@@ -1,0 +1,22 @@
+{
+  "name": "machine-tabs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "css-loader": "^2.1.0",
+    "html-loader": "^0.5.5",
+    "less": "^3.9.0",
+    "less-loader": "^4.1.0",
+    "style-loader": "^0.23.1",
+    "webpack": "^4.30.0"
+  },
+  "scripts": {
+    "start": "http-server -a localhost -p 9001 -o"
+  }
+}

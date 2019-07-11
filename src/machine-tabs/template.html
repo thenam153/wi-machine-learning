@@ -1,0 +1,38 @@
+<ul class="toolbar">
+	<li ng-repeat="name in self.titleTabs track by $index" class="menu-item " ng-class="{active: self.current_tab === $index}" ng-click="changeTab($index);">{{name}}</li>
+</ul>
+<div class="body">
+	<div  class="in-body" >
+		<model-selection ng-show="self.titleTabs[self.current_tab] === 'Model Selection'"
+		set-data-model="self.setDataModel"
+		set-item-selected="self.setItemSelected"
+		></model-selection>
+		<dataset-selection ng-show="self.titleTabs[self.current_tab] === 'Dataset Selection'" id-project="self.idProject" 	
+		input-curve-specs="self.inputCurveSpecs"
+		target-curve-spec="self.targetCurveSpec"
+		steps="self.dataSteps"
+		type-selected="self.typeSelected"
+		
+		add-curve-input="self.addCurveInput"
+        get-on-item-changed="self.getOnItemChanged"
+        on-target-item-changed="self.onTargetItemChanged"
+        remove-data-selection-list="self.removeDataSelectionList"
+        change-type="self.changeType"
+        drop="self.drop"
+        out="self.out"
+        deactivate="self.deactivate"
+		selection-list="self.selectionList"
+        merge-curves="self.mergeCurves"
+        make-selection-list="self.makeSelectionList"
+        
+		style="display: flex;flex:auto;"></dataset-selection>
+		<training-prediction 
+		step-datas="self.dataStepsForTrainPredict"
+		input-curve-specs="self.inputCurveSpecs"
+		target-curve-spec="self.targetCurveSpec"
+		model="self.selectedModelProps"
+		ng-show="self.titleTabs[self.current_tab] === 'Training and Prediction'"
+		>
+		 </training-prediction>
+	</div>
+</div>

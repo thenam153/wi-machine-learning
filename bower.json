@@ -1,0 +1,22 @@
+{
+  "name": "machine-tabs",
+  "authors": [
+    "thenam153 <noilinhtinh016@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.7.8",
+    "jquery": "^3.4.1",
+    "misc-component": "https://github.com/tunghoang/misc-component.git"
+  }
+}

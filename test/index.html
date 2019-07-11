@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Machine tool</title>
+	<script src="../bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="../bower_components/jquery-ui/jquery-ui.min.js"></script>
+    <script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="../bower_components/angular/angular.min.js"></script>
+	<script src="../bower_components/angular-ui-select/dist/select.min.js"></script>
+	<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
+	<script src="../bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+	<script src="../bower_components/lodash/dist/lodash.min.js"></script>
+	<script src="../bower_components/ng-file-upload/ng-file-upload.min.js"></script>
+	<script src="../bower_components/angular-modal-service/dst/angular-modal-service.min.js"></script>
+	<script src="../bower_components/misc-component/dist/misc-components.js"></script>
+	<script src="../bower_components/async/dist/async.min.js"></script>
+	<script src="../dist/main.js"></script>
+	
+    <link rel="stylesheet" href="../bower_components/jquery-ui/themes/base/jquery-ui.min.css">
+    <link rel="stylesheet" href="../bower_components/angular-ui-select/dist/select.min.css">
+    <link rel="stylesheet" href="../bower_components/ng-dialog/css/ngDialog.min.css">
+    <link rel="stylesheet" href="../bower_components/ng-dialog/css/ngDialog-theme-default.min.css">
+    <link rel="stylesheet" href="../bower_components/bootstrap-css/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../bower_components/font-awesome/css/font-awesome.min.css">
+</head>
+<body ng-app="myApp" ng-controller="myCtr">
+	<machine-tabs token="'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InR1bmdoeCIsIndob2FtaSI6Im1haW4tc2VydmljZSIsInJvbGUiOjAsImNvbXBhbnkiOiJJMkciLCJpYXQiOjE1NjI3Mjk0NTEsImV4cCI6MTU2MjkwMjI1MX0.8Y1x0XhiLfjFD73_CSv_H6TiEStthNNxBNeJZ23_4yw'" id-project='1'></machine-tabs>
+	<script>
+		angular.module('myApp',['machineTabs'])
+		.controller('myCtr', ['$scope', function($scope){
+			
+		}]);
+	</script>
+</body>
+</html>
