@@ -14,7 +14,7 @@ app.component(componentName,{
     bindings: {
     	// datas: '=',
     	// selectedItemProps: '=',
-    	setDataModel: '<',
+    	setDataModels: '<',
     	setItemSelected: '<'
     }
 });
@@ -30,15 +30,19 @@ function ModelSelectionController($scope){
 			self.datas.push(self.handleData(dataJson[i],i));
 		}
 		// console.log(dataJson);
-		self.setDataModel(self.datas)
+		self.setDataModels(self.datas)
+		console.log(self.datas);
 	}
 	this.handleData = function(dataJson,key) {
 		var definitions = dataJson.definitions;
-		// var key = Object.keys(definitions);
+		var keysPath = Object.keys(dataJson.paths);
+		console.log(keysPath[4]);
 		var item = {};
+		item.create = keysPath[4];
+		item.name = key;
 		item.data = {};
-		// item.data.label = key[key.length-1];
 		item.data.label = key;
+		// item.properties = {name: key};	
 		item.properties = {};	
 		for (let i in definitions[key].properties){
 			// item.properties[i] = definitions[key].properties[i].type;
@@ -52,13 +56,15 @@ function ModelSelectionController($scope){
 	}
 	this.onItemChanged = function(selectedItemProps){
 		self.selectedItemProps = selectedItemProps;
-		self.setItemSelected(selectedItemProps);
-		// console.log(selectedItemProps);
+		// console.log(this,this.selectedItem);
+		let props = Object.assign({}, {params: this.selectedItem.properties}, {name: this.selectedItem.name}, {create: this.selectedItem.create});
+		// console.log(props);
+		self.setItemSelected(props);
 	}
-	this.setValue = function(params,value) {
-		console.log(self.selectedItemProps[this.itemLabel].type);
+	this.setValue = function(param,value) {
+		// console.log(self.selectedItemProps[this.itemLabel].type);
 		value = validate(self.selectedItemProps[this.itemLabel].type,value);
-		if(!value) value = params;
+		if(value === '') value = param;
 		this.itemValue = value;
 		self.selectedItemProps[this.itemLabel].value = value;
 		return
@@ -82,10 +88,12 @@ function ModelSelectionController($scope){
 				return '';
 			case 'boolean':
 				if(value.toString().toLowerCase() == 'true') {
-					return 'true';
+					// return 'true';
+					return true;
 				}
 				if(value.toString().toLowerCase() == 'false') {
-					return 'false';
+					// return 'false';
+					return false;
 				}
 				return '';
 			default: return '';

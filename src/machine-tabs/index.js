@@ -65,19 +65,20 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
 		},function() {
 			// console.log('watch');
 			for(let i in self.dataSteps) {
-	        	self.hanldeDrop(i,self.indexInputCurve, self.formatCurve);
+	        	self.handleDrop(i,self.indexInputCurve, self.formatCurve);
 	        }
 	        self.indexInputCurve = -1;
 	        self.formatCurve = null;
 		})
 	}
 	
-	this.setDataModel = function(data) {
-		console.log(data);
-		self.modelDatas = data;
+	this.setDataModels = function(datas) {
+		console.log(datas);
+		self.modelDatas = datas;
 	}
 	this.setItemSelected = function(selectedModelProps) {
 		self.selectedModelProps = selectedModelProps;
+        // console.log(self.selectedModelProps);
 	}
 	this.inputCurveSpecs = [
 		{
@@ -95,10 +96,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
         value: null,
         currentSelect: '[no choose]'
     };
-	function makeSl(dataStep,step,index = -1,type = null) {
-		// console.log(dataStep);
-		// let datasets = dataStep.datasets;
-		// let selectionList = dataStep.selectionList;
+	function handleSelectionList(dataStep,step,index = -1,type = null) {
 		let inputSpecs = [...self.inputCurveSpecs,self.targetCurveSpec];
 		let mergeCurves = [];
 		for(let dataset of dataStep.datasets) {
@@ -236,7 +234,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
 		}
 		// console.log(dataStep);
 	}
-// =================================================================================================================================
  	let functionCache = [];
     let functionCacheSteps = {
         training: {
@@ -357,7 +354,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
             currentSelect: '[no choose]'
         });
         // for(let i in self.dataSteps) {
-        // 	self.hanldeDrop(i,self.inputCurveSpecs.length - 1, ADD);
+        // 	self.handleDrop(i,self.inputCurveSpecs.length - 1, ADD);
         // }
     }
     this.getOnItemChanged = function($index) {
@@ -372,7 +369,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
                     self.inputCurveSpecs[$index].currentSelect = '[no choose]';
                 }
                 // for(let i in self.dataSteps) {
-                // 	self.hanldeDrop(i);
+                // 	self.handleDrop(i);
                 // }
             }
         return functionCache[$index];
@@ -392,7 +389,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
             self.inputCurveSpecs.splice($index,1);
         }
         // for(let i in self.dataSteps) {
-        // 	self.hanldeDrop(i,$index, REMOVE);
+        // 	self.handleDrop(i,$index, REMOVE);
         // }
     }
     this.changeType = function(button) {
@@ -411,7 +408,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
             }
         self.makeSelectionList();
         for(let i in self.dataSteps) {
-        	self.hanldeDrop(i);
+        	self.handleDrop(i);
         }
     }
     this.drop = function(step) {
@@ -427,7 +424,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
                     //             self.makeSelectionList();   
                     //         }
                     //     }
-                    //     self.hanldeDrop(step);
+                    //     self.handleDrop(step);
                     // })    
                     for(let node of datasets) {
                     	let valueDataset = angular.copy(node);
@@ -439,7 +436,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
                             }
                         }
                     }
-                    self.hanldeDrop(step);
+                    self.handleDrop(step);
                 })
             }
         }
@@ -468,7 +465,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
                         //         }
                         //         return dataset.$$hashKey !== datasetRemove.$$hashKey;
                         //     });
-                        //     self.hanldeDrop(step);
+                        //     self.handleDrop(step);
                         // })
                         for(let datasetRemove of datasets) {
                         	 self.dataSteps[step].datasets = _.remove(self.dataSteps[step].datasets,(dataset,index)=>{
@@ -481,7 +478,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
                                 return dataset.$$hashKey !== datasetRemove.$$hashKey;
                             });
                         }
-                        self.hanldeDrop(step);
+                        self.handleDrop(step);
                         functionCacheSteps[step].status = !functionCacheSteps[step].status;
                     })   
                 }
@@ -495,7 +492,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
         }
         return -1;
     }
-    this.hanldeDrop = function(step,index = -1,type = null) {
+    this.handleDrop = function(step,index = -1,type = null) {
     	let datasetSource = Object.assign([],self.dataSteps[step].datasets);
     	let datasetDestination = Object.assign([],self.dataStepsForTrainPredict[step].datasets);
     	let ds = _.intersectionBy(datasetDestination, datasetSource, 'idDataset');
@@ -504,6 +501,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
     		ds1[i].use = true;
     	}
     	self.dataStepsForTrainPredict[step].datasets = [...ds,...ds1];
-    	makeSl(self.dataStepsForTrainPredict[step],step ,index,type);
+    	handleSelectionList(self.dataStepsForTrainPredict[step],step ,index,type);
     }
 }

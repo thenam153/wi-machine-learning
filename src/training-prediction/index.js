@@ -27,13 +27,22 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
     const VERIFY_STEP_STATE = 'verify';
     const PREDICT_STEP_STATE = 'prediction';
     // const BASE_ML_URL = 'http://192.168.0.120:5001/api';
-
+    this.$onInit = function() {
+    	// self.baseMlUrl = '';
+    	// $scope.$watch(function() {
+    	// 	return JSON.stringify(self.model);
+    	// }, function() {
+    	// 	// if(self.model)
+    	// 	self.baseMlUrl = config[self.model.name] || '';
+    	// 	console.log('change', self.baseMlUrl);
+    	// })
+    }
     this.model_id = null;
 	this.onDiscriminator = function(dataset) {
-		console.log(dataset.curves);
+		// console.log(dataset.curves);
 		wiDialog.discriminator(dataset.discrmnt,dataset.curves,function(res) {
 			dataset.discrmnt = res;
-			console.log(res);
+			// console.log(res);
 		})
 	}
 	this.runTask = runTask;
@@ -74,22 +83,22 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
         });
     }
     function postCreateModel(payload) {
-    	return postPromise(BASE_ML_URL + '/model/create/decision_tree', payload, 'POST');
+    	return postPromise(config[self.model.name] + self.model.create , payload, 'POST');
     }
     function postCreateBucketId(payload) {
-    	return postPromise(BASE_ML_URL + '/data', payload ,'POST');
+    	return postPromise(config[self.model.name] + '/data', payload ,'POST');
     }
     function putDataOfTrain(payload) {
-    	return postPromise(BASE_ML_URL + '/data', payload, 'PUT');
+    	return postPromise(config[self.model.name] + '/data', payload, 'PUT');
     }
     function postTrainByBucketData(payload) {
-    	return postPromise(BASE_ML_URL + '/model/train_by_bucket_data', payload,'POST');
+    	return postPromise(config[self.model.name] + '/model/train_by_bucket_data', payload,'POST');
     }
     function postPredict(payload) {
-    	return postPromise(BASE_ML_URL + '/model/predict', payload, 'POST');
+    	return postPromise(config[self.model.name] + '/model/predict', payload, 'POST');
     }
     function isRun(dataset) {
-    	console.log('isRun',dataset);
+    	// console.log('isRun',dataset);
     	let isValid = true;
 		for(let i of dataset.inputCurveSpecs) {
 			if(i.currentSelect == '[no choose]') {
@@ -100,14 +109,13 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 		return isValid;
     }
     async function createModelAndBucketId() {
+    	console.log(self.model);
     	let payload = {};
-		for(let i in self.model) {
-			payload[i] = self.model[i].value;
-			if(i === 'model_id') self.model_id = self.model[i].value;
+		for(let i in self.model.params) {
+			payload[i] = self.model.params[i].value;
+			if(i === 'model_id') self.model_id = self.model.params[i].value;
 			if(i === 'max_features') payload[i] = self.inputCurveSpecs.length
 		}
-		payload["criterion"] = "mse";
-		payload["splitter"] = "best";
 		console.log(payload);
 		let resModelId = await postCreateModel(payload);
 		let request = {
