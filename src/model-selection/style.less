@@ -12,11 +12,13 @@ model-selection {
 		margin-right: 0;
 	}
 	editable div.my-content {
-		text-overflow: ellipsis;
-		overflow: hidden;
 		direction: rtl;
-		white-space: nowrap;
 		width: 117px;
+		&>div{
+			overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		}
 	}
 	label {
 		margin-bottom: 0;
@@ -39,7 +41,7 @@ model-selection {
 		border-radius: 2px;
 	}
 	.btn-default {
-		color: #8d949e;
+		color: #333;
 		background-color: #fff;
 		border-color: #ccd0d5;
 	}
