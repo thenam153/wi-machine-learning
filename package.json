@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "http-server -a localhost -p 9001 -o"
   },
   "author": "",
   "license": "ISC",
@@ -15,8 +15,5 @@
     "less-loader": "^4.1.0",
     "style-loader": "^0.23.1",
     "webpack": "^4.30.0"
-  },
-  "scripts": {
-    "start": "http-server -a localhost -p 9001 -o"
   }
 }
