@@ -17,6 +17,8 @@
   "dependencies": {
     "angular": "^1.7.8",
     "jquery": "^3.4.1",
-    "misc-component": "https://github.com/tunghoang/misc-component.git"
+    "misc-component": "https://github.com/tunghoang/misc-component.git",
+    "async": "^3.1.0",
+    "themify-icons": "^0.1.2"
   }
 }

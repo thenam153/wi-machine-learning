@@ -1,0 +1,46 @@
+body {
+    width: 100vw;
+    height: 100vh;
+}
+machine-tabs {
+    display: flex;
+    flex: 1;
+    height: 100%;
+    
+    .menu {
+        font-family: Roboto, system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        background: #1962a7;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        height: 40px;
+        font-size: 12px;
+        font-weight: bold;
+        .menu-item {
+            color: #fff;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            cursor: pointer;
+            transition: all ease-in 0.3s;
+            
+            &:hover {
+                background: #2a77bf;
+                transition: all ease-in 0.3s;
+            }
+        }
+        .active {
+            background: #2a77bf;
+
+        }
+    }
+
+    .main {
+        flex: 1;
+        background: #f4f4f4;
+        
+    }
+}

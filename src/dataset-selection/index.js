@@ -7,7 +7,7 @@ var app = angular.module(moduleName, ['wiTreeView','wiDroppable']);
 app.component(componentName,{
 	template: require('./template.html'),
     controller: DatasetSelectionController,
-    style: require('./style.css'),
+    style: require('./style.less'),
     controllerAs: 'self',
     bindings: {
     	idProject: '<',

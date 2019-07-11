@@ -7,7 +7,7 @@ var app = angular.module(moduleName, ['modelSelection','datasetSelection','train
 app.component(componentName,{
 	template: require('./template.html'),
     controller: MachineTabsController,
-    style: require('./style.css'),
+    style: require('./style.less'),
     controllerAs: 'self',
     bindings: {
     	token: '<',

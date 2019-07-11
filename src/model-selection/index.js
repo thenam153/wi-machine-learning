@@ -9,7 +9,7 @@ var app = angular.module(moduleName, ['wiDropdownList','editable']);
 app.component(componentName,{
 	template: require('./template.html'),
     controller: ModelSelectionController,
-    style: require('./style.css'),
+    style: require('./style.less'),
     controllerAs: 'self',
     bindings: {
     	// datas: '=',
