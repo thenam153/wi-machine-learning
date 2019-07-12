@@ -42,7 +42,7 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 		// console.log(dataset.curves);
 		wiDialog.discriminator(dataset.discrmnt,dataset.curves,function(res) {
 			dataset.discrmnt = res;
-			// console.log(res);
+			console.log(res);
 		})
 	}
 	this.runTask = runTask;
@@ -99,6 +99,7 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
     }
     function isRun(dataset) {
     	// console.log('isRun',dataset);
+    	if(!dataset.use) return false;
     	let isValid = true;
 		for(let i of dataset.inputCurveSpecs) {
 			if(i.currentSelect == '[no choose]') {
@@ -195,6 +196,7 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 		});
 	}
 	async function train(cb) {
+		if(!self.stepDatas[TRAIN_STEP_STATE].datasets.length) return cb();
 		let res = await createModelAndBucketId();
 		console.log(res);
 		async.each(self.stepDatas[TRAIN_STEP_STATE].datasets,function(dataset,_cb){
@@ -212,7 +214,8 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 					});
 				})
 			}else {
-				_cb();
+				// _cb();
+				cb();
 			}
 		},async function(err) {
 			if(err) console.error(err);
@@ -247,7 +250,8 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 					});
 				});
 			}else {
-				_cb();
+				// _cb();
+				cb();
 			}
 		},err => {
 			if(err) console.error(err);
@@ -270,7 +274,8 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 					});
 				});
 			}else {
-				_cb();
+				// _cb();
+				cb();
 			}
 		},err => {
 			if(err) console.error(err);
@@ -283,7 +288,6 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 	    // let length = (dataset.bottom - dataset.top) / dataset.step;
 	    let curveSet = new Set();
 	    let curvesData = new Array();
-
 	    let curvesInDataset = dataset.curves;
 	    if (!curvesInDataset) return callback(result);
 	    function findCurve(condition) {
@@ -304,6 +308,7 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 	    findCurve(discriminator);
 
 	    function evaluate(condition, index) {
+	    	if(typeof discriminator !== 'undefined' && !discriminator.active) {return true;}
 	        if (condition && condition.children && condition.children.length) {
 	            let left = evaluate(condition.children[0], index);
 	            let right = evaluate(condition.children[1], index);
@@ -394,9 +399,18 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 	            	// console.log(data);
 	            	length = data.length;
 	            	// console.log(length);
+	            	// if(typeof discriminator !== 'undefined' && !discriminator.active) {
+	            	// 	for (let i = 0; i <= length; i++) {
+			           //      result.push(true);
+			           //  }
+	            	// }else {
+	            	// 	for (let i = 0; i <= length; i++) {
+			           //      result.push(evaluate(discriminator, i));
+			           //  }
+	            	// }
 	            	for (let i = 0; i <= length; i++) {
-		                result.push(evaluate(discriminator, i));
-		            }
+			                result.push(evaluate(discriminator, i));
+			            }
 		            callback(result);
 	            })();
 	        }
