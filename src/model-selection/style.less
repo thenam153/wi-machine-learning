@@ -12,16 +12,20 @@ model-selection {
 		margin-right: 0;
 	}
 	editable div.my-content {
-		direction: rtl;
+		// direction: rtl;
 		width: 117px;
 		&>div{
 			overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			float: right;
 		}
 	}
 	label {
 		margin-bottom: 0;
+	}
+	editable form {
+		text-align: right;
 	}
 	.editable-custom {
 		margin: 5px 0;

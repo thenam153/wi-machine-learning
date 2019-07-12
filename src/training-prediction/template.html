@@ -1,4 +1,4 @@
-<div style="display:flex;flex-direction: column;width: 100%;height: 100%;padding-bottom: 20px;" class="slim-scroller">
+<div style="display:flex;flex-direction: column;width: 100%;height: 100%;padding-bottom: 20px; position: relative;" class="slim-scroller">
     <div 
         ng-repeat="(name,step) in self.stepDatas "  
         id="{{step.name}}" 
@@ -52,7 +52,6 @@
             </div>
         </div>
     </div>
-</div>
-<div style="margin:0 8em; display: none;">
-    <button ng-click="self.runAll()">Run All</button>
+    <div style="position: absolute;" ng-click="self.runAll()" class="float-button ti ti-control-forward">
+    </div>
 </div>
