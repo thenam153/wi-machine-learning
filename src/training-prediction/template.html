@@ -1,45 +1,45 @@
-<div style="margin:0 8em; ">
-    <button ng-click="self.runAll()">Run All</button>
-    <div  class='bordered panel panel-default' ng-repeat="(name,step) in self.stepDatas " style='display:table;min-width: 100%;'
-        id="{{step.name}}" ng-init="step.expanded=true">
-        <div class='panel-heading' style='background-color:#eee;height: 41px;'>
-            <span class='control-button' ng-class="{'fa fa-chevron-up':  step.expanded, 'fa fa-chevron-down': !step.expanded}" ng-click='step.expanded = !step.expanded'
-                style='margin-right:5px;'>
-            </span>
-            <!-- <span style='margin-right:10px;padding-right:2px;' ng-click="wiWorkflowMachineLearning.safeRunStep(wf);"  -->
-            <span style='margin-right:10px;padding-right:2px;' ng-click="self.runTask(step.index);"
-                class='fa fa-play control-button block-button'>
-            </span>
-            <span style='font-weight:700;float: left;'>{{step.name}}</span>
-            <!-- <span ng-show="self.showState(wf)">&#32; ( working ... )</span> -->
+<div style="display:flex; flex: 1; height: 100%;margin: 0 10px;" class="slim-scroller">
+
+    <div ng-repeat="(name,step) in self.stepDatas " id="{{step.name}}" ng-init="step.expanded=true" style="flex: 1; ">
+        <div class="block" style="height: calc(100vh - 80px); display: block; width: calc(100% - 20px); margin: 20px 10px;">
+            <div class="tab-header">{{step.name}}
+                <div style="display: flex;">
+                    <!-- <span class='control-button'
+                    ng-class="{'fa fa-chevron-up':  step.expanded, 'fa fa-chevron-down': !step.expanded}"
+                    ng-click='step.expanded = !step.expanded' style='margin-right:5px;'>
+                    </span> -->
+                    <div class="fn-button" ng-click="self.runTask(step.index)">Run</div>
+                </div>
+            </div>
+            <div style="display: flex; padding: 15px">
+                <div class='table-column table-head'>
+                    <div class="row-block">Filter</div>
+                    <div class="row-block">Well</div>
+                    <div class="row-block">Dataset </div>
+                    <div class="row-block"ng-repeat="input in self.inputCurveSpecs track by $index" >{{input.label}}</div>
+                    <div class="row-block" ng-if="step.target" >Target {{}}</div>
+                    <div class="row-block" ng-if="step.name != 'Train'" >{{step.name}} curve name</div>
+                </div>
+                <div class='table-column' ng-repeat="(indexDataset,dataset) in step.datasets" style="flex: 1; position: relative;">
+                    <!-- <div><input type="checkbox" ng-model="dataset.use"></div> -->
+                    <div class="fn-button" style="top: -48px;right: 56px;position: absolute;" ng-click="" ng-model="dataset.use">Active</div>
+                    <div class="fn-button" style="top: -48px;right: 120px;position: absolute;" ng-click="self.onDiscriminator(dataset)" ng-model="dataset.use">Filter</div>
+                    <div class="row-block left"title='{{dataset.wellName}}'>{{dataset.wellName}}</div>
+                    <div class="row-block left"title='{{dataset.name}}'>{{dataset.name}}</div>
+                    <div class="row-block left" ng-repeat="input in dataset.inputCurveSpecs track by $index">
+                        <wi-dropdown-list place-holder="Curve" items="step.selectionList[$index]"
+                            hide-delete-button='true' current-select='input.currentSelect'
+                            on-item-changed="self.getOnItemChange(name,indexDataset,$index)"></wi-dropdown-list>
+                    </div>
+                    <div class="row-block left" ng-if="step.name != 'Train'" >
+                        <input type="text"  ng-model="item.resultCurveName"
+                            class="form-control wi-form-control">
+                    </div>
+                </div>
+            </div>
         </div>
-        <div ng-show="step.expanded" class='panel-body'  style="border-top: 1px solid #eee;overflow:visible;">
-            <ul class='table-row table-head'>
-                <li></li>
-                <li  style="width: 60px;">Filter</li>
-                <li>Well</li>
-                <li>Dataset </li>
-                <li ng-repeat="input in self.inputCurveSpecs track by $index" style="width: 160px" >{{input.label}}</li>
-                <li ng-if="step.target" style="width: 160px;">Target {{}}</li>
-                <li ng-if="step.name != 'Train'" style="width: 170px;">{{step.name}} curve name</li>
-            </ul>
-            <ul class='table-row' ng-repeat="(indexDataset,dataset) in step.datasets">
-                <li><input type="checkbox" ng-model="dataset.use"></li>
-                <li style="padding-top: 5px; width: 60px; text-align: center;cursor: pointer;line-height: 16px;font-size: 20px;" ng-click="self.onDiscriminator(dataset)">
-                    <span class="fa fa-filter"></span>
-                </li>
-                <li title='{{dataset.wellName}}'>{{dataset.wellName}}</li>
-                <li title='{{dataset.name}}'>{{dataset.name}}</li>
-                <li style='height:auto;overflow:visible;padding:0;width: 160px;' ng-repeat="input in dataset.inputCurveSpecs track by $index">
-                    <wi-dropdown-list place-holder="Curve" items="step.selectionList[$index]" hide-delete-button = 'true' current-select = 'input.currentSelect' on-item-changed="self.getOnItemChange(name,indexDataset,$index)"></wi-dropdown-list>
-                </li>
-                <!-- <li style='height:auto;overflow:visible;padding:0;width: 160px;' ng-if="step.name == 'Train'">
-                    <wi-dropdown-list place-holder="Curve" items="self.stepDatas[step.state].selectionList['target']" hide-delete-button = 'true' current-select = 'self.stepDatas.training.targetCurveSpec.currentSelect' on-item-changed="self.onItemTargetChanged"></wi-dropdown-list>
-                </li> -->
-                <li ng-if="step.name != 'Train'" style="width: 170px;"> 
-                    <input type="text" style="height: 32px;" ng-model="item.resultCurveName" class="form-control wi-form-control" >
-                </li>
-            </ul>
-        </div>
+    </div>
+    <div class="float-button" ng-click="self.runAll()">
+        <span class="ti ti-control-forward"></span>
     </div>
 </div>

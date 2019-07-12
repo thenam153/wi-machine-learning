@@ -1,5 +1,6 @@
 <div style="display: flex;flex-direction: column;flex: 1;" class="slim-scroller">
 	<div class="menu">
+		<!-- <span class="menu-item ">MACHINE LEARNING</span> -->
 		<span ng-repeat="name in self.titleTabs track by $index" class="menu-item " ng-class="{active: self.current_tab === $index}" ng-click="changeTab($index);">{{name}}</span>
 	</div>
 	<div class="main">
