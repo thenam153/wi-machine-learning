@@ -23,6 +23,7 @@ app.component(componentName,{
         changeType: '<',
         drop: '<',
         out: '<',
+        over: '<',
         deactivate: '<',
         selectionList: '<',
         mergeCurves: '<',

@@ -10,7 +10,7 @@
 				<div class="tab-header">Training</div>
 				<div class="tab-content">
 					<wi-droppable container-style="{'flex':'1','display':'flex'}" on-drop="self.drop('training')"
-						on-out="self.out('training')" on-deactivate="self.deactivate('training')"
+						on-over="self.over('training')" on-out="self.out('training')" on-deactivate="self.deactivate('training')"
 						style="display: flex;height: 100%;">
 						<div style="display: flex; flex: 1;flex-direction: column;">
 							<wi-tree-view tree-root="self.steps['training'].datasets" hide-unmatched='true'
@@ -67,7 +67,7 @@
 				<div class="tab-header">Verify</div>
 				<div class="tab-content">
 					<wi-droppable container-style="{'flex':'1','display':'flex'}" on-drop="self.drop('verify')"
-						on-out="self.out('verify')" on-deactivate="self.deactivate('verify')"
+						on-over="self.over('verify')" on-out="self.out('verify')" on-deactivate="self.deactivate('verify')"
 						style="display: flex;height: 100%;">
 						<div style="display: flex; flex: 1;flex-direction: column;">
 							<wi-tree-view tree-root="self.steps['verify'].datasets" hide-unmatched='true'
@@ -82,7 +82,7 @@
 				<div class="tab-header">Prediction</div>
 				<div class="tab-content">
 					<wi-droppable container-style="{'flex':'1','display':'flex'}" on-drop="self.drop('prediction')"
-						on-out="self.out('prediction')" on-deactivate="self.deactivate('prediction')"
+						on-over="self.over('prediction')" on-out="self.out('prediction')" on-deactivate="self.deactivate('prediction')"
 						style="display: flex;height: 100%;">
 						<div style="display: flex; flex: 1;flex-direction: column;">
 							<wi-tree-view tree-root="self.steps['prediction'].datasets" hide-unmatched='true'

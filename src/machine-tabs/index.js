@@ -240,18 +240,21 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
             status: true,
             drop: null,
             out: null,
+            over: null,
             deactivate: null,
         },
         verify: {
             status: true,
             drop: null,
             out: null,
+            over: null,
             deactivate: null,
         },
         prediction: {
             status: true,
             drop: null,
             out: null,
+            over: null,
             deactivate: null,
         },
     }
@@ -445,10 +448,20 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
     this.out = function(step) {
         if(!functionCacheSteps[step].out) {
             functionCacheSteps[step].out = function(event,helper,datasets) {
-                functionCacheSteps[step].status = !functionCacheSteps[step].status;
+                // functionCacheSteps[step].status = !functionCacheSteps[step].status;
+                functionCacheSteps[step].status = false;
             }
         }
         return functionCacheSteps[step].out;
+    }
+    this.over = function(step) {
+        if(!functionCacheSteps[step].over) {
+            functionCacheSteps[step].over = function(event,helper,datasets) {
+                // functionCacheSteps[step].status = !functionCacheSteps[step].status;
+                functionCacheSteps[step].status = true;
+            }
+        }
+        return functionCacheSteps[step].over;
     }
     this.deactivate = function(step) {
         if(!functionCacheSteps[step].deactivate) {
