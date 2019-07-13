@@ -99,7 +99,7 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
     }
     function isRun(dataset) {
     	// console.log('isRun',dataset);
-    	if(!dataset.use) return false;
+    	if(!dataset.active) return false;
     	let isValid = true;
 		for(let i of dataset.inputCurveSpecs) {
 			if(i.currentSelect == '[no choose]') {
@@ -214,8 +214,8 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 					});
 				})
 			}else {
-				// _cb();
-				cb();
+				_cb();
+				// cb();
 			}
 		},async function(err) {
 			if(err) console.error(err);
@@ -250,8 +250,8 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 					});
 				});
 			}else {
-				// _cb();
-				cb();
+				_cb();
+				// cb();
 			}
 		},err => {
 			if(err) console.error(err);
@@ -274,8 +274,8 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 					});
 				});
 			}else {
-				// _cb();
-				cb();
+				_cb();
+				// cb();
 			}
 		},err => {
 			if(err) console.error(err);
@@ -398,16 +398,6 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 	            	let data = await wiApi.getCurveDataPromise(curvesInDataset[0].idCurve);
 	            	// console.log(data);
 	            	length = data.length;
-	            	// console.log(length);
-	            	// if(typeof discriminator !== 'undefined' && !discriminator.active) {
-	            	// 	for (let i = 0; i <= length; i++) {
-			           //      result.push(true);
-			           //  }
-	            	// }else {
-	            	// 	for (let i = 0; i <= length; i++) {
-			           //      result.push(evaluate(discriminator, i));
-			           //  }
-	            	// }
 	            	for (let i = 0; i <= length; i++) {
 			                result.push(evaluate(discriminator, i));
 			            }
@@ -431,7 +421,7 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 		// 	console.log('Run All finish');
 		// })
 	}
-	this.onToggleUseOutput = function(dataset) {
-		dataset.use = !dataset.use;
+	this.onToggleActiveOutput = function(dataset) {
+		dataset.active = !dataset.active;
 	}
 }

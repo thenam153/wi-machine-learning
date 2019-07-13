@@ -511,7 +511,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
     	let ds = _.intersectionBy(datasetDestination, datasetSource, 'idDataset');
     	let ds1 = _.pullAllBy(datasetSource, ds, 'idDataset');
     	for(let i in ds1) {
-    		ds1[i].use = true;
+    		ds1[i].active = true;
     	}
     	self.dataStepsForTrainPredict[step].datasets = [...ds,...ds1];
     	handleSelectionList(self.dataStepsForTrainPredict[step],step ,index,type);
