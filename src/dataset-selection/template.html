@@ -1,96 +1,125 @@
-<div style="display:flex; flex: 1;" class="slim-scroller">
-	<div class="block" style="height: calc(100vh - 80px); display: block;">
-		<wi-tree-view tree-root="self.treedata" hide-unmatched='true' get-children="self.getChildren"
-			click-fn='self.clickFn' get-label="self.getLabel" get-icon='self.getIcon' run-match='self.runMatch'>
-		</wi-tree-view>
-	</div>
-	<div style="flex: 1;display: flex;flex-direction: column; padding: 0 20px 0 0;">
-		<div class="training" style="flex: 1;display: flex;">
-			<div class="block" style="flex: 1;">
-				<div class="tab-header">Training</div>
+<div style="display:flex; height: 100%;" class="slim-scroller">
+	<div style="display: flex; flex: 1;margin: 0 15px 15px 0; overflow: hidden;">
+		<div class="resizable-block" style="flex-basis: 300px; " resizable
+			r-directions="['right']" r-flex="true">
+			<div class="block" style="flex: 1; height: 100%;">
 				<div class="tab-content">
-					<wi-droppable container-style="{'flex':'1','display':'flex'}" on-drop="self.drop('training')"
-						on-over="self.over('training')" on-out="self.out('training')" on-deactivate="self.deactivate('training')"
-						style="display: flex;height: 100%;">
-						<div style="display: flex; flex: 1;flex-direction: column;">
-							<wi-tree-view tree-root="self.steps['training'].datasets" hide-unmatched='true'
-								get-children="self.getChildrenDataset" click-fn='self.clickFnTrain'
-								get-label="self.getLabel" get-icon='self.getIcon' run-match='self.runMatch'>
-							</wi-tree-view>
-						</div>
-					</wi-droppable>
-				</div>
-			</div>
-			<div class="block" style="flex: 1;">
-				<div class="tab-header">Input selection
-					<div style="display: flex;">
-						<div class="fn-button" ng-repeat="button in self.buttons track by $index"
-							ng-click="self.isActive = $index;self.changeType(button);"
-							ng-class="{'fn-button-active': self.isActive == $index}">
-							<span>{{button.label}}</span>
-						</div>
-						<div class="fn-button" ng-click="self.addCurveInput()">Add Curve</div>
-					</div>
-				</div>
-				<div class="tab-content">
-					<div style="padding: 15px;">
-						<div class="list-in-tab" ng-repeat="item in self.inputCurveSpecs track by $index">
-							<div class="label-list-in-tab">
-								{{item.label}} {{$index+1}}
-							</div>
-							<div style="flex: 1;">
-									<wi-dropdown-list place-holder="Curve" items="self.selectionList"
-									hide-delete-button='true' on-item-changed="self.getOnItemChanged($index)"
-									current-select="item.currentSelect">
-								</wi-dropdown-list>
-							</div>
-							<div class="delete-list" ng-click="self.removeDataSelectionList($index)">
-								<i class="ti ti-close"></i>
-							</div>
-						</div>
-						<div class="list-in-tab" >
-								<div class="label-list-in-tab">
-									{{self.targetCurveSpec.label}}
-								</div>
-								<div style="flex: 1;">
-									<wi-dropdown-list place-holder="Curve" items="self.selectionList"
-									hide-delete-button='true' current-select='self.targetCurveSpec.currentSelect'
-									on-item-changed="self.onTargetItemChanged"></wi-dropdown-list>
-								</div>
-							</div>
+					<div class="tab-content-scroll">
+						<wi-tree-view tree-root="self.treedata" hide-unmatched='true' get-children="self.getChildren"
+							click-fn='self.clickFn' get-label="self.getLabel" get-icon='self.getIcon'
+							run-match='self.runMatch'>
+						</wi-tree-view>
 					</div>
 				</div>
 			</div>
 		</div>
-		<div style="flex: 1; display: flex;">
-			<div class="block" style="flex: 1;">
-				<div class="tab-header">Verify</div>
-				<div class="tab-content">
-					<wi-droppable container-style="{'flex':'1','display':'flex'}" on-drop="self.drop('verify')"
-						on-over="self.over('verify')" on-out="self.out('verify')" on-deactivate="self.deactivate('verify')"
-						style="display: flex;height: 100%;">
-						<div style="display: flex; flex: 1;flex-direction: column;">
-							<wi-tree-view tree-root="self.steps['verify'].datasets" hide-unmatched='true'
-								get-children="self.getChildrenDataset" click-fn='self.clickFnVerify'
-								get-label="self.getLabel" get-icon='self.getIcon' run-match='self.runMatch'>
-							</wi-tree-view>
+		<div style="display: flex; flex: 1; flex-direction: column;">
+			<div style="display: flex; flex-basis: 50%;" resizable r-directions="['bottom']" r-flex="true">
+				<div class="resizable-block" style="flex-basis: 40%; " resizable r-directions="['right']" r-flex="true">
+					<div class="block" style="flex: 1; height: 100%;">
+						<div class="tab-header">Training</div>
+						<div class="tab-content">
+							<div class="tab-content-scroll">
+								<wi-droppable container-style="{'flex':'1','display':'flex'}"
+									on-drop="self.drop('training')" on-over="self.over('training')"
+									on-out="self.out('training')" on-deactivate="self.deactivate('training')"
+									style="display: flex;height: 100%;">
+									<div style="display: flex; flex: 1;flex-direction: column;">
+										<wi-tree-view tree-root="self.steps['training'].datasets" hide-unmatched='true'
+											get-children="self.getChildrenDataset" click-fn='self.clickFnTrain'
+											get-label="self.getLabel" get-icon='self.getIcon' run-match='self.runMatch'>
+										</wi-tree-view>
+									</div>
+								</wi-droppable>
+							</div>
 						</div>
-					</wi-droppable>
+					</div>
+				</div>
+				<div class="resizable-block" style="flex: 1;">
+					<div class="block" style="flex: 1; height: 100%;">
+						<div class="tab-header">Input selection
+							<div style="display: flex;">
+								<div class="fn-button" ng-repeat="button in self.buttons track by $index"
+									ng-click="self.isActive = $index;self.changeType(button);"
+									ng-class="{'fn-button-active': self.isActive == $index}">
+									<span>{{button.label}}</span>
+								</div>
+								<div class="fn-button" ng-click="self.addCurveInput()">Add Curve</div>
+							</div>
+						</div>
+						<div class="tab-content">
+							<div class="tab-content-scroll" style="padding : 15px;">
+								<div class="list-in-tab" ng-repeat="item in self.inputCurveSpecs track by $index">
+									<div class="label-list-in-tab">
+										{{item.label}} {{$index+1}}
+									</div>
+									<div style="flex: 1;">
+										<wi-dropdown-list place-holder="Curve" items="self.selectionList"
+											hide-delete-button='true' on-item-changed="self.getOnItemChanged($index)"
+											current-select="item.currentSelect">
+										</wi-dropdown-list>
+									</div>
+									<div class="delete-list" ng-click="self.removeDataSelectionList($index)">
+										<i class="ti ti-close"></i>
+									</div>
+								</div>
+								<div class="list-in-tab">
+									<div class="label-list-in-tab">
+										{{self.targetCurveSpec.label}}
+									</div>
+									<div style="flex: 1;">
+										<wi-dropdown-list place-holder="Curve" items="self.selectionList"
+											hide-delete-button='true'
+											current-select='self.targetCurveSpec.currentSelect'
+											on-item-changed="self.onTargetItemChanged"></wi-dropdown-list>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
-			<div class="block" style="flex: 1;">
-				<div class="tab-header">Prediction</div>
-				<div class="tab-content">
-					<wi-droppable container-style="{'flex':'1','display':'flex'}" on-drop="self.drop('prediction')"
-						on-over="self.over('prediction')" on-out="self.out('prediction')" on-deactivate="self.deactivate('prediction')"
-						style="display: flex;height: 100%;">
-						<div style="display: flex; flex: 1;flex-direction: column;">
-							<wi-tree-view tree-root="self.steps['prediction'].datasets" hide-unmatched='true'
-								get-children="self.getChildrenDataset" click-fn='self.clickFnPrediction'
-								get-label="self.getLabel" get-icon='self.getIcon' run-match='self.runMatch'>
-							</wi-tree-view>
+			<div style="display: flex; flex: 1;">
+				<div class="resizable-block" style="flex-basis: 50%;" resizable r-directions="['right']" r-flex="true">
+					<div class="block" style="flex: 1; height: 100%;">
+						<div class="tab-header">Verify</div>
+						<div class="tab-content">
+							<div class="tab-content-scroll">
+								<wi-droppable container-style="{'flex':'1','display':'flex'}"
+									on-drop="self.drop('verify')" on-over="self.over('verify')"
+									on-out="self.out('verify')" on-deactivate="self.deactivate('verify')"
+									style="display: flex;height: 100%;">
+									<div style="display: flex; flex: 1;flex-direction: column;">
+										<wi-tree-view tree-root="self.steps['verify'].datasets" hide-unmatched='true'
+											get-children="self.getChildrenDataset" click-fn='self.clickFnVerify'
+											get-label="self.getLabel" get-icon='self.getIcon' run-match='self.runMatch'>
+										</wi-tree-view>
+									</div>
+								</wi-droppable>
+							</div>
 						</div>
-					</wi-droppable>
+					</div>
+				</div>
+				<div class="resizable-block" style="flex: 1;">
+					<div class="block" style="flex: 1; height: 100%;">
+						<div class="tab-header">Prediction</div>
+						<div class="tab-content">
+							<div class="tab-content-scroll">
+								<wi-droppable container-style="{'flex':'1','display':'flex'}"
+									on-drop="self.drop('prediction')" on-over="self.over('prediction')"
+									on-out="self.out('prediction')" on-deactivate="self.deactivate('prediction')"
+									style="display: flex;height: 100%;">
+									<div style="display: flex; flex: 1;flex-direction: column;">
+										<wi-tree-view tree-root="self.steps['prediction'].datasets"
+											hide-unmatched='true' get-children="self.getChildrenDataset"
+											click-fn='self.clickFnPrediction' get-label="self.getLabel"
+											get-icon='self.getIcon' run-match='self.runMatch'>
+										</wi-tree-view>
+									</div>
+								</wi-droppable>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

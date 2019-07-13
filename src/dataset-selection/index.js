@@ -2,7 +2,7 @@ const moduleName = "datasetSelection";
 const componentName = "datasetSelection";
 module.exports.name = moduleName;
 
-var app = angular.module(moduleName, ['wiTreeView','wiDroppable']);
+var app = angular.module(moduleName, ['wiTreeView','wiDroppable','angularResizable']);
 
 app.component(componentName,{
 	template: require('./template.html'),

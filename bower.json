@@ -19,6 +19,7 @@
     "jquery": "^3.4.1",
     "misc-component": "https://github.com/tunghoang/misc-component.git",
     "async": "^3.1.0",
-    "themify-icons": "^0.1.2"
+    "themify-icons": "^0.1.2",
+    "angular-resizable": "^1.2.0"
   }
 }
