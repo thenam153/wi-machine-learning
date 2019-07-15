@@ -97,6 +97,9 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
     function postPredict(payload) {
     	return postPromise(config[self.model.name] + '/model/predict', payload, 'POST');
     }
+    function getBucket() {
+    	return postPromise(config[self.model.name] + '/bucket/list', {}, 'GET');
+    }
     function isRun(dataset) {
     	// console.log('isRun',dataset);
     	if(!dataset.active) return false;

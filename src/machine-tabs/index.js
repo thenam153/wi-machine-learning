@@ -22,7 +22,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
 	this.modelDatas = [];
 	this.selectedModelProps = {};
 	this.current_tab = 0 ;
-	this.titleTabs = ['Model Selection','Dataset Selection','Training and Prediction'];
+	this.titleTabs = ['Dataset Selection','Model Selection','Training and Prediction'];
 	this.steps = ['training','prediction','verify'];
 	$scope.changeTab = function(index) {
 		self.current_tab = index;

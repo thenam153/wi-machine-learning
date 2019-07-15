@@ -44,6 +44,11 @@ function ModelSelectionController($scope){
 		item.data.label = key;
 		// item.properties = {name: key};	
 		item.properties = {};	
+		item.properties['bucket_id'] = {};
+		item.properties['bucket_id'].name = 'bucket_id';
+		item.properties['bucket_id'].type = 'string';
+		item.properties['bucket_id'].default= 'bucket_id_01';
+		item.properties['bucket_id'].value = item.properties['bucket_id'].default;
 		for (let i in definitions[key].properties){
 			// item.properties[i] = definitions[key].properties[i].type;
 			item.properties[i] = {};
