@@ -512,6 +512,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
     	let ds1 = _.pullAllBy(datasetSource, ds, 'idDataset');
     	for(let i in ds1) {
     		ds1[i].active = true;
+            console.log(ds1[i]);
     	}
     	self.dataStepsForTrainPredict[step].datasets = [...ds,...ds1];
     	handleSelectionList(self.dataStepsForTrainPredict[step],step ,index,type);

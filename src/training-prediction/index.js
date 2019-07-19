@@ -73,11 +73,15 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
                 url: url,
                 data: data,
             }).then((response) => {
-            	// console.log(response);
+            	console.log(response);
                 if (response.status === 200) resolve(response.data);
                 if (response.status === 201) resolve(response.data);
                 else reject(new Error(response.data.reason));
             }, (err) => {
+            	console.log('err',err);
+            	if(err.status === 400 && err.data.status === 'existed') {
+            		resolve({existed : true});
+            	}
                 reject(err);
             })
         });
@@ -128,6 +132,10 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 		}
 		let resBucketId = await postCreateBucketId(request);
 		console.log(resBucketId);
+		if(resBucketId.existed) {
+			request.override_flag = true;
+			resBucketId = await postCreateBucketId(request);
+		}
 		return new Promise((resolve) => {
 			resolve({
 				model_id: resModelId,

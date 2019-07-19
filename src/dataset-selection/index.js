@@ -2,7 +2,7 @@ const moduleName = "datasetSelection";
 const componentName = "datasetSelection";
 module.exports.name = moduleName;
 
-var app = angular.module(moduleName, ['wiTreeView','wiDroppable','angularResizable']);
+var app = angular.module(moduleName, ['wiTreeView','wiDroppable','angularResizable','wiTreeViewVirtual']);
 
 app.component(componentName,{
 	template: require('./template.html'),
@@ -55,54 +55,81 @@ function DatasetSelectionController($scope,wiApi,$timeout){
     }	
     this.getIcon = function (node) {
     	if(!node) return;
-    	if(node.idCurve) {
+        if(node.idCurve) {
     		return "curve-16x16";
     	} else if(node.idDataset){
     		return "curve-data-16x16";
     	} else if(node.idWell) {
 	        return "well-16x16";
- 		}
+ 		} else if(node.idProject) {
+            return "project-normal-16x16";
+        }
     }
     this.getChildren = function (node) {
     	if (!node) return [];
         if(node.idDataset){
             return node.curves || [];           
-        }
-        else if (node.idWell) {
+        }else if (node.idWell) {
             return node.datasets || [];
-        }
-    }
-    this.getChildrenDataset = function(node) {
-        if (!node) return [];
-        if (node.idWell && node.idProject) {
-            return node.datasets || [];
+        }else if(node.idProject) {
+            return node.wells || [];
         }
         return [];
     }
+    this.getChildrenDataset = function(node) {
+        // if (!node) return [];
+        // if (node.idWell && node.idProject) {
+        //     return node.datasets || [];
+        // }
+        return [];
+    }
     this.clickFn = function(event,node,selectIds,rootnode) {
-    	if(!node.idWell || node.datasets) return [];
-    	wiApi.getWellPromise(node.idWell).then(well =>{
-    		$timeout(()=>{
-                well.datasets.forEach(dataset=>{
-                    dataset.wellName = well.name;
+        if(node.idProject && node.wells) return;
+        if(node.idWell && node.datasets) return;
+        // if(node.idWell && node.idProject) {
+        //     wiApi.getWellPromise(node.idWell).then(well =>{
+        //         $timeout(()=>{
+        //             well.datasets.forEach(dataset=>{
+        //                 dataset.wellName = well.name;
+        //             })
+        //             node.datasets = well.datasets;          
+        //         })
+        //     }).catch(err =>{
+        //         console.error(err);
+        //     })
+        // }else 
+        if(node.idProject) {
+            wiApi.getFullInfoPromise(node.idProject, node.owner, node.name).then(dataProject => {
+                console.log(dataProject);
+                $timeout(()=>{
+                    node.wells = dataProject.wells;   
+                    for(let i of node.wells) {
+                        for(let j of i.datasets) {
+                            j.wellName = i.name;
+                        }
+                    }   
                 })
-    			node.datasets = well.datasets;    		
-    		})
-    	}).catch(err =>{
-    		console.error(err);
-    	})
+            });
+        }
     }
     this.runMatch = function(node,filter) {
         return node.name.includes(filter);
     }
     this.$onInit = function() {
         self.typeSelected = self.buttons[0].type;
-    	(async ()=>{
-    		try{
-    			self.treedata = await wiApi.getWellsPromise(self.idProject);
-    		}catch (e){
-    			console.error(e);
-    		}
-    	})();
+    	// (async ()=>{
+    	// 	try{
+    	// 		self.treedata = await wiApi.getWellsPromise(self.idProject);
+    	// 	}catch (e){
+    	// 		console.error(e);
+    	// 	}
+    	// })();
+        (async() => {
+            try {
+                self.treedata = await wiApi.getProjectsPromise();
+            }catch (e) {
+                console.error(e);
+            }
+        })();
     }
 }

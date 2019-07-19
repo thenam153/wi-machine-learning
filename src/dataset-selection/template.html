@@ -5,10 +5,12 @@
 			<div class="block" style="flex: 1; height: 100%;">
 				<div class="tab-content">
 					<div class="tab-content-scroll">
-						<wi-tree-view tree-root="self.treedata" hide-unmatched='true' get-children="self.getChildren"
-							click-fn='self.clickFn' get-label="self.getLabel" get-icon='self.getIcon'
-							run-match='self.runMatch'>
-						</wi-tree-view>
+						<div style="height: 100%;">
+							<wi-tree-view-virtual tree-root="self.treedata" hide-unmatched='true' get-children="self.getChildren"
+								click-fn='self.clickFn' get-label="self.getLabel" get-icon='self.getIcon'
+								run-match='self.runMatch' keep-chidren='true'>
+							</wi-tree-view-virtual>
+						</div>
 					</div>
 				</div>
 			</div>
