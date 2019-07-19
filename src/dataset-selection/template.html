@@ -27,10 +27,12 @@
 									on-out="self.out('training')" on-deactivate="self.deactivate('training')"
 									style="display: flex;height: 100%;">
 									<div style="display: flex; flex: 1;flex-direction: column;">
-										<wi-tree-view tree-root="self.steps['training'].datasets" hide-unmatched='true'
-											get-children="self.getChildrenDataset" click-fn='self.clickFnTrain'
-											get-label="self.getLabel" get-icon='self.getIcon' run-match='self.runMatch'>
-										</wi-tree-view>
+										<div style="height: 400px;">
+											<wi-tree-view-virtual tree-root="self.steps['training'].datasets" hide-unmatched='true'
+												get-children="self.getChildrenDataset" click-fn='self.clickFnTrain'
+												get-label="self.getLabel" get-icon='self.getIcon' run-match='self.runMatch'>
+											</wi-tree-view-virtual>
+										</div>
 									</div>
 								</wi-droppable>
 							</div>
