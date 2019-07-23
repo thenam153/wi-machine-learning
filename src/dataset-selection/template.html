@@ -27,7 +27,7 @@
 									on-out="self.out('training')" on-deactivate="self.deactivate('training')"
 									style="display: flex;height: 100%;">
 									<div style="display: flex; flex: 1;flex-direction: column;">
-										<div style="height: 400px;">
+										<div style="height: 100%;">
 											<wi-tree-view-virtual tree-root="self.steps['training'].datasets" hide-unmatched='true'
 												get-children="self.getChildrenDataset" click-fn='self.clickFnTrain'
 												get-label="self.getLabel" get-icon='self.getIcon' run-match='self.runMatch'>
@@ -94,10 +94,12 @@
 									on-out="self.out('verify')" on-deactivate="self.deactivate('verify')"
 									style="display: flex;height: 100%;">
 									<div style="display: flex; flex: 1;flex-direction: column;">
-										<wi-tree-view tree-root="self.steps['verify'].datasets" hide-unmatched='true'
-											get-children="self.getChildrenDataset" click-fn='self.clickFnVerify'
-											get-label="self.getLabel" get-icon='self.getIcon' run-match='self.runMatch'>
-										</wi-tree-view>
+										<div style="height: 100%;">
+											<wi-tree-view-virtual keep-children='true' tree-root="self.steps['verify'].datasets" hide-unmatched='true'
+												get-children="self.getChildrenDataset" click-fn='self.clickFnVerify'
+												get-label="self.getLabel" get-icon='self.getIcon' run-match='self.runMatch'>
+											</wi-tree-view-virtual>
+										</div>
 									</div>
 								</wi-droppable>
 							</div>
@@ -114,11 +116,13 @@
 									on-out="self.out('prediction')" on-deactivate="self.deactivate('prediction')"
 									style="display: flex;height: 100%;">
 									<div style="display: flex; flex: 1;flex-direction: column;">
-										<wi-tree-view tree-root="self.steps['prediction'].datasets"
-											hide-unmatched='true' get-children="self.getChildrenDataset"
-											click-fn='self.clickFnPrediction' get-label="self.getLabel"
-											get-icon='self.getIcon' run-match='self.runMatch'>
-										</wi-tree-view>
+										<div style="height: 100%;">
+											<wi-tree-view-virtual keep-children='true' tree-root="self.steps['prediction'].datasets"
+												hide-unmatched='true' get-children="self.getChildrenDataset"
+												click-fn='self.clickFnPrediction' get-label="self.getLabel"
+												get-icon='self.getIcon' run-match='self.runMatch'>
+											</wi-tree-view-virtual>
+										</div>
 									</div>
 								</wi-droppable>
 							</div>

@@ -7,4 +7,7 @@ module.exports = {
 	// RandomForest: require('./random_forest'),
 	// SVM: require('./svm'),
 	// XGBoost: require('./xgboost.json')
+	KNearestNeighborsClassifier: require('./knn_classifier'),
+	LogisticRegressionClassifier: require('./logistic_regression_classifier'),
+	LinearRegression: require('./linear_regression'),
 }

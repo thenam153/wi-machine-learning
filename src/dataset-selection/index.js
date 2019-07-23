@@ -86,18 +86,6 @@ function DatasetSelectionController($scope,wiApi,$timeout){
     this.clickFn = function(event,node,selectIds,rootnode) {
         if(node.idProject && node.wells) return;
         if(node.idWell && node.datasets) return;
-        // if(node.idWell && node.idProject) {
-        //     wiApi.getWellPromise(node.idWell).then(well =>{
-        //         $timeout(()=>{
-        //             well.datasets.forEach(dataset=>{
-        //                 dataset.wellName = well.name;
-        //             })
-        //             node.datasets = well.datasets;          
-        //         })
-        //     }).catch(err =>{
-        //         console.error(err);
-        //     })
-        // }else 
         if(node.idProject) {
             wiApi.getFullInfoPromise(node.idProject, node.owner, node.name).then(dataProject => {
                 console.log(dataProject);

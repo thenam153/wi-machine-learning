@@ -274,13 +274,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
             },
             properties: null
         }];
-        // self.selectionList = [{
-        //     data: {
-        //         label: '[no choose]'
-        //     },
-        //     properties: null
-        // }];
-        // console.log(self.typeSelected);
         switch(self.typeSelected) {
             case 'family_curve': 
             	console.log('run');
@@ -417,22 +410,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
     this.drop = function(step) {
         if(!functionCacheSteps[step].drop) {
             functionCacheSteps[step].drop = function(event,helper,datasets) {
-                $timeout(()=>{
-                    // datasets.forEach(node => {
-                    //     let valueDataset = angular.copy(node);
-                    //     if (self.equals(self.dataSteps[step].datasets,valueDataset) < 0 && valueDataset.idDataset && valueDataset.idWell) {
-                    //         self.dataSteps[step].datasets.push(valueDataset);
-                    //         if(step == 'training') {
-                    //             self.mergeCurves.push(valueDataset.curves);
-                    //             self.makeSelectionList();   
-                    //         }
-                    //     }
-                    //     self.handleDrop(step);
-                    // })    
+                $timeout(()=>{ 
                     for(let node of datasets) {
                     	let valueDataset = angular.copy(node);
                         if (self.equals(self.dataSteps[step].datasets,valueDataset) < 0 && valueDataset.idDataset && valueDataset.idWell) {
-                            self.dataSteps[step].datasets.push(valueDataset);
+                            // self.dataSteps[step].datasets.push(valueDataset);
+                            self.dataSteps[step].datasets = _.concat(self.dataSteps[step].datasets, valueDataset);
                             if(step == 'training') {
                                 self.mergeCurves.push(valueDataset.curves);
                                 self.makeSelectionList();   
@@ -445,6 +428,30 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
         }
         return functionCacheSteps[step].drop;
     }
+    // this.drop = function(step) {
+    //     if(!functionCacheSteps[step].drop) {
+    //         functionCacheSteps[step].drop = function(event,helper,datasets) {
+    //             let dataPre = angular.copy(self.dataSteps[step].datasets);
+    //             self.dataSteps[step].datasets.length = 0;
+    //             $timeout(()=>{ 
+    //                 for(let node of datasets) {
+    //                     let valueDataset = angular.copy(node);
+    //                     if (self.equals(dataPre,valueDataset) < 0 && valueDataset.idDataset && valueDataset.idWell) {
+    //                         dataPre.push(valueDataset);
+    //                         if(step == 'training') {
+    //                             self.mergeCurves.push(valueDataset.curves);
+    //                             self.makeSelectionList();   
+    //                         }
+    //                     }
+    //                 }
+    //                 self.dataSteps[step].datasets = dataPre;
+    //                 self.handleDrop(step);
+    //             })
+    //         }
+    //     }
+    //     return functionCacheSteps[step].drop;
+    // }
+
     this.out = function(step) {
         if(!functionCacheSteps[step].out) {
             functionCacheSteps[step].out = function(event,helper,datasets) {
@@ -511,7 +518,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
     	let ds = _.intersectionBy(datasetDestination, datasetSource, 'idDataset');
     	let ds1 = _.pullAllBy(datasetSource, ds, 'idDataset');
     	for(let i in ds1) {
-    		ds1[i].active = true;
+            ds1[i].active = true;
+    		ds1[i]._selected = false;
             console.log(ds1[i]);
     	}
     	self.dataStepsForTrainPredict[step].datasets = [...ds,...ds1];

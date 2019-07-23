@@ -387,21 +387,6 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 	                    done();
 	            	})();
 	            } 
-	            // else {
-	                // let len = Math.round((dataset.bottom - dataset.top) / dataset.step) + 1;
-	                // let data = new Array(len);
-	                // async.eachOf(data, function (depth, i, callback) {
-	                //     data[i] = (dataset.step * i + dataset.top).parseFloat(4);
-	                //     async.setImmediate(callback);
-	                // }, function (err) {
-	                //     curvesData.push({
-	                //         idCurve: curve.idCurve,
-	                //         name: curve.name,
-	                //         data: data
-	                //     })
-	                //     done();
-	                // })
-	            // }
 	        },
 	        function (err) {
 	            console.log('done!', curvesData);
