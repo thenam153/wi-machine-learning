@@ -5,9 +5,9 @@ module.exports.name = moduleName;
 var app = angular.module(moduleName, ['modelSelection','datasetSelection','trainingPrediction','wiApi']);
 
 app.component(componentName,{
-	template: require('./template.html'),
+	template: require('./newtemplate.html'),
     controller: MachineTabsController,
-    style: require('./style.less'),
+    style: require('./newstyle.less'),
     controllerAs: 'self',
     bindings: {
     	token: '<',

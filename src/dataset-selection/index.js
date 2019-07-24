@@ -5,9 +5,9 @@ module.exports.name = moduleName;
 var app = angular.module(moduleName, ['wiTreeView','wiDroppable','angularResizable','wiTreeViewVirtual']);
 
 app.component(componentName,{
-	template: require('./template.html'),
+	template: require('./newtemplate.html'),
     controller: DatasetSelectionController,
-    style: require('./style.less'),
+    style: require('./newstyle.less'),
     controllerAs: 'self',
     bindings: {
     	idProject: '<',
