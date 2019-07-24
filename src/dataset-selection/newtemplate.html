@@ -10,6 +10,16 @@
 				ng-class="{'active': self.isActive == $index}"></div>
 			<div class="button ti ti-plus" ng-click="self.addCurveInput()"></div>
 		</div>
+		<div style="margin-top: 20px;">
+			<div class="title">
+				{{self.targetCurveSpec.label}}
+			</div>
+			<div style="margin-left: 20px;">
+				<wi-dropdown-list place-holder="Curve" items="self.selectionList" hide-delete-button='true'
+					current-select='self.targetCurveSpec.currentSelect' on-item-changed="self.onTargetItemChanged">
+				</wi-dropdown-list>
+			</div>
+		</div>
 		<div class="list-input">
 			<div class="list-scroll">
 				<div style="margin-bottom: 15px;" ng-repeat="item in self.inputCurveSpecs track by $index">
@@ -28,16 +38,7 @@
 
 				</div>
 			</div>
-		</div>
-		<div>
-			<div class="title">
-				{{self.targetCurveSpec.label}}
-			</div>
-			<div>
-				<wi-dropdown-list place-holder="Curve" items="self.selectionList" hide-delete-button='true'
-					current-select='self.targetCurveSpec.currentSelect' on-item-changed="self.onTargetItemChanged">
-				</wi-dropdown-list>
-			</div>
+
 		</div>
 
 	</div>
@@ -99,8 +100,8 @@
 				<span class="title">Prediction</span>
 				<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
 			</div>
-			<wi-droppable container-style="{'flex':'1','display':'flex','overflow':'auto'}" on-drop="self.drop('prediction')"
-				on-over="self.over('prediction')" on-out="self.out('prediction')"
+			<wi-droppable container-style="{'flex':'1','display':'flex','overflow':'auto'}"
+				on-drop="self.drop('prediction')" on-over="self.over('prediction')" on-out="self.out('prediction')"
 				on-deactivate="self.deactivate('prediction')" style="display: flex;height: 100%;">
 				<div style="display: flex; flex: 1;flex-direction: column;">
 					<div style="height: 100%;">
