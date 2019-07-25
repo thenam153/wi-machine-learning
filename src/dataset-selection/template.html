@@ -48,7 +48,7 @@
 									ng-class="{'fn-button-active': self.isActive == $index}">
 									<span>{{button.label}}</span>
 								</div>
-								<div class="fn-button" ng-click="self.addCurveInput()">Add Curve</div>
+								<div class="fn-button" ng-click="self.addInputCurve()">Add Curve</div>
 							</div>
 						</div>
 						<div class="tab-content">
@@ -63,7 +63,7 @@
 											current-select="item.currentSelect">
 										</wi-dropdown-list>
 									</div>
-									<div class="delete-list" ng-click="self.removeDataSelectionList($index)">
+									<div class="delete-list" ng-click="self.removeInputCurve($index)">
 										<i class="ti ti-close"></i>
 									</div>
 								</div>

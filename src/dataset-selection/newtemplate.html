@@ -8,7 +8,7 @@
 			<div class="button ti ti-comments" ng-repeat="button in self.buttons track by $index"
 				ng-click="self.isActive = $index;self.changeType(button);"
 				ng-class="{'active': self.isActive == $index}"></div>
-			<div class="button ti ti-plus" ng-click="self.addCurveInput()"></div>
+			<div class="button ti ti-plus" ng-click="self.addInputCurve()"></div>
 		</div>
 		<div style="margin-top: 20px;">
 			<div class="title">
@@ -25,7 +25,7 @@
 				<div style="margin-bottom: 15px;" ng-repeat="item in self.inputCurveSpecs track by $index">
 					<div class="title" style="font-weight: 400; font-size: 12px;">
 						<div style="margin-right: 10px; cursor: pointer;"
-							ng-click="self.removeDataSelectionList($index)">
+							ng-click="self.removeInputCurve($index)">
 							<i class="fa fa-times-circle"></i>
 						</div>
 						{{item.label}} {{$index+1}}

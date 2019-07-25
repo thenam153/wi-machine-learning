@@ -340,7 +340,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
 			self.selectionList = angular.copy(selectionList);  
         }  
     }
-    this.addCurveInput = function() {
+    this.addInputCurve = function() {
     	console.log('add');
     	self.indexInputCurve = self.inputCurveSpecs.length - 1;
     	self.formatCurve = ADD;
@@ -393,7 +393,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
         }, 500);
         handle()
     }
-    this.removeDataSelectionList = function($index) {
+    this.removeInputCurve = function($index) {
     	self.indexInputCurve = $index;
     	self.formatCurve = REMOVE;
         if(self.inputCurveSpecs.length > 1){

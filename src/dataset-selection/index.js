@@ -16,10 +16,10 @@ app.component(componentName,{
         steps: '<',
         typeSelected: '<',
 
-        addCurveInput: '<',
+        addInputCurve: '<',
         getOnItemChanged: '<',
         onTargetItemChanged: '<',
-        removeDataSelectionList: '<',
+        removeInputCurve: '<',
         changeType: '<',
         drop: '<',
         out: '<',
