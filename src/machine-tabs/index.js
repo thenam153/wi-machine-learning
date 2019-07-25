@@ -60,16 +60,16 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
 		};
 		self.dataStepsForTrainPredict = angular.copy(self.dataSteps);
 		if(self.token && self.token.length) window.localStorage.setItem('token',self.token);
-		$scope.$watch(function() {
-			return JSON.stringify(self.inputCurveSpecs) + JSON.stringify(self.targetCurveSpec);
-		},function() {
-			// console.log('watch');
-			for(let i in self.dataSteps) {
-	        	self.handleDrop(i,self.indexInputCurve, self.formatCurve);
-	        }
-	        self.indexInputCurve = -1;
-	        self.formatCurve = null;
-		})
+		// $scope.$watch(function() {
+		// 	return JSON.stringify(self.inputCurveSpecs) + JSON.stringify(self.targetCurveSpec);
+		// },function() {
+		// 	// console.log('watch');
+		// 	for(let i in self.dataSteps) {
+	 //        	self.handleDrop(i,self.indexInputCurve, self.formatCurve);
+	 //        }
+	 //        self.indexInputCurve = -1;
+	 //        self.formatCurve = null;
+		// })
 	}
 	
 	this.setDataModels = function(datas) {
@@ -352,6 +352,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
         // for(let i in self.dataSteps) {
         // 	self.handleDrop(i,self.inputCurveSpecs.length - 1, ADD);
         // }
+        let handle = _.debounce(() => {
+            for(let i in self.dataSteps) {
+             self.handleDrop(i,self.inputCurveSpecs.length - 1, ADD);
+            }  
+        }, 500);
+        handle()
     }
     this.getOnItemChanged = function($index) {
         if (!functionCache[$index])
@@ -364,9 +370,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
                 else {
                     self.inputCurveSpecs[$index].currentSelect = '[no choose]';
                 }
-                // for(let i in self.dataSteps) {
-                // 	self.handleDrop(i);
-                // }
+                let handle = _.debounce(() => {
+                    for(let i in self.dataSteps) {
+                     self.handleDrop(i);
+                    }  
+                }, 500);
+                handle()
             }
         return functionCache[$index];
     }
@@ -377,6 +386,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
         }else {
             self.targetCurveSpec.currentSelect = '[no choose]';
         }
+        let handle = _.debounce(() => {
+            for(let i in self.dataSteps) {
+             self.handleDrop(i);
+            }  
+        }, 500);
+        handle()
     }
     this.removeDataSelectionList = function($index) {
     	self.indexInputCurve = $index;
@@ -384,6 +399,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
         if(self.inputCurveSpecs.length > 1){
             self.inputCurveSpecs.splice($index,1);
         }
+        let handle = _.debounce(() => {
+            for(let i in self.dataSteps) {
+             self.handleDrop(i,$index, REMOVE);
+            }  
+        }, 500);
+        handle()
         // for(let i in self.dataSteps) {
         // 	self.handleDrop(i,$index, REMOVE);
         // }
@@ -524,7 +545,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
     	for(let i in ds1) {
             ds1[i].active = true;
     		ds1[i]._selected = false;
-            console.log(ds1[i]);
+            // console.log(ds1[i]);
     	}
     	self.dataStepsForTrainPredict[step].datasets = [...ds,...ds1];
     	handleSelectionList(self.dataStepsForTrainPredict[step],step ,index,type);
