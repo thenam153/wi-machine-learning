@@ -23,7 +23,60 @@
     </div>
     <div class="workspace">
         <div ng-show="isSet(1)" class="workspace-main">
-
+                <div id="Train" ng-init="self.stepDatas['training'].expanded=true" class="block"
+                style="max-width: calc(100vw - 40px); transition: flex 500ms ease-in-out;">
+                <div class="tab-header">
+                    <div class="fn-button" ng-click="self.runTask(0);">Run</div>
+                </div>
+                <div>
+                    <div class='table-row table-head'>
+                        <div class="table-block table-left bg" style="width: 60px;justify-content: center;">Active</div>
+                        <div class="table-block bg" style="width: 60px;justify-content: center">Filter</div>
+                        <div class="table-block bg">Well</div>
+                        <div class="table-block bg">Dataset </div>
+                        <div class="table-block bg" ng-repeat="input in self.inputCurveSpecs track by $index"
+                            style="width: 120px">{{input.label}}
+                        </div>
+                        <div class="table-block bg" ng-if="self.stepDatas['training'].target" style="width: 120px;">Target {{}}
+                        </div>
+                        <div class="table-block bg" ng-if="self.stepDatas['training'].name != 'Train'" style="width: 120px;">
+                            {{self.stepDatas['training'].name}} curve name</div>
+                    </div>
+                    <div class='table-row' ng-repeat="(indexDataset,dataset) in self.stepDatas['training'].datasets">
+                        <div class="table-block table-left" style="width: 60px;justify-content: center;">
+                            <!-- <input type="checkbox" ng-model="dataset.use"> -->
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider round" ng-click="self.onToggleActiveOutput(dataset)"></span>
+                            </label>
+                        </div>
+                        <div class="table-block" style="justify-content: center; width: 60px;"
+                            ng-click="self.onDiscriminator(dataset)">
+                            <span class="fa fa-filter"></span>
+                        </div>
+                        <div class="table-block" title='{{dataset.wellName}}'>{{dataset.wellName}}</div>
+                        <div class="table-block" title='{{dataset.name}}'>{{dataset.name}}</div>
+                        <div class="table-block" style='overflow:visible;padding:0;width: 120px;'
+                            ng-repeat="input in dataset.inputCurveSpecs track by $index">
+                            <div>
+                                <div ng-click="self.abc=!self.abc">show</div>
+                                <div ng-show="self.abc" ng-repeat="i in self.stepDatas['training'].selectionList[$index] track by $index">
+                                    <div ng-click="">
+                                        {{i}}
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <wi-dropdown-list place-holder="Curve" items="self.stepDatas['training'].selectionList[$index]"
+                                hide-delete-button='true' current-select='input.currentSelect'
+                                on-item-changed="self.getOnItemChange('training', indexDataset, $index)"></wi-dropdown-list> -->
+                        </div>
+                        <div class="table-block" ng-if="self.stepDatas['training'].name != 'Train'" style="width: 120px;">
+                            <input type="text" style="height: 32px;" ng-model="item.resultCurveName"
+                                class="form-control wi-form-control">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div ng-show="isSet(2)" class="workspace-main">
 

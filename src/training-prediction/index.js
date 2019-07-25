@@ -6,9 +6,9 @@ var config = require('../config/config.js');
 var app = angular.module(moduleName, ['wiDialog','wiDiscriminator','wiApi']);
 
 app.component(componentName,{
-	template: require('./template.html'),
+	template: require('./newtemplate.html'),
     controller: TrainingPredictionController,
-    style: require('./style.less'),
+    style: require('./newstyle.less'),
     controllerAs: 'self',
     bindings: {
     	stepDatas: '<',
