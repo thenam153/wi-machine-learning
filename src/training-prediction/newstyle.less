@@ -1,22 +1,41 @@
 training-prediction {
 	font-family: 'Roboto', sans-serif !important;
 	font-size  : 12px;
-	div.table-row {
-        list-style: none;
-        padding-left: 0;
-        white-space: nowrap;
-        display: -webkit-box;
-    }
-    .table-head {
-        position: sticky;
-        top: 0 !important;
-        z-index: 2;
-        font-weight: bold;
+
+	.table-row {
+		display        : flex;
+		height         : 50px;
+		width          : fit-content;
+		min-width      : 100%;
+		background     : #fff;
+		align-items    : center;
+		border-bottom  : 1px solid #D5DFEF;
+		justify-content: space-between;
+		
+
 	}
+
+	.table-row>div {
+		overflow     : hidden;
+		text-overflow: ellipsis;
+		white-space  : nowrap;
+		width        : 120px;
+	}
+
+	.table-block {
+		padding-left: 20px;
+		min-width   : 120px;
+	}
+
+	.table-main {
+		overflow     : auto;
+		border-radius: 2px;
+	}
+
 	.toolbar {
 		display        : flex;
-		justify-content: space-between;
-		margin-bottom  : 20px;
+		justify-content: center;
+		margin-bottom  : 10px;
 
 		.tab {
 			display: flex;
@@ -29,7 +48,7 @@ training-prediction {
 				cursor       : pointer;
 
 				&:hover {
-					filter: invert(0.1);
+					filter    : invert(0.1);
 					transition: all ease-in 0.2s;
 				}
 			}
@@ -43,44 +62,22 @@ training-prediction {
 
 		}
 
-		.button {
-			display    : flex;
-			font-weight: bold;
-			color      : #A5ACB4;
-			cursor     : pointer;
-			transition : all ease-in 0.2s;
+		
 
-			.toolbar-button {
-				border       : 1px solid #A5ACB4;
-				border-radius: 2px;
-				margin-left  : 15px;
-				padding      : 8px 20px;
-				cursor       : pointer;
-
-				&:hover {
-					border    : 1px solid #4b7def;
-					transition: all ease-in 0.2s;
-
-				}
-
-				&:active {
-					transition: all ease-in 0.2s;
-					transform : scale(0.8);
-				}
-			}
-
-			.active {
-				color       : #fff;
-				background  : #4b7def;
-				border-color: #4b7def;
-			}
-		}
-
-		.search {
-			display    : flex;
-			align-items: center;
-			color      : #8793A1;
-			min-width  : 270px;
+		
+	}
+	.dropdown-list {
+		position: fixed;
+		border: 1px solid #eaeaea;
+		z-index: 4;
+		border-radius: 2px;
+		min-width: 150px;
+		box-shadow: 0 7px 27px -3px #0000001f;
+		max-height: 200px;
+		overflow: auto;
+		background: #fff;
+		>div{
+			padding: 10px 20px;
 		}
 	}
 
@@ -89,38 +86,169 @@ training-prediction {
 		flex   : 1;
 
 		.workspace-main {
-			overflow      : auto;
+			height        : 100%;
+			overflow      : hidden;
 			flex          : 1;
 			display       : flex;
 			flex-direction: column;
-			background    : #fff;
+			.search {
+				display    : flex;
+				align-items: center;
+				color      : #8793A1;
+				min-width  : 270px;
+				position: absolute;
+				top: 40px;
+				z-index: 3;
+				left: 40px;
+				border: 1px solid #A5ACB4;
+				border-radius: 2px;
+				margin-left: 15px;
+				padding: 8px 20px;
+				cursor: pointer;
+			
+			}
+			.button {
+				display    : flex;
+				font-weight: bold;
+				color      : #A5ACB4;
+				cursor     : pointer;
+				transition : all ease-in 0.2s;
+				position: absolute;
+				top: 40px;
+				z-index: 3;
+				right: 40px;
+			
+	
+				.toolbar-button {
+					border       : 1px solid #A5ACB4;
+					border-radius: 2px;
+					margin-left  : 15px;
+					padding      : 8px 20px;
+					cursor       : pointer;
+	
+					&:hover {
+						border    : 1px solid #4b7def;
+						transition: all ease-in 0.2s;
+	
+					}
+	
+					&:active {
+						transition: all ease-in 0.2s;
+						transform : scale(0.8);
+					}
+				}
+	
+				.active {
+					color       : #fff;
+					background  : #4b7def;
+					border-color: #4b7def;
+				}
+			}
 		}
 	}
 }
+
+//SWITCH BUTTON
+
+.switch {
+	position     : relative;
+	display      : inline-block;
+	min-width    : 31px;
+	height       : 16px;
+	margin-bottom: 0;
+}
+
+.switch input {
+	opacity: 0;
+	width  : 0;
+	height : 0;
+}
+
+.slider {
+	position             : absolute;
+	cursor               : pointer;
+	top                  : 0;
+	left                 : 0;
+	right                : 0;
+	bottom               : 0;
+	// background-color  : #ccc;
+	background-image     : linear-gradient(to right, #a9a9a9, #bdbdbd);
+	-webkit-transition   : .2s;
+	transition           : .2s;
+}
+
+.slider:before {
+	position          : absolute;
+	content           : "";
+	height            : 14px;
+	width             : 14px;
+	left              : 1px;
+	bottom            : 1px;
+	background-color  : white;
+	-webkit-transition: 0.2s;
+	transition        : 0.2s;
+	box-shadow        : 0 1px 3px #0000003b;
+}
+
+input:checked+.slider {
+	// background-color: #3e84ff;
+	background-image   : linear-gradient(to right, #4b7def, #3058c7);
+}
+
+input:focus+.slider {
+	box-shadow: none;
+}
+
+input:checked+.slider:before {
+	-webkit-transform: translateX(15px);
+	-ms-transform    : translateX(15px);
+	transform        : translateX(15px);
+}
+
+/* Rounded sliders */
+.slider.round {
+	border-radius: 34px;
+}
+
+.slider.round:before {
+	border-radius: 50%;
+}
+
+.slim-scroller {
+	::-webkit-scrollbar {
+		background: transparent !important;
+		width     : 5px !important;
+		height    : 5px !important;
+	}
+
+	::-webkit-scrollbar-thumb {
+		background-color: #dcdcdc !important;
+	}
+}
+
+//RESET CSS
 input,
 label,
 select,
 button,
-textarea
-{
-	margin:0;
-	border:0;
-	padding:0;
-	display:inline-block;
-	vertical-align:middle;
-	white-space:normal;
-	background:none;
-	line-height:1;
-	
+textarea {
+	margin        : 0;
+	border        : 0;
+	padding       : 0;
+	display       : inline-block;
+	vertical-align: middle;
+	white-space   : normal;
+	background    : none;
+	line-height   : 1;
+
 	/* Browsers have different default form fonts */
-	font-size:13px;
-	font-family:Arial;
+	font-size  : 13px;
+	font-family: Arial;
 }
 
 /* Remove the stupid outer glow in Webkit */
-input:focus
-{
-	outline:0;
+input:focus {
+	outline: 0;
 }
 
 /* Box Sizing Reset
@@ -128,11 +256,10 @@ input:focus
 
 /* All of our custom controls should be what we expect them to be */
 input,
-textarea
-{
-	-webkit-box-sizing:content-box;
-	-moz-box-sizing:content-box;
-	box-sizing:content-box;
+textarea {
+	-webkit-box-sizing: content-box;
+	-moz-box-sizing   : content-box;
+	box-sizing        : content-box;
 }
 
 /* These elements are usually rendered a certain way by the browser */
@@ -142,11 +269,10 @@ input[type=button],
 input[type=submit],
 input[type=checkbox],
 input[type=radio],
-select
-{
-	-webkit-box-sizing:border-box;
-	-moz-box-sizing:border-box;
-	box-sizing:border-box;
+select {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing   : border-box;
+	box-sizing        : border-box;
 }
 
 /* Text Inputs
@@ -165,42 +291,34 @@ input[type=tel],
 input[type=text],
 input[type=time],
 input[type=url],
-input[type=week]
-{
-}
+input[type=week] {}
 
 /* Button Controls
 -----------------------------------------------*/
 
 input[type=checkbox],
-input[type=radio]
-{
-	width:13px;
-	height:13px;
+input[type=radio] {
+	width : 13px;
+	height: 13px;
 }
 
 /* File Uploads
 -----------------------------------------------*/
 
-input[type=file]
-{
-
-}
+input[type=file] {}
 
 /* Search Input
 -----------------------------------------------*/
 
 /* Make webkit render the search input like a normal text field */
-input[type=search]
-{
-	-webkit-appearance:textfield;
-	-webkit-box-sizing:content-box;
+input[type=search] {
+	-webkit-appearance: textfield;
+	-webkit-box-sizing: content-box;
 }
 
 /* Turn off the recent search for webkit. It adds about 15px padding on the left */
-::-webkit-search-decoration
-{
-	display:none;
+::-webkit-search-decoration {
+	display: none;
 }
 
 /* Buttons
@@ -209,43 +327,36 @@ input[type=search]
 button,
 input[type="reset"],
 input[type="button"],
-input[type="submit"]
-{
+input[type="submit"] {
 	/* Fix IE7 display bug */
-	overflow:visible;
-	width:auto;
+	overflow: visible;
+	width   : auto;
 }
 
 /* IE8 and FF freak out if this rule is within another selector */
-::-webkit-file-upload-button
-{	
-	padding:0;
-	border:0;
-	background:none;
+::-webkit-file-upload-button {
+	padding   : 0;
+	border    : 0;
+	background: none;
 }
 
 /* Textarea
 -----------------------------------------------*/
 
-textarea 
-{
+textarea {
 	/* Move the label to the top */
-	vertical-align:top;
-	
+	vertical-align: top;
+
 	/* Turn off scroll bars in IE unless needed */
-	overflow:auto;
+	overflow: auto;
 }
 
 /* Selects
 -----------------------------------------------*/
 
-select
-{
+select {}
 
-}
-
-select[multiple] 
-{
+select[multiple] {
 	/* Move the label to the top */
-	vertical-align:top;
+	vertical-align: top;
 }

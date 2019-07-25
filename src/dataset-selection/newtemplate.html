@@ -21,7 +21,7 @@
 			</div>
 		</div>
 		<div class="list-input">
-			<div class="list-scroll">
+			<div class="list-scroll" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
 				<div style="margin-bottom: 15px;" ng-repeat="item in self.inputCurveSpecs track by $index">
 					<div class="title" style="font-weight: 400; font-size: 12px;">
 						<div style="margin-right: 10px; cursor: pointer;"
@@ -48,8 +48,8 @@
 				<span class="title">Traning</span>
 				<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
 			</div>
-			<wi-droppable container-style="{'flex':'1','display':'flex','overflow':'auto'}"
-				on-drop="self.drop('training')" style="display: flex;height: 100%;">
+			<wi-droppable container-style="{'flex':'1','display':'flex'}" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'
+				on-drop="self.drop('training')" style="display: flex;height: calc(100% - 67px); overflow-x: hidden;">
 				<div style="display: flex; flex: 1;flex-direction: column;">
 					<div style="height: 100%;">
 						<div ng-repeat="item in self.steps['training'].datasets track by $index">
@@ -73,8 +73,8 @@
 				<span class="title">Verify</span>
 				<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
 			</div>
-			<wi-droppable container-style="{'flex':'1','display':'flex','overflow':'auto'}"
-				on-drop="self.drop('verify')" style="display: flex;height: 100%;">
+			<wi-droppable container-style="{'flex':'1','display':'flex'}"onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'
+				on-drop="self.drop('verify')" style="display: flex;height: calc(100% - 67px); overflow-x: hidden;">
 				<div style="display: flex; flex: 1;flex-direction: column;">
 					<div style="height: 100%;">
 						<div ng-repeat="item in self.steps['verify'].datasets track by $index">
@@ -98,8 +98,8 @@
 				<span class="title">Prediction</span>
 				<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
 			</div>
-			<wi-droppable container-style="{'flex':'1','display':'flex','overflow':'auto'}"
-				on-drop="self.drop('prediction')" style="display: flex;height: 100%;">
+			<wi-droppable container-style="{'flex':'1','display':'flex'}"onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'
+				on-drop="self.drop('prediction')" style="display: flex;height: calc(100% - 67px); overflow-x: hidden;">
 				<div style="display: flex; flex: 1;flex-direction: column;">
 					<div style="height: 100%;">
 						<div ng-repeat="item in self.steps['prediction'].datasets track by $index">
