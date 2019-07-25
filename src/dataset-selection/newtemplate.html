@@ -49,13 +49,12 @@
 				<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
 			</div>
 			<wi-droppable container-style="{'flex':'1','display':'flex','overflow':'auto'}"
-				on-drop="self.drop('training')" on-over="self.over('training')" on-out="self.out('training')"
-				on-deactivate="self.deactivate('training')" style="display: flex;height: 100%;">
+				on-drop="self.drop('training')" style="display: flex;height: 100%;">
 				<div style="display: flex; flex: 1;flex-direction: column;">
 					<div style="height: 100%;">
 						<div ng-repeat="item in self.steps['training'].datasets track by $index">
 							<div class="datasets-info">
-								<div class="button ti ti-close"></div>
+								<div class="button ti ti-close" ng-click="self.removeDataset('training', $index)"></div>
 								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
 									{{item.name}}</div>
 								<div class="detail">
@@ -75,13 +74,12 @@
 				<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
 			</div>
 			<wi-droppable container-style="{'flex':'1','display':'flex','overflow':'auto'}"
-				on-drop="self.drop('verify')" on-over="self.over('verify')" on-out="self.out('verify')"
-				on-deactivate="self.deactivate('verify')" style="display: flex;height: 100%;">
+				on-drop="self.drop('verify')" style="display: flex;height: 100%;">
 				<div style="display: flex; flex: 1;flex-direction: column;">
 					<div style="height: 100%;">
 						<div ng-repeat="item in self.steps['verify'].datasets track by $index">
 							<div class="datasets-info">
-								<div class="button ti ti-close"></div>
+								<div class="button ti ti-close" ng-click="self.removeDataset('verify', $index)"></div>
 								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
 									{{item.name}}</div>
 								<div class="detail">
@@ -101,13 +99,12 @@
 				<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
 			</div>
 			<wi-droppable container-style="{'flex':'1','display':'flex','overflow':'auto'}"
-				on-drop="self.drop('prediction')" on-over="self.over('prediction')" on-out="self.out('prediction')"
-				on-deactivate="self.deactivate('prediction')" style="display: flex;height: 100%;">
+				on-drop="self.drop('prediction')" style="display: flex;height: 100%;">
 				<div style="display: flex; flex: 1;flex-direction: column;">
 					<div style="height: 100%;">
 						<div ng-repeat="item in self.steps['prediction'].datasets track by $index">
 							<div class="datasets-info">
-								<div class="button ti ti-close"></div>
+								<div class="button ti ti-close" ng-click="self.removeDataset('prediction', $index)"></div>
 								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
 									{{item.name}}</div>
 								<div class="detail">

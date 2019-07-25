@@ -418,11 +418,13 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
                             self.dataSteps[step].datasets = _.concat(self.dataSteps[step].datasets, valueDataset);
                             if(step == 'training') {
                                 self.mergeCurves.push(valueDataset.curves);
-                                self.makeSelectionList();   
                             }
                         }
                     }
-                    self.handleDrop(step);
+                    self.makeSelectionList();
+                    var handle = _.debounce(() => {self.handleDrop(step)}, 1000);  
+                    handle();
+                    // self.handleDrop(step);
                 })
             }
         }
@@ -475,18 +477,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
             functionCacheSteps[step].deactivate = function(event,helper,datasets) {
                 if(!functionCacheSteps[step].status) {
                     $timeout(()=>{
-                        // datasets.forEach(datasetRemove =>{
-                        //     self.dataSteps[step].datasets = _.remove(self.dataSteps[step].datasets,(dataset,index)=>{
-                        //         if(step == 'training') {
-                        //             if(dataset.$$hashKey === datasetRemove.$$hashKey) {
-                        //                 self.mergeCurves.splice(index,1);
-                        //                 self.makeSelectionList();
-                        //             }
-                        //         }
-                        //         return dataset.$$hashKey !== datasetRemove.$$hashKey;
-                        //     });
-                        //     self.handleDrop(step);
-                        // })
                         for(let datasetRemove of datasets) {
                         	 self.dataSteps[step].datasets = _.remove(self.dataSteps[step].datasets,(dataset,index)=>{
                                 if(step == 'training') {
@@ -505,6 +495,20 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
             }
         }
         return functionCacheSteps[step].deactivate;
+    }
+    this.removeDataset = function(step, $index) {
+        $timeout(() => {
+            self.dataSteps[step].datasets = _.remove(self.dataSteps[step].datasets, (dataset,index)=>{
+                if(step == 'training') {
+                    if(index === $index) {
+                        self.mergeCurves.splice(index,1);
+                    }
+                }
+                return index !== $index;
+            });
+            self.makeSelectionList();
+            self.handleDrop(step);
+        });
     }
     this.equals = function(arrayData, data){
         for(let i in arrayData) {

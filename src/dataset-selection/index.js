@@ -27,7 +27,8 @@ app.component(componentName,{
         deactivate: '<',
         selectionList: '<',
         mergeCurves: '<',
-        makeSelectionList: '<'
+        makeSelectionList: '<',
+        removeDataset: '<'
         // isClick: '=',
     }
 });
