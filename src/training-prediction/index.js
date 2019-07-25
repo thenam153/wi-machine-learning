@@ -6,9 +6,9 @@ var config = require('../config/config.js');
 var app = angular.module(moduleName, ['wiDialog','wiDiscriminator','wiApi']);
 
 app.component(componentName,{
-	template: require('./template.html'),
+	template: require('./newtemplate.html'),
     controller: TrainingPredictionController,
-    style: require('./style.less'),
+    style: require('./newstyle.less'),
     controllerAs: 'self',
     bindings: {
     	stepDatas: '<',
@@ -26,7 +26,19 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
     const TRAIN_STEP_STATE = 'training';
     const VERIFY_STEP_STATE = 'verify';
     const PREDICT_STEP_STATE = 'prediction';
-    // const BASE_ML_URL = 'http://192.168.0.120:5001/api';
+	// const BASE_ML_URL = 'http://192.168.0.120:5001/api';
+	 //--------------
+	 $scope.tab = 1;
+	 self.selectionTab = self.selectionTab || 'Wells';
+ 
+	 $scope.setTab = function(newTab){
+		 $scope.tab = newTab;
+	 };
+ 
+	 $scope.isSet = function(tabNum){
+		 return $scope.tab === tabNum;
+	 };
+	 //--------------
     this.$onInit = function() {
     	// self.baseMlUrl = '';
     	// $scope.$watch(function() {

@@ -1,0 +1,34 @@
+<div style="display:flex;flex-direction: column;width: 100%;height: 100%; position: relative; padding: 40px; background: #EDEFF3;"
+    class="slim-scroller">
+    <div class="toolbar">
+        <div class="search">
+            <div class="ti ti-search" style="margin-right: 15px; font-size: 17px;"></div>
+            <input placeholder="Search">
+        </div>
+        <div class="tab">
+            <div class="tab-button" ng-class="{'active' : isSet(1)}" ng-click="setTab(1)"
+                style="border-right: 1px solid #edeff3;">Train</div>
+            <div class="tab-button" ng-class="{'active' : isSet(2)}" ng-click="setTab(2)"
+                style="border-right: 1px solid #edeff3;border-left: 1px solid #edeff3;">Verify</div>
+            <div class="tab-button" ng-class="{'active' : isSet(3)}" ng-click="setTab(3)"
+                style="border-left: 1px solid #edeff3;">Predict</div>
+        </div>
+        <div class="button">
+            <div class="toolbar-button">Sort by</div>
+            <div class="toolbar-button">Select All</div>
+            <div class="toolbar-button active">Run Now</div>
+        </div>
+
+    </div>
+    <div class="workspace">
+        <div ng-show="isSet(1)" class="workspace-main">
+
+        </div>
+        <div ng-show="isSet(2)" class="workspace-main">
+
+        </div>
+        <div ng-show="isSet(3)" class="workspace-main">
+
+        </div>
+    </div>
+</div>
