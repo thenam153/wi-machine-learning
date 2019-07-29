@@ -14,7 +14,7 @@
         <div ng-show="isSet(1)" class="workspace-main" id="Train" ng-init="self.stepDatas['training'].expanded=true">
             <div class="search">
                 <div class="ti ti-search" style="margin-right: 15px; font-size: 15px;"></div>
-                <input placeholder="Search">
+                <input placeholder="Search" ng-model="searchTraining">
             </div>
             <div class="button">
                 <div class="toolbar-button">Sort by</div>
@@ -23,12 +23,11 @@
                 <div class="toolbar-button active" ng-click="self.runAll()">Run All</div>
             </div>
             <div style="overflow: hidden; display: flex; flex-direction: column;">
-
                 <div class="table-main">
                     <div class='table-row'
-                        style="color: #959da9; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #edeff3; border: none;">
+                        style="color: #959da9; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #fff; border: none; box-shadow: 0 5px 6px #00000012;">
                         <div class="table-block"
-                            style="width: 70px; min-width: 70px; background: #edeff3; position: sticky; left: 0;">Active
+                            style="width: 70px; min-width: 70px; position: sticky; left: 0;">Active
                         </div>
                         <div class="table-block" style="width: 70px; min-width: 70px;">Filter</div>
                         <div class="table-block">Well</div>
@@ -39,10 +38,10 @@
                         <div class="table-block" ng-if="self.stepDatas['training'].name != 'Train'">
                             {{self.stepDatas['training'].name}} curve name</div>
                     </div>
-                    <div class='table-row' ng-repeat="(indexDataset,dataset) in self.stepDatas['training'].datasets"
+                    <div class='table-row' ng-repeat="(indexDataset,dataset) in self.stepDatas['training'].datasets | filter:searchTraining track by $index"
                         ng-init="dataset.showList = [];">
                         <div class="table-block"
-                            style="width: 70px; min-width: 70px; background: #fff; position: sticky; left: 0;">
+                            style="width: 70px; min-width: 70px; position: sticky; left: 0; z-index: 1;">
                             <label class="switch">
                                 <input type="checkbox" checked>
                                 <span class="slider round" ng-click="self.onToggleActiveOutput(dataset)"></span>
@@ -54,13 +53,19 @@
                         </div>
                         <div class="table-block" title='{{dataset.wellName}}'>{{dataset.wellName}}</div>
                         <div class="table-block" title='{{dataset.name}}'>{{dataset.name}}</div>
-                        <div class="table-block" ng-repeat="input in dataset.inputCurveSpecs track by $index">
+                        <div class="table-block" ng-repeat="input in dataset.inputCurveSpecs track by $index"
+                            style="overflow: visible;">
                             <div style="position: relative;">
-                                <div ng-click="dataset.showList[$index]=!dataset.showList[$index]">show</div>
+                                <div>show
+                                    <div ng-click="dataset.showList[$index]=!dataset.showList[$index]" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
+                                </div>
                                 <div ng-show="dataset.showList[$index]" class="dropdown-list">
-                                    <div
-                                        ng-repeat="i in self.stepDatas['training'].selectionList[$index] track by $indexList">
-                                        {{i.data.label}}
+                                    <span class="dropdown-list-caret"></span>
+                                    <div style="overflow: auto; max-height: 185px;">
+                                        <div
+                                            ng-repeat="i in self.stepDatas['training'].selectionList[$index] track by $indexList">
+                                            {{i.data.label}}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -69,8 +74,7 @@
                                     on-item-changed="self.getOnItemChange('training', indexDataset, $index)"></wi-dropdown-list> -->
                         </div>
                         <div class="table-block" ng-if="self.stepDatas['training'].name != 'Train'" style="">
-                            <input type="text" style="height: 32px;" ng-model="item.resultCurveName"
-                                class="form-control wi-form-control">
+                            <input type="text" style="height: 32px;" ng-model="item.resultCurveName">
                         </div>
                     </div>
                 </div>
@@ -79,7 +83,7 @@
         <div ng-show="isSet(2)" class="workspace-main">
             <div class="search">
                 <div class="ti ti-search" style="margin-right: 15px; font-size: 15px;"></div>
-                <input placeholder="Search">
+                <input placeholder="Search" ng-model="searchVerify">
             </div>
             <div class="button">
                 <div class="toolbar-button">Sort by</div>
@@ -91,9 +95,9 @@
 
                 <div class="table-main">
                     <div class='table-row'
-                        style="color: #959da9; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #edeff3; border: none;">
+                        style="color: #959da9; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #fff; border: none;box-shadow: 0 5px 6px #00000012;">
                         <div class="table-block"
-                            style="width: 70px; min-width: 70px; background: #edeff3; position: sticky; left: 0;">Active
+                            style="width: 70px; min-width: 70px; position: sticky; left: 0;">Active
                         </div>
                         <div class="table-block" style="width: 70px; min-width: 70px;">Filter</div>
                         <div class="table-block">Well</div>
@@ -104,10 +108,10 @@
                         <div class="table-block" ng-if="self.stepDatas['verify'].name != 'Train'">
                             {{self.stepDatas['verify'].name}} curve name</div>
                     </div>
-                    <div class='table-row' ng-repeat="(indexDataset,dataset) in self.stepDatas['verify'].datasets"
+                    <div class='table-row' ng-repeat="(indexDataset,dataset) in self.stepDatas['verify'].datasets | filter:searchVerify track by $index"
                         ng-init="dataset.showList = [];">
                         <div class="table-block"
-                            style="width: 70px; min-width: 70px; background: #fff; position: sticky; left: 0;">
+                            style="width: 70px; min-width: 70px; background: #fff; position: sticky; left: 0;z-index: 1;">
                             <label class="switch">
                                 <input type="checkbox" checked>
                                 <span class="slider round" ng-click="self.onToggleActiveOutput(dataset)"></span>
@@ -119,13 +123,20 @@
                         </div>
                         <div class="table-block" title='{{dataset.wellName}}'>{{dataset.wellName}}</div>
                         <div class="table-block" title='{{dataset.name}}'>{{dataset.name}}</div>
-                        <div class="table-block" ng-repeat="input in dataset.inputCurveSpecs track by $index">
+                        <div class="table-block" ng-repeat="input in dataset.inputCurveSpecs track by $index"
+                            style="overflow: visible;">
                             <div style="position: relative;">
-                                <div ng-click="dataset.showList[$index]=!dataset.showList[$index]">show</div>
+                                <div >show
+                                    <div ng-click="dataset.showList[$index]=!dataset.showList[$index]" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
+                                </div>
+                                <div ng-show="dataset.showList[$index]" class="dropdown-list-caret"></div>
                                 <div ng-show="dataset.showList[$index]" class="dropdown-list">
-                                    <div
-                                        ng-repeat="i in self.stepDatas['verify'].selectionList[$index] track by $indexList">
-                                        {{i.data.label}}
+                                    <span class="dropdown-list-caret"></span>
+                                    <div style="overflow: auto; max-height: 185px;">
+                                        <div
+                                            ng-repeat="i in self.stepDatas['verify'].selectionList[$index] track by $indexList">
+                                            {{i.data.label}}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -134,8 +145,7 @@
                                             on-item-changed="self.getOnItemChange('training', indexDataset, $index)"></wi-dropdown-list> -->
                         </div>
                         <div class="table-block" ng-if="self.stepDatas['verify'].name != 'Train'">
-                            <input type="text" style="height: 32px;" ng-model="item.resultCurveName"
-                                class="form-control wi-form-control">
+                            <input type="text" style="height: 32px;" ng-model="item.resultCurveName">
                         </div>
                     </div>
                 </div>
@@ -144,7 +154,7 @@
         <div ng-show="isSet(3)" class="workspace-main">
             <div class="search">
                 <div class="ti ti-search" style="margin-right: 15px; font-size: 15px;"></div>
-                <input placeholder="Search">
+                <input placeholder="Search" ng-model="searchPrediction">
             </div>
             <div class="button">
                 <div class="toolbar-button">Sort by</div>
@@ -156,9 +166,9 @@
 
                 <div class="table-main">
                     <div class='table-row'
-                        style="color: #959da9; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #edeff3; border: none;">
+                        style="color: #959da9; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #fff; border: none;    box-shadow: 0 5px 6px #00000012;">
                         <div class="table-block"
-                            style="width: 70px; min-width: 70px; background: #edeff3; position: sticky; left: 0;">Active
+                            style="width: 70px; min-width: 70px; position: sticky; left: 0;">Active
                         </div>
                         <div class="table-block" style="width: 70px; min-width: 70px;">Filter</div>
                         <div class="table-block">Well</div>
@@ -169,10 +179,10 @@
                         <div class="table-block" ng-if="self.stepDatas['prediction'].name != 'Train'">
                             {{self.stepDatas['prediction'].name}} curve name</div>
                     </div>
-                    <div class='table-row' ng-repeat="(indexDataset,dataset) in self.stepDatas['prediction'].datasets"
+                    <div class='table-row' ng-repeat="(indexDataset,dataset) in self.stepDatas['prediction'].datasets| filter:searchPrediction track by $index" 
                         ng-init="dataset.showList = [];">
                         <div class="table-block"
-                            style="width: 70px; min-width: 70px; background: #fff; position: sticky; left: 0;">
+                            style="width: 70px; min-width: 70px; background: #fff; position: sticky; left: 0;z-index: 1;">
                             <label class="switch">
                                 <input type="checkbox" checked>
                                 <span class="slider round" ng-click="self.onToggleActiveOutput(dataset)"></span>
@@ -184,13 +194,20 @@
                         </div>
                         <div class="table-block" title='{{dataset.wellName}}'>{{dataset.wellName}}</div>
                         <div class="table-block" title='{{dataset.name}}'>{{dataset.name}}</div>
-                        <div class="table-block" ng-repeat="input in dataset.inputCurveSpecs track by $index">
+                        <div class="table-block" ng-repeat="input in dataset.inputCurveSpecs track by $index"
+                            style="overflow: visible;">
                             <div style="position: relative;">
-                                <div ng-click="dataset.showList[$index]=!dataset.showList[$index]">show</div>
+                                <div >show
+                                    <div ng-click="dataset.showList[$index]=!dataset.showList[$index]" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
+                                </div>
+                                <div ng-show="dataset.showList[$index]" class="dropdown-list-caret"></div>
                                 <div ng-show="dataset.showList[$index]" class="dropdown-list">
-                                    <div
-                                        ng-repeat="i in self.stepDatas['prediction'].selectionList[$index] track by $indexList">
-                                        {{i.data.label}}
+                                    <span class="dropdown-list-caret"></span>
+                                    <div style="overflow: auto; max-height: 185px;">
+                                        <div
+                                            ng-repeat="i in self.stepDatas['prediction'].selectionList[$index] track by $indexList">
+                                            {{i.data.label}}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -199,8 +216,7 @@
                                             on-item-changed="self.getOnItemChange('training', indexDataset, $index)"></wi-dropdown-list> -->
                         </div>
                         <div class="table-block" ng-if="self.stepDatas['prediction'].name != 'Train'" style="">
-                            <input type="text" style="height: 32px;" ng-model="item.resultCurveName"
-                                class="form-control wi-form-control">
+                            <input type="text" style="height: 32px;" ng-model="item.resultCurveName">
                         </div>
                     </div>
                 </div>
