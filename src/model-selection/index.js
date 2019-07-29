@@ -7,9 +7,9 @@ const dataJson = require('./model/model.js');
 var app = angular.module(moduleName, ['wiDropdownList','editable']);
 
 app.component(componentName,{
-	template: require('./template.html'),
+	template: require('./newtemplate.html'),
     controller: ModelSelectionController,
-    style: require('./style.less'),
+    style: require('./newstyle.less'),
     controllerAs: 'self',
     bindings: {
     	// datas: '=',

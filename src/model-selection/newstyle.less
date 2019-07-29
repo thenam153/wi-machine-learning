@@ -1,4 +1,5 @@
-dataset-selection {
+model-selection {
+
 	.main-content {
 		display    : flex;
 		height     : 100%;
@@ -9,6 +10,7 @@ dataset-selection {
 		.header {
 			display       : flex;
 			flex-direction: column;
+			margin-bottom : 20px;
 		}
 
 		.title {
@@ -20,77 +22,18 @@ dataset-selection {
 			display      : flex;
 		}
 
-		.sticky {
-			background    : #EDEFF3;
-			padding-bottom: 20px;
-			position      : sticky;
-			top           : 0;
-		}
-
 		.sub {
 			color    : #8793A1;
 			font-size: 12px;
 		}
 
 		.input-selection {
-			flex-basis    : 315px;
+			width         : 315px;
 			display       : flex;
 			flex-direction: column;
 			background    : #fff;
 			padding       : 20px;
 
-
-
-			.button-input {
-				display              : grid;
-				grid-template-columns: 1fr 1fr 1fr 1fr;
-				grid-gap             : 10px;
-				margin-top           : 20px;
-
-				.button {
-					background     : #EDEFF3;
-					padding        : 15px;
-					border-radius  : 2px;
-					display        : flex;
-					align-items    : center;
-					justify-content: center;
-					cursor         : pointer;
-					transition     : all ease-in 0.2s;
-
-					&.active {
-						background: #4B7DEF;
-						color     : #fff;
-						transition: all ease-in 0.3s;
-					}
-
-					&:active {
-						transform : scale(0.7);
-						transition: all ease-in 0.2s;
-					}
-
-					&:hover {
-						filter: saturate(1.5)
-					}
-				}
-			}
-
-			.list-input {
-				margin-top: 20px;
-				flex      : 1;
-				display   : flex;
-				overflow  : hidden;
-				position  : relative;
-
-				.list-scroll {
-					position: absolute;
-					top     : 0;
-					right   : 0;
-					margin  : 0 auto;
-					bottom  : 0;
-					left    : 0;
-				}
-
-			}
 		}
 
 		.workspace {
@@ -98,54 +41,36 @@ dataset-selection {
 			display: flex;
 			padding: 20px;
 			height : calc(100vh - 60px);
-
-			.tab {
-				display: flex;
-
-				.tab-name {
-					user-select  : none;
-					cursor       : pointer;
-					opacity      : 0.3;
-					padding      : 0px 20px 15px 20px;
-					border-bottom: 2px solid #F5F9FC;
-					transition   : all ease-in 0.2s;
-
-					&.active {
-						opacity      : 1;
-						border-bottom: 2px solid #4b7def;
-						transition   : all ease-in 0.2s;
-
-					}
-				}
-			}
-
-			.datasets-info {
-				display       : flex;
-				flex-direction: column;
-				padding       : 10px 20px;
-				background    : #fff;
-				margin-bottom : 10px;
-				position      : relative;
-
-				.button {
-					top      : 15px;
-					right    : 15px;
-					font-size: 8px;
-					cursor   : pointer;
-					position : absolute;
-				}
-
-				.detail {
-					display: flex;
-					color  : #ccc;
-
-					>div {
-						margin-right: 10px;
-					}
-				}
-
-			}
 		}
+	}
+
+	.dropdown-list {
+		user-select  : none;
+		overflow     : visible;
+		position     : absolute;
+		z-index      : 1;
+		left         : -29px;
+		border-radius: 2px;
+		margin-top   : 15px;
+		padding      : 15px 0;
+		min-width    : 150px;
+		box-shadow   : 0 0px 25px 0 #0000001c;
+		background   : #fff;
+
+		>div>div {
+			padding: 10px 20px;
+			cursor : pointer;
+		}
+	}
+
+
+	.dropdown-list-caret {
+		position           : absolute;
+		left               : 64px;
+		top                : -20px;
+		z-index            : 8;
+		border             : 10px solid transparent;
+		border-bottom-color: #fff;
 	}
 
 	.slim-scroller {
@@ -157,6 +82,32 @@ dataset-selection {
 
 		::-webkit-scrollbar-thumb {
 			background-color: #dcdcdc !important;
+		}
+	}
+
+	editable {
+		display      : flex;
+		border-bottom: 1px solid #dadada;
+	}
+
+	editable label {
+		padding      : 10px 0;
+		flex         : 1;
+		float        : left;
+		margin-right : 0;
+		margin-bottom: 0;
+	}
+
+	editable div.my-content {
+		flex     : 1;
+		direction: rtl;
+		padding  : 10px 0;
+		overflow : hidden;
+
+		&>div {
+			overflow     : hidden;
+			text-overflow: ellipsis;
+			white-space  : nowrap;
 		}
 	}
 
@@ -229,10 +180,22 @@ dataset-selection {
 		font-size    : 12px;
 	}
 
+	.ui-select-bootstrap .ui-select-choices-row.active>span {
+		color           : #fff;
+		text-decoration : none;
+		outline         : 0;
+		background-color: #4b7def;
+	}
+
+	.ui-select-bootstrap .ui-select-match-text {
+		margin-top: 1px;
+	}
+
 	.ui-select-bootstrap>.ui-select-choices,
 	.ui-select-bootstrap>.ui-select-no-choice {
-		max-height: 500px;
-		margin-top: 4px;
+		max-height   : 500px;
+		margin-top   : 4px;
+		border-radius: 2px;
 	}
 
 	.ui-select-bootstrap .ui-select-choices-row>span {
