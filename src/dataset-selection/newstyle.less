@@ -1,4 +1,115 @@
+.dragging {
+	background   : #fff !important;
+	border-radius: 10px !important;
+	border       : 2px dotted #4B7DEF !important;
+	width        : 200px;
+	padding      : 15px 20px;
+	transition   : padding ease-in 0.3s;
+
+	wi-droppable .drag-over {
+		transition      : all 0.2s ease-in;
+		filter          : unset !important;
+		background-color: rgba(255, 255, 255, 0.5);
+	}
+
+	wi-tree-node-virtual {
+		width: 100%;
+
+		&>div {
+			cursor      : default;
+			//margin    : 0 0 0 15px;
+			padding-left: 0 !important;
+
+		}
+
+		.node-icon {
+			display      : flex;
+			padding-right: 10px;
+			font-size    : 13px;
+			filter       : saturate(2)
+		}
+
+		.node-label {
+			padding-right: 10px;
+			font-size    : 13px;
+			display      : inline-block;
+			white-space  : nowrap;
+			overflow     : hidden;
+			text-overflow: ellipsis;
+		}
+
+		.node-caret {
+			display: none;
+		}
+
+		.invisible {
+			visibility: hidden;
+		}
+
+		.node-content {
+			border-bottom      : 1px solid #fff;
+			position           : relative;
+			white-space        : nowrap;
+			text-overflow      : ellipsis;
+			overflow           : hidden;
+			// padding         : 11px;
+			display            : flex;
+			align-items        : center;
+			transition-property: padding, margin;
+			transition-duration: 0.2s;
+			// height          : 2.3em; //old
+			height             : 37px; //new
+
+			&,
+			&::after {
+				// line-height: 2.3em; //old
+				height        : 37px; //new
+			}
+
+
+			&.search-mode {
+				color: #fff;
+
+				&.not-matched.not-show {
+					display: none;
+				}
+
+				&.not-matched>div {
+					opacity: 1;
+				}
+			}
+
+			&.selected {
+				background: #fff;
+
+				&::after {
+					background-color: #fff;
+				}
+			}
+
+			&::after {
+				content : "2r";
+				color   : transparent;
+				display : block;
+				position: absolute;
+				top     : 0;
+				width   : 4px;
+			}
+
+			&::after {
+				right: 0;
+			}
+		}
+
+		.node-content:hover {
+			background: #fff;
+		}
+
+	}
+}
+
 dataset-selection {
+
 	.main-content {
 		display    : flex;
 		height     : 100%;
@@ -96,13 +207,13 @@ dataset-selection {
 		.no-datasets {
 			height         : 100%;
 			width          : 100%;
-			border-radius: 5px;
+			border-radius  : 5px;
 			border         : 2px dotted #d8d8d8;
 			display        : flex;
 			flex-direction : column;
 			align-items    : center;
 			justify-content: center;
-			color: #c7ccd2;
+			color          : #c7ccd2;
 		}
 
 		.workspace {
