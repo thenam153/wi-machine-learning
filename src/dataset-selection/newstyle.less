@@ -93,6 +93,18 @@ dataset-selection {
 			}
 		}
 
+		.no-datasets {
+			height         : 100%;
+			width          : 100%;
+			border-radius: 5px;
+			border         : 2px dotted #d8d8d8;
+			display        : flex;
+			flex-direction : column;
+			align-items    : center;
+			justify-content: center;
+			color: #c7ccd2;
+		}
+
 		.workspace {
 			flex   : 1;
 			display: flex;
@@ -238,6 +250,13 @@ dataset-selection {
 	.ui-select-bootstrap .ui-select-choices-row>span {
 		padding      : 7px 20px;
 		border-bottom: 1px solid #fff;
+	}
+
+	.ui-select-bootstrap .ui-select-choices-row.active>span {
+		color           : #fff;
+		text-decoration : none;
+		outline         : 0;
+		background-color: #4b7def;
 	}
 
 	//CUSTOM CSS

@@ -1,23 +1,36 @@
 <div class="main-content slim-scroller">
     <div class="input-selection">
-        <div class="header">
-            <span class="title">Input Selection</span>
-            <span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
+        <div class="tab">
+            <div class="tab-button" ng-class="{'active' : isSet(1)}" ng-click="setTab(1)">Tab1</div>
+            <div class="tab-button" ng-class="{'active' : isSet(2)}" ng-click="setTab(2)">Tab2</div>
+            <div class="tab-button" ng-class="{'active' : isSet(3)}" ng-click="setTab(3)">Tab3</div>
         </div>
-        <div class="header">
-            <span class="title">Input Selection</span>
-            <wi-dropdown-list place-holder="Model" items="self.datas" hide-delete-button='self.hideDeleteButton'
-                current-select='self.currentSelect' on-item-changed="self.onItemChanged">
-            </wi-dropdown-list>
-        </div>
-
-        <div>
-            <div class="editable-custom" ng-repeat="(key, props) in self.selectedItemProps">
-                <editable item-value="self.selectedItemProps[key].value" item-label="key"
-                    label-style="{'min-width':'130px'}" enabled="true" set-value="self.setValue"
-                    params="self.selectedItemProps[key].default" ng-if="value != 'array'">
-                </editable>
+        <div ng-show="isSet(1)" style="padding: 20px;">
+            <div class="header">
+                <span class="title">Model Selection</span>
+                <span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
             </div>
+            <div class="header">
+                <span class="title">Model Selection</span>
+                <wi-dropdown-list place-holder="Model" items="self.datas" hide-delete-button='self.hideDeleteButton'
+                    current-select='self.currentSelect' on-item-changed="self.onItemChanged">
+                </wi-dropdown-list>
+            </div>
+
+            <div onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
+                <div class="editable-custom" ng-repeat="(key, props) in self.selectedItemProps">
+                    <editable item-value="self.selectedItemProps[key].value" item-label="key"
+                        label-style="{'min-width':'130px'}" enabled="true" set-value="self.setValue"
+                        params="self.selectedItemProps[key].default" ng-if="value != 'array'">
+                    </editable>
+                </div>
+            </div>
+        </div>
+        <div ng-show="isSet(1)" style="padding: 20px;">
+    
+        </div>
+        <div ng-show="isSet(1)" style="padding: 20px;">
+           
         </div>
     </div>
     <div class="workspace">
