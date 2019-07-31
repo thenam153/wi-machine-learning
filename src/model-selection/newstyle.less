@@ -32,25 +32,47 @@ model-selection {
 			display       : flex;
 			flex-direction: column;
 			background    : #fff;
+			position      : relative;
 
 		}
 
 		.workspace {
-			flex   : 1;
-			display: flex;
-			padding: 20px;
-			height : calc(100vh - 60px);
+			flex      : 1;
+			display   : flex;
+			// padding: 20px;
+			height    : calc(100vh - 60px);
+		}
+
+		.button-neural {
+			position       : absolute;
+			bottom         : 0;
+			margin         : 20px;
+			display        : flex;
+			justify-content: center;
+			border-radius  : 2px;
+			width          : -webkit-fill-available;
+			padding        : 10px;
+			background     : #4b7def;
+			text-transform : uppercase;
+			color          : #fff;
+			cursor         : pointer;
+			transition: all ease-in 0.2s;
+
+			&:hover {
+				background: #5e8dfa;
+				transition: all ease-in 0.2s;
+			}
 		}
 
 		.tab {
-			display      : flex;
+			display: flex;
 
 			.tab-button {
 				flex           : 1;
 				display        : flex;
 				justify-content: center;
 				border-radius  : 2px;
-				border-bottom: 2px solid #edeff3; 
+				border-bottom  : 2px solid #edeff3;
 				padding        : 15px 30px;
 				color          : #A5ACB4;
 				cursor         : pointer;
@@ -62,9 +84,9 @@ model-selection {
 			}
 
 			.active {
-				color     : #4b7def;
-				border-bottom: 2px solid #4b7def; 
-				transition: all ease-in 0.2s;
+				color        : #4b7def;
+				border-bottom: 2px solid #4b7def;
+				transition   : all ease-in 0.2s;
 
 			}
 
@@ -298,5 +320,14 @@ model-selection {
 		color        : #353535;
 		background   : #EDEFF3;
 
+	}
+
+	.jsPanel-theme-default {
+		width           : calc(100% - 315px) !important;
+		left            : unset !important;
+		top             : unset !important;
+		height          : calc(100% - 60px) !important;
+		box-shadow      : none;
+		background-color: #EDEFF3;
 	}
 }

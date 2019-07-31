@@ -125,7 +125,8 @@ function ModelSelectionController($scope, $compile){
 			position: 'center',
 			contentSize: '750 500',
 			panelSize: '750 500',
-			content: `<div id="id1" style="height:750px;">aasdasdasdasd</div>`,
+			container: document.getElementById('workspace'),
+			content: `<div id="id1"></div>`,
 			draggable: {
                 containment: "parent"
             },
