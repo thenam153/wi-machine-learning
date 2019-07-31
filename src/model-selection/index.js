@@ -33,6 +33,18 @@ function ModelSelectionController($scope, $compile){
 		self.setDataModels(self.datas)
 		console.log(self.datas);
 	}
+	//--------------
+	$scope.tab = 1;
+	self.selectionTab = self.selectionTab || 'Train';
+
+	$scope.setTab = function(newTab){
+		$scope.tab = newTab;
+	};
+
+	$scope.isSet = function(tabNum){
+		return $scope.tab === tabNum;
+	};
+	//--------------
 	this.handleData = function(dataJson,key) {
 		var definitions = dataJson.definitions;
 		var keysPath = Object.keys(dataJson.paths);

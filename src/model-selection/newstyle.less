@@ -32,7 +32,6 @@ model-selection {
 			display       : flex;
 			flex-direction: column;
 			background    : #fff;
-			padding       : 20px;
 
 		}
 
@@ -41,6 +40,34 @@ model-selection {
 			display: flex;
 			padding: 20px;
 			height : calc(100vh - 60px);
+		}
+
+		.tab {
+			display      : flex;
+
+			.tab-button {
+				flex           : 1;
+				display        : flex;
+				justify-content: center;
+				border-radius  : 2px;
+				border-bottom: 2px solid #edeff3; 
+				padding        : 15px 30px;
+				color          : #A5ACB4;
+				cursor         : pointer;
+
+				&:hover {
+					filter    : invert(0.1);
+					transition: all ease-in 0.2s;
+				}
+			}
+
+			.active {
+				color     : #4b7def;
+				border-bottom: 2px solid #4b7def; 
+				transition: all ease-in 0.2s;
+
+			}
+
 		}
 	}
 
