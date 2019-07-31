@@ -4,7 +4,7 @@ module.exports.name = moduleName;
 
 const dataJson = require('./model/model.js');
 
-var app = angular.module(moduleName, ['wiDropdownList','editable']);
+var app = angular.module(moduleName, ['wiNeuralNetwork','wiDropdownList','editable']);
 
 app.component(componentName,{
 	template: require('./newtemplate.html'),
@@ -19,7 +19,7 @@ app.component(componentName,{
     }
 });
 
-function ModelSelectionController($scope){
+function ModelSelectionController($scope, $compile){
 	let self = 	this;
 	self.hideDeleteButton = false;	
 	this.$onInit = function() {
@@ -104,4 +104,62 @@ function ModelSelectionController($scope){
 			default: return '';
 		}
 	}
+	self.panel = {};
+	this.click = function() {
+		$.jsPanel({
+			id: 'id1',
+			headerTitle: 'test 1',
+			// headerLogo: 'adadad',
+			position: 'center',
+			contentSize: '750 500',
+			panelSize: '750 500',
+			content: `<div id="id1" style="height:750px;">aasdasdasdasd</div>`,
+			draggable: {
+                containment: "parent"
+            },
+            resizable: {
+                containment: "parent"
+            },
+            callback: function(panel) {
+            	let scope = $scope.$new();
+      //       	self.panel = panel;
+            	const scopeOptions = {
+                    cropViewByZones: true
+                }
+      //           let scope = {};
+                inputs = [{class: "Input Curve",
+                            label: "ECGR",
+                            name: "ECGR",
+                            type: "1",
+                            value: "ECGR"}];
+		        outputs = [{class: "Target Output",
+		                        label: "DTCO3",
+		                        name: "DTCO3",
+		                        type: "1",
+		                        value: "DTCO3"}];
+		        layers = [5,5];
+		        Object.assign(scope, {self, inputs, outputs, layers})
+		        const html = `<div style="display:flex;flex:0.7;height:100%;flex-direction:column;padding:10px;overflow:auto;"><wi-neural-network 
+						    style='flex:1; display: flex;' 
+						    container='' 
+						    input-curves="inputs"
+						    output-curves="outputs" 
+						    hidden-layer="layers">
+						</wi-neural-network></div>`
+				// $(`#id1`).html($compile(html)(scope))
+
+				$(`#id1`).html($compile(html)(scope))
+            },	
+            onclosed: (panel) => {
+				delete scope;
+				scope.$destroy();
+			}
+		})
+	}
+	function getContentSize(ratio = 3 / 4) {
+        let body = $(`#id1`);
+        let width = body.width() * ratio;
+        let height = body.height() * ratio;
+        return `${width} ${height}`;
+    }
 }
