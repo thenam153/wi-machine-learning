@@ -56,7 +56,7 @@
                         <div class="table-block" ng-repeat="input in dataset.inputCurveSpecs track by $index"
                             style="overflow: visible;">
                             <div style="position: relative;">
-                                <div>show
+                                <div>{{dataset.inputCurveSpecs[$index].currentSelect}}
                                     <div ng-click="dataset.showList[$index]=!dataset.showList[$index]" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
                                 </div>
                                 <div ng-show="dataset.showList[$index]" class="dropdown-list">
@@ -126,7 +126,7 @@
                         <div class="table-block" ng-repeat="input in dataset.inputCurveSpecs track by $index"
                             style="overflow: visible;">
                             <div style="position: relative;">
-                                <div >show
+                                <div >{{dataset.inputCurveSpecs[$index].currentSelect}}
                                     <div ng-click="dataset.showList[$index]=!dataset.showList[$index]" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
                                 </div>
                                 <div ng-show="dataset.showList[$index]" class="dropdown-list-caret"></div>
@@ -197,7 +197,7 @@
                         <div class="table-block" ng-repeat="input in dataset.inputCurveSpecs track by $index"
                             style="overflow: visible;">
                             <div style="position: relative;">
-                                <div >show
+                                <div >{{dataset.inputCurveSpecs[$index].currentSelect}}
                                     <div ng-click="dataset.showList[$index]=!dataset.showList[$index]" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
                                 </div>
                                 <div ng-show="dataset.showList[$index]" class="dropdown-list-caret"></div>
