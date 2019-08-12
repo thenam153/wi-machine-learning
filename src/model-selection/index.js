@@ -4,7 +4,7 @@ module.exports.name = moduleName;
 
 const dataJson = require('./model/model.js');
 
-var app = angular.module(moduleName, ['wiNeuralNetwork','wiDropdownList','editable']);
+var app = angular.module(moduleName, ['wiDropdownList','editable']);
 
 app.component(componentName,{
 	template: require('./newtemplate.html'),
@@ -15,7 +15,9 @@ app.component(componentName,{
     	// datas: '=',
     	// selectedItemProps: '=',
     	setDataModels: '<',
-    	setItemSelected: '<'
+    	setItemSelected: '<',
+    	nnConfig: '<',
+    	setLayers: '<'
     }
 });
 
@@ -135,26 +137,17 @@ function ModelSelectionController($scope, $compile){
             },
             callback: function(panel) {
             	let scope = $scope.$new();
-      //       	self.panel = panel;
             	const scopeOptions = {
                     cropViewByZones: true
                 }
-      //           let scope = {};
-                inputs = [{class: "Input Curve",
-                            label: "ECGR",
-                            name: "ECGR",
-                            type: "1",
-                            value: "ECGR"}];
-		        outputs = [{class: "Target Output",
-		                        label: "DTCO3",
-		                        name: "DTCO3",
-		                        type: "1",
-		                        value: "DTCO3"}];
-		        layers = [5,5];
+                inputs = self.nnConfig.inputs;
+		        outputs = [self.nnConfig.outputs];
+		        layers = self.nnConfig.layers;
+		        scope.container = self.nnConfig.container;
 		        Object.assign(scope, {self, inputs, outputs, layers})
 		        const html = `<div style="display:flex;flex:0.7;height:100%;flex-direction:column;padding:10px;overflow:auto;"><wi-neural-network 
 						    style='flex:1; display: flex;' 
-						    container='' 
+						    container='container' 
 						    input-curves="inputs"
 						    output-curves="outputs" 
 						    hidden-layer="layers">

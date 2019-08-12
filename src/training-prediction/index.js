@@ -63,20 +63,25 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 		verify: {},
 		prediction: {}
 	}
-	this.getOnItemChange = function(step,indexDataset,index) {
-		if(!functionCache[step][indexDataset]) functionCache[step][indexDataset] = [];
-		if(!functionCache[step][indexDataset][index]) {
-			functionCache[step][indexDataset][index] = function(selectedItemProps) {
-				self.stepDatas[step].datasets[indexDataset].inputCurveSpecs[index].value = selectedItemProps;
-				if(selectedItemProps) {
-					self.stepDatas[step].datasets[indexDataset].inputCurveSpecs[index].currentSelect = selectedItemProps.name;
-				}
-				else {
-					self.stepDatas[step].datasets[indexDataset].inputCurveSpecs[index].currentSelect = '[no choose]';
-				}
-			}
-		}
-		return functionCache[step][indexDataset][index];
+	// this.getOnItemChange = function(step,indexDataset,index) {
+	// 	if(!functionCache[step][indexDataset]) functionCache[step][indexDataset] = [];
+	// 	if(!functionCache[step][indexDataset][index]) {
+	// 		functionCache[step][indexDataset][index] = function(selectedItemProps) {
+	// 			self.stepDatas[step].datasets[indexDataset].inputCurveSpecs[index].value = selectedItemProps;
+	// 			if(selectedItemProps) {
+	// 				self.stepDatas[step].datasets[indexDataset].inputCurveSpecs[index].currentSelect = selectedItemProps.name;
+	// 			}
+	// 			else {
+	// 				self.stepDatas[step].datasets[indexDataset].inputCurveSpecs[index].currentSelect = '[no choose]';
+	// 			}
+	// 		}
+	// 	}
+	// 	return functionCache[step][indexDataset][index];
+	// }
+	this.setItemOnChange = function(dataset, index, item) {
+		console.log(dataset, index, item);
+		dataset.inputCurveSpecs[index].value = item.properties;
+		dataset.inputCurveSpecs[index].currentSelect = item.data.label;
 	}
 	function postPromise(url, data, method) {
         return new Promise(function(resolve, reject) {
@@ -175,25 +180,28 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 		}
 	}
 	function getDataCurveAndFilter(dataset, curves, callback) {
-		let arrNaN = [];
-		let inputCurveData = [];
-		// console.log(dataset);
-		async.eachSeries(dataset.inputCurveSpecs,function(input,_cb) {
-			(async()=> {
-				let curve = dataset.curves.find(i => {
-					return i.name === input.currentSelect;
-				});
-				let dataCurve = await wiApi.getCurveDataPromise(curve.idCurve);
-				for(let i in dataCurve) {
-					dataCurve[i] = parseFloat(dataCurve[i].x,4);
-					if(isNaN(dataCurve[i])) curves[i] = false;
+		return new Promise((resolve, reject) => {
+			let arrNaN = [];
+			let inputCurveData = [];
+			// console.log(dataset);
+			async.eachSeries(dataset.inputCurveSpecs,function(input,_cb) {
+				(async()=> {
+					let curve = dataset.curves.find(i => {
+						return i.name === input.currentSelect;
+					});
+					let dataCurve = await wiApi.getCurveDataPromise(curve.idCurve);
+					for(let i in dataCurve) {
+						dataCurve[i] = parseFloat(dataCurve[i].x,4);
+						if(isNaN(dataCurve[i])) curves[i] = false;
+					}
+					inputCurveData.push(dataCurve);
+					_cb();
+				})();	
+			}, err => {
+				if (err || !inputCurveData || !inputCurveData.length) {
+					console.log(err);
+					reject(err || 'Something was wrong');
 				}
-				inputCurveData.push(dataCurve);
-				_cb();
-			})();	
-		}, err => {
-			if (err) console.log(err);
-			if(inputCurveData && inputCurveData.length) {
 				let cacheInputCurveData = [];
 				cacheInputCurveData.length = inputCurveData.length;
 				let length = inputCurveData[0].length;
@@ -212,22 +220,20 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 					}
 				}
 				inputCurveData = cacheInputCurveData;
-				callback(inputCurveData);	
-			}else {
-				callback([]);
-			}
-		});
+				resolve(inputCurveData);	
+			});
+		})
 	}
 	async function train(cb) {
 		if(!self.stepDatas[TRAIN_STEP_STATE].datasets.length) return cb();
 		let res = await createModelAndBucketId();
 		console.log(res);
-		async.each(self.stepDatas[TRAIN_STEP_STATE].datasets,function(dataset,_cb){
+		async.each(self.stepDatas[TRAIN_STEP_STATE].datasets, function(dataset,_cb){
 			if(isRun(dataset)) {
-				evaluateExpr(dataset,dataset.discrmnt,function(curves) {
-					// console.log('evaluate',curves);
-					getDataCurveAndFilter(dataset, curves, async function(dataCurves) {
-						console.log(dataCurves);
+				evaluateExpr(dataset,dataset.discrmnt)
+				.then((curves) => {
+					getDataCurveAndFilter(dataset, curves).then(async (dataCurves) => {
+						// console.log(dataCurves);
 						let request = {
 							bucket_id: self.model_id,
 							data: dataCurves
@@ -236,11 +242,14 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 						_cb();
 					});
 				})
+				.catch(err => {
+					console.error(err);
+					_cb(err);
+				});
 			}else {
 				_cb();
-				// cb();
 			}
-		},async function(err) {
+		}, async function(err) {
 			if(err) console.error(err);
 			let req = {
 				model_id: self.model_id,
@@ -253,10 +262,12 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 		})
 	}
 	async function verify(cb) {
-		async.each(self.stepDatas[VERIFY_STEP_STATE].datasets,function(dataset,_cb){
+		async.each(self.stepDatas[VERIFY_STEP_STATE].datasets, function(dataset,_cb){
 			if(isRun(dataset)) {
-				evaluateExpr(dataset,dataset.discrmnt,function(curves) {
-					getDataCurveAndFilter(dataset, curves, async function(dataCurves) {
+				evaluateExpr(dataset,dataset.discrmnt)
+				.then(function(curves) {
+					getDataCurveAndFilter(dataset, curves)
+					.then(async function(dataCurves) {
 						let target = dataCurves.splice(dataCurves.length - 1, 1)[0];
 						// console.log(target,dataCurves);	
 						let payload = {
@@ -271,6 +282,10 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 						console.log('verify',dataError);
 						_cb();
 					});
+				})
+				.catch(err => {
+					console.error(err);
+					_cb(err);
 				});
 			}else {
 				_cb();
@@ -282,10 +297,12 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 		});
 	}
 	async function prediction(cb) {
-		async.each(self.stepDatas[PREDICT_STEP_STATE].datasets,function(dataset,_cb){
+		async.each(self.stepDatas[PREDICT_STEP_STATE].datasets, function(dataset,_cb){
 			if(isRun(dataset)) {
-				evaluateExpr(dataset,dataset.discrmnt,function(curves) {
-					getDataCurveAndFilter(dataset, curves, async function(dataCurves) {
+				evaluateExpr(dataset,dataset.discrmnt)
+				.then(function(curves) {
+					getDataCurveAndFilter(dataset, curves)
+					.then(async function(dataCurves) {
 						// console.log(target,dataCurves);	
 						let payload = {
 							features: dataCurves,
@@ -295,6 +312,10 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 						console.log('predict',preidictData);
 						_cb();
 					});
+				})
+				.catch(err => {
+					console.error(err);
+					_cb(err);
 				});
 			}else {
 				_cb();
@@ -305,114 +326,116 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 			cb();	
 		})
 	}
-	function evaluateExpr(dataset, discriminator, callback) {
-	    let result = new Array();
-	    let length = 0;
-	    // let length = (dataset.bottom - dataset.top) / dataset.step;
-	    let curveSet = new Set();
-	    let curvesData = new Array();
-	    let curvesInDataset = dataset.curves;
-	    if (!curvesInDataset) return callback(result);
-	    function findCurve(condition) {
-	        if (condition && condition.children && condition.children.length) {
-	            condition.children.forEach(function (child) {
-	                findCurve(child);
-	            })
-	        } else if (condition && condition.left && condition.right) {
-	            curveSet.add(condition.left.value);
-	            if (condition.right.type == 'curve') {
-	                curveSet.add(condition.right.value);
-	            }
-	        } else {
-	            return;
-	        }
-	    }
+	function evaluateExpr(dataset, discriminator) {
+		return new Promise(resolve => {
+			let result = new Array();
+		    let length = 0;
+		    // let length = (dataset.bottom - dataset.top) / dataset.step;
+		    let curveSet = new Set();
+		    let curvesData = new Array();
+		    let curvesInDataset = dataset.curves;
+		    if (!curvesInDataset) return callback(result);
+		    function findCurve(condition) {
+		        if (condition && condition.children && condition.children.length) {
+		            condition.children.forEach(function (child) {
+		                findCurve(child);
+		            })
+		        } else if (condition && condition.left && condition.right) {
+		            curveSet.add(condition.left.value);
+		            if (condition.right.type == 'curve') {
+		                curveSet.add(condition.right.value);
+		            }
+		        } else {
+		            return;
+		        }
+		    }
 
-	    findCurve(discriminator);
+		    findCurve(discriminator);
 
-	    function evaluate(condition, index) {
-	    	if(typeof discriminator !== 'undefined' && !discriminator.active) {return true;}
-	        if (condition && condition.children && condition.children.length) {
-	            let left = evaluate(condition.children[0], index);
-	            let right = evaluate(condition.children[1], index);
-	            switch (condition.operator) {
-	                case 'and':
-	                    return left && right;
-	                case 'or':
-	                    return left || right;
-	            }
-	        }
-	        else if (condition && condition.left && condition.right) {
-	            let leftCurve = curvesData.find(function (curve) {
-	                return curve.name == condition.left.value;
-	            });
-	            let left = leftCurve ? parseFloat(leftCurve.data[index]) : null;
+		    function evaluate(condition, index) {
+		    	if(typeof discriminator !== 'undefined' && !discriminator.active) {return true;}
+		        if (condition && condition.children && condition.children.length) {
+		            let left = evaluate(condition.children[0], index);
+		            let right = evaluate(condition.children[1], index);
+		            switch (condition.operator) {
+		                case 'and':
+		                    return left && right;
+		                case 'or':
+		                    return left || right;
+		            }
+		        }
+		        else if (condition && condition.left && condition.right) {
+		            let leftCurve = curvesData.find(function (curve) {
+		                return curve.name == condition.left.value;
+		            });
+		            let left = leftCurve ? parseFloat(leftCurve.data[index]) : null;
 
-	            let right = condition.right.value;
-	            if (condition.right.type == 'curve') {
-	                let rightCurve = curvesData.find(function (curve) {
-	                    return curve.name == condition.right.value;
-	                })
-	                right = rightCurve ? parseFloat(rightCurve.data[index]) : null;
-	            }
+		            let right = condition.right.value;
+		            if (condition.right.type == 'curve') {
+		                let rightCurve = curvesData.find(function (curve) {
+		                    return curve.name == condition.right.value;
+		                })
+		                right = rightCurve ? parseFloat(rightCurve.data[index]) : null;
+		            }
 
-	            if (left != null && right != null) {
-	                switch (condition.comparison) {
-	                    case '<':
-	                        return left < right;
-	                    case '>':
-	                        return left > right;
-	                    case '=':
-	                        return left == right;
-	                    case '<=':
-	                        return left <= right;
-	                    case '>=':
-	                        return left >= right;
-	                }
-	            } else {
-	                return false;
-	            }
-	        } else {
-	            return true;
-	        }
-	    }
+		            if (left != null && right != null) {
+		                switch (condition.comparison) {
+		                    case '<':
+		                        return left < right;
+		                    case '>':
+		                        return left > right;
+		                    case '=':
+		                        return left == right;
+		                    case '<=':
+		                        return left <= right;
+		                    case '>=':
+		                        return left >= right;
+		                }
+		            } else {
+		                return false;
+		            }
+		        } else {
+		            return true;
+		        }
+		    }
 
-	    let curveArr = curvesInDataset.filter(c => {
-	        // console.log('c',c,Array.from(curveSet).includes(c.name),Array.from(curveSet));
-	        return Array.from(curveSet).includes(c.name);
-	    });
-	    console.log(curveArr);
-	    async.eachOfSeries(
-	        curveArr,
-	        function (curve, i, done) {
-	            // console.log('curve of curve arr',curve);
-	            if (curve) {
-	            	(async()=>{
-	            		let data = await wiApi.getCurveDataPromise(curve.idCurve);
-	            		if (Array.isArray(data)) {
-	                        curvesData.push({
-	                            idCurve: curve.idCurve,
-	                            name: curve.name,
-	                            data: data.map(d => parseFloat(d.x))
-	                        })
-	                    }
-	                    done();
-	            	})();
-	            } 
-	        },
-	        function (err) {
-	            console.log('done!', curvesData);
-	            (async()=> {
-	            	let data = await wiApi.getCurveDataPromise(curvesInDataset[0].idCurve);
-	            	// console.log(data);
-	            	length = data.length;
-	            	for (let i = 0; i <= length; i++) {
-			                result.push(evaluate(discriminator, i));
-			            }
-		            callback(result);
-	            })();
-	        }
-	    );
+		    let curveArr = curvesInDataset.filter(c => {
+		        // console.log('c',c,Array.from(curveSet).includes(c.name),Array.from(curveSet));
+		        return Array.from(curveSet).includes(c.name);
+		    });
+		    console.log(curveArr);
+		    async.eachOfSeries(
+		        curveArr,
+		        function (curve, i, done) {
+		            // console.log('curve of curve arr',curve);
+		            if (curve) {
+		            	(async()=>{
+		            		let data = await wiApi.getCurveDataPromise(curve.idCurve);
+		            		if (Array.isArray(data)) {
+		                        curvesData.push({
+		                            idCurve: curve.idCurve,
+		                            name: curve.name,
+		                            data: data.map(d => parseFloat(d.x))
+		                        })
+		                    }
+		                    done();
+		            	})();
+		            } 
+		        },
+		        function (err) {
+		            console.log('done!', curvesData);
+		            (async()=> {
+		            	let data = await wiApi.getCurveDataPromise(curvesInDataset[0].idCurve);
+		            	// console.log(data);
+		            	length = data.length;
+		            	for (let i = 0; i <= length; i++) {
+				                result.push(evaluate(discriminator, i));
+				            }
+			            resolve(result);
+		            })();
+		        }
+		    );
+		})
 	}
 	this.runAll = async function() {
 		train(function() {

@@ -64,8 +64,8 @@
                                     <span class="dropdown-list-caret"></span>
                                     <div style="overflow: auto; max-height: 185px;" >
                                         <div ng-repeat="i in self.stepDatas['training'].selectionList[idxInput] track by i.data.label" 
-                                            ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]">
-                                            {{i.data.label}} {{idxInput}}
+                                            ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]; self.setItemOnChange(dataset, idxInput, i)">
+                                            {{i.data.label}}
                                         </div>
                                     </div>
                                 </div>
@@ -135,7 +135,8 @@
                                     <div style="overflow: auto; max-height: 185px;">
                                         <div
                                             ng-repeat="i in self.stepDatas['verify'].selectionList[idxInput] track by i.data.label"
-                                            ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]">
+                                            ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput];
+                                                    self.setItemOnChange(dataset, idxInput, i)">
                                             {{i.data.label}}
                                         </div>
                                     </div>
@@ -206,7 +207,8 @@
                                     <div style="overflow: auto; max-height: 185px;">
                                         <div
                                             ng-repeat="i in self.stepDatas['prediction'].selectionList[idxInput] track by i.data.label"
-                                            ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]">
+                                            ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput];
+                                            self.setItemOnChange(dataset, idxInput, i)">
                                             {{i.data.label}}
                                         </div>
                                     </div>

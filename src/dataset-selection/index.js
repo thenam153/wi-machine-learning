@@ -13,7 +13,7 @@ app.component(componentName,{
     	idProject: '<',
         inputCurveSpecs: '<',
         targetCurveSpec: '<',
-        steps: '<',
+        machineLearnSteps: '<',
         typeSelected: '<',
 
         addInputCurve: '<',
@@ -22,14 +22,13 @@ app.component(componentName,{
         removeInputCurve: '<',
         changeType: '<',
         drop: '<',
-        out: '<',
-        over: '<',
-        deactivate: '<',
+        // out: '<',
+        // over: '<',
+        // deactivate: '<',
         selectionList: '<',
         mergeCurves: '<',
         makeSelectionList: '<',
         removeDataset: '<'
-        // isClick: '=',
     }
 });
 

@@ -11,21 +11,24 @@
 	</div>
 	<div class="main">
 		<model-selection ng-show="self.titleTabs[self.current_tab] === 'Model Selection'"
-			set-data-models="self.setDataModels" set-item-selected="self.setItemSelected"></model-selection>
+			set-data-models="self.setDataModels" set-item-selected="self.setItemSelected" nn-config="self.nnConfig"set-layers="self.setLayers"
+			></model-selection>
 
 
 		<dataset-selection ng-show="self.titleTabs[self.current_tab] === 'Dataset Selection'"
 			id-project="self.idProject" input-curve-specs="self.inputCurveSpecs"
-			target-curve-spec="self.targetCurveSpec" steps="self.dataSteps" type-selected="self.typeSelected"
-			add-input-curve="self.addInputCurve" get-on-item-changed="self.getOnItemChanged"
+			target-curve-spec="self.targetCurveSpec" machine-learn-steps="self.machineLearnSteps" type-selected="self.typeSelected" add-input-curve="self.addInputCurve" get-on-item-changed="self.getOnItemChanged"
 			on-target-item-changed="self.onTargetItemChanged" remove-input-Curve="self.removeInputCurve"
-			change-type="self.changeType" drop="self.drop" out="self.out" over="self.over" deactivate="self.deactivate"
-			selection-list="self.selectionList" merge-curves="self.mergeCurves"
-			make-selection-list="self.makeSelectionList" remove-dataset="self.removeDataset"></dataset-selection>
+			change-type="self.changeType" drop="self.drop" selection-list="self.selectionList" 
+			merge-curves="self.mergeCurves" make-selection-list="self.makeSelectionList" 
+			remove-dataset="self.removeDataset"></dataset-selection>
 
 
 		<training-prediction step-datas="self.dataStepsForTrainPredict" input-curve-specs="self.inputCurveSpecs"
 			target-curve-spec="self.targetCurveSpec" model="self.selectedModelProps"
 			ng-show="self.titleTabs[self.current_tab] === 'Training and Prediction'"></training-prediction>
+		<wi-neural-network container="self.nnConfig.container" input-curves="self.nnConfig.inputs"
+						    output-curves="self.nnConfig.outputs" 
+						    hidden-layer="self.nnConfig.layers"></wi-neural-network>
 	</div>
 </div>

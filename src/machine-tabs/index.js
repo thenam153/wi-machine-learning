@@ -2,7 +2,7 @@ const moduleName = "machineTabs";
 const componentName = "machineTabs";
 module.exports.name = moduleName;
 
-var app = angular.module(moduleName, ['modelSelection','datasetSelection','trainingPrediction','wiApi']);
+var app = angular.module(moduleName, ['modelSelection','datasetSelection','trainingPrediction','wiApi','wiNeuralNetwork']);
 
 app.component(componentName,{
 	template: require('./newtemplate.html'),
@@ -32,7 +32,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
 	}
 	this.typeSelected = 'curve';
 	this.$onInit = function() {
-		self.dataSteps = {
+		self.machineLearnSteps = {
 				training: {
 					datasets: [],
 					selectionList: [],
@@ -58,28 +58,44 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
 					index: 2
 				}
 		};
-		self.dataStepsForTrainPredict = angular.copy(self.dataSteps);
+		self.dataStepsForTrainPredict = angular.copy(self.machineLearnSteps);
 		if(self.token && self.token.length) window.localStorage.setItem('token',self.token);
-		// $scope.$watch(function() {
-		// 	return JSON.stringify(self.inputCurveSpecs) + JSON.stringify(self.targetCurveSpec);
-		// },function() {
-		// 	// console.log('watch');
-		// 	for(let i in self.dataSteps) {
-	 //        	self.handleDrop(i,self.indexInputCurve, self.formatCurve);
-	 //        }
-	 //        self.indexInputCurve = -1;
-	 //        self.formatCurve = null;
-		// })
 	}
-	
 	this.setDataModels = function(datas) {
-		console.log(datas);
 		self.modelDatas = datas;
 	}
 	this.setItemSelected = function(selectedModelProps) {
 		self.selectedModelProps = selectedModelProps;
-        // console.log(self.selectedModelProps);
 	}
+    this.nnConfig = { inputs: [], outputs: [], layers: [5,5], container: {} };
+    function updateNNConfig() {
+        self.nnConfig.inputs = self.inputCurveSpecs.map(i => {
+                                        return {
+                                                label: i.currentSelect,  
+                                                name: i.currentSelect, 
+                                                value : i.currentSelect,
+                                                class: 'Input Curve',
+                                                type: "1"
+                                            }
+                                    });
+        self.nnConfig.outputs = [{
+                                    label: self.targetCurveSpec.currentSelect,
+                                    name: self.targetCurveSpec.currentSelect, 
+                                    value: self.targetCurveSpec.currentSelect,
+                                    class: 'Target output',
+                                    type: "1"
+                                }]
+        console.log(self.nnConfig)
+        $timeout(function () {
+            if(self.nnConfig.container.wiNNCtrl) {
+                self.nnConfig.container.wiNNCtrl.update(self.nnConfig);                
+            }
+        });
+        // console.log(self.inputCurveSpecs);
+        // console.log(self.targetCurveSpec);
+    }   
+    this.updateNNConfig = _.debounce(updateNNConfig);
+    setInterval(self.updateNNConfig(), 1000);
 	this.inputCurveSpecs = [
 		{
 			label: 'Input Curve',
@@ -137,7 +153,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
 		}else {
 			dataStep.selectionList = new Array(self.inputCurveSpecs.length);
 		}
-		console.log(curves);
+		// console.log(curves);
 		if (step === 'training' && self.typeSelected === 'curve') {
 			for(let i = 0; i < dataStep.selectionList.length; i++) {
 				if(!dataStep.selectionList[i]) dataStep.selectionList[i] = [];
@@ -182,7 +198,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
 								},
 								properties: null
 							}];
-							console.log(curve);
+							// console.log(curve);
 							if((curve.idFamily == (inputSpecs[i].value || {}).idFamily )&& curve.idFamily ) dataStep.selectionList[i].push(dataInformation);
 						}
 	    			break;
@@ -349,11 +365,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
             value: null,
             currentSelect: '[no choose]'
         });
-        // for(let i in self.dataSteps) {
+        // for(let i in self.machineLearnSteps) {
         // 	self.handleDrop(i,self.inputCurveSpecs.length - 1, ADD);
         // }
         let handle = _.debounce(() => {
-            for(let i in self.dataSteps) {
+            for(let i in self.machineLearnSteps) {
              self.handleDrop(i,self.inputCurveSpecs.length - 1, ADD);
             }  
         }, 500);
@@ -371,7 +387,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
                     self.inputCurveSpecs[$index].currentSelect = '[no choose]';
                 }
                 let handle = _.debounce(() => {
-                    for(let i in self.dataSteps) {
+                    for(let i in self.machineLearnSteps) {
                      self.handleDrop(i);
                     }  
                 }, 500);
@@ -387,7 +403,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
             self.targetCurveSpec.currentSelect = '[no choose]';
         }
         let handle = _.debounce(() => {
-            for(let i in self.dataSteps) {
+            for(let i in self.machineLearnSteps) {
              self.handleDrop(i);
             }  
         }, 500);
@@ -400,12 +416,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
             self.inputCurveSpecs.splice($index,1);
         }
         let handle = _.debounce(() => {
-            for(let i in self.dataSteps) {
+            for(let i in self.machineLearnSteps) {
              self.handleDrop(i,$index, REMOVE);
             }  
         }, 500);
         handle()
-        // for(let i in self.dataSteps) {
+        // for(let i in self.machineLearnSteps) {
         // 	self.handleDrop(i,$index, REMOVE);
         // }
     }
@@ -424,7 +440,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
                 currentSelect: '[no choose]'
             }
         self.makeSelectionList();
-        for(let i in self.dataSteps) {
+        for(let i in self.machineLearnSteps) {
         	self.handleDrop(i);
         }
     }
@@ -434,9 +450,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
                 $timeout(()=>{ 
                     for(let node of datasets) {
                     	let valueDataset = angular.copy(node);
-                        if (self.equals(self.dataSteps[step].datasets,valueDataset) < 0 && valueDataset.idDataset && valueDataset.idWell) {
-                            // self.dataSteps[step].datasets.push(valueDataset);
-                            self.dataSteps[step].datasets = _.concat(self.dataSteps[step].datasets, valueDataset);
+                        if (self.equals(self.machineLearnSteps[step].datasets,valueDataset) < 0 && valueDataset.idDataset && valueDataset.idWell) {
+                            // self.machineLearnSteps[step].datasets.push(valueDataset);
+                            self.machineLearnSteps[step].datasets = _.concat(self.machineLearnSteps[step].datasets, valueDataset);
                             if(step == 'training') {
                                 self.mergeCurves.push(valueDataset.curves);
                             }
@@ -451,75 +467,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
         }
         return functionCacheSteps[step].drop;
     }
-    // this.drop = function(step) {
-    //     if(!functionCacheSteps[step].drop) {
-    //         functionCacheSteps[step].drop = function(event,helper,datasets) {
-    //             let dataPre = angular.copy(self.dataSteps[step].datasets);
-    //             self.dataSteps[step].datasets.length = 0;
-    //             $timeout(()=>{ 
-    //                 for(let node of datasets) {
-    //                     let valueDataset = angular.copy(node);
-    //                     if (self.equals(dataPre,valueDataset) < 0 && valueDataset.idDataset && valueDataset.idWell) {
-    //                         dataPre.push(valueDataset);
-    //                         if(step == 'training') {
-    //                             self.mergeCurves.push(valueDataset.curves);
-    //                             self.makeSelectionList();   
-    //                         }
-    //                     }
-    //                 }
-    //                 self.dataSteps[step].datasets = dataPre;
-    //                 self.handleDrop(step);
-    //             })
-    //         }
-    //     }
-    //     return functionCacheSteps[step].drop;
-    // }
-
-    this.out = function(step) {
-        if(!functionCacheSteps[step].out) {
-            functionCacheSteps[step].out = function(event,helper,datasets) {
-                // functionCacheSteps[step].status = !functionCacheSteps[step].status;
-                functionCacheSteps[step].status = false;
-            }
-        }
-        return functionCacheSteps[step].out;
-    }
-    this.over = function(step) {
-        if(!functionCacheSteps[step].over) {
-            functionCacheSteps[step].over = function(event,helper,datasets) {
-                // functionCacheSteps[step].status = !functionCacheSteps[step].status;
-                functionCacheSteps[step].status = true;
-            }
-        }
-        return functionCacheSteps[step].over;
-    }
-    this.deactivate = function(step) {
-        if(!functionCacheSteps[step].deactivate) {
-            functionCacheSteps[step].deactivate = function(event,helper,datasets) {
-                if(!functionCacheSteps[step].status) {
-                    $timeout(()=>{
-                        for(let datasetRemove of datasets) {
-                        	 self.dataSteps[step].datasets = _.remove(self.dataSteps[step].datasets,(dataset,index)=>{
-                                if(step == 'training') {
-                                    if(dataset.$$hashKey === datasetRemove.$$hashKey) {
-                                        self.mergeCurves.splice(index,1);
-                                        self.makeSelectionList();
-                                    }
-                                }
-                                return dataset.$$hashKey !== datasetRemove.$$hashKey;
-                            });
-                        }
-                        self.handleDrop(step);
-                        functionCacheSteps[step].status = !functionCacheSteps[step].status;
-                    })   
-                }
-            }
-        }
-        return functionCacheSteps[step].deactivate;
-    }
     this.removeDataset = function(step, $index) {
         $timeout(() => {
-            self.dataSteps[step].datasets = _.remove(self.dataSteps[step].datasets, (dataset,index)=>{
+            self.machineLearnSteps[step].datasets = _.remove(self.machineLearnSteps[step].datasets, (dataset,index)=>{
                 if(step == 'training') {
                     if(index === $index) {
                         self.mergeCurves.splice(index,1);
@@ -538,7 +488,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
         return -1;
     }
     this.handleDrop = function(step,index = -1,type = null) {
-    	let datasetSource = Object.assign([],self.dataSteps[step].datasets);
+    	let datasetSource = Object.assign([],self.machineLearnSteps[step].datasets);
     	let datasetDestination = Object.assign([],self.dataStepsForTrainPredict[step].datasets);
     	let ds = _.intersectionBy(datasetDestination, datasetSource, 'idDataset');
     	let ds1 = _.pullAllBy(datasetSource, ds, 'idDataset');
@@ -549,5 +499,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
     	}
     	self.dataStepsForTrainPredict[step].datasets = [...ds,...ds1];
     	handleSelectionList(self.dataStepsForTrainPredict[step],step ,index,type);
+        self.updateNNConfig();
     }
 }
