@@ -67,7 +67,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
 	this.setItemSelected = function(selectedModelProps) {
 		self.selectedModelProps = selectedModelProps;
 	}
-    this.nnConfig = { inputs: [], outputs: [], layers: [5,5], container: {} };
+    this.nnConfig = { inputs: [], outputs: [], layers: [], container: {}, nLayer: 2, layerConfig: [{label: 'label 0', value: 10}, {label: 'label 1', value: 10}] };
     function updateNNConfig() {
         self.nnConfig.inputs = self.inputCurveSpecs.map(i => {
                                         return {
@@ -86,16 +86,37 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
                                     type: "1"
                                 }]
         console.log(self.nnConfig)
+        self.nnConfig.layers = self.nnConfig.layerConfig.map(i => i.value);
         $timeout(function () {
             if(self.nnConfig.container.wiNNCtrl) {
                 self.nnConfig.container.wiNNCtrl.update(self.nnConfig);                
             }
         });
-        // console.log(self.inputCurveSpecs);
+        console.log(self.nnConfig);
         // console.log(self.targetCurveSpec);
     }   
     this.updateNNConfig = _.debounce(updateNNConfig);
     setInterval(self.updateNNConfig(), 1000);
+    this.nnConfigNLayerChanged = function(nLayer) {
+        self.nnConfig.nLayer = nLayer;
+        if(self.nnConfig.nLayer < self.nnConfig.layerConfig.length) {
+            self.nnConfig.layerConfig.splice(self.nnConfig.nLayer, self.nnConfig.layerConfig.length - self.nnConfig.nLayer);
+        }else {
+            let oldLength = self.nnConfig.layerConfig.length;
+            for (let i = 0; i < self.nnConfig.nLayer - oldLength; i++) {
+                self.nnConfig.layerConfig.push({
+                    label: "Layer " + (oldLength + i),
+                    value: 10
+                });
+            }
+        }
+        self.updateNNConfig();
+    }
+    this.layerChange = function(layer, value) {
+        layer.value = value;
+        console.log(self.nnConfig);
+        self.updateNNConfig();
+    }
 	this.inputCurveSpecs = [
 		{
 			label: 'Input Curve',

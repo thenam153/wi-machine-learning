@@ -14,10 +14,11 @@ app.component(componentName,{
     bindings: {
     	// datas: '=',
     	// selectedItemProps: '=',
-    	setDataModels: '<',
-    	setItemSelected: '<',
+    	layerChange: '<',
     	nnConfig: '<',
-    	setLayers: '<'
+    	nnConfigNLayerChanged: '<',
+    	setDataModels: '<',
+    	setItemSelected: '<'
     }
 });
 
@@ -33,7 +34,7 @@ function ModelSelectionController($scope, $compile){
 		}
 		// console.log(dataJson);
 		self.setDataModels(self.datas)
-		console.log(self.datas);
+		console.log('config', self.nnConfig);
 	}
 	//--------------
 	$scope.tab = 1;
@@ -117,50 +118,6 @@ function ModelSelectionController($scope, $compile){
 				return '';
 			default: return '';
 		}
-	}
-	self.panel = {};
-	this.click = function() {
-		$.jsPanel({
-			id: 'id1',
-			headerTitle: 'test 1',
-			// headerLogo: 'adadad',
-			position: 'center',
-			contentSize: '750 500',
-			panelSize: '750 500',
-			container: document.getElementById('workspace'),
-			content: `<div id="id1"></div>`,
-			draggable: {
-                containment: "parent"
-            },
-            resizable: {
-                containment: "parent"
-            },
-            callback: function(panel) {
-            	let scope = $scope.$new();
-            	const scopeOptions = {
-                    cropViewByZones: true
-                }
-                inputs = self.nnConfig.inputs;
-		        outputs = [self.nnConfig.outputs];
-		        layers = self.nnConfig.layers;
-		        scope.container = self.nnConfig.container;
-		        Object.assign(scope, {self, inputs, outputs, layers})
-		        const html = `<div style="display:flex;flex:0.7;height:100%;flex-direction:column;padding:10px;overflow:auto;"><wi-neural-network 
-						    style='flex:1; display: flex;' 
-						    container='container' 
-						    input-curves="inputs"
-						    output-curves="outputs" 
-						    hidden-layer="layers">
-						</wi-neural-network></div>`
-				// $(`#id1`).html($compile(html)(scope))
-
-				$(`#id1`).html($compile(html)(scope))
-            },	
-            onclosed: (panel) => {
-				delete scope;
-				scope.$destroy();
-			}
-		})
 	}
 	function getContentSize(ratio = 3 / 4) {
         let body = $(`#id1`);
