@@ -22,7 +22,7 @@
                 <div class="toolbar-button active" ng-click="self.runTask(0);">Run Now</div>
                 <div class="toolbar-button active" ng-click="self.runAll()">Run All</div>
             </div>
-            <div style="overflow: hidden; display: flex; flex-direction: column;">
+            <div style="overflow: hidden; display: flex; flex-direction: column; height: 100%;">
                 <div class="table-main">
                     <div class='table-row'
                         style="color: #4e555f; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #fff; border: none; box-shadow: 0 5px 6px #00000012;">
@@ -53,18 +53,19 @@
                         </div>
                         <div class="table-block" title='{{dataset.wellName}}'>{{dataset.wellName}}</div>
                         <div class="table-block" title='{{dataset.name}}'>{{dataset.name}}</div>
-                        <div class="table-block" ng-repeat="input in dataset.inputCurveSpecs track by $index"
+
+                        <div class="table-block" ng-repeat="(idxInput,input) in dataset.inputCurveSpecs track by $index"
                             style="overflow: visible;">
                             <div style="position: relative;">
-                                <div>{{dataset.inputCurveSpecs[$index].currentSelect}}
-                                    <div ng-click="dataset.showList[$index]=!dataset.showList[$index]" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
+                                <div style="width: 100px; display: flex; align-items: center; justify-content: space-between;">{{dataset.inputCurveSpecs[idxInput].currentSelect}}
+                                    <div ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
                                 </div>
-                                <div ng-show="dataset.showList[$index]" class="dropdown-list">
+                                <div ng-show="dataset.showList[idxInput]" class="dropdown-list">
                                     <span class="dropdown-list-caret"></span>
-                                    <div style="overflow: auto; max-height: 185px;">
-                                        <div
-                                            ng-repeat="i in self.stepDatas['training'].selectionList[$index]">
-                                            {{i.data.label}}
+                                    <div style="overflow: auto; max-height: 185px;" >
+                                        <div ng-repeat="i in self.stepDatas['training'].selectionList[idxInput] track by i.data.label" 
+                                            ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]">
+                                            {{i.data.label}} {{idxInput}}
                                         </div>
                                     </div>
                                 </div>
@@ -91,7 +92,7 @@
                 <div class="toolbar-button active" ng-click="self.runTask(1);">Run Now</div>
                 <div class="toolbar-button active" ng-click="self.runAll()">Run All</div>
             </div>
-            <div style="overflow: hidden; display: flex; flex-direction: column;">
+            <div style="overflow: hidden; display: flex; flex-direction: column;  height: 100%;">
 
                 <div class="table-main">
                     <div class='table-row'
@@ -123,18 +124,18 @@
                         </div>
                         <div class="table-block" title='{{dataset.wellName}}'>{{dataset.wellName}}</div>
                         <div class="table-block" title='{{dataset.name}}'>{{dataset.name}}</div>
-                        <div class="table-block" ng-repeat="input in dataset.inputCurveSpecs track by $index"
+                        <div class="table-block" ng-repeat="(idxInput,input) in dataset.inputCurveSpecs track by $index"
                             style="overflow: visible;">
                             <div style="position: relative;">
-                                <div >{{dataset.inputCurveSpecs[$index].currentSelect}}
-                                    <div ng-click="dataset.showList[$index]=!dataset.showList[$index]" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
+                                <div style="width: 100px; display: flex; align-items: center; justify-content: space-between;">{{dataset.inputCurveSpecs[idxInput].currentSelect}}
+                                    <div ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
                                 </div>
-                                <div ng-show="dataset.showList[$index]" class="dropdown-list-caret"></div>
-                                <div ng-show="dataset.showList[$index]" class="dropdown-list">
+                                <div ng-show="dataset.showList[idxInput]" class="dropdown-list">
                                     <span class="dropdown-list-caret"></span>
                                     <div style="overflow: auto; max-height: 185px;">
                                         <div
-                                            ng-repeat="i in self.stepDatas['verify'].selectionList[$index] ">
+                                            ng-repeat="i in self.stepDatas['verify'].selectionList[idxInput] track by i.data.label"
+                                            ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]">
                                             {{i.data.label}}
                                         </div>
                                     </div>
@@ -162,7 +163,7 @@
                 <div class="toolbar-button active" ng-click="self.runTask(2);">Run Now</div>
                 <div class="toolbar-button active" ng-click="self.runAll()">Run All</div>
             </div>
-            <div style="overflow: hidden; display: flex; flex-direction: column;">
+            <div style="overflow: hidden; display: flex; flex-direction: column;  height: 100%;">
 
                 <div class="table-main">
                     <div class='table-row'
@@ -194,18 +195,18 @@
                         </div>
                         <div class="table-block" title='{{dataset.wellName}}'>{{dataset.wellName}}</div>
                         <div class="table-block" title='{{dataset.name}}'>{{dataset.name}}</div>
-                        <div class="table-block" ng-repeat="input in dataset.inputCurveSpecs track by $index"
+                        <div class="table-block" ng-repeat="(idxInput,input) in dataset.inputCurveSpecs track by $index"
                             style="overflow: visible;">
                             <div style="position: relative;">
-                                <div >{{dataset.inputCurveSpecs[$index].currentSelect}}
-                                    <div ng-click="dataset.showList[$index]=!dataset.showList[$index]" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
+                                <div style="width: 100px; display: flex; align-items: center; justify-content: space-between;">{{dataset.inputCurveSpecs[idxInput].currentSelect}}
+                                    <div ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
                                 </div>
-                                <div ng-show="dataset.showList[$index]" class="dropdown-list-caret"></div>
-                                <div ng-show="dataset.showList[$index]" class="dropdown-list">
+                                <div ng-show="dataset.showList[idxInput]" class="dropdown-list">
                                     <span class="dropdown-list-caret"></span>
                                     <div style="overflow: auto; max-height: 185px;">
                                         <div
-                                            ng-repeat="i in self.stepDatas['prediction'].selectionList[$index] ">
+                                            ng-repeat="i in self.stepDatas['prediction'].selectionList[idxInput] track by i.data.label"
+                                            ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]">
                                             {{i.data.label}}
                                         </div>
                                     </div>
