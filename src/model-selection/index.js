@@ -49,9 +49,10 @@ function ModelSelectionController($scope, $compile){
 	};
 	//--------------
 	this.clickMe = function () {
-		console.log("okokok")
 		let element = document.getElementById("tab-layer");
-  		element.classList.toggle("hide");
+		element.classList.toggle("hide");
+		let changePosition = document.getElementById("model-selection");
+		changePosition.classList.toggle("position-static");
 	}
 
 	this.handleData = function(dataJson,key) {
