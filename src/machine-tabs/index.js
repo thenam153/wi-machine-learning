@@ -19,7 +19,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
 	const REMOVE = 0;
 	const ADD = 1;
 	let self = 	this;
-	this.modelDatas = [];
+	this.dataModels = [];
 	this.selectedModelProps = {};
 	this.current_tab = 0 ;
 	this.titleTabs = ['Dataset Selection','Model Selection','Training and Prediction'];
@@ -61,8 +61,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
 		self.dataStepsForTrainPredict = angular.copy(self.machineLearnSteps);
 		if(self.token && self.token.length) window.localStorage.setItem('token',self.token);
 	}
-	this.setDataModels = function(datas) {
-		self.modelDatas = datas;
+	this.setDataModels = function(data) {
+		self.dataModels = data;
 	}
 	this.setItemSelected = function(selectedModelProps) {
 		self.selectedModelProps = selectedModelProps;

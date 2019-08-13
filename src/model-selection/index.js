@@ -2,7 +2,7 @@ const moduleName = "modelSelection";
 const componentName = "modelSelection";
 module.exports.name = moduleName;
 
-const dataJson = require('./model/model.js');
+const dataJson = require('./model/wi-uservice.json');
 
 var app = angular.module(moduleName, ['wiDropdownList','editable']);
 
@@ -26,15 +26,15 @@ function ModelSelectionController($scope, $compile){
 	let self = 	this;
 	self.hideDeleteButton = false;	
 	this.$onInit = function() {
-		self.datas = [];
+		// self.datas = [];
 		self.selectedItemProps = {};
-		// self.data = self.handleData(dataJson);
-		for(let i in dataJson) {
-			self.datas.push(self.handleData(dataJson[i],i));
-		}
-		// console.log(dataJson);
-		self.setDataModels(self.datas)
-		console.log('config', self.nnConfig);
+		self.dataJson = dataJson;
+		self.dataJson = self.dataJson.map(d => {
+			let data = Object.assign({}, {data: {label: d.label}, properties: d});
+			return data;
+		})
+		console.log(self.dataJson );
+		self.setDataModels(self.dataJson)
 	}
 	//--------------
 	$scope.tab = 2;
@@ -47,57 +47,35 @@ function ModelSelectionController($scope, $compile){
 	$scope.isSet = function(tabNum){
 		return $scope.tab === tabNum;
 	};
-	//--------------
 	this.clickMe = function () {
 		let element = document.getElementById("tab-layer");
 		element.classList.toggle("hide");
 		let changePosition = document.getElementById("model-selection");
 		changePosition.classList.toggle("position-static");
 	}
-
-	this.handleData = function(dataJson,key) {
-		var definitions = dataJson.definitions;
-		var keysPath = Object.keys(dataJson.paths);
-		console.log(keysPath[4]);
-		var item = {};
-		item.create = keysPath[4];
-		item.name = key;
-		item.data = {};
-		item.data.label = key;
-		// item.properties = {name: key};	
-		item.properties = {};	
-		item.properties['bucket_id'] = {};
-		item.properties['bucket_id'].name = 'bucket_id';
-		item.properties['bucket_id'].type = 'string';
-		item.properties['bucket_id'].default= 'bucket_id_01';
-		item.properties['bucket_id'].value = item.properties['bucket_id'].default;
-		for (let i in definitions[key].properties){
-			// item.properties[i] = definitions[key].properties[i].type;
-			item.properties[i] = {};
-			item.properties[i].name = i;
-			item.properties[i].type = definitions[key].properties[i].type;
-			item.properties[i].default= definitions[key].properties[i].example || 0;
-			item.properties[i].value = item.properties[i].default;
+	let funcCache = null;
+	this.onItemChanged = function() {
+		if(!funcCache) {
+			funcCache = function(selectedItemProps) {
+				self.selectedItemProps = selectedItemProps;
+				let props = Object.assign({}, {properties: this.selectedItem.properties}, {name: this.selectedItem.properties.label});
+				self.setItemSelected(props);
+			}
 		}
-		return item;
+		return funcCache;
 	}
-	this.onItemChanged = function(selectedItemProps){
-		self.selectedItemProps = selectedItemProps;
-		// console.log(this,this.selectedItem);
-		let props = Object.assign({}, {params: this.selectedItem.properties}, {name: this.selectedItem.name}, {create: this.selectedItem.create});
-		// console.log(props);
-		self.setItemSelected(props);
-	}
-	this.setValue = function(param,value) {
-		// console.log(self.selectedItemProps[this.itemLabel].type);
-		value = validate(self.selectedItemProps[this.itemLabel].type,value);
+	this.setValue = function(param, value) {
+		console.log(param, value);
+		let item = self.selectedItemProps.payload.params.find(i => {
+			return i.name == this.itemLabel
+		})
+		value = validate(item.type, value);
 		if(value === '') value = param;
 		this.itemValue = value;
-		self.selectedItemProps[this.itemLabel].value = value;
-		return
+		item.value = value;
+		// return
 	}
-	var validate = function(type,value) {
-		// console.log(value,Number.isInteger(value),typeof value);
+	function validate(type,value) {
 		switch(type){
 			case 'string' : return value; 
 
@@ -126,10 +104,4 @@ function ModelSelectionController($scope, $compile){
 			default: return '';
 		}
 	}
-	function getContentSize(ratio = 3 / 4) {
-        let body = $(`#id1`);
-        let width = body.width() * ratio;
-        let height = body.height() * ratio;
-        return `${width} ${height}`;
-    }
 }
