@@ -2,7 +2,7 @@
     <div class="input-selection">
         <div class="tab">
             <div class="tab-button" ng-class="{'active' : isSet(1)}" ng-click="setTab(1)">Tab1</div>
-            <div class="tab-button" ng-class="{'active' : isSet(2)}" ng-click="setTab(2)">Tab2</div>
+            <div id="tab-layer" class="tab-button" ng-class="{'active' : isSet(2)}" ng-click="setTab(2)">Tab2</div>
             <div class="tab-button" ng-class="{'active' : isSet(3)}" ng-click="setTab(3)">Tab3</div>
         </div>
         <div ng-show="isSet(1)" style="padding: 20px;">
@@ -25,9 +25,27 @@
                     </editable>
                 </div>
             </div>
+            <button ng-click="self.clickMe()">Click me :)</button>
         </div>
         <div ng-show="isSet(2)" style="padding: 20px;">
-            <div class="header">
+         
+            <div class="hidden-layers">
+                <div class="add ti ti-minus" ng-click="self.nnConfig.nLayer = self.nnConfig.nLayer - 1; self.nnConfigNLayerChanged(self.nnConfig.nLayer)"></div>
+                <input class="inputs" ng-model='self.nnConfig.nLayer'  class="form-control wi-form-control" ng-change="self.nnConfigNLayerChanged(self.nnConfig.nLayer)" min="1">
+                <div class="remove ti ti-plus" ng-click="self.nnConfig.nLayer = self.nnConfig.nLayer + 1; self.nnConfigNLayerChanged(self.nnConfig.nLayer)"></div>
+            </div>
+            <div ng-repeat="layer in self.nnConfig.layerConfig track by $index" class="input-number">
+                <div style="display: flex; align-items: center;">
+                    <div class="layer-16x16" style="margin-right: 10px; min-width: 16px;"></div>
+                    <div class="name">{{layer.label}}</div>
+                    <input style="font-weight: bold;" class="form-control wi-form-control" ng-model="layer.value" ng-change="self.layerChange(layer, layer.value)" min="1">
+                </div>
+                <div style="display: flex;">
+                    <div class="add ti ti-minus" ng-click="layer.value = layer.value - 1; self.layerChange(layer, layer.value)"></div>
+                    <div class="remove ti ti-plus" ng-click="layer.value = layer.value + 1; self.layerChange(layer, layer.value)"></div>
+                </div>
+            </div>
+            <!-- <div class="header">
                 Hidden Layers
                 <input ng-model='self.nnConfig.nLayer' type="number" ng-change="self.nnConfigNLayerChanged(self.nnConfig.nLayer)" min="1">
             </div>
@@ -36,7 +54,7 @@
                     <span>{{layer.label}}</span>
                     <input class="form-control wi-form-control" ng-model="layer.value" type="number" ng-change="self.layerChange(layer, layer.value)" min="1">
                 </div>
-            </div>
+            </div> -->
         </div>
         <div ng-show="isSet(3)" style="padding: 20px;">
             

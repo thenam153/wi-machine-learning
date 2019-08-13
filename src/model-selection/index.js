@@ -37,7 +37,7 @@ function ModelSelectionController($scope, $compile){
 		console.log('config', self.nnConfig);
 	}
 	//--------------
-	$scope.tab = 1;
+	$scope.tab = 2;
 	self.selectionTab = self.selectionTab || 'Train';
 
 	$scope.setTab = function(newTab){
@@ -48,6 +48,12 @@ function ModelSelectionController($scope, $compile){
 		return $scope.tab === tabNum;
 	};
 	//--------------
+	this.clickMe = function () {
+		console.log("okokok")
+		let element = document.getElementById("tab-layer");
+  		element.classList.toggle("hide");
+	}
+
 	this.handleData = function(dataJson,key) {
 		var definitions = dataJson.definitions;
 		var keysPath = Object.keys(dataJson.paths);
