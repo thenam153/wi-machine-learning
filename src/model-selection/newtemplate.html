@@ -5,7 +5,7 @@
             <div id="tab-layer" class="tab-button" ng-class="{'active' : isSet(2)}" ng-click="setTab(2)">Tab2</div>
             <div class="tab-button" ng-class="{'active' : isSet(3)}" ng-click="setTab(3)">Tab3</div>
         </div>
-        <div ng-show="isSet(1)" style="padding: 20px;">
+        <div ng-show="isSet(1)" style="padding: 20px; overflow: hidden;">
             <div class="header">
                 <span class="title">Model Selection</span>
                 <span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
@@ -17,7 +17,7 @@
                 </wi-dropdown-list>
             </div>
             
-            <div onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
+            <div onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden' style="height: 100%;">
                 <div class="editable-custom" ng-repeat="(key, props) in self.selectedItemProps.payload.params" ng-init="props.value = props.example">
                     <editable ng-if="props.type!='List'" item-value="props.value" item-label="props.name"
                         label-style="{'min-width':'130px'}" enabled="true" set-value="self.getFnSetValue('params')"
@@ -27,32 +27,44 @@
                         {{props.name}} - {{props.value}}
                     </div>
                 </div>
+<!-- <<<<<<< HEAD
                 Avandsada
                  <div ng-if="self.selectedItemProps.payload.train" class="editable-custom" ng-repeat="(key, props) in self.selectedItemProps.payload.train" ng-init="props.value = props.example">
                     <editable item-value="props.value" item-label="props.name"
                         label-style="{'min-width':'130px'}" enabled="true" set-value="self.getFnSetValue('train')"
                         params="props.name" ng-if="props.type != 'array'">
                     </editable>
+======= -->
+                <div class="header" style="margin-top: 20px;">
+                    <span class="title">Advance</span>
+                    <span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
                 </div>
+                <div ng-if="self.selectedItemProps.payload.train" class="editable-custom" ng-repeat="(key, props) in self.selectedItemProps.payload.train" ng-init="props.value = props.example">
+                   <editable item-value="props.value" item-label="props.name"
+                       label-style="{'min-width':'130px'}" enabled="true" set-value="self.setValue"
+                       params="props.name" ng-if="props.type != 'array'">
+                   </editable>
+               </div>
             </div>
             <button ng-click="self.clickMe()">Click me :)</button>
         </div>
-        <div ng-show="isSet(2)" style="padding: 20px;">
-         
+        <div ng-show="isSet(2)" style="padding: 20px; overflow: hidden;">
             <div class="hidden-layers">
                 <div class="add ti ti-minus" ng-click="self.nnConfig.nLayer = self.nnConfig.nLayer - 1; self.nnConfigNLayerChanged(self.nnConfig.nLayer)"></div>
                 <input class="inputs" ng-model='self.nnConfig.nLayer'  class="form-control wi-form-control" ng-change="self.nnConfigNLayerChanged(self.nnConfig.nLayer)" min="1">
                 <div class="remove ti ti-plus" ng-click="self.nnConfig.nLayer = self.nnConfig.nLayer + 1; self.nnConfigNLayerChanged(self.nnConfig.nLayer)"></div>
             </div>
-            <div ng-repeat="layer in self.nnConfig.layerConfig track by $index" class="input-number">
-                <div style="display: flex; align-items: center;">
-                    <div class="layer-16x16" style="margin-right: 10px; min-width: 16px;"></div>
-                    <div class="name">{{layer.label}}</div>
-                    <input style="font-weight: bold;" class="form-control wi-form-control" ng-model="layer.value" ng-change="self.layerChange(layer, layer.value)" min="1">
-                </div>
-                <div style="display: flex;">
-                    <div class="add ti ti-minus" ng-click="layer.value = layer.value - 1; self.layerChange($index, layer.value)"></div>
-                    <div class="remove ti ti-plus" ng-click="layer.value = layer.value + 1; self.layerChange($index, layer.value)"></div>
+            <div style="height: 100%;" onmouseover=this.style.overflow='auto' onmouseout=this.style.overflow='hidden'>
+                <div ng-repeat="layer in self.nnConfig.layerConfig track by $index" class="input-number">
+                    <div style="display: flex; align-items: center;">
+                        <div class="layer-16x16" style="margin-right: 10px; min-width: 16px;"></div>
+                        <div class="name">{{layer.label}}</div>
+                        <input style="font-weight: bold;" class="form-control wi-form-control" ng-model="layer.value" ng-change="self.layerChange(layer, layer.value)" min="1">
+                    </div>
+                    <div style="display: flex;">
+                        <div class="add ti ti-minus" ng-click="layer.value = layer.value - 1; self.layerChange($index, layer.value)"></div>
+                        <div class="remove ti ti-plus" ng-click="layer.value = layer.value + 1; self.layerChange($index, layer.value)"></div>
+                    </div>
                 </div>
             </div>
             <!-- <div class="header">
