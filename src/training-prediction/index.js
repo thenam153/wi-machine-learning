@@ -40,15 +40,8 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 	 };
 	 //--------------
     this.$onInit = function() {
-    	// self.baseMlUrl = '';
-    	// $scope.$watch(function() {
-    	// 	return JSON.stringify(self.model);
-    	// }, function() {
-    	// 	// if(self.model)
-    	// 	self.baseMlUrl = config[self.model.name] || '';
-    	// 	console.log('change', self.baseMlUrl);
-    	// })
     }
+
     this.model_id = null;
 	this.onDiscriminator = function(dataset) {
 		// console.log(dataset.curves);
@@ -57,32 +50,20 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 			console.log(res);
 		})
 	}
+
 	this.runTask = runTask;
 	let functionCache = {
 		training: {},
 		verify: {},
 		prediction: {}
 	}
-	// this.getOnItemChange = function(step,indexDataset,index) {
-	// 	if(!functionCache[step][indexDataset]) functionCache[step][indexDataset] = [];
-	// 	if(!functionCache[step][indexDataset][index]) {
-	// 		functionCache[step][indexDataset][index] = function(selectedItemProps) {
-	// 			self.stepDatas[step].datasets[indexDataset].inputCurveSpecs[index].value = selectedItemProps;
-	// 			if(selectedItemProps) {
-	// 				self.stepDatas[step].datasets[indexDataset].inputCurveSpecs[index].currentSelect = selectedItemProps.name;
-	// 			}
-	// 			else {
-	// 				self.stepDatas[step].datasets[indexDataset].inputCurveSpecs[index].currentSelect = '[no choose]';
-	// 			}
-	// 		}
-	// 	}
-	// 	return functionCache[step][indexDataset][index];
-	// }
+
 	this.setItemOnChange = function(dataset, index, item) {
 		console.log(dataset, index, item);
 		dataset.inputCurveSpecs[index].value = item.properties;
 		dataset.inputCurveSpecs[index].currentSelect = item.data.label;
 	}
+
 	function postPromise(url, data, method) {
         return new Promise(function(resolve, reject) {
             $http({
@@ -103,63 +84,31 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
             })
         });
     }
+
     function postCreateModel(payload) {
-    	return postPromise(config[self.model.name] + self.model.create , payload, 'POST');
+    	return postPromise(`${self.model.properties.url}/api/model/create/${self.model.properties.create}`, payload, 'POST');
     }
+
     function postCreateBucketId(payload) {
-    	return postPromise(config[self.model.name] + '/data', payload ,'POST');
+    	return postPromise(`${self.model.properties.url}/api/data`, payload ,'POST');
     }
+
     function putDataOfTrain(payload) {
-    	return postPromise(config[self.model.name] + '/data', payload, 'PUT');
+    	return postPromise(`${self.model.properties.url}/api/data`, payload, 'PUT');
     }
+
     function postTrainByBucketData(payload) {
-    	return postPromise(config[self.model.name] + '/model/train_by_bucket_data', payload,'POST');
+    	return postPromise(`${self.model.properties.url}/api/model/train_by_bucket_data`, payload,'POST');
     }
+
     function postPredict(payload) {
-    	return postPromise(config[self.model.name] + '/model/predict', payload, 'POST');
+    	return postPromise(`${self.model.properties.url}/api/model/predict`, payload, 'POST');
     }
+
     function getBucket() {
-    	return postPromise(config[self.model.name] + '/bucket/list', {}, 'GET');
+    	return postPromise(`${self.model.properties.url}/api/bucket/list`, {}, 'GET');
     }
-    function isRun(dataset) {
-    	// console.log('isRun',dataset);
-    	if(!dataset.active) return false;
-    	let isValid = true;
-		for(let i of dataset.inputCurveSpecs) {
-			if(i.currentSelect == '[no choose]') {
-				isValid = false;
-				break;
-			}
-		}
-		return isValid;
-    }
-    async function createModelAndBucketId() {
-    	console.log(self.model);
-    	let payload = {};
-		for(let i in self.model.params) {
-			payload[i] = self.model.params[i].value;
-			if(i === 'model_id') self.model_id = self.model.params[i].value;
-			if(i === 'max_features') payload[i] = self.inputCurveSpecs.length
-		}
-		console.log(payload);
-		let resModelId = await postCreateModel(payload);
-		let request = {
-			bucket_id: self.model_id,
-			dims: self.inputCurveSpecs.length + 1
-		}
-		let resBucketId = await postCreateBucketId(request);
-		console.log(resBucketId);
-		if(resBucketId.existed) {
-			request.override_flag = true;
-			resBucketId = await postCreateBucketId(request);
-		}
-		return new Promise((resolve) => {
-			resolve({
-				model_id: resModelId,
-				bucket_id: resBucketId
-			})
-		})
-    }
+
 	function runTask(step) {
 		switch(step) {
 			case 0: 
@@ -179,52 +128,9 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 				break;
 		}
 	}
-	function getDataCurveAndFilter(dataset, curves, callback) {
-		return new Promise((resolve, reject) => {
-			let arrNaN = [];
-			let inputCurveData = [];
-			// console.log(dataset);
-			async.eachSeries(dataset.inputCurveSpecs,function(input,_cb) {
-				(async()=> {
-					let curve = dataset.curves.find(i => {
-						return i.name === input.currentSelect;
-					});
-					let dataCurve = await wiApi.getCurveDataPromise(curve.idCurve);
-					for(let i in dataCurve) {
-						dataCurve[i] = parseFloat(dataCurve[i].x,4);
-						if(isNaN(dataCurve[i])) curves[i] = false;
-					}
-					inputCurveData.push(dataCurve);
-					_cb();
-				})();	
-			}, err => {
-				if (err || !inputCurveData || !inputCurveData.length) {
-					console.log(err);
-					reject(err || 'Something was wrong');
-				}
-				let cacheInputCurveData = [];
-				cacheInputCurveData.length = inputCurveData.length;
-				let length = inputCurveData[0].length;
-				for(let i in inputCurveData) {
-					if(length > inputCurveData[i].length) length = inputCurveData[i].length; 
-				}
-				for(let i = 0; i < inputCurveData.length; i++) {
-					if(inputCurveData[i].length > length) {
-						inputCurveData[i].splice(length,inputCurveData[i].length - length);
-					}
-					for(let j = 0; j < inputCurveData[i].length; j++) {
-						if(!cacheInputCurveData[i]) cacheInputCurveData[i] = []; 
-						if(curves[j]) {
-							cacheInputCurveData[i].push(inputCurveData[i][j]);
-						}
-					}
-				}
-				inputCurveData = cacheInputCurveData;
-				resolve(inputCurveData);	
-			});
-		})
-	}
+
 	async function train(cb) {
+		console.log(self.model);
 		if(!self.stepDatas[TRAIN_STEP_STATE].datasets.length) return cb();
 		let res = await createModelAndBucketId();
 		console.log(res);
@@ -233,7 +139,6 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 				evaluateExpr(dataset,dataset.discrmnt)
 				.then((curves) => {
 					getDataCurveAndFilter(dataset, curves).then(async (dataCurves) => {
-						// console.log(dataCurves);
 						let request = {
 							bucket_id: self.model_id,
 							data: dataCurves
@@ -261,6 +166,7 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 			cb();	
 		})
 	}
+
 	async function verify(cb) {
 		async.each(self.stepDatas[VERIFY_STEP_STATE].datasets, function(dataset,_cb){
 			if(isRun(dataset)) {
@@ -296,6 +202,7 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 			cb();	
 		});
 	}
+
 	async function prediction(cb) {
 		async.each(self.stepDatas[PREDICT_STEP_STATE].datasets, function(dataset,_cb){
 			if(isRun(dataset)) {
@@ -326,6 +233,7 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 			cb();	
 		})
 	}
+
 	function evaluateExpr(dataset, discriminator) {
 		return new Promise(resolve => {
 			let result = new Array();
@@ -437,6 +345,92 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 		    );
 		})
 	}
+
+	function isRun(dataset) {
+    	if(!dataset.active) return false;
+    	let isValid = true;
+		for(let i of dataset.inputCurveSpecs) {
+			if(i.currentSelect == '[no choose]') {
+				isValid = false;
+				break;
+			}
+		}
+		return isValid;
+    }
+
+    async function createModelAndBucketId() {
+    	console.log(self.model);
+    	let payload = {};
+    	let params = self.model.properties.payload.params;
+		params.forEach(i => {
+			payload[i.name] = i.value;
+		})
+		console.log(payload);
+
+		let resModelId = await postCreateModel(payload);
+		let request = {
+			bucket_id: self.model_id,
+			dims: self.inputCurveSpecs.length + 1
+		}
+		let resBucketId = await postCreateBucketId(request);
+		if(resBucketId.existed) {
+			request.override_flag = true;
+			resBucketId = await postCreateBucketId(request);
+		}
+		return new Promise((resolve) => {
+			resolve({
+				model_id: resModelId,
+				bucket_id: resBucketId
+			})
+		})
+    }
+
+	function getDataCurveAndFilter(dataset, curves, callback) {
+		return new Promise((resolve, reject) => {
+			let arrNaN = [];
+			let inputCurveData = [];
+			// console.log(dataset);
+			async.eachSeries(dataset.inputCurveSpecs,function(input,_cb) {
+				(async()=> {
+					let curve = dataset.curves.find(i => {
+						return i.name === input.currentSelect;
+					});
+					let dataCurve = await wiApi.getCurveDataPromise(curve.idCurve);
+					for(let i in dataCurve) {
+						dataCurve[i] = parseFloat(dataCurve[i].x,4);
+						if(isNaN(dataCurve[i])) curves[i] = false;
+					}
+					inputCurveData.push(dataCurve);
+					_cb();
+				})();	
+			}, err => {
+				if (err || !inputCurveData || !inputCurveData.length) {
+					console.log(err);
+					reject(err || 'Something was wrong');
+				}
+				let cacheInputCurveData = [];
+				cacheInputCurveData.length = inputCurveData.length;
+				let length = inputCurveData[0].length;
+				for(let i in inputCurveData) {
+					if(length > inputCurveData[i].length) length = inputCurveData[i].length; 
+				}
+				for(let i = 0; i < inputCurveData.length; i++) {
+					if(inputCurveData[i].length > length) {
+						inputCurveData[i].splice(length,inputCurveData[i].length - length);
+					}
+					for(let j = 0; j < inputCurveData[i].length; j++) {
+						if(!cacheInputCurveData[i]) cacheInputCurveData[i] = []; 
+						if(curves[j]) {
+							cacheInputCurveData[i].push(inputCurveData[i][j]);
+						}
+					}
+				}
+				inputCurveData = cacheInputCurveData;
+				resolve(inputCurveData);	
+			});
+		})
+	}
+
 	this.runAll = async function() {
 		train(function() {
 			verify(function() {
@@ -445,13 +439,8 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 				})
 			})
 		})
-		// async.eachOfSeries(stepDatas, (data,index,next) {
-
-		// }, err => {
-		// 	if(!err) return console.log(err);
-		// 	console.log('Run All finish');
-		// })
 	}
+
 	this.onToggleActiveOutput = function(dataset) {
 		dataset.active = !dataset.active;
 	}

@@ -14,6 +14,7 @@ app.component(componentName,{
     bindings: {
     	// datas: '=',
     	// selectedItemProps: '=',
+    	updateLayer: '<',
     	layerChange: '<',
     	nnConfig: '<',
     	nnConfigNLayerChanged: '<',
@@ -37,7 +38,7 @@ function ModelSelectionController($scope, $compile){
 		self.setDataModels(self.dataJson)
 	}
 	//--------------
-	$scope.tab = 2;
+	$scope.tab = 1;
 	self.selectionTab = self.selectionTab || 'Train';
 
 	$scope.setTab = function(newTab){
@@ -47,32 +48,32 @@ function ModelSelectionController($scope, $compile){
 	$scope.isSet = function(tabNum){
 		return $scope.tab === tabNum;
 	};
-	this.clickMe = function () {
-		let element = document.getElementById("tab-layer");
-		element.classList.toggle("hide");
-		let changePosition = document.getElementById("model-selection");
-		changePosition.classList.toggle("position-static");
-	}
-	let funcCache = null;
-	this.onItemChanged = function() {
-		if(!funcCache) {
-			funcCache = function(selectedItemProps) {
-				self.selectedItemProps = selectedItemProps;
-				let props = Object.assign({}, {properties: this.selectedItem.properties}, {name: this.selectedItem.properties.label});
-				self.setItemSelected(props);
-			}
+	this.onItemChanged = function(selectedItemProps){
+		self.selectedItemProps = selectedItemProps;
+		let props = Object.assign({}, {properties: this.selectedItem.properties}, {name: this.selectedItem.properties.label});
+		self.setItemSelected(props);
+		if(!props.properties.nnnw) {
+			let element = document.getElementById("tab-layer");
+			element.classList.add("hide");
+			let changePosition = document.getElementById("model-selection");
+			changePosition.classList.add("position-static");
+		}else {
+			self.updateLayer();
+			let element = document.getElementById("tab-layer");
+			element.classList.remove("hide");
+			let changePosition = document.getElementById("model-selection");
+			changePosition.classList.remove("position-static");
 		}
-		return funcCache;
 	}
 	this.setValue = function(param, value) {
 		console.log(param, value);
 		let item = self.selectedItemProps.payload.params.find(i => {
-			return i.name == this.itemLabel
+			return i.name == param
 		})
 		value = validate(item.type, value);
-		if(value === '') value = param;
-		this.itemValue = value;
-		item.value = value;
+		if(value === '') value = item.example;
+		// this.itemValue = value;
+		item.value = value;			
 		// return
 	}
 	function validate(type,value) {

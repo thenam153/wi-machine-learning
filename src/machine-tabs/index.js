@@ -19,7 +19,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
 	const REMOVE = 0;
 	const ADD = 1;
 	let self = 	this;
-	this.dataModels = [];
+	this.model;
 	this.selectedModelProps = {};
 	this.current_tab = 0 ;
 	this.titleTabs = ['Dataset Selection','Model Selection','Training and Prediction'];
@@ -62,10 +62,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
 		if(self.token && self.token.length) window.localStorage.setItem('token',self.token);
 	}
 	this.setDataModels = function(data) {
-		self.dataModels = data;
+		self.model = data;
 	}
 	this.setItemSelected = function(selectedModelProps) {
 		self.selectedModelProps = selectedModelProps;
+        // console.log(selectedModelProps);
 	}
     this.nnConfig = { inputs: [], outputs: [], layers: [], container: {}, nLayer: 2, layerConfig: [{label: 'label 0', value: 10}, {label: 'label 1', value: 10}] };
     function updateNNConfig() {
@@ -85,21 +86,25 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
                                     class: 'Target output',
                                     type: "1"
                                 }]
-        console.log(self.nnConfig)
         self.nnConfig.layers = self.nnConfig.layerConfig.map(i => i.value);
         $timeout(function () {
             if(self.nnConfig.container.wiNNCtrl) {
                 self.nnConfig.container.wiNNCtrl.update(self.nnConfig);                
             }
         });
-        console.log(self.nnConfig);
-        // console.log(self.targetCurveSpec);
+        console.log(self.nnConfig, self.selectedModelProps);
     }   
     this.updateNNConfig = _.debounce(updateNNConfig);
     setInterval(self.updateNNConfig(), 1000);
     this.nnConfigNLayerChanged = function(nLayer) {
         self.nnConfig.nLayer = nLayer;
+        let params = self.selectedModelProps.properties.payload.params;
+        let layer = (params || []).find(i => {
+            return i.name === 'hidden_layer_sizes';
+        })
+        console.log(layer);
         if(self.nnConfig.nLayer < self.nnConfig.layerConfig.length) {
+            layer.value.splice(self.nnConfig.nLayer, self.nnConfig.layerConfig.length - self.nnConfig.nLayer);
             self.nnConfig.layerConfig.splice(self.nnConfig.nLayer, self.nnConfig.layerConfig.length - self.nnConfig.nLayer);
         }else {
             let oldLength = self.nnConfig.layerConfig.length;
@@ -114,7 +119,21 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
     }
     this.layerChange = function(layer, value) {
         layer.value = value;
-        console.log(self.nnConfig);
+        self.updateNNConfig();
+    }
+    this.updateLayer = function() {
+        if(self.selectedModelProps.properties && self.selectedModelProps.properties.nnnw  ) {
+            let params = self.selectedModelProps.properties.payload.params;
+            let layer = (params || []).find(i => {
+                return i.name === 'hidden_layer_sizes';
+            })
+            if(layer) {
+                self.nnConfig.nLayer = layer.example.length;
+                self.nnConfig.layerConfig = layer.example.map((i, idx) => {
+                    return {label:'label ' + idx, value: i}
+                })
+            }
+        } 
         self.updateNNConfig();
     }
 	this.inputCurveSpecs = [
