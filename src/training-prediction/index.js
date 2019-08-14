@@ -57,7 +57,25 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 		verify: {},
 		prediction: {}
 	}
-
+	// this.getOnItemChange = function(step,indexDataset,index) {
+	// 	if(!functionCache[step][indexDataset]) functionCache[step][indexDataset] = [];
+	// 	if(!functionCache[step][indexDataset][index]) {
+	// 		functionCache[step][indexDataset][index] = function(selectedItemProps) {
+	// 			self.stepDatas[step].datasets[indexDataset].inputCurveSpecs[index].value = selectedItemProps;
+	// 			if(selectedItemProps) {
+	// 				self.stepDatas[step].datasets[indexDataset].inputCurveSpecs[index].currentSelect = selectedItemProps.name;
+	// 			}
+	// 			else {
+	// 				self.stepDatas[step].datasets[indexDataset].inputCurveSpecs[index].currentSelect = '[no choose]';
+	// 			}
+	// 		}
+	// 	}
+	// 	return functionCache[step][indexDataset][index];
+	// }
+	this.showWapper = function () {
+		let element = document.getElementById("wapper");
+		element.classList.toggle("show");
+	}
 	this.setItemOnChange = function(dataset, index, item) {
 		console.log(dataset, index, item);
 		dataset.inputCurveSpecs[index].value = item.properties;
