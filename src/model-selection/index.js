@@ -76,6 +76,38 @@ function ModelSelectionController($scope, $compile){
 		item.value = value;			
 		// return
 	}
+	let fnSetValue = {};
+	this.getFnSetValue = function(type) {
+		if(type === 'params') {
+			if(!fnSetValue.params) {
+				fnSetValue.params = function(param, value) {
+					console.log(param, value);
+					let item = self.selectedItemProps.payload.params.find(i => {
+						return i.name == param
+					})
+					value = validate(item.type, value);
+					if(value === '') value = item.example;
+					// this.itemValue = value;
+					item.value = value;		
+				}
+			}
+			return fnSetValue.params;
+		}else {
+			if(!fnSetValue.train) {
+				fnSetValue.train = function(param, value) {
+					console.log(param, value);
+					let item = self.selectedItemProps.payload.train.find(i => {
+						return i.name == param
+					})
+					value = validate(item.type, value);
+					if(value === '') value = item.example;
+					// this.itemValue = value;
+					item.value = value;		
+				}
+			}
+			return fnSetValue.train;
+		}
+	}
 	function validate(type,value) {
 		switch(type){
 			case 'string' : return value; 
