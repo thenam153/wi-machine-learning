@@ -102,7 +102,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
         let layer = (params || []).find(i => {
             return i.name === 'hidden_layer_sizes';
         })
-        console.log(layer);
         if(self.nnConfig.nLayer < self.nnConfig.layerConfig.length) {
             layer.value.splice(self.nnConfig.nLayer, self.nnConfig.layerConfig.length - self.nnConfig.nLayer);
             self.nnConfig.layerConfig.splice(self.nnConfig.nLayer, self.nnConfig.layerConfig.length - self.nnConfig.nLayer);
@@ -113,12 +112,19 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
                     label: "Layer " + (oldLength + i),
                     value: 10
                 });
+                layer.value.push(10);
             }
         }
         self.updateNNConfig();
     }
-    this.layerChange = function(layer, value) {
-        layer.value = value;
+    this.layerChange = function(index, value) {
+        // layer.value = value;
+        let params = self.selectedModelProps.properties.payload.params;
+        let layer = (params || []).find(i => {
+            return i.name === 'hidden_layer_sizes';
+        })
+        self.nnConfig.layerConfig[index].value = value;
+        layer.value[index] = value;
         self.updateNNConfig();
     }
     this.updateLayer = function() {

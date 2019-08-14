@@ -104,7 +104,7 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
     }
 
     function postCreateModel(payload) {
-    	return postPromise(`${self.model.properties.url}/api/model/create/${self.model.properties.create}`, payload, 'POST');
+    	return postPromise(`${self.model.properties.url}/api/model/create${self.model.properties.create}`, payload, 'POST');
     }
 
     function postCreateBucketId(payload) {

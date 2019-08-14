@@ -19,10 +19,13 @@
             
             <div onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
                 <div class="editable-custom" ng-repeat="(key, props) in self.selectedItemProps.payload.params" ng-init="props.value = props.example">
-                    <editable item-value="props.value" item-label="props.name"
-                        label-style="{'min-width':'130px'}" enabled="true" set-value="self.setValue"
+                    <editable ng-if="props.type!='List'" item-value="props.value" item-label="props.name"
+                        label-style="{'min-width':'130px'}" enabled="true" set-value="self.setValue1"
                         params="props.name" ng-if="props.type != 'array'">
                     </editable>
+                    <div ng-if="props.type=='List'">
+                        {{props.name}} - {{props.value}}
+                    </div>
                 </div>
                 Avandsada
                  <div ng-if="self.selectedItemProps.payload.train" class="editable-custom" ng-repeat="(key, props) in self.selectedItemProps.payload.train" ng-init="props.value = props.example">
@@ -48,8 +51,8 @@
                     <input style="font-weight: bold;" class="form-control wi-form-control" ng-model="layer.value" ng-change="self.layerChange(layer, layer.value)" min="1">
                 </div>
                 <div style="display: flex;">
-                    <div class="add ti ti-minus" ng-click="layer.value = layer.value - 1; self.layerChange(layer, layer.value)"></div>
-                    <div class="remove ti ti-plus" ng-click="layer.value = layer.value + 1; self.layerChange(layer, layer.value)"></div>
+                    <div class="add ti ti-minus" ng-click="layer.value = layer.value - 1; self.layerChange($index, layer.value)"></div>
+                    <div class="remove ti ti-plus" ng-click="layer.value = layer.value + 1; self.layerChange($index, layer.value)"></div>
                 </div>
             </div>
             <!-- <div class="header">
