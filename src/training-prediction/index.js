@@ -57,21 +57,6 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 		verify: {},
 		prediction: {}
 	}
-	// this.getOnItemChange = function(step,indexDataset,index) {
-	// 	if(!functionCache[step][indexDataset]) functionCache[step][indexDataset] = [];
-	// 	if(!functionCache[step][indexDataset][index]) {
-	// 		functionCache[step][indexDataset][index] = function(selectedItemProps) {
-	// 			self.stepDatas[step].datasets[indexDataset].inputCurveSpecs[index].value = selectedItemProps;
-	// 			if(selectedItemProps) {
-	// 				self.stepDatas[step].datasets[indexDataset].inputCurveSpecs[index].currentSelect = selectedItemProps.name;
-	// 			}
-	// 			else {
-	// 				self.stepDatas[step].datasets[indexDataset].inputCurveSpecs[index].currentSelect = '[no choose]';
-	// 			}
-	// 		}
-	// 	}
-	// 	return functionCache[step][indexDataset][index];
-	// }
 	this.showWapper = function () {
 		let element = document.getElementById("wapper");
 		element.classList.toggle("show");
@@ -104,7 +89,7 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
     }
 
     function postCreateModel(payload) {
-    	return postPromise(`${self.model.properties.url}/api/model/create${self.model.properties.create}`, payload, 'POST');
+    	return postPromise(`${self.model.properties.url}/api/model/create/${self.model.properties.create}`, payload, 'POST');
     }
 
     function postCreateBucketId(payload) {
@@ -157,11 +142,11 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 				evaluateExpr(dataset,dataset.discrmnt)
 				.then((curves) => {
 					getDataCurveAndFilter(dataset, curves).then(async (dataCurves) => {
-						let request = {
-							bucket_id: self.model_id,
+						let payload = {
+							bucket_id: self.bucket_id,
 							data: dataCurves
 						}
-						let res = await putDataOfTrain(request);
+						let res = await putDataOfTrain(payload);
 						_cb();
 					});
 				})
@@ -174,12 +159,12 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 			}
 		}, async function(err) {
 			if(err) console.error(err);
-			let req = {
-				model_id: self.model_id,
-				bucket_id: self.model_id
-			}
-			console.log(req);
-			let res = await postTrainByBucketData(req);
+			let request = createPayloadForTrain();
+			// let req = {
+			// 	model_id: self.model_id,
+			// 	bucket_id: self.bucket_id
+			// }
+			let res = await postTrainByBucketData(request);
 			console.log('train ',res);
 			cb();	
 		})
@@ -382,12 +367,14 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
     	let params = self.model.properties.payload.params;
 		params.forEach(i => {
 			payload[i.name] = i.value;
+			if(i.name === 'model_id') self.model_id = i.value;
 		})
 		console.log(payload);
 
 		let resModelId = await postCreateModel(payload);
+		self.bucket_id = self.model_id + Date.now()
 		let request = {
-			bucket_id: self.model_id,
+			bucket_id: self.bucket_id,
 			dims: self.inputCurveSpecs.length + 1
 		}
 		let resBucketId = await postCreateBucketId(request);
@@ -448,7 +435,24 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 			});
 		})
 	}
-
+	function createPayloadForTrain() {
+		if(!self.model.properties.payload.train) {
+			return {
+				model_id: self.model_id,
+				bucket_id: self.bucket_id
+			}
+		}else {
+	    	let payload = {
+	    		model_id: self.model_id,
+				bucket_id: self.bucket_id
+	    	};
+	    	let params = self.model.properties.payload.train;
+			params.forEach(i => {
+				payload[i.name] = i.value;
+			})
+			return payload
+		}
+	}
 	this.runAll = async function() {
 		train(function() {
 			verify(function() {

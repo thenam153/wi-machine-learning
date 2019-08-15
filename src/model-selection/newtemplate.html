@@ -21,7 +21,7 @@
                 style="height: 100%;">
                 <div class="editable-custom" ng-repeat="(key, props) in self.selectedItemProps.payload.params" ng-init="props.value = props.example">
                     <editable ng-if="props.type!='List'" item-value="props.value" item-label="props.name"
-                        label-style="{'min-width':'130px'}" enabled="true" set-value="self.setValue1"
+                        label-style="{'min-width':'130px'}" enabled="true" set-value="self.getFnSetValue('params')"
                         params="props.name" ng-if="props.type != 'array'">
                     </editable>
                     <!-- <div ng-if="props.type=='List'">
@@ -32,6 +32,14 @@
                         <span class="sub" style="margin-bottom: 10px;">{{props.value}}</span>
                     </div>
                 </div>
+<!-- <<<<<<< HEAD
+                Avandsada
+                 <div ng-if="self.selectedItemProps.payload.train" class="editable-custom" ng-repeat="(key, props) in self.selectedItemProps.payload.train" ng-init="props.value = props.example">
+                    <editable item-value="props.value" item-label="props.name"
+                        label-style="{'min-width':'130px'}" enabled="true" set-value="self.getFnSetValue('train')"
+                        params="props.name" ng-if="props.type != 'array'">
+                    </editable>
+======= -->
                 <div class="header" style="margin-top: 20px;">
                     <span class="title">Advance</span>
                     <span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
