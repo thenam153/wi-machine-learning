@@ -25,7 +25,23 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
 	this.titleTabs = ['Dataset Selection','Model Selection','Training and Prediction'];
 	this.steps = ['training','prediction','verify'];
 	$scope.changeTab = function(index) {
-		self.current_tab = index;
+        if ( index === 'back' ) {
+            if ( self.current_tab === 0){
+                return;
+            } else {
+                self.current_tab = self.current_tab - 1;
+                return;
+            }
+        } else if ( index === 'next' ) {
+            if ( self.current_tab === 2){
+                return;
+            } else {
+                self.current_tab = self.current_tab + 1;
+                return;
+            }
+        } else {
+            self.current_tab = index;
+        }
 	}
 	$scope.isActive = function(index) {
 		return self.current_tab === index;

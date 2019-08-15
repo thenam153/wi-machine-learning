@@ -1,15 +1,15 @@
 <div class="main-content slim-scroller" style="width: 315px;">
     <div class="input-selection">
         <div class="tab">
-            <div class="tab-button" ng-class="{'active' : isSet(1)}" ng-click="setTab(1)">Tab1</div>
-            <div id="tab-layer" class="tab-button" ng-class="{'active' : isSet(2)}" ng-click="setTab(2)">Tab2</div>
-            <div class="tab-button" ng-class="{'active' : isSet(3)}" ng-click="setTab(3)">Tab3</div>
+            <div class="tab-button" ng-class="{'active' : isSet(1)}" ng-click="setTab(1)">Model Selection</div>
+            <div id="tab-layer" class="tab-button" ng-class="{'active' : isSet(2)}" ng-click="setTab(2)">Neural Network</div>
+            <!-- <div class="tab-button" ng-class="{'active' : isSet(3)}" ng-click="setTab(3)">Tab3</div> -->
         </div>
-        <div ng-show="isSet(1)" style="padding: 20px; overflow: hidden;">
-            <div class="header">
+        <div ng-show="isSet(1)" style="padding: 20px; overflow: hidden; height: 100%;">
+            <!-- <div class="header">
                 <span class="title">Model Selection</span>
                 <span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
-            </div>
+            </div> -->
             <div class="header">
                 <span class="title">Model Selection</span>
                 <wi-dropdown-list place-holder="Model" items="self.dataJson" hide-delete-button='self.hideDeleteButton'
@@ -17,14 +17,19 @@
                 </wi-dropdown-list>
             </div>
             
-            <div onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden' style="height: 100%;">
+            <div onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'
+                style="height: 100%;">
                 <div class="editable-custom" ng-repeat="(key, props) in self.selectedItemProps.payload.params" ng-init="props.value = props.example">
                     <editable ng-if="props.type!='List'" item-value="props.value" item-label="props.name"
                         label-style="{'min-width':'130px'}" enabled="true" set-value="self.setValue1"
                         params="props.name" ng-if="props.type != 'array'">
                     </editable>
-                    <div ng-if="props.type=='List'">
+                    <!-- <div ng-if="props.type=='List'">
                         {{props.name}} - {{props.value}}
+                    </div> -->
+                    <div class="header" ng-if="props.type=='List'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
+                        <span class="title" style="font-size: 13px;">{{props.name}}</span>
+                        <span class="sub" style="margin-bottom: 10px;">{{props.value}}</span>
                     </div>
                 </div>
                 <div class="header" style="margin-top: 20px;">
@@ -38,7 +43,7 @@
                    </editable>
                </div>
             </div>
-            <button ng-click="self.clickMe()">Click me :)</button>
+            <!-- <button ng-click="self.clickMe()">Click me :)</button> -->
         </div>
         <div ng-show="isSet(2)" style="padding: 20px; overflow: hidden;">
             <div class="hidden-layers">
@@ -70,9 +75,9 @@
                 </div>
             </div> -->
         </div>
-        <div ng-show="isSet(3)" style="padding: 20px;">
+        <!-- <div ng-show="isSet(3)" style="padding: 20px;">
             
-        </div>
+        </div> -->
     </div>
     <div id="workspace" class="workspace">
         
