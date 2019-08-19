@@ -17,7 +17,7 @@ app.component(componentName,{
         model: '<',
     }
 });
-function TrainingPredictionController($scope,wiDialog,wiApi,$http){
+function TrainingPredictionController($scope, wiDialog, wiApi, $http){
 	let self = this;
 	const TRAIN_STEP_NAME = 'Train';
     const VERIFY_STEP_NAME = 'Verify';
@@ -26,18 +26,21 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
     const TRAIN_STEP_STATE = 'training';
     const VERIFY_STEP_STATE = 'verify';
     const PREDICT_STEP_STATE = 'prediction';
+
+    const ML_TOOLKIT = 'curve';
+    const ML_TOOLKIT_CLASSIFICATION = 'classification';
 	// const BASE_ML_URL = 'http://192.168.0.120:5001/api';
 	 //--------------
-	 $scope.tab = 1;
-	 self.selectionTab = self.selectionTab || 'Wells';
- 
-	 $scope.setTab = function(newTab){
-		 $scope.tab = newTab;
-	 };
- 
-	 $scope.isSet = function(tabNum){
-		 return $scope.tab === tabNum;
-	 };
+	$scope.tab = 1;
+	self.selectionTab = self.selectionTab || 'Wells';
+
+	$scope.setTab = function(newTab) {
+	 $scope.tab = newTab;
+	};
+
+	$scope.isSet = function(tabNum) {
+	 return $scope.tab === tabNum;
+	};
 	 //--------------
     this.$onInit = function() {
     }
@@ -63,6 +66,9 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 	}
 	this.setItemOnChange = function(dataset, index, item) {
 		console.log(dataset, index, item);
+		if(dataset.inputCurveSpecs.length === index + 1 && dataset.patternCurveName) {
+			dataset.resultCurveName = item.data.label.toUpperCase() !== '[NO CHOOSE]' ? item.data.label.toUpperCase() + dataset.patternCurveName : dataset.patternCurveName ;
+		}
 		dataset.inputCurveSpecs[index].value = item.properties;
 		dataset.inputCurveSpecs[index].currentSelect = item.data.label;
 	}
@@ -160,10 +166,6 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 		}, async function(err) {
 			if(err) console.error(err);
 			let request = createPayloadForTrain();
-			// let req = {
-			// 	model_id: self.model_id,
-			// 	bucket_id: self.bucket_id
-			// }
 			let res = await postTrainByBucketData(request);
 			console.log('train ',res);
 			cb();	
@@ -173,23 +175,22 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 	async function verify(cb) {
 		async.each(self.stepDatas[VERIFY_STEP_STATE].datasets, function(dataset,_cb){
 			if(isRun(dataset)) {
-				evaluateExpr(dataset,dataset.discrmnt)
+				evaluateExpr(dataset, dataset.discrmnt)
 				.then(function(curves) {
 					getDataCurveAndFilter(dataset, curves)
 					.then(async function(dataCurves) {
-						let target = dataCurves.splice(dataCurves.length - 1, 1)[0];
+						let targetFilter = dataCurves.pop();
 						// console.log(target,dataCurves);	
 						let payload = {
 							features: dataCurves,
 							model_id: self.model_id
 						}
-						let verifyData = await postPredict(payload);			
-						let dataError = [];
-						for(let i = 0; i < target.length; i++) {
-							dataError[i] = Math.abs((target[i] - verifyData.target[i]) / verifyData.target[i]);
-						}	
-						console.log('verify',dataError);
-						_cb();
+						let dataVerify = await postPredict(payload);
+						handleResultVerify(dataset, dataVerify)
+						.then(newCurve => {
+							console.log(newCurve);
+							_cb();
+						})	
 					});
 				})
 				.catch(err => {
@@ -218,8 +219,9 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 							features: dataCurves,
 							model_id: self.model_id
 						}
-						let preidictData = await postPredict(payload);	
-						console.log('predict',preidictData);
+						let dataPrediction = await postPredict(payload);	
+						// console.log('predict', dataPrediction);
+						handleResultPrediction(dataset, dataPrediction);
 						_cb();
 					});
 				})
@@ -395,14 +397,14 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 			let arrNaN = [];
 			let inputCurveData = [];
 			// console.log(dataset);
-			async.eachSeries(dataset.inputCurveSpecs,function(input,_cb) {
+			async.eachSeries(dataset.inputCurveSpecs, function(input, _cb) {
 				(async()=> {
 					let curve = dataset.curves.find(i => {
 						return i.name === input.currentSelect;
 					});
 					let dataCurve = await wiApi.getCurveDataPromise(curve.idCurve);
 					for(let i in dataCurve) {
-						dataCurve[i] = parseFloat(dataCurve[i].x,4);
+						dataCurve[i] = parseFloat(dataCurve[i].x, 4);
 						if(isNaN(dataCurve[i])) curves[i] = false;
 					}
 					inputCurveData.push(dataCurve);
@@ -453,6 +455,7 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 			return payload
 		}
 	}
+
 	this.runAll = async function() {
 		train(function() {
 			verify(function() {
@@ -466,4 +469,155 @@ function TrainingPredictionController($scope,wiDialog,wiApi,$http){
 	this.onToggleActiveOutput = function(dataset) {
 		dataset.active = !dataset.active;
 	}
+
+	async function saveCurve(curveInfo, dataset, callback) {
+		let payload = {
+            idDataset: curveInfo.idDataset,
+            data: curveInfo.data,
+            unit: curveInfo.unit || undefined,
+            idFamily: curveInfo.idFamily || null,
+        }
+        if(dataset.step == 0 ) {
+        	let curveData = await wiApi.getCurveDataPromise(dataset.curves[0].idCurve);
+        	payload.data = curveData.map((d,i)=>{
+                return [parseFloat(d.y),curveInfo.data[i]];
+            });
+        }
+    	let curve = await wiApi.checkCurveExistedPromise(curveInfo.name, curveInfo.idDataset);
+    	if (curve && curve.idCurve) {
+            payload.idDesCurve = curve.idCurve;
+            curveInfo.idCurve = curve.idCurve;
+        } else {
+            payload.curveName = curveInfo.name
+        }
+        let newCurve = await wiApi.createCurvePromise(payload);
+        // console.log(newCurve);
+        callback(newCurve);
+	}
+	function handleResultVerify(dataset, dataVerify) {
+		return new Promise ((resolve, reject) => {
+			let curveTarget = {
+				name: 'target',
+				value: dataVerify.target
+			}		
+			getDataCurves(dataset, dataset.inputCurveSpecs, function(curves) {
+				if(!curves) reject(new Error('Failture'));
+				let targetNFilter = curves.pop();
+				let filterNullResult = filterNull(curves);
+				fillNullInCurve(filterNullResult.fillNull, curveTarget, function(res) {
+					console.log(res); 
+					if(!res) reject(new Error('Failture'));
+					let curveInfo = {
+                        idDataset: dataset.idDataset,
+                        idFamily: dataset.inputCurveSpecs.slice(-1).pop().value.idFamily,
+                        // idWell: well.idWell,
+                        name: dataset.resultCurveName,
+                        data: res.value,
+                        unit: dataset.inputCurveSpecs.slice(-1).pop().value.unit
+                    }
+                    saveCurve(curveInfo, dataset, function(newCurve) {
+                    	if(!newCurve.idCurve) reject(new Error('Failture'));
+                    	resolve(newCurve)
+                    })
+				})
+			})
+		})
+	}
+	function handleResultPrediction (dataset, dataPrediction) {
+		return new Promise ((resolve, reject) => {
+			let curveTarget = {
+				name: 'target',
+				value: dataPrediction.target
+			}		
+			let idFamily, unit;
+			if(self.stepDatas[TRAIN_STEP_STATE].datasets[0].inputCurveSpecs.slice(-1).pop().value) {
+				idFamily = self.stepDatas[TRAIN_STEP_STATE].datasets[0].inputCurveSpecs.slice(-1).pop().value.idFamily;
+				unit = self.stepDatas[TRAIN_STEP_STATE].datasets[0].inputCurveSpecs.slice(-1).pop().value.unit;	
+			}else {
+				_cb(new Error('Data Training not existed'))
+			}
+			
+			// console.log(self.stepDatas[TRAIN_STEP_STATE].datasets[0].inputCurveSpecs.slice(-1).pop());
+			getDataCurves(dataset, dataset.inputCurveSpecs, function(curves) {
+				if(!curves) reject(new Error('Failture'));
+				let targetNFilter = curves.pop();
+				let filterNullResult = filterNull(curves);
+				fillNullInCurve(filterNullResult.fillNull, curveTarget, function(res) {
+					console.log(res); 
+					if(!res) reject(new Error('Failture'));
+					let curveInfo = {
+		                idDataset: dataset.idDataset,
+		                idFamily: idFamily,
+		                // idWell: well.idWell,
+		                name: dataset.resultCurveName,
+		                data: res.value,
+		                unit: unit
+		            }
+		            saveCurve(curveInfo, dataset, function(newCurve) {
+		            	if(!newCurve.idCurve) reject(new Error('Failture'));
+		            	resolve(newCurve)
+		            })
+				})
+			})
+		})
+	}
+
+	function fillNullInCurve(fillArr, curvesArray, cb) {
+        async.forEachOfSeries(curvesArray, function (curve, j, done) {
+            for (let i in fillArr)
+                curve.value.splice(fillArr[i], 0, NaN);
+            done();
+        }, function (err) {
+            cb && cb(curvesArray);
+        });
+    }
+
+    function filterNull(curves) {
+        // let WELL = [];
+        let l = curves.length;
+        let filterCurves = [];
+        let fillNull = [];
+        for (let j = 0; j < l; j++) {
+            filterCurves[j] = [];
+        }
+        for (let i = 0; i < curves[0].length; i++) {
+            let notNull = true;
+            for (let j = 0; j < l; j++)
+                if (isNaN(curves[j][i])) {
+                    fillNull.push(i);
+                    notNull = false;
+                    break;
+                }
+            if (notNull)
+                for (let j = 0; j < l; j++) {
+                    // if (j == 0) WELL.push(well[i]);
+                    filterCurves[j].push(curves[j][i]);
+                }
+        }
+        return {
+            filterCurves: filterCurves,
+            fillNull: fillNull,
+            // well: WELL
+        };
+    }
+
+    async function getDataCurves(dataset, curves, callback) {
+    	let listInputCurves = [];
+
+    	if(curves.length) {
+    		for(let i = 0; i < curves.length; i++) {
+    			let curve = dataset.curves.find(c => {
+    				return c.name === curves[i].value.name;
+    			})
+    			if(!curve) callback([]);
+    			let curveData = await wiApi.getCurveDataPromise(curve.idCurve);
+    			listInputCurves[i] = curveData.map(function (d) {
+                    return parseFloat(d.x);
+                });
+    		}
+    		callback && callback(listInputCurves);
+    	}else {
+    		callback && callback([]);
+    	}
+    }	
 }

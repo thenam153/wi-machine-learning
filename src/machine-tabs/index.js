@@ -555,9 +555,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
     	let ds = _.intersectionBy(datasetDestination, datasetSource, 'idDataset');
     	let ds1 = _.pullAllBy(datasetSource, ds, 'idDataset');
     	for(let i in ds1) {
+            if(step != 'training') {
+                ds1[i].resultCurveName = ds1[i].patternCurveName = '_' + step.toUpperCase();
+            }
             ds1[i].active = true;
     		ds1[i]._selected = false;
-            // console.log(ds1[i]);
     	}
     	self.dataStepsForTrainPredict[step].datasets = [...ds,...ds1];
     	handleSelectionList(self.dataStepsForTrainPredict[step],step ,index,type);

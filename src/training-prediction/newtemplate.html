@@ -77,7 +77,7 @@
                                     on-item-changed="self.getOnItemChange('training', indexDataset, $index)"></wi-dropdown-list> -->
                         </div>
                         <div class="table-block" ng-if="self.stepDatas['training'].name != 'Train'" style="">
-                            <input type="text" style="height: 32px;" ng-model="item.resultCurveName">
+                            <input type="text" style="height: 32px;" ng-model="dataset.resultCurveName">
                         </div>
                     </div>
                 </div>
@@ -149,7 +149,7 @@
                                             on-item-changed="self.getOnItemChange('training', indexDataset, $index)"></wi-dropdown-list> -->
                         </div>
                         <div class="table-block" ng-if="self.stepDatas['verify'].name != 'Train'">
-                            <input type="text" style="height: 32px;" ng-model="item.resultCurveName">
+                            <input type="text" style="height: 32px;" ng-model="dataset.resultCurveName">
                         </div>
                     </div>
                 </div>
@@ -221,7 +221,7 @@
                                             on-item-changed="self.getOnItemChange('training', indexDataset, $index)"></wi-dropdown-list> -->
                         </div>
                         <div class="table-block" ng-if="self.stepDatas['prediction'].name != 'Train'" style="">
-                            <input type="text" style="height: 32px;" ng-model="item.resultCurveName">
+                            <input type="text" style="height: 32px;" ng-model="dataset.resultCurveName">
                         </div>
                     </div>
                 </div>
