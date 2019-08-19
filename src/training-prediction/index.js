@@ -3,7 +3,12 @@ const componentName = "trainingPrediction";
 module.exports.name = moduleName;
 
 var config = require('../config/config.js');
-var app = angular.module(moduleName, ['wiDialog','wiDiscriminator','wiApi']);
+var app = angular.module(moduleName, ['wiDialog',
+	'wiDiscriminator',
+	'wiApi',  
+	'distributionMapModule',
+  	'visualizationMapModule',
+  	'somModelService']);
 
 app.component(componentName,{
 	template: require('./newtemplate.html'),
@@ -17,7 +22,7 @@ app.component(componentName,{
         model: '<',
     }
 });
-function TrainingPredictionController($scope, wiDialog, wiApi, $http){
+function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, somModelService){
 	let self = this;
 	const TRAIN_STEP_NAME = 'Train';
     const VERIFY_STEP_NAME = 'Verify';
@@ -53,7 +58,7 @@ function TrainingPredictionController($scope, wiDialog, wiApi, $http){
 			console.log(res);
 		})
 	}
-
+	this.running = false;
 	this.runTask = runTask;
 	let functionCache = {
 		training: {},
@@ -94,6 +99,11 @@ function TrainingPredictionController($scope, wiDialog, wiApi, $http){
         });
     }
 
+    function getSomVisualize(model_id) {
+    	// /model/som/
+    	return postPromise(`${self.model.properties.url}/api/model/som/${model_id}`, {}, 'GET');
+    }
+
     function postCreateModel(payload) {
     	return postPromise(`${self.model.properties.url}/api/model/create/${self.model.properties.create}`, payload, 'POST');
     }
@@ -119,20 +129,24 @@ function TrainingPredictionController($scope, wiDialog, wiApi, $http){
     }
 
 	function runTask(step) {
+		self.running = true;
 		switch(step) {
 			case 0: 
 				train(function(){
 					console.log('run',step);
+					self.running = false;
 				});
 				break;				
 			case 1:
 				verify(function(){
 					console.log('run',step);
+					self.running = false;
 				})	
 				break;	
 			case 2:
 				prediction(function(){
 					console.log('run',step);
+					self.running = false;
 				})
 				break;
 		}
@@ -167,6 +181,7 @@ function TrainingPredictionController($scope, wiDialog, wiApi, $http){
 			if(err) console.error(err);
 			let request = createPayloadForTrain();
 			let res = await postTrainByBucketData(request);
+			doAfterTrain();
 			console.log('train ',res);
 			cb();	
 		})
@@ -221,8 +236,10 @@ function TrainingPredictionController($scope, wiDialog, wiApi, $http){
 						}
 						let dataPrediction = await postPredict(payload);	
 						// console.log('predict', dataPrediction);
-						handleResultPrediction(dataset, dataPrediction);
-						_cb();
+						handleResultPrediction(dataset, dataPrediction)
+						.then((newCurve) => {
+							_cb();
+						});
 					});
 				})
 				.catch(err => {
@@ -457,10 +474,12 @@ function TrainingPredictionController($scope, wiDialog, wiApi, $http){
 	}
 
 	this.runAll = async function() {
+		self.running = true;
 		train(function() {
 			verify(function() {
 				prediction(function() {
 					console.log('Run All');
+					self.running = false;
 				})
 			})
 		})
@@ -562,14 +581,17 @@ function TrainingPredictionController($scope, wiDialog, wiApi, $http){
 		})
 	}
 
-	function fillNullInCurve(fillArr, curvesArray, cb) {
-        async.forEachOfSeries(curvesArray, function (curve, j, done) {
-            for (let i in fillArr)
+	function fillNullInCurve(fillArr, curve, cb) {
+        // async.forEachOfSeries(curvesArray, function (curve, j, done) {
+            for (let i in fillArr) {
                 curve.value.splice(fillArr[i], 0, NaN);
-            done();
-        }, function (err) {
-            cb && cb(curvesArray);
-        });
+            }
+
+            cb && cb(curve);
+            // done();
+        // }, function (err) {
+        //     cb && cb(curvesArray);
+        // });
     }
 
     function filterNull(curves) {
@@ -620,4 +642,172 @@ function TrainingPredictionController($scope, wiDialog, wiApi, $http){
     		callback && callback([]);
     	}
     }	
+
+    async function doAfterTrain(dataset) {
+    	if(self.model.properties['som-visualization']) {
+			$http({
+				method: 'GET',
+				url: `${self.model.properties.url}/api/model/som/${self.model_id}`,
+			})
+			.then((res) => {
+				console.log(res);
+				if(res.status === 201) {
+					$timeout(() => {
+		    			self.dataSomVisualize = res.data;
+		    		})
+				}
+			})
+		}
+    }
+    // ============================================================================
+
+    this.dataSomVisualize = {
+    	distributionMaps: [{
+    		"header": "feature_0",
+    		'row': [{"cells": []}]
+    	}],
+		visualizationMap: [{"cells": [{
+    			"features": [],
+    			"label": null
+    		}]}]
+    }
+
+	// Distribution map function
+	this.getDistributionMaps = function (data) {
+		return data.distributionMaps;
+	}
+
+	this.getDistributionMapHeader = function (distributionMap) {
+		return distributionMap.header;
+	}
+
+	this.getDistributionMapRows = function (distributionMap) {
+		return distributionMap.rows;
+	}
+
+	this.getDistributionMapCells = function (row) {
+		return row.cells;
+	}
+
+	this.getDistributionMapWeight = function (cell) {
+		return cell.weight;
+	}
+
+	this.getDistributionMapScaledWeight = function (cell) {
+		return cell.scaledWeight;
+	}
+
+	this.getDistributionMapLabel = function (cell) {
+		return cell.label;
+	}
+
+	this.distributionMapClickFn = function (event, cell) {
+		console.log(cell);
+	}
+
+	this.distributionMapColors = ["#FFFFDD", "#AAF191", "#80D385", "#61B385", "#3E9583", "#217681", "#285285", "#1F2D86", "#000086"];
+	this.distributionMapColorRange = d3.range(0, 1, 1.0 / (this.distributionMapColors.length - 1));
+	this.distributionMapColorRange.push(1);
+
+	this.getDistributionMapColors = function () {
+		return self.distributionMapColors;
+	}
+
+	this.distributionMapColorScale = d3.scaleLinear()
+	.domain(this.distributionMapColorRange)
+	.range(this.distributionMapColors)
+
+	// Visualization map function
+	this.getVisualizationMap = function (data) {
+		return data.visualizationMap;
+	}
+
+	this.getVisualizationMapCells = function (row) {
+		return row.cells;
+	}
+
+	this.getVisualizationMapFeatures = function (cell) {
+		return cell.features;
+	}
+
+	this.getVisualizationMapLabel = function (cell) {
+		return cell.label;
+	}
+
+	this.getVisualizationMapLabels = function (data) {
+		let labels = [];
+		for (i = 0; i < data.visualizationMap.length; i++) {
+			cells = data.visualizationMap[i].cells;
+			for (j = 0; j < cells.length; j++) {
+				label = cells[j].label;
+				if (!labels.includes(label)) {
+					labels.push(label)
+				}
+			}
+		}
+		return labels;
+	}
+
+	this.getVisualizationMapFeatureWeight = function (feature) {
+		return feature.weight;
+	}
+
+	this.getVisualizationMapFeatureScaledWeight = function (feature) {
+		return feature.scaledWeight;
+	}
+
+	this.getVisualizationMapFeatureNames = function (data) {
+		let featureHeaders = []
+		data.visualizationMap[0].cells[0].features.forEach(feature => {
+			featureHeaders.push(feature.header);
+		});
+		return featureHeaders;
+	}
+
+	this.getVisualizationMapFeatureName = function (feature) {
+		return feature.header;
+	}
+
+	this.visualizationMapClickFn = function (event, cell) {
+		console.log(cell);
+	}
+
+	this.visualizationMapLabelColors = [
+	"rgba(255,0,0,0.6)",
+	"rgba(0,255,0,0.6)",
+	"rgba(0,0,255,0.6)",
+	"rgba(255,255,0,0.6)",
+	"rgba(0,255,255,0.6)",
+	"violet",
+	"springgreen"
+	]
+
+	this.visualizationMapFeatureColors = [
+	'red', 'green', 'blue', 'yellow'
+	]
+
+	this.getFittedModel = async function () {
+		// let responseDataPromise = somModelService.getFittedModel();
+		// responseDataPromise.then((data) => {
+		// 	console.log(data);
+		// 	self.dataSomVisualize = data;
+		// }).catch((err) => {
+		// 	console.log(err);
+		// 	// self.dataSomVisualize = dataDemo;
+		// })
+		if(self.model.properties['som-visualization']) {
+    		$http({
+	    		method: 'GET',
+	    		url: `${self.model.properties.url}/api/model/som/${self.model_id}`,
+	    	})
+	    	.then((res) => {
+	    		console.log(res);
+	    		if(res.status === 201) {
+	    			$timeout(() => {
+		    			self.dataSomVisualize = res.data;
+		    		})
+	    		}
+	    	});
+    	}
+	}
 }
