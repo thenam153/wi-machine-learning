@@ -19,7 +19,8 @@ app.component(componentName,{
     	nnConfig: '<',
     	nnConfigNLayerChanged: '<',
     	setDataModels: '<',
-    	setItemSelected: '<'
+    	setItemSelected: '<',
+    	currentSelectModel: '<'
     }
 });
 

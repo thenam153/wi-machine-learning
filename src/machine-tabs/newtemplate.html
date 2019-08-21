@@ -1,8 +1,25 @@
-<div style="display: flex;flex-direction: column;flex: 1;" class="slim-scroller">
+<div ng-show="self.showDialogOpenMlProject" class="body-dialog-ml" >
+	<span  class="menu-item " ng-click="self.showDialogOpenMlProject=!self.showDialogOpenMlProject">OPEN</span>
+	<wi-dropdown-list place-holder="Machine learning project" items="self.listMlProject" hide-delete-button='false'
+                    current-select='self.currentSelectMlProject' on-item-changed="self.onItemMlProjectChange"></wi-dropdown-list>
+    <span ng-click="self.clickButtonOpen()">Ok</span>
+    <span ng-click="self.showDialogOpenMlProject=false">Cancel</span>
+</div>
 
+<div ng-show="self.showDialogSaveMlProject" class="body-dialog-ml" ng-init="nameMlProject=''" >
+	<span  class="menu-item " ng-click="self.showDialogSaveMlProject=!self.showDialogSaveMlProject">OPEN</span>
+	<input type="text" ng-model="nameMlProject" >
+    <span ng-click="self.clickButtonSave(nameMlProject)">Ok</span>
+    <span ng-click="self.showDialogSaveMlProject=false">Cancel</span>
+</div>
+
+<div ng-class='{"backdrop-dialog": self.showDialogOpenMlProject}' style="display: flex;flex-direction: column;flex: 1;" class="slim-scroller">
 	<div class="menu">
 		<div class="active menu-item">Machine learning</div>
 		<div style="display: flex;">
+			<span  class="menu-item " ng-click="self.openDialogMlProject();">OPEN</span>
+			<span  class="menu-item " ng-click="self.openDialogSaveMlProject()">SAVE</span>
+			<span  class="menu-item ">NEW</span>
 			<span ng-repeat="name in self.titleTabs track by $index" class="menu-item"
 				ng-class="{active: self.current_tab === $index}" ng-click="changeTab($index);">{{name}}</span>
 				<span style="font-size: 15px;" class="menu-item active ti ti-settings"></span>
@@ -18,7 +35,7 @@
 			<span class="ti ti-arrow-right" ng-click="changeTab('next');"></span>
 		</div>
 		<model-selection id="model-selection" ng-show="self.titleTabs[self.current_tab] === 'Model Selection'"
-			set-data-models="self.setDataModels" set-item-selected="self.setItemSelected" nn-config="self.nnConfig"set-layers="self.setLayers" nn-config-n-layer-changed="self.nnConfigNLayerChanged" nn-config="self.nnConfig" layer-change="self.layerChange" update-layer="self.updateLayer"
+			set-data-models="self.setDataModels" set-item-selected="self.setItemSelected" nn-config="self.nnConfig"set-layers="self.setLayers" nn-config-n-layer-changed="self.nnConfigNLayerChanged" nn-config="self.nnConfig" layer-change="self.layerChange" update-layer="self.updateLayer" current-select-model="self.currentSelectModel.name"
 			></model-selection>
 
 		<dataset-selection ng-show="self.titleTabs[self.current_tab] === 'Dataset Selection'"
@@ -30,8 +47,8 @@
 			remove-dataset="self.removeDataset"></dataset-selection>
 
 		<training-prediction step-datas="self.dataStepsForTrainPredict" input-curve-specs="self.inputCurveSpecs"
-			target-curve-spec="self.targetCurveSpec" model="self.selectedModelProps"
-			ng-show="self.titleTabs[self.current_tab] === 'Training and Prediction'"></training-prediction>
+			target-curve-spec="self.targetCurveSpec" model="self.selectedModelProps" state-workflow="self.stateWorkflow" set-model-id="self.setModelId" set-bucket-id="self.setBucketId"
+			ng-show="self.titleTabs[self.current_tab] === 'Training and Prediction'" som-visualize="self.dataSomVisualize" show-som-visualize="self.showSomVisualize"></training-prediction>
 		<wi-neural-network container="self.nnConfig.container" input-curves="self.nnConfig.inputs"
 						    output-curves="self.nnConfig.outputs" 
 						    hidden-layer="self.nnConfig.layers"></wi-neural-network>

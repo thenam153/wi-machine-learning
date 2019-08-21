@@ -20,6 +20,11 @@ app.component(componentName,{
     	inputCurveSpecs: '<',
         targetCurveSpec: '<',
         model: '<',
+        stateWorkflow: '<',
+        setModelId: '<',
+        setBucketId: '<',
+        somVisualize: '<',
+        showSomVisualize: '<',
     }
 });
 function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, somModelService){
@@ -47,8 +52,6 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 	 return $scope.tab === tabNum;
 	};
 	 //--------------
-    this.$onInit = function() {
-    }
 
     this.model_id = null;
 	this.onDiscriminator = function(dataset) {
@@ -156,7 +159,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 		console.log(self.model);
 		if(!self.stepDatas[TRAIN_STEP_STATE].datasets.length) return cb();
 		let res = await createModelAndBucketId();
-		console.log(res);
+		console.log(self.stepDatas[TRAIN_STEP_STATE].datasets);
 		async.each(self.stepDatas[TRAIN_STEP_STATE].datasets, function(dataset,_cb){
 			if(isRun(dataset)) {
 				evaluateExpr(dataset,dataset.discrmnt)
@@ -389,14 +392,15 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 			if(i.name === 'model_id') self.model_id = i.value;
 		})
 		console.log(payload);
-
 		let resModelId = await postCreateModel(payload);
+		self.setModelId(self.model_id);
 		self.bucket_id = self.model_id + Date.now()
 		let request = {
 			bucket_id: self.bucket_id,
 			dims: self.inputCurveSpecs.length + 1
 		}
 		let resBucketId = await postCreateBucketId(request);
+		self.setBucketId(self.bucket_id)
 		if(resBucketId.existed) {
 			request.override_flag = true;
 			resBucketId = await postCreateBucketId(request);
@@ -644,7 +648,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     }	
 
     async function doAfterTrain(dataset) {
-    	if(self.model.properties['som-visualization']) {
+    	if(self.model.properties && self.model.properties['som-visualization']) {
 			$http({
 				method: 'GET',
 				url: `${self.model.properties.url}/api/model/som/${self.model_id}`,
@@ -653,161 +657,145 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 				console.log(res);
 				if(res.status === 201) {
 					$timeout(() => {
-		    			self.dataSomVisualize = res.data;
+						self.showSomVisualize = true;
+		    			self.somVisualize = res.data;
 		    		})
 				}
 			})
+		}else {
+			$timeout(() => {
+				self.showSomVisualize = false;
+    		})
 		}
     }
     // ============================================================================
+    this.getDistributionMaps = function (data) {
+			return data.distributionMaps;
+		}
 
-    this.dataSomVisualize = {
-    	distributionMaps: [{
-    		"header": "feature_0",
-    		'row': [{"cells": []}]
-    	}],
-		visualizationMap: [{"cells": [{
-    			"features": [],
-    			"label": null
-    		}]}]
-    }
+		this.getDistributionMapHeader = function (distributionMap) {
+			return distributionMap.header;
+		}
 
-	// Distribution map function
-	this.getDistributionMaps = function (data) {
-		return data.distributionMaps;
-	}
+		this.getDistributionMapRows = function (distributionMap) {
+			return distributionMap.rows;
+		}
 
-	this.getDistributionMapHeader = function (distributionMap) {
-		return distributionMap.header;
-	}
+		this.getDistributionMapCells = function (row) {
+			return row.cells;
+		}
 
-	this.getDistributionMapRows = function (distributionMap) {
-		return distributionMap.rows;
-	}
+		this.getDistributionMapWeight = function (cell) {
+			return cell.weight;
+		}
 
-	this.getDistributionMapCells = function (row) {
-		return row.cells;
-	}
+		this.getDistributionMapScaledWeight = function (cell) {
+			return cell.scaledWeight;
+		}
 
-	this.getDistributionMapWeight = function (cell) {
-		return cell.weight;
-	}
+		this.getDistributionMapLabel = function (cell) {
+			return cell.label;
+		}
 
-	this.getDistributionMapScaledWeight = function (cell) {
-		return cell.scaledWeight;
-	}
+		this.distributionMapClickFn = function (event, cell) {
+			console.log(cell);
+		}
 
-	this.getDistributionMapLabel = function (cell) {
-		return cell.label;
-	}
+		this.distributionMapColors = ["#FFFFDD", "#AAF191", "#80D385", "#61B385", "#3E9583", "#217681", "#285285", "#1F2D86", "#000086"];
+		this.distributionMapColorRange = d3.range(0, 1, 1.0 / (this.distributionMapColors.length - 1));
+		this.distributionMapColorRange.push(1);
 
-	this.distributionMapClickFn = function (event, cell) {
-		console.log(cell);
-	}
+		this.getDistributionMapColors = function () {
+			return self.distributionMapColors;
+		}
 
-	this.distributionMapColors = ["#FFFFDD", "#AAF191", "#80D385", "#61B385", "#3E9583", "#217681", "#285285", "#1F2D86", "#000086"];
-	this.distributionMapColorRange = d3.range(0, 1, 1.0 / (this.distributionMapColors.length - 1));
-	this.distributionMapColorRange.push(1);
+		this.distributionMapColorScale = d3.scaleLinear()
+		.domain(this.distributionMapColorRange)
+		.range(this.distributionMapColors)
 
-	this.getDistributionMapColors = function () {
-		return self.distributionMapColors;
-	}
+		// Visualization map function
+		this.getVisualizationMap = function (data) {
+			return data.visualizationMap;
+		}
 
-	this.distributionMapColorScale = d3.scaleLinear()
-	.domain(this.distributionMapColorRange)
-	.range(this.distributionMapColors)
+		this.getVisualizationMapCells = function (row) {
+			return row.cells;
+		}
 
-	// Visualization map function
-	this.getVisualizationMap = function (data) {
-		return data.visualizationMap;
-	}
+		this.getVisualizationMapFeatures = function (cell) {
+			return cell.features;
+		}
 
-	this.getVisualizationMapCells = function (row) {
-		return row.cells;
-	}
+		this.getVisualizationMapLabel = function (cell) {
+			return cell.label;
+		}
 
-	this.getVisualizationMapFeatures = function (cell) {
-		return cell.features;
-	}
-
-	this.getVisualizationMapLabel = function (cell) {
-		return cell.label;
-	}
-
-	this.getVisualizationMapLabels = function (data) {
-		let labels = [];
-		for (i = 0; i < data.visualizationMap.length; i++) {
-			cells = data.visualizationMap[i].cells;
-			for (j = 0; j < cells.length; j++) {
-				label = cells[j].label;
-				if (!labels.includes(label)) {
-					labels.push(label)
+		this.getVisualizationMapLabels = function (data) {
+			let labels = [];
+			for (i = 0; i < data.visualizationMap.length; i++) {
+				cells = data.visualizationMap[i].cells;
+				for (j = 0; j < cells.length; j++) {
+					label = cells[j].label;
+					if (!labels.includes(label)) {
+						labels.push(label)
+					}
 				}
 			}
+			return labels;
 		}
-		return labels;
-	}
 
-	this.getVisualizationMapFeatureWeight = function (feature) {
-		return feature.weight;
-	}
+		this.getVisualizationMapFeatureWeight = function (feature) {
+			return feature.weight;
+		}
 
-	this.getVisualizationMapFeatureScaledWeight = function (feature) {
-		return feature.scaledWeight;
-	}
+		this.getVisualizationMapFeatureScaledWeight = function (feature) {
+			return feature.scaledWeight;
+		}
 
-	this.getVisualizationMapFeatureNames = function (data) {
-		let featureHeaders = []
-		data.visualizationMap[0].cells[0].features.forEach(feature => {
-			featureHeaders.push(feature.header);
-		});
-		return featureHeaders;
-	}
+		this.getVisualizationMapFeatureNames = function (data) {
+			let featureHeaders = []
+			data.visualizationMap[0].cells[0].features.forEach(feature => {
+				featureHeaders.push(feature.header);
+			});
+			return featureHeaders;
+		}
 
-	this.getVisualizationMapFeatureName = function (feature) {
-		return feature.header;
-	}
+		this.getVisualizationMapFeatureName = function (feature) {
+			return feature.header;
+		}
 
-	this.visualizationMapClickFn = function (event, cell) {
-		console.log(cell);
-	}
+		this.visualizationMapClickFn = function (event, cell) {
+			console.log(cell);
+		}
 
-	this.visualizationMapLabelColors = [
-	"rgba(255,0,0,0.6)",
-	"rgba(0,255,0,0.6)",
-	"rgba(0,0,255,0.6)",
-	"rgba(255,255,0,0.6)",
-	"rgba(0,255,255,0.6)",
-	"violet",
-	"springgreen"
-	]
+		this.visualizationMapLabelColors = [
+		"rgba(255,0,0,0.6)",
+		"rgba(0,255,0,0.6)",
+		"rgba(0,0,255,0.6)",
+		"rgba(255,255,0,0.6)",
+		"rgba(0,255,255,0.6)",
+		"violet",
+		"springgreen"
+		]
 
-	this.visualizationMapFeatureColors = [
-	'red', 'green', 'blue', 'yellow'
-	]
+		this.visualizationMapFeatureColors = [
+		'red', 'green', 'blue', 'yellow'
+		]
 
-	this.getFittedModel = async function () {
-		// let responseDataPromise = somModelService.getFittedModel();
-		// responseDataPromise.then((data) => {
-		// 	console.log(data);
-		// 	self.dataSomVisualize = data;
-		// }).catch((err) => {
-		// 	console.log(err);
-		// 	// self.dataSomVisualize = dataDemo;
-		// })
-		if(self.model.properties['som-visualization']) {
-    		$http({
-	    		method: 'GET',
-	    		url: `${self.model.properties.url}/api/model/som/${self.model_id}`,
-	    	})
-	    	.then((res) => {
-	    		console.log(res);
-	    		if(res.status === 201) {
-	    			$timeout(() => {
-		    			self.dataSomVisualize = res.data;
-		    		})
-	    		}
-	    	});
-    	}
-	}
+		this.getFittedModel = async function () {
+			if(self.model.properties['som-visualization']) {
+	    		$http({
+		    		method: 'GET',
+		    		url: `${self.model.properties.url}/api/model/som/${self.model_id}`,
+		    	})
+		    	.then((res) => {
+		    		console.log(res);
+		    		if(res.status === 201) {
+		    			$timeout(() => {
+			    			self.somVisualize = res.data;
+			    		})
+		    		}
+		    	});
+	    	}
+		}
 }

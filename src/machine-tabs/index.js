@@ -15,10 +15,178 @@ app.component(componentName,{
     }
 });
 
-function MachineTabsController($scope, $timeout, wiToken, wiApi){
+function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
 	const REMOVE = 0;
 	const ADD = 1;
 	let self = 	this;
+    this.showSomVisualize = false;
+    this.showDialogOpenMlProject = false;
+    this.currentSelectMlProject = null;
+    self.mlProjectSelected = null;
+    this.openDialogMlProject = async function() {
+        self.listMlProject = await wiApi.getMlProjectListPromise();
+        self.listMlProject = self.listMlProject.map(i => {
+            return {
+                data: {
+                    label: i.name
+                },
+                properties: i
+            }
+        })
+        console.log(self.listMlProject);
+        self.showDialogOpenMlProject = true;
+
+    }
+    this.onItemMlProjectChange = function(itemProps) {
+        self.currentSelectMlProject = itemProps.name;
+        self.mlProjectSelected = itemProps;
+    }
+    this.clickButtonOpen = async function() {
+        self.showDialogOpenMlProject = false;
+        if(self.mlProjectSelected) {
+            self.currentSelectModel = {};
+            self.machineLearnSteps = {
+                training: {
+                    datasets: [],
+                    selectionList: [],
+                    // inputCurveSpecs: [],
+                    target: true,
+                    name: 'Train',
+                    index: 0
+                },
+                verify: {
+                    datasets: [],
+                    selectionList: [],
+                    // inputCurveSpecs: [],
+                    target: true,
+                    name: 'Verify',
+                    index: 1
+                },
+                prediction: {
+                    datasets: [],
+                    selectionList: [],
+                    // inputCurveSpecs: [],
+                    target: false,
+                    name: 'Predict',
+                    index: 2
+                }
+            };
+            self.dataStepsForTrainPredict = angular.copy(self.machineLearnSteps);
+            let content = self.mlProjectSelected.content;
+            for(let i in content.steps) {
+                for(let j in content.steps[i].datasets) {
+                    let dataset = await wiApi.getDatasetInfoPromise(content.steps[i].datasets[j].idDataset);
+                    let valueDataset = angular.copy(dataset);
+                        if (self.equals(self.machineLearnSteps[i].datasets, valueDataset) < 0 && valueDataset.idDataset && valueDataset.idWell) {
+                            self.machineLearnSteps[i].datasets = _.concat(self.machineLearnSteps[i].datasets, valueDataset);
+                            if(i == 'training') {
+                                self.mergeCurves.push(valueDataset.curves);
+                            }
+                        }
+                    let valueDatasetTrainPredict = angular.copy(dataset);
+                    let cacheDataset = content.steps[i].datasets.find(d => {
+                        return valueDatasetTrainPredict.idDataset === d.idDataset;
+                    })
+                    if(cacheDataset) {
+                        valueDatasetTrainPredict.inputCurveSpecs = cacheDataset.inputCurveSpecs;
+                        valueDatasetTrainPredict.resultCurveName = cacheDataset.resultCurveName;
+                        valueDatasetTrainPredict.patternCurveName = '_' + i.toUpperCase();
+                        valueDatasetTrainPredict.active = cacheDataset.active || true;
+                        self.dataStepsForTrainPredict[i].datasets.push(valueDatasetTrainPredict)
+                    }
+                }
+            }
+            self.makeSelectionList();
+            $timeout(() => {
+                self.inputCurveSpecs = content.inputCurveSpecs;
+                self.targetCurveSpec = content.targetCurveSpec;
+                self.currentSelectModel = {
+                                            name: content.model.name,
+                                            payload: content.model.payload,
+                                            sync: false
+                                        };
+                self.stateWorkflow = content.stateWorkflow || {
+                                                                state : -1, // -1 is nothing 0 was train 1 was verify, predict
+                                                                waitResult: false,
+                                                                model_id: null,
+                                                                bucket_id: null
+                                                            };
+                if(self.stateWorkflow.model_id && content.model.name === 'Supervise Som') {
+                    $http({
+                        method: 'GET',
+                        url: `${content.model.url}/api/model/som/${self.stateWorkflow.model_id}`,
+                    })
+                    .then((res) => {
+                        console.log(res);
+                        if(res.status === 201) {
+                            $timeout(() => {
+                                self.dataSomVisualize = res.data;     
+                                self.showSomVisualize = true;                           
+                            })
+                        }
+                    });
+                }
+            });
+
+        }
+        
+    }
+    function saveWorkflow() {
+        let steps = angular.copy(self.dataStepsForTrainPredict);
+        for(let i in steps) {
+            steps[i].datasets = steps[i].datasets.map(d => {
+                return {
+                    inputCurveSpecs: d.inputCurveSpecs,
+                    idDataset: d.idDataset,
+                    name: d.name,
+                    resultCurveName: d.resultCurveName,
+                    active: d.active
+                }
+            })
+        }
+        let model = {
+            name: angular.copy(self.selectedModelProps.name),
+            payload: angular.copy(self.selectedModelProps.properties.payload),
+            url: self.selectedModelProps.properties.url
+        }
+        let inputCurveSpecs = self.inputCurveSpecs.map(i => {
+            return i
+        })
+        let targetCurveSpec = self.targetCurveSpec;
+        self.workflow = {
+            inputCurveSpecs: inputCurveSpecs,
+            targetCurveSpec: targetCurveSpec,
+            model: model,
+            stateWorkflow: self.stateWorkflow,
+            steps: steps
+        }
+    }
+    this.clickButtonSave = function(name) {
+        console.log('save workflow', name);
+        self.showDialogSaveMlProject = false;
+        saveWorkflow();
+        wiApi.createMlProjectPromise({
+            name: name,
+            content: self.workflow
+        })
+        .then((mlProject) => {
+            if(!mlProject) return console.error(new Error("Don't create Ml Project"))
+            self.mlProjectSelected = mlProject;
+            self.currentSelectMlProject = mlProject.name;
+        });
+    }
+    this.openDialogSaveMlProject = function() { 
+        if(self.mlProjectSelected) {
+            saveWorkflow();
+            wiApi.editMlProjectPromise({
+                name: self.mlProjectSelected.name,
+                idMlProject: self.mlProjectSelected.idMlProject,
+                content: self.workflow
+            })
+        }else {
+            self.showDialogSaveMlProject = true;
+        }
+    }
 	this.model;
 	this.selectedModelProps = {};
 	this.current_tab = 0 ;
@@ -47,42 +215,72 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
 		return self.current_tab === index;
 	}
 	this.typeSelected = 'curve';
-	this.$onInit = function() {
-		self.machineLearnSteps = {
-				training: {
-					datasets: [],
-					selectionList: [],
-					// inputCurveSpecs: [],
-					target: true,
-					name: 'Train',
-					index: 0
-				},
-				verify: {
-					datasets: [],
-					selectionList: [],
-					// inputCurveSpecs: [],
-					target: true,
-					name: 'Verify',
-					index: 1
-				},
-				prediction: {
-					datasets: [],
-					selectionList: [],
-					// inputCurveSpecs: [],
-					target: false,
-					name: 'Predict',
-					index: 2
-				}
-		};
-		self.dataStepsForTrainPredict = angular.copy(self.machineLearnSteps);
+	this.$onInit = async function() {
+        self.currentSelectModel = {};
+        self.dataSomVisualize = {
+            distributionMaps: [{
+                "header": "feature_0",
+                'row': [{"cells": []}]
+            }],
+            visualizationMap: [{"cells": [{
+                    "features": [],
+                    "label": null
+                }]}]
+        }
+        self.machineLearnSteps = {
+            training: {
+                datasets: [],
+                selectionList: [],
+                // inputCurveSpecs: [],
+                target: true,
+                name: 'Train',
+                index: 0
+            },
+            verify: {
+                datasets: [],
+                selectionList: [],
+                // inputCurveSpecs: [],
+                target: true,
+                name: 'Verify',
+                index: 1
+            },
+            prediction: {
+                datasets: [],
+                selectionList: [],
+                // inputCurveSpecs: [],
+                target: false,
+                name: 'Predict',
+                index: 2
+            }
+        };
+        self.dataStepsForTrainPredict = angular.copy(self.machineLearnSteps);
+        self.stateWorkflow = {
+            state : -1, // -1 is nothing 0 was train 1 was verify, predict
+            waitResult: false,
+            model_id: null,
+            bucket_id: null
+        }
+		// self.dataStepsForTrainPredict = angular.copy(self.machineLearnSteps);
 		if(self.token && self.token.length) window.localStorage.setItem('token',self.token);
 	}
+    this.setModelId = function(modelId) {
+        self.stateWorkflow.model_id = modelId;
+    }
+    this.setBucketId = function(bucketId) {
+        self.stateWorkflow.bucket_id = bucketId;
+    }
 	this.setDataModels = function(data) {
 		self.model = data;
 	}
 	this.setItemSelected = function(selectedModelProps) {
-		self.selectedModelProps = selectedModelProps;
-        // console.log(selectedModelProps);
+        if(!self.currentSelectModel.sync && self.currentSelectModel.name) {
+            self.selectedModelProps = selectedModelProps;
+            self.selectedModelProps.properties.payload = self.currentSelectModel.payload;
+            self.currentSelectModel.sync = true;
+        }else{
+            self.selectedModelProps = selectedModelProps;
+        }
+        // console.log('asdasdas', self.selectedModelProps)
 	}
     this.nnConfig = { inputs: [], outputs: [], layers: [], container: {}, nLayer: 2, layerConfig: [{label: 'label 0', value: 10}, {label: 'label 1', value: 10}] };
     function updateNNConfig() {
@@ -174,7 +372,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
         value: null,
         currentSelect: '[no choose]'
     };
-	function handleSelectionList(dataStep,step,index = -1,type = null) {
+	function handleSelectionList(dataStep, step, index = -1, type = null) {
 		let inputSpecs = [...self.inputCurveSpecs,self.targetCurveSpec];
 		let mergeCurves = [];
 		for(let dataset of dataStep.datasets) {
@@ -302,11 +500,25 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
 				dataset.inputCurveSpecs = angular.copy(inputSpecs);
 			}else {
 				for(let i = 0; i < dataset.inputCurveSpecs.length; i++) {
-					if(!dataset.inputCurveSpecs[i]) dataset.inputCurveSpecs[i] = {
-			            label: 'Input Curve',
-			            value: null,
-			            currentSelect: '[no choose]'
-			        };
+					if(!dataset.inputCurveSpecs[i]) {
+                        dataset.inputCurveSpecs[i] = {
+    			            label: 'Input Curve',
+    			            value: null,
+    			            currentSelect: '[no choose]'
+                        }
+                    }else {
+                        let input = dataStep.selectionList[i].find(d => {
+                            return dataset.inputCurveSpecs[i].currentSelect === d.data.label;
+                        });
+                        if(!input) {
+                            dataset.inputCurveSpecs[i] = {
+                                label: 'Input Curve',
+                                value: null,
+                                currentSelect: '[no choose]'
+                            }
+                            dataset.resultCurveName = dataset.patternCurveName;
+                        } 
+                    }
 				}	
 			}
 		}
@@ -317,23 +529,14 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi){
         training: {
             status: true,
             drop: null,
-            out: null,
-            over: null,
-            deactivate: null,
         },
         verify: {
             status: true,
             drop: null,
-            out: null,
-            over: null,
-            deactivate: null,
         },
         prediction: {
             status: true,
             drop: null,
-            out: null,
-            over: null,
-            deactivate: null,
         },
     }
     this.mergeCurves = [];

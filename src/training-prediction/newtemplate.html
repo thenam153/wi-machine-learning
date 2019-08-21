@@ -10,7 +10,7 @@
                 style="border-right: 1px solid #edeff3;border-left: 1px solid #edeff3;">Verify</div>
             <div class="tab-button" ng-class="{'active' : isSet(3)}" ng-click="setTab(3)"
                 style="border-left: 1px solid #edeff3;">Predict</div>
-             <div class="tab-button" ng-class="{'active' : isSet(4)}" ng-click="setTab(4)"
+             <div class="tab-button" ng-class="{'active' : isSet(4)}" ng-show="self.showSomVisualize" ng-click="setTab(4)"
             style="border-left: 1px solid #edeff3;">Som Visualize</div>
         </div>
     </div>
@@ -230,10 +230,10 @@
             </div>
         </div>
         <div ng-show="isSet(4)" class="workspace-main" style="height: calc(100vh - 200px);">
-            <div style="display: flex; overflow: hidden;">
+            <div ng-if="self.showSomVisualize" style="display: flex; overflow: hidden;">
                 <div style="width: calc(100vw - 300px); overflow: auto hidden;">
                     <distribution-map
-                    data="self.dataSomVisualize"
+                    data="self.somVisualize"
                     colors="self.getDistributionMapColors"
                     color-scale="self.distributionMapColorScale"
                     get-maps="self.getDistributionMaps"
@@ -249,7 +249,7 @@
                 </div>
                 <div>
                     <visualization-map
-                    data="self.dataSomVisualize"
+                    data="self.somVisualize"
                     get-map="self.getVisualizationMap"
                     get-cells="self.getVisualizationMapCells"
                     get-features="self.getVisualizationMapFeatures"

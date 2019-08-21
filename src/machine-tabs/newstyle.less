@@ -8,7 +8,23 @@ machine-tabs {
     flex    : 1;
     height  : 100%;
     overflow: hidden;
-
+    .body-dialog-ml {
+        position: absolute;
+        width: 500px;
+        background: white;
+        height: 400px;
+        z-index: 100000;
+        top: 50%;
+        right: 50%;
+        transform: translate(50%, -50%);
+        box-shadow: 0 10px 50px #0000004f;
+        border-radius: 2px;
+    }
+    .backdrop-dialog {     
+        pointer-events: none;
+        user-select: none;
+        filter: contrast(0.8) brightness(0.8);
+    }
     .menu {
         font-family           : Roboto, system-ui, sans-serif;
         -webkit-font-smoothing: antialiased;
