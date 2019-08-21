@@ -1,15 +1,15 @@
 <div ng-show="self.showDialogOpenMlProject" class="body-dialog-ml" >
 	<span  class="menu-item " ng-click="self.showDialogOpenMlProject=!self.showDialogOpenMlProject">OPEN</span>
 	<wi-dropdown-list place-holder="Machine learning project" items="self.listMlProject" hide-delete-button='false'
-                    current-select='self.currentSelectMlProject' on-item-changed="self.onItemMlProjectChange"></wi-dropdown-list>
-    <span ng-click="self.clickButtonOpen()">Ok</span>
+                    current-select='self.currentSelectedMlProject' on-item-changed="self.onItemMlProjectChange"></wi-dropdown-list>
+    <span ng-click="self.onClickButtonOpen()">Ok</span>
     <span ng-click="self.showDialogOpenMlProject=false">Cancel</span>
 </div>
 
 <div ng-show="self.showDialogSaveMlProject" class="body-dialog-ml" ng-init="nameMlProject=''" >
 	<span  class="menu-item " ng-click="self.showDialogSaveMlProject=!self.showDialogSaveMlProject">OPEN</span>
 	<input type="text" ng-model="nameMlProject" >
-    <span ng-click="self.clickButtonSave(nameMlProject)">Ok</span>
+    <span ng-click="self.onClickButtonSave(nameMlProject)">Ok</span>
     <span ng-click="self.showDialogSaveMlProject=false">Cancel</span>
 </div>
 
@@ -17,9 +17,9 @@
 	<div class="menu">
 		<div class="active menu-item">Machine learning</div>
 		<div style="display: flex;">
-			<span  class="menu-item " ng-click="self.openDialogMlProject();">OPEN</span>
+			<span  class="menu-item " ng-click="self.openDialogOpenMlProject();">OPEN</span>
 			<span  class="menu-item " ng-click="self.openDialogSaveMlProject()">SAVE</span>
-			<span  class="menu-item ">NEW</span>
+			<span  class="menu-item " ng-click="self.onClickButtonNew()">NEW</span>
 			<span ng-repeat="name in self.titleTabs track by $index" class="menu-item"
 				ng-class="{active: self.current_tab === $index}" ng-click="changeTab($index);">{{name}}</span>
 				<span style="font-size: 15px;" class="menu-item active ti ti-settings"></span>
@@ -35,16 +35,16 @@
 			<span class="ti ti-arrow-right" ng-click="changeTab('next');"></span>
 		</div>
 		<model-selection id="model-selection" ng-show="self.titleTabs[self.current_tab] === 'Model Selection'"
-			set-data-models="self.setDataModels" set-item-selected="self.setItemSelected" nn-config="self.nnConfig"set-layers="self.setLayers" nn-config-n-layer-changed="self.nnConfigNLayerChanged" nn-config="self.nnConfig" layer-change="self.layerChange" update-layer="self.updateLayer" current-select-model="self.currentSelectModel.name"
+			set-props-model="self.setPropsModel" set-model-selected="self.setModelSelected" nn-config="self.nnConfig"set-layers="self.setLayers" nn-config-n-layer-changed="self.nnConfigNLayerChanged" nn-config="self.nnConfig" layer-change="self.layerChange" update-layer="self.updateLayer" current-selected-model="self.currentSelectedModel.name"
 			></model-selection>
 
 		<dataset-selection ng-show="self.titleTabs[self.current_tab] === 'Dataset Selection'"
 			id-project="self.idProject" input-curve-specs="self.inputCurveSpecs"
-			target-curve-spec="self.targetCurveSpec" machine-learn-steps="self.machineLearnSteps" type-selected="self.typeSelected" add-input-curve="self.addInputCurve" get-on-item-changed="self.getOnItemChanged"
-			on-target-item-changed="self.onTargetItemChanged" remove-input-Curve="self.removeInputCurve"
-			change-type="self.changeType" drop="self.drop" selection-list="self.selectionList" 
+			target-curve-spec="self.targetCurveSpec" machine-learn-steps="self.machineLearnSteps" type-selected="self.typeSelected" on-add-input-item="self.onAddInputItem" get-fn-on-input-changed="self.getFnOnInputChanged"
+			on-target-item-changed="self.onTargetItemChanged" on-remove-input-item="self.onRemoveInputItem"
+			on-change-type="self.onChangeType" drop="self.getFnDrop" selection-list="self.selectionList" 
 			merge-curves="self.mergeCurves" make-selection-list="self.makeSelectionList" 
-			remove-dataset="self.removeDataset"></dataset-selection>
+			on-remove-dataset="self.onRemoveDataset"></dataset-selection>
 
 		<training-prediction step-datas="self.dataStepsForTrainPredict" input-curve-specs="self.inputCurveSpecs"
 			target-curve-spec="self.targetCurveSpec" model="self.selectedModelProps" state-workflow="self.stateWorkflow" set-model-id="self.setModelId" set-bucket-id="self.setBucketId"

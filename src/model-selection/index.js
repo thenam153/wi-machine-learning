@@ -18,9 +18,9 @@ app.component(componentName,{
     	layerChange: '<',
     	nnConfig: '<',
     	nnConfigNLayerChanged: '<',
-    	setDataModels: '<',
-    	setItemSelected: '<',
-    	currentSelectModel: '<'
+    	setPropsModel: '<',
+    	setModelSelected: '<',
+    	currentSelectedModel: '<'
     }
 });
 
@@ -36,7 +36,7 @@ function ModelSelectionController($scope, $compile){
 			return data;
 		})
 		console.log(self.dataJson );
-		self.setDataModels(self.dataJson)
+		self.setPropsModel(self.dataJson)
 	}
 	//--------------
 	$scope.tab = 1;
@@ -52,7 +52,7 @@ function ModelSelectionController($scope, $compile){
 	this.onItemChanged = function(selectedItemProps){
 		self.selectedItemProps = selectedItemProps;
 		let props = Object.assign({}, {properties: this.selectedItem.properties}, {name: this.selectedItem.properties.label});
-		self.setItemSelected(props);
+		self.setModelSelected(props);
 		if(!props.properties.nnnw) {
 			let element = document.getElementById("tab-layer");
 			element.classList.add("hide");

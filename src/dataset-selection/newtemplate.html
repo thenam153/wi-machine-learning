@@ -8,9 +8,9 @@
 		</div>
 		<div class="button-input">
 			<div class="button ti ti-comments" ng-repeat="button in self.buttons track by $index"
-				ng-click="self.isActive = $index;self.changeType(button);"
+				ng-click="self.isActive = $index;self.onChangeType(button);"
 				ng-class="{'active': self.isActive == $index}"></div>
-			<div class="button ti ti-plus" ng-click="self.addInputCurve()"></div>
+			<div class="button ti ti-plus" ng-click="self.onAddInputItem()"></div>
 		</div>
 		<div style="margin-top: 20px;">
 			<div class="title">
@@ -26,14 +26,14 @@
 			<div class="list-scroll" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
 				<div style="margin-bottom: 15px;" ng-repeat="item in self.inputCurveSpecs track by $index">
 					<div class="title" style="font-weight: 400; font-size: 12px;">
-						<div style="margin-right: 10px; cursor: pointer;" ng-click="self.removeInputCurve($index)">
+						<div style="margin-right: 10px; cursor: pointer;" ng-click="self.onRemoveInputItem($index)">
 							<i class="ti ti-close"></i>
 						</div>
 						{{item.label}} {{$index+1}}
 					</div>
 					<div style="margin-left: 20px;">
 						<wi-dropdown-list place-holder="Curve" items="self.selectionList" hide-delete-button='true'
-							on-item-changed="self.getOnItemChanged($index)" current-select="item.currentSelect">
+							on-item-changed="self.getFnOnInputChanged($index)" current-select="item.currentSelect">
 						</wi-dropdown-list>
 					</div>
 
@@ -63,7 +63,7 @@
 					<div style="height: 100%;">
 						<div ng-repeat="item in self.machineLearnSteps['training'].datasets track by $index">
 							<div class="datasets-info">
-								<div class="button ti ti-close" ng-click="self.removeDataset('training', $index)"></div>
+								<div class="button ti ti-close" ng-click="self.onRemoveDataset('training', $index)"></div>
 								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
 									{{item.name}}</div>
 								<div class="detail">
@@ -95,7 +95,7 @@
 					<div style="height: 100%;">
 						<div ng-repeat="item in self.machineLearnSteps['verify'].datasets track by $index">
 							<div class="datasets-info">
-								<div class="button ti ti-close" ng-click="self.removeDataset('verify', $index)"></div>
+								<div class="button ti ti-close" ng-click="self.onRemoveDataset('verify', $index)"></div>
 								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
 									{{item.name}}</div>
 								<div class="detail">
@@ -127,7 +127,7 @@
 					<div style="height: 100%;">
 						<div ng-repeat="item in self.machineLearnSteps['prediction'].datasets track by $index">
 							<div class="datasets-info">
-								<div class="button ti ti-close" ng-click="self.removeDataset('prediction', $index)">
+								<div class="button ti ti-close" ng-click="self.onRemoveDataset('prediction', $index)">
 								</div>
 								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
 									{{item.name}}</div>

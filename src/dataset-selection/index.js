@@ -15,20 +15,16 @@ app.component(componentName,{
         targetCurveSpec: '<',
         machineLearnSteps: '<',
         typeSelected: '<',
-
-        addInputCurve: '<',
-        getOnItemChanged: '<',
-        onTargetItemChanged: '<',
-        removeInputCurve: '<',
-        changeType: '<',
-        drop: '<',
-        // out: '<',
-        // over: '<',
-        // deactivate: '<',
         selectionList: '<',
         mergeCurves: '<',
+        onAddInputItem: '<',
+        getFnOnInputChanged: '<',
+        onTargetItemChanged: '<',
+        onRemoveInputItem: '<',
+        onChangeType: '<',
+        onRemoveDataset: '<',
         makeSelectionList: '<',
-        removeDataset: '<'
+        drop: '<',
     }
 });
 
