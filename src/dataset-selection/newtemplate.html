@@ -1,7 +1,9 @@
 <div class="main-content slim-scroller">
 	<div class="input-selection">
 		<div class="header">
-			<span class="title">Input Selection</span>
+			<span class="title">
+				<span class="ti ti-import" style="margin-right: 15px;"></span>
+				Input Selection</span>
 			<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
 		</div>
 		<div class="button-input">
@@ -25,7 +27,7 @@
 				<div style="margin-bottom: 15px;" ng-repeat="item in self.inputCurveSpecs track by $index">
 					<div class="title" style="font-weight: 400; font-size: 12px;">
 						<div style="margin-right: 10px; cursor: pointer;" ng-click="self.removeInputCurve($index)">
-							<i class="fa fa-times-circle"></i>
+							<i class="ti ti-close"></i>
 						</div>
 						{{item.label}} {{$index+1}}
 					</div>
@@ -143,7 +145,10 @@
 	</div>
 	<div class="input-selection">
 		<div class="header">
-			<span class="title">Project list</span>
+			<span class="title">
+				<span class="ti ti-align-left" style="margin-right: 15px;"></span>
+					Project list
+			</span>
 			<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
 		</div>
 		<div style="height: 100%; margin: 0 -20px;">

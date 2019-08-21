@@ -229,39 +229,45 @@
                 </div>
             </div>
         </div>
-        <div ng-show="isSet(4)" class="workspace-main" style="flex-direction: row;">
-            <distribution-map
-            data="self.dataSomVisualize"
-            colors="self.getDistributionMapColors"
-            color-scale="self.distributionMapColorScale"
-            get-maps="self.getDistributionMaps"
-            get-header="self.getDistributionMapHeader"
-            get-rows="self.getDistributionMapRows"
-            get-cells="self.getDistributionMapCells"
-            get-weight="self.getDistributionMapWeight"
-            get-scaled-weight="self.getDistributionMapScaledWeight"
-            get-label="self.getDistributionMapLabel"
-            click-fn="self.distributionMapClickFn"
-            >
-            </distribution-map>
-            <visualization-map
-            data="self.dataSomVisualize"
-            get-map="self.getVisualizationMap"
-            get-cells="self.getVisualizationMapCells"
-            get-features="self.getVisualizationMapFeatures"
-            get-label="self.getVisualizationMapLabel"
-            get-labels="self.getVisualizationMapLabels"
-            get-feature-weight="self.getVisualizationMapFeatureWeight"
-            get-feature-scaled-weight="self.getVisualizationMapFeatureScaledWeight"
-            max-weight=1
-            get-feature-name="self.getVisualizationMapFeatureName"
-            get-feature-names="self.getVisualizationMapFeatureNames"
-            feature-colors="self.visualizationMapFeatureColors"
-            label-colors="self.visualizationMapLabelColors"
-            click-fn="self.visualizationMapClickFn"
-            >
-        </visualization-map>
-         <button ng-click="self.getFittedModel()">Test</button>
+        <div ng-show="isSet(4)" class="workspace-main" style="height: calc(100vh - 200px);">
+            <div style="display: flex; overflow: hidden;">
+                <div style="width: calc(100vw - 300px); overflow: auto hidden;">
+                    <distribution-map
+                    data="self.dataSomVisualize"
+                    colors="self.getDistributionMapColors"
+                    color-scale="self.distributionMapColorScale"
+                    get-maps="self.getDistributionMaps"
+                    get-header="self.getDistributionMapHeader"
+                    get-rows="self.getDistributionMapRows"
+                    get-cells="self.getDistributionMapCells"
+                    get-weight="self.getDistributionMapWeight"
+                    get-scaled-weight="self.getDistributionMapScaledWeight"
+                    get-label="self.getDistributionMapLabel"
+                    click-fn="self.distributionMapClickFn"
+                    >
+                    </distribution-map>
+                </div>
+                <div>
+                    <visualization-map
+                    data="self.dataSomVisualize"
+                    get-map="self.getVisualizationMap"
+                    get-cells="self.getVisualizationMapCells"
+                    get-features="self.getVisualizationMapFeatures"
+                    get-label="self.getVisualizationMapLabel"
+                    get-labels="self.getVisualizationMapLabels"
+                    get-feature-weight="self.getVisualizationMapFeatureWeight"
+                    get-feature-scaled-weight="self.getVisualizationMapFeatureScaledWeight"
+                    max-weight=1
+                    get-feature-name="self.getVisualizationMapFeatureName"
+                    get-feature-names="self.getVisualizationMapFeatureNames"
+                    feature-colors="self.visualizationMapFeatureColors"
+                    label-colors="self.visualizationMapLabelColors"
+                    click-fn="self.visualizationMapClickFn"
+                    >
+                    </visualization-map>
+                </div>
+            </div>
+         <!-- <button ng-click="self.getFittedModel()">Test</button> -->
         </div>
     </div>
 </div>
