@@ -31,7 +31,7 @@ app.component(componentName,{
 function DatasetSelectionController($scope,wiApi,$timeout){
 	let self = 	this;
 	this.treedata;
-    this.isActive = 0;
+    // this.isActive = 0;
     this.buttons = [{
         label: 'Curve',
         type: 'curve',
@@ -100,7 +100,7 @@ function DatasetSelectionController($scope,wiApi,$timeout){
         return node.name.includes(filter);
     }
     this.$onInit = function() {
-        self.typeSelected = self.buttons[0].type;
+        // self.typeSelected = self.buttons[0].type;
     	// (async ()=>{
     	// 	try{
     	// 		self.treedata = await wiApi.getWellsPromise(self.idProject);

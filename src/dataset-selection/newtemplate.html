@@ -7,9 +7,11 @@
 			<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
 		</div>
 		<div class="button-input">
+			<!-- <div class="button ti ti-comments" ng-repeat="button in self.buttons track by $index"
+				ng-click="self.isActive = $index;self.onChangeType(button);" -->
 			<div class="button ti ti-comments" ng-repeat="button in self.buttons track by $index"
-				ng-click="self.isActive = $index;self.onChangeType(button);"
-				ng-class="{'active': self.isActive == $index}"></div>
+				ng-click="self.onChangeType(button);"
+				ng-class="{'active': self.isActive == $index || self.typeSelected == button.type}"></div>
 			<div class="button ti ti-plus" ng-click="self.onAddInputItem()"></div>
 		</div>
 		<div style="margin-top: 20px;">

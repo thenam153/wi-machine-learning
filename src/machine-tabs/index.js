@@ -138,18 +138,34 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         // self.dataStepsForTrainPredict = angular.copy(self.machineLearnSteps);
         if(self.token && self.token.length) window.localStorage.setItem('token',self.token);
     }
-    this.openDialogOpenMlProject = async function() {
-        self.listMlProject = await wiApi.getMlProjectListPromise();
-        self.listMlProject = self.listMlProject.map(i => {
-            return {
-                data: {
-                    label: i.name
-                },
-                properties: i
-            }
-        })
-        console.log(self.listMlProject);
-        self.showDialogOpenMlProject = true;
+    this.openDialogOpenMlProject = function() {
+        wiApi.getMlProjectListPromise()
+        .then((listMlProject) => {
+            self.listMlProject = listMlProject.map(i => {
+                return {
+                    data: {
+                        label: i.name
+                    },
+                    properties: i
+                }
+            })
+            console.log(self.listMlProject);
+            $timeout(() => {
+                self.showDialogOpenMlProject = true;            
+            })
+        });
+        // self.listMlProject = self.listMlProject.map(i => {
+        //     return {
+        //         data: {
+        //             label: i.name
+        //         },
+        //         properties: i
+        //     }
+        // })
+        // console.log(self.listMlProject);
+        // $timeout(() => {
+        //     self.showDialogOpenMlProject = true;            
+        // })
     }
     this.openDialogSaveMlProject = function() { 
         if(self.mlProjectSelected) {
@@ -216,8 +232,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                     }
                 }
             }
-            self.makeSelectionList();
             $timeout(() => {
+                self.typeSelected = content.type || 'curve';
                 self.inputCurveSpecs = content.inputCurveSpecs;
                 self.targetCurveSpec = content.targetCurveSpec;
                 self.currentSelectedModel = {
@@ -246,6 +262,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                         }
                     });
                 }
+                self.makeSelectionList();
             });
 
         }
@@ -271,6 +288,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     this.onClickButtonNew = function() {
         $timeout(() => {
             self.currentSelectedModel = {};
+            self.currentSelectedMlProject = {};
             self.dataSomVisualize = {
                 distributionMaps: [{
                     "header": "feature_0",
@@ -838,6 +856,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         self.workflow = {
             inputCurveSpecs: inputCurveSpecs,
             targetCurveSpec: targetCurveSpec,
+            type: self.typeSelected,
             model: model,
             stateWorkflow: self.stateWorkflow,
             steps: steps
