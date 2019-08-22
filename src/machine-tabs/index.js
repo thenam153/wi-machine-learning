@@ -274,6 +274,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                             })
                         }
                     });
+                }else {
+                    $timeout(() => {  
+                        self.showSomVisualize = false;                           
+                    })
                 }
                 self.makeSelectionList();
                 self.sprinnerMl  = false;
@@ -496,6 +500,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         });
     }
     function updateNNConfig() {
+        console.log('update nn config')
         self.nnConfig.inputs = self.inputCurveSpecs.map(i => {
                                         return {
                                                 label: i.currentSelect,  
