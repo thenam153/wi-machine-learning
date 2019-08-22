@@ -217,6 +217,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             };
             self.dataStepsForTrainPredict = angular.copy(self.machineLearnSteps);
             let content = self.mlProjectSelected.content;
+            self.currentSelectedMlProject = self.mlProjectSelected.name;
             for(let i in content.steps) {
                 for(let j in content.steps[i].datasets) {
                     let dataset = await wiApi.getDatasetInfoPromise(content.steps[i].datasets[j].idDataset);
@@ -295,8 +296,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     // }
     this.onClickButtonNew = function() {
         $timeout(() => {
+            self.mlNameProject = null;
             self.currentSelectedModel = {};
-            self.currentSelectedMlProject = {};
+            self.currentSelectedMlProject = null;
             self.dataSomVisualize = {
                 distributionMaps: [{
                     "header": "feature_0",
