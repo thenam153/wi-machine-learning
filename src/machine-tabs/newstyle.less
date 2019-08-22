@@ -32,7 +32,6 @@ body {
     position      : absolute;
     width         : 400px;
     background    : white;
-    height        : 400px;
     z-index       : 100000;
     box-shadow    : 0 39px 37px 18px #0000000d;
     border-radius : 2px;
@@ -69,7 +68,7 @@ body {
     }
 
     .main-dl-ml {
-        flex    : 1;
+        flex-basis    : 200px;
         overflow: auto;
         margin  : 10px 0;
 
@@ -157,6 +156,13 @@ machine-tabs {
                 opacity   : 1;
                 transition: all ease-in 0.3s;
             }
+        }
+        .ml-project-name {
+            color: #ffffff;
+            padding: 5px 10px;
+            margin-right: 20px;
+            border-radius: 2px;
+            border: 1px solid #fff;
         }
 
         .active {

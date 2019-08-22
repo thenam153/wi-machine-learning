@@ -171,10 +171,16 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     this.openDialogSaveMlProject = function() { 
         if(self.mlProjectSelected) {
             saveWorkflow();
+            self.showNotiSave = true;
             wiApi.editMlProjectPromise({
                 name: self.mlProjectSelected.name,
                 idMlProject: self.mlProjectSelected.idMlProject,
                 content: self.workflow
+            })
+            .then((mlProject)=>{
+                $timeout(()=>{
+                    self.showNotiSave = false;
+                },1000)
             })
         }else {
             self.showDialogSaveMlProject = true;
@@ -183,6 +189,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     this.onClickButtonOpen = async function() {
         self.showDialogOpenMlProject = false;
         if(self.mlProjectSelected) {
+            self.sprinnerMl = true;
             self.mergeCurves = [];
             self.currentSelectedModel = {};
             self.machineLearnSteps = {
@@ -264,8 +271,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                     });
                 }
                 self.makeSelectionList();
+                self.sprinnerMl  = false;
             });
-
         }
     }
     this.onClickButtonSave = function(name) {

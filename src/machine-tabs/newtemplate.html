@@ -1,15 +1,8 @@
-
-
-<div ng-show="self.showDialogSaveMlProject" class="body-dialog-ml" ng-init="nameMlProject=''" >
-	<span  class="menu-item " ng-click="self.showDialogSaveMlProject=!self.showDialogSaveMlProject">OPEN</span>
-	<input type="text" ng-model="nameMlProject" >
-    <span ng-click="self.onClickButtonSave(nameMlProject)">Ok</span>
-    <span ng-click="self.showDialogSaveMlProject=false">Cancel</span>
-</div>
 <div style="display: flex;flex-direction: column;flex: 1;" class="slim-scroller">
 	<div class="menu">
-		<div class="active menu-item">Machine learning
-			<span  class="menu-item active ti ti-new-window " ng-click="self.openDialogOpenMlProject();" style="margin-left: 20px;"></span>
+		<div class="active menu-item">
+			<span ng-if="self.currentSelectedMlProject" ng-click="self.openDialogOpenMlProject();" class="ml-project-name">{{self.currentSelectedMlProject ? self.currentSelectedMlProject: ''}}</span>
+			<span  class="menu-item active ti ti-new-window"  ng-click="self.openDialogOpenMlProject();"></span>
 			<span  class="menu-item active ti ti-save " ng-click="self.openDialogSaveMlProject()"></span>
 			<span  class="menu-item active ti ti-plus " ng-click="self.onClickButtonNew()"></span>
 		</div>
@@ -49,7 +42,7 @@
 						    hidden-layer="self.nnConfig.layers"></wi-neural-network>
 	</div>
 </div>
-<div ng-show="self.showDialogOpenMlProject" style="background: #00000052; position: absolute; width: 100vw; height: 100vh;    display: flex; align-items: center; justify-content: center;"> 
+<div ng-show="self.showDialogOpenMlProject" style="background: #00000052; position: absolute; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center;"> 
 	<div  class="body-dialog-ml slim-scroller" >
 		<div class="header-dl-ml">
 			<div class="header-dl-ml-title">Open projects</div>
@@ -64,7 +57,8 @@
 			<!-- <wi-dropdown-list place-holder="Machine learning project" items="self.listMlProject" hide-delete-button='false'
 			current-select='self.currentSelectedMlProject' on-item-changed="self.onItemMlProjectChange"></wi-dropdown-list> -->
 			<div ng-repeat="project in self.listMlProject | filter:searchProject track by $index" 
-			ng-class="{selectedProject: self.selectedProject === project}" ng-click="self.mlProjectSelected=project;self.currentSelectedMlProject=project?project.name:self.currentSelectedMlProject;"
+			ng-class="{selectedProject: self.currentSelectedMlProject === project.name}" 
+			ng-click="self.mlProjectSelected=project;self.currentSelectedMlProject=project?project.name:self.currentSelectedMlProject;"
 			class="item-list-of-dl">
 				{{project.name}}
 			</div>
@@ -72,6 +66,27 @@
 		<div class="footer-dl-ml">
 			<div class="footer-dl-ml-btn" ng-click="self.showDialogOpenMlProject=false">CANCEL</div>
 			<div class="footer-dl-ml-btn active" ng-click="self.onClickButtonOpen()">OPEN</div>
+		</div>
+	</div>
+</div>
+<div ng-show="self.sprinnerMl" style="background: #ffffffc9; height: 100vh; width: 100vw; z-index: 5; position: absolute; display: flex; align-items: center; justify-content: center;">
+    <div >
+        <div class="loader08"></div>
+    </div>
+</div>
+<div ng-show="self.showNotiSave" style="background: #ffffffc9; height: 100vh; width: 100vw; z-index: 5; position: absolute; display: flex; align-items: center; justify-content: center;">
+    <div >
+        <div>HDJHDGAHDHGFDAHG</div>
+    </div>
+</div>
+<div ng-show="self.showDialogSaveMlProject" style="background: #00000052; position: absolute; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center;"> 
+	<div  class="body-dialog-ml slim-scroller">
+		<div class="header-dl-ml" style="justify-content: flex-start;">
+			<div class="header-dl-ml-title">Save projects</div>
+		</div>
+		<div class="footer-dl-ml">
+			<div class="footer-dl-ml-btn" ng-click="self.showDialogSaveMlProject=false">CANCEL</div>
+			<div class="footer-dl-ml-btn active" ng-click="self.onClickButtonSave(nameMlProject)">SAVE</div>
 		</div>
 	</div>
 </div>
