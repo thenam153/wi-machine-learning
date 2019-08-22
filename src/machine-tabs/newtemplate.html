@@ -1,10 +1,4 @@
-<div ng-show="self.showDialogOpenMlProject" class="body-dialog-ml" >
-	<span  class="menu-item " ng-click="self.showDialogOpenMlProject=!self.showDialogOpenMlProject">OPEN</span>
-	<wi-dropdown-list place-holder="Machine learning project" items="self.listMlProject" hide-delete-button='false'
-                    current-select='self.currentSelectedMlProject' on-item-changed="self.onItemMlProjectChange"></wi-dropdown-list>
-    <span ng-click="self.onClickButtonOpen()">Ok</span>
-    <span ng-click="self.showDialogOpenMlProject=false">Cancel</span>
-</div>
+
 
 <div ng-show="self.showDialogSaveMlProject" class="body-dialog-ml" ng-init="nameMlProject=''" >
 	<span  class="menu-item " ng-click="self.showDialogSaveMlProject=!self.showDialogSaveMlProject">OPEN</span>
@@ -13,13 +7,15 @@
     <span ng-click="self.showDialogSaveMlProject=false">Cancel</span>
 </div>
 
-<div ng-class='{"backdrop-dialog": self.showDialogOpenMlProject}' style="display: flex;flex-direction: column;flex: 1;" class="slim-scroller">
+<div style="display: flex;flex-direction: column;flex: 1;" class="slim-scroller">
 	<div class="menu">
-		<div class="active menu-item">Machine learning</div>
+		<div class="active menu-item">Machine learning
+			<span  class="menu-item active ti ti-new-window " ng-click="self.openDialogOpenMlProject();" style="margin-left: 20px;"></span>
+			<span  class="menu-item active ti ti-save " ng-click="self.openDialogSaveMlProject()"></span>
+			<span  class="menu-item active ti ti-plus " ng-click="self.onClickButtonNew()"></span>
+		</div>
 		<div style="display: flex;">
-			<span  class="menu-item " ng-click="self.openDialogOpenMlProject();">OPEN</span>
-			<span  class="menu-item " ng-click="self.openDialogSaveMlProject()">SAVE</span>
-			<span  class="menu-item " ng-click="self.onClickButtonNew()">NEW</span>
+			
 			<span ng-repeat="name in self.titleTabs track by $index" class="menu-item"
 				ng-class="{active: self.current_tab === $index}" ng-click="changeTab($index);">{{name}}</span>
 				<span style="font-size: 15px;" class="menu-item active ti ti-settings"></span>
@@ -52,5 +48,31 @@
 		<wi-neural-network container="self.nnConfig.container" input-curves="self.nnConfig.inputs"
 						    output-curves="self.nnConfig.outputs" 
 						    hidden-layer="self.nnConfig.layers"></wi-neural-network>
+	</div>
+</div>
+<div ng-show="self.showDialogOpenMlProject" style="background: #00000052; position: absolute; width: 100vw; height: 100vh;    display: flex; align-items: center; justify-content: center;"> 
+	<div  class="body-dialog-ml slim-scroller" >
+		<div class="header-dl-ml">
+			<div class="header-dl-ml-title">Open projects</div>
+			<div style="display: flex; align-items: center;">
+				<div class="search-project">
+					<input placeholder="Search" ng-model="searchProject">
+				</div>
+				<div class="new-project ti ti-plus"></div>
+			</div>
+		</div>
+		<div class="main-dl-ml">
+			<!-- <wi-dropdown-list place-holder="Machine learning project" items="self.listMlProject" hide-delete-button='false'
+			current-select='self.currentSelectedMlProject' on-item-changed="self.onItemMlProjectChange"></wi-dropdown-list> -->
+			<div ng-repeat="project in self.listMlProject | filter:searchProject track by $index" 
+			ng-class="{selectedProject: self.selectedProject === project}"
+			class="item-list-of-dl">
+				{{project.data.label}}
+			</div>
+		</div>
+		<div class="footer-dl-ml">
+			<div class="footer-dl-ml-btn" ng-click="self.showDialogOpenMlProject=false">CANCEL</div>
+			<div class="footer-dl-ml-btn active" ng-click="self.onClickButtonOpen()">OPEN</div>
+		</div>
 	</div>
 </div>

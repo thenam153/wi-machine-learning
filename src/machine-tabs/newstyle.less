@@ -3,28 +3,133 @@ body {
     height: 100vh;
 }
 
+.slim-scroller {
+    ::-webkit-scrollbar {
+        background: transparent !important;
+        width     : 5px !important;
+        height    : 5px !important;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #dcdcdc !important;
+    }
+}
+
+@keyframes show-dialog {
+    0% {
+        transform: scale(0);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.body-dialog-ml {
+    padding       : 0 20px;
+    display       : flex;
+    flex-direction: column;
+    position      : absolute;
+    width         : 400px;
+    background    : white;
+    height        : 400px;
+    z-index       : 100000;
+    box-shadow    : 0 39px 37px 18px #0000000d;
+    border-radius : 2px;
+    animation     : show-dialog 0.3s ease;
+
+    .header-dl-ml {
+        flex-basis     : 80px;
+        display        : flex;
+        justify-content: space-between;
+        align-items    : center;
+        border-bottom  : 1px solid #efefef;
+
+        .header-dl-ml-title {
+            font-weight: bold;
+        }
+
+        .search-project {
+            border-radius: 2px;
+            border       : 1px solid #e8e8e8;
+            margin-right : 20px;
+            width        : 100%;
+            line-height  : 1;
+            font-size    : 12px;
+            padding      : 10px;
+        }
+
+        .new-project {
+            color        : #4b7def;
+            padding      : 10px;
+            border       : 1px solid #4b7def;
+            border-radius: 2px;
+            cursor       : pointer;
+        }
+    }
+
+    .main-dl-ml {
+        flex    : 1;
+        overflow: auto;
+        margin  : 10px 0;
+
+        .item-list-of-dl {
+            background: #eaeaea;
+            border-radius: 2px;
+            padding  : 10px 10px;
+            margin   : 10px 0;
+            font-size: 12px;
+            user-select: none;
+            border: 1px solid #eaeaea;
+
+            &:hover {
+                background: #c9cace;
+
+            }
+        }
+        .selectedProject {
+            border: 1px solid #4b7def;
+            background: #4b7def !important;
+            color: #fff;
+        }
+    }
+
+    .footer-dl-ml {
+        flex-basis     : 80px;
+        display        : flex;
+        justify-content: flex-end;
+        align-items    : center;
+        border-top     : 1px solid #efefef;
+
+        .footer-dl-ml-btn {
+            background    : #e6e7ea;
+            color         : #616161;
+            transition    : all 0.2s ease-in;
+            margin-left   : 20px;
+            padding       : 11px 18px;
+            display       : flex;
+            align-items   : center;
+            line-height   : 1;
+            height        : 36px;
+            font-size     : 12px;
+            border-radius : 2px;
+            letter-spacing: 2px;
+            cursor        : pointer;
+        }
+
+        .active {
+            background: #4B7DEF;
+            color     : #fff;
+        }
+    }
+}
+
 machine-tabs {
     display : flex;
     flex    : 1;
     height  : 100%;
     overflow: hidden;
-    .body-dialog-ml {
-        position: absolute;
-        width: 500px;
-        background: white;
-        height: 400px;
-        z-index: 100000;
-        top: 50%;
-        right: 50%;
-        transform: translate(50%, -50%);
-        box-shadow: 0 10px 50px #0000004f;
-        border-radius: 2px;
-    }
-    .backdrop-dialog {     
-        pointer-events: none;
-        user-select: none;
-        filter: contrast(0.8) brightness(0.8);
-    }
+
     .menu {
         font-family           : Roboto, system-ui, sans-serif;
         -webkit-font-smoothing: antialiased;
@@ -144,5 +249,92 @@ machine-tabs {
         width   : calc(100% - 315px);
         right   : 0;
         position: absolute;
+    }
+
+    //RESET CSS
+    .form-control {
+        box-shadow   : none;
+        font-size    : 12px;
+        border-radius: 2px;
+        border       : none;
+        height       : 20px;
+        padding      : 0;
+    }
+
+    .form-control:focus {
+        border-color: #fff;
+        outline     : none;
+        box-shadow  : none;
+    }
+
+    .btn {
+        border-radius: 2px;
+        padding      : 0;
+        box-shadow   : none;
+    }
+
+    .btn-default {
+        color           : #333;
+        background-color: unset;
+        border-color    : unset;
+        border          : none;
+        font-size       : 12px;
+        color           : #8793A1;
+        background      : #fff;
+    }
+
+    .btn-default.focus,
+    .btn-default:focus {
+        color           : #333;
+        background-color: #ffffff;
+        box-shadow      : none;
+    }
+
+    .btn-default:hover {
+        background-color: #ffffff;
+        border-color    : #4B7DEF;
+        transition      : all ease-in 0.3s;
+        box-shadow      : none;
+    }
+
+    .btn-default.active,
+    .btn-default:active,
+    .open>.dropdown-toggle.btn-default {
+        background-color: #ffffff;
+        border-color    : #fff;
+        box-shadow      : none;
+        border-radius   : 2px;
+    }
+
+    .btn-default-focus {
+        box-shadow   : none;
+        outline      : none;
+        border-radius: 2px;
+        background   : #fff;
+    }
+
+    .dropdown-menu {
+        box-shadow   : none;
+        border-radius: 0;
+        padding      : 0;
+        font-size    : 12px;
+    }
+
+    .ui-select-bootstrap>.ui-select-choices,
+    .ui-select-bootstrap>.ui-select-no-choice {
+        max-height: 500px;
+        margin-top: 4px;
+    }
+
+    .ui-select-bootstrap .ui-select-choices-row>span {
+        padding      : 7px 20px;
+        border-bottom: 1px solid #fff;
+    }
+
+    .ui-select-bootstrap .ui-select-choices-row.active>span {
+        color           : #fff;
+        text-decoration : none;
+        outline         : 0;
+        background-color: #4b7def;
     }
 }
