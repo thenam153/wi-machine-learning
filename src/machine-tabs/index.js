@@ -255,6 +255,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                                             payload: content.model.payload,
                                             sync: false
                                         };
+                // self.updateNNConfig();
                 self.stateWorkflow = content.stateWorkflow || {
                                                                 state : -1, // -1 is nothing 0 was train 1 was verify, predict
                                                                 waitResult: false,
@@ -564,7 +565,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             let layer = (params || []).find(i => {
                 return i.name === 'hidden_layer_sizes';
             })
-            if(layer) {
+            if(layer.value) {
+                self.nnConfig.nLayer = layer.value.length;
+                self.nnConfig.layerConfig = layer.value.map((i, idx) => {
+                    return {label:'label ' + idx, value: i}
+                })
+            }else if(layer.example) {
                 self.nnConfig.nLayer = layer.example.length;
                 self.nnConfig.layerConfig = layer.example.map((i, idx) => {
                     return {label:'label ' + idx, value: i}
