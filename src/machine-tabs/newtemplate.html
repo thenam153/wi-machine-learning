@@ -43,7 +43,7 @@
 	</div>
 </div>
 <div ng-show="self.showDialogOpenMlProject" style="background: #00000052; position: absolute; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center;"> 
-	<div  class="body-dialog-ml slim-scroller" >
+	<div  class="body-dialog-ml slim-scroller">
 		<div class="header-dl-ml">
 			<div class="header-dl-ml-title">Open projects</div>
 			<div style="display: flex; align-items: center;">
@@ -58,14 +58,14 @@
 			current-select='self.currentSelectedMlProject' on-item-changed="self.onItemMlProjectChange"></wi-dropdown-list> -->
 			<div ng-repeat="project in self.listMlProject | filter:searchProject track by $index" 
 			ng-class="{selectedProject: self.mlNameProject === project.name}" 
-			ng-click="self.mlProjectSelected=project;self.mlNameProject=project.name"
+			ng-click="self.mlProjectCache=project;self.mlNameProject=project.name"
 			class="item-list-of-dl">
 				{{project.name}}
 			</div>
 		</div>
 		<div class="footer-dl-ml">
-			<div class="footer-dl-ml-btn" ng-click="self.showDialogOpenMlProject=false;self.mlProjectSelected=null;self.mlNameProject=null">CANCEL</div>
-			<div class="footer-dl-ml-btn active" ng-click="self.onClickButtonOpen()">OPEN</div>
+			<div class="footer-dl-ml-btn" ng-click="self.showDialogOpenMlProject=false;self.mlNameProject=self.mlProjectSelected.name">CANCEL</div>
+			<div class="footer-dl-ml-btn active" ng-click="self.onClickButtonOpen(self.mlProjectCache)">OPEN</div>
 		</div>
 	</div>
 </div>
@@ -85,7 +85,7 @@
 			<div class="header-dl-ml-title">Save projects</div>
 		</div>
 		<div class="footer-dl-ml">
-			<div class="footer-dl-ml-btn" ng-click="self.showDialogSaveMlProject=false">CANCEL</div>
+			<div class="footer-dl-ml-btn" ng-click="self.showDialogSaveMlProject=false;">CANCEL</div>
 			<div class="footer-dl-ml-btn active" ng-click="self.onClickButtonSave(nameMlProject)">SAVE</div>
 		</div>
 	</div>

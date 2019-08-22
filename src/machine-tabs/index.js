@@ -139,6 +139,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         if(self.token && self.token.length) window.localStorage.setItem('token',self.token);
     }
     this.openDialogOpenMlProject = function() {
+        self.showDialogOpenMlProject = true;
         wiApi.getMlProjectListPromise()
         .then((listMlProject) => {
             // self.listMlProject = listMlProject.map(i => {
@@ -151,8 +152,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             // })
             // console.log(self.listMlProject);
             $timeout(() => {
-                self.listMlProject = listMlProject;
-                self.showDialogOpenMlProject = true;            
+                self.listMlProject = listMlProject;            
             })
         });
         // self.listMlProject = self.listMlProject.map(i => {
@@ -186,65 +186,69 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             self.showDialogSaveMlProject = true;
         }
     }
-    this.onClickButtonOpen = async function() {
+    this.onClickButtonOpen = async function(mlProject) {
+        console.log(mlProject);
+        self.mlProjectSelected = mlProject;
+        self.mlNameProject = mlProject.name;
         self.showDialogOpenMlProject = false;
         if(self.mlProjectSelected) {
-            self.sprinnerMl = true;
-            self.mergeCurves = [];
-            self.currentSelectedModel = {};
-            self.machineLearnSteps = {
-                training: {
-                    datasets: [],
-                    selectionList: [],
-                    target: true,
-                    name: 'Train',
-                    index: 0
-                },
-                verify: {
-                    datasets: [],
-                    selectionList: [],
-                    target: true,
-                    name: 'Verify',
-                    index: 1
-                },
-                prediction: {
-                    datasets: [],
-                    selectionList: [],
-                    target: false,
-                    name: 'Predict',
-                    index: 2
-                }
-            };
-            self.dataStepsForTrainPredict = angular.copy(self.machineLearnSteps);
-            let content = self.mlProjectSelected.content;
-            self.currentSelectedMlProject = self.mlProjectSelected.name;
-            for(let i in content.steps) {
-                for(let j in content.steps[i].datasets) {
-                    let dataset = await wiApi.getDatasetInfoPromise(content.steps[i].datasets[j].idDataset);
-                    let valueDataset = angular.copy(dataset);
-                        if (self.equals(self.machineLearnSteps[i].datasets, valueDataset) < 0 && valueDataset.idDataset && valueDataset.idWell) {
-                            self.machineLearnSteps[i].datasets = _.concat(self.machineLearnSteps[i].datasets, valueDataset);
-                            if(i == 'training') {
-                                self.mergeCurves.push(valueDataset.curves);
+            $timeout(async() => {
+                self.sprinnerMl = true;
+                self.mergeCurves = [];
+                self.currentSelectedModel = {};
+                self.machineLearnSteps = {
+                    training: {
+                        datasets: [],
+                        selectionList: [],
+                        target: true,
+                        name: 'Train',
+                        index: 0
+                    },
+                    verify: {
+                        datasets: [],
+                        selectionList: [],
+                        target: true,
+                        name: 'Verify',
+                        index: 1
+                    },
+                    prediction: {
+                        datasets: [],
+                        selectionList: [],
+                        target: false,
+                        name: 'Predict',
+                        index: 2
+                    }
+                };
+                self.dataStepsForTrainPredict = angular.copy(self.machineLearnSteps);
+                let content = self.mlProjectSelected.content;
+                self.currentSelectedMlProject = self.mlProjectSelected.name;
+                for(let i in content.steps) {
+                    for(let j in content.steps[i].datasets) {
+                        let dataset = await wiApi.getDatasetInfoPromise(content.steps[i].datasets[j].idDataset);
+                        let valueDataset = angular.copy(dataset);
+                            if (self.equals(self.machineLearnSteps[i].datasets, valueDataset) < 0 && valueDataset.idDataset && valueDataset.idWell) {
+                                self.machineLearnSteps[i].datasets = _.concat(self.machineLearnSteps[i].datasets, valueDataset);
+                                if(i == 'training') {
+                                    self.mergeCurves.push(valueDataset.curves);
+                                }
                             }
+                        let valueDatasetTrainPredict = angular.copy(dataset);
+                        let cacheDataset = content.steps[i].datasets.find(d => {
+                            return valueDatasetTrainPredict.idDataset === d.idDataset;
+                        })
+                        if(cacheDataset) {
+                            valueDatasetTrainPredict.inputCurveSpecs = cacheDataset.inputCurveSpecs;
+                            valueDatasetTrainPredict.resultCurveName = cacheDataset.resultCurveName;
+                            valueDatasetTrainPredict.patternCurveName = '_' + i.toUpperCase();
+                            valueDatasetTrainPredict.active = cacheDataset.active || true;
+                            self.dataStepsForTrainPredict[i].datasets.push(valueDatasetTrainPredict)
                         }
-                    let valueDatasetTrainPredict = angular.copy(dataset);
-                    let cacheDataset = content.steps[i].datasets.find(d => {
-                        return valueDatasetTrainPredict.idDataset === d.idDataset;
-                    })
-                    if(cacheDataset) {
-                        valueDatasetTrainPredict.inputCurveSpecs = cacheDataset.inputCurveSpecs;
-                        valueDatasetTrainPredict.resultCurveName = cacheDataset.resultCurveName;
-                        valueDatasetTrainPredict.patternCurveName = '_' + i.toUpperCase();
-                        valueDatasetTrainPredict.active = cacheDataset.active || true;
-                        self.dataStepsForTrainPredict[i].datasets.push(valueDatasetTrainPredict)
                     }
                 }
-            }
-            $timeout(() => {
                 self.typeSelected = content.type || 'curve';
                 self.inputCurveSpecs = content.inputCurveSpecs;
                 self.targetCurveSpec = content.targetCurveSpec;
+                console.log(self.inputCurveSpecs);
                 self.currentSelectedModel = {
                                             name: content.model.name,
                                             payload: content.model.payload,
