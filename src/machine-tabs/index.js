@@ -248,6 +248,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 self.typeSelected = content.type || 'curve';
                 self.inputCurveSpecs = content.inputCurveSpecs;
                 self.targetCurveSpec = content.targetCurveSpec;
+                self.makeSelectionList();
                 console.log(self.inputCurveSpecs);
                 self.currentSelectedModel = {
                                             name: content.model.name,
@@ -279,7 +280,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                         self.showSomVisualize = false;                           
                     })
                 }
-                self.makeSelectionList();
                 self.sprinnerMl  = false;
             });
         }
