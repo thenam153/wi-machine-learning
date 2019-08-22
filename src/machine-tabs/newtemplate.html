@@ -64,9 +64,9 @@
 			<!-- <wi-dropdown-list place-holder="Machine learning project" items="self.listMlProject" hide-delete-button='false'
 			current-select='self.currentSelectedMlProject' on-item-changed="self.onItemMlProjectChange"></wi-dropdown-list> -->
 			<div ng-repeat="project in self.listMlProject | filter:searchProject track by $index" 
-			ng-class="{selectedProject: self.selectedProject === project}"
+			ng-class="{selectedProject: self.selectedProject === project}" ng-click="self.mlProjectSelected=project;self.currentSelectedMlProject=project?project.name:self.currentSelectedMlProject;"
 			class="item-list-of-dl">
-				{{project.data.label}}
+				{{project.name}}
 			</div>
 		</div>
 		<div class="footer-dl-ml">

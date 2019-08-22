@@ -141,16 +141,17 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     this.openDialogOpenMlProject = function() {
         wiApi.getMlProjectListPromise()
         .then((listMlProject) => {
-            self.listMlProject = listMlProject.map(i => {
-                return {
-                    data: {
-                        label: i.name
-                    },
-                    properties: i
-                }
-            })
-            console.log(self.listMlProject);
+            // self.listMlProject = listMlProject.map(i => {
+            //     return {
+            //         data: {
+            //             label: i.name
+            //         },
+            //         properties: i
+            //     }
+            // })
+            // console.log(self.listMlProject);
             $timeout(() => {
+                self.listMlProject = listMlProject;
                 self.showDialogOpenMlProject = true;            
             })
         });
@@ -281,10 +282,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             self.currentSelectedMlProject = mlProject.name;
         });
     }
-    this.onItemMlProjectChange = function(itemProps) {
-        self.currentSelectedMlProject = itemProps ? itemProps.name : self.currentSelectedMlProject;
-        self.mlProjectSelected = itemProps;
-    }
+    // this.onItemMlProjectChange = function(itemProps) {
+    //     self.currentSelectedMlProject = itemProps ? itemProps.name : self.currentSelectedMlProject;
+    //     self.mlProjectSelected = itemProps;
+    // }
     this.onClickButtonNew = function() {
         $timeout(() => {
             self.currentSelectedModel = {};
