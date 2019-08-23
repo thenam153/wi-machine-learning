@@ -103,31 +103,31 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 
     function getSomVisualize(model_id) {
     	// /model/som/
-    	return postPromise(`${self.model.properties.url}/api/model/som/${model_id}`, {}, 'GET');
+    	return postPromise(`${self.model.url}/api/model/som/${model_id}`, {}, 'GET');
     }
 
     function postCreateModel(payload) {
-    	return postPromise(`${self.model.properties.url}/api/model/create/${self.model.properties.create}`, payload, 'POST');
+    	return postPromise(`${self.model.url}/api/model/create/${self.model.create}`, payload, 'POST');
     }
 
     function postCreateBucketId(payload) {
-    	return postPromise(`${self.model.properties.url}/api/data`, payload ,'POST');
+    	return postPromise(`${self.model.url}/api/data`, payload ,'POST');
     }
 
     function putDataOfTrain(payload) {
-    	return postPromise(`${self.model.properties.url}/api/data`, payload, 'PUT');
+    	return postPromise(`${self.model.url}/api/data`, payload, 'PUT');
     }
 
     function postTrainByBucketData(payload) {
-    	return postPromise(`${self.model.properties.url}/api/model/train_by_bucket_data`, payload,'POST');
+    	return postPromise(`${self.model.url}/api/model/train_by_bucket_data`, payload,'POST');
     }
 
     function postPredict(payload) {
-    	return postPromise(`${self.model.properties.url}/api/model/predict`, payload, 'POST');
+    	return postPromise(`${self.model.url}/api/model/predict`, payload, 'POST');
     }
 
     function getBucket() {
-    	return postPromise(`${self.model.properties.url}/api/bucket/list`, {}, 'GET');
+    	return postPromise(`${self.model.url}/api/bucket/list`, {}, 'GET');
     }
 
 	function runTask(step) {
@@ -418,7 +418,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     async function createModelAndBucketId() {
     	console.log(self.model);
     	let payload = {};
-    	let params = self.model.properties.payload.params;
+    	let params = self.model.payload.params;
 		params.forEach(i => {
 			payload[i.name] = i.value;
 			if(i.name === 'model_id') self.model_id = i.value;
@@ -491,7 +491,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 		})
 	}
 	function createPayloadForTrain() {
-		if(!self.model.properties.payload.train) {
+		if(!self.model.payload.train) {
 			return {
 				model_id: self.model_id,
 				bucket_id: self.bucket_id
@@ -501,7 +501,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 	    		model_id: self.model_id,
 				bucket_id: self.bucket_id
 	    	};
-	    	let params = self.model.properties.payload.train;
+	    	let params = self.model.payload.train;
 			params.forEach(i => {
 				payload[i.name] = i.value;
 			})
@@ -680,10 +680,10 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     }	
 
     async function doAfterTrain(dataset) {
-    	if(self.model.properties && self.model.properties['som-visualization']) {
+    	if(self.model && self.model['som-visualization']) {
 			$http({
 				method: 'GET',
-				url: `${self.model.properties.url}/api/model/som/${self.model_id}`,
+				url: `${self.model.url}/api/model/som/${self.model_id}`,
 			})
 			.then((res) => {
 				console.log(res);
@@ -815,10 +815,10 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 		]
 
 		this.getFittedModel = async function () {
-			if(self.model.properties['som-visualization']) {
+			if(self.model['som-visualization']) {
 	    		$http({
 		    		method: 'GET',
-		    		url: `${self.model.properties.url}/api/model/som/${self.model_id}`,
+		    		url: `${self.model.url}/api/model/som/${self.model_id}`,
 		    	})
 		    	.then((res) => {
 		    		console.log(res);

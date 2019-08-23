@@ -14,10 +14,10 @@
             <div class="header">
                 <span class="title">Model Selection</span>
                 <wi-dropdown-list ng-if="self.typeModelSelected==='classification'" place-holder="Model" items="self.listModel.classification" hide-delete-button='self.hideDeleteButton'
-                    current-select='self.currentSelectedModel.name' on-item-changed="self.onModelChanged">
+                    current-select='self.currentSelectedModel' on-item-changed="self.onModelChanged">
                 </wi-dropdown-list>
                 <wi-dropdown-list ng-if="self.typeModelSelected!=='classification'" place-holder="Model" items="self.listModel.regression" hide-delete-button='self.hideDeleteButton'
-                    current-select='self.currentSelectedModel.name' on-item-changed="self.onModelChanged">
+                    current-select='self.currentSelectedModel' on-item-changed="self.onModelChanged">
                 </wi-dropdown-list>
             </div>
             
