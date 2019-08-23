@@ -24,6 +24,14 @@ body {
         transform: scale(1);
     }
 }
+@keyframes show-toast {
+    0% {
+        transform: translateX(120%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
 .toast-ml {
     background: #fff;
     display: flex;
@@ -33,10 +41,10 @@ body {
     border: 1px solid #dcdcdc;
     border-radius: 2px;
     box-shadow: 0 10px 20px #00000005;
+    animation: show-toast 0.5s ease;
     .icon-toast-ml {
         font-size: 20px;
         margin-right: 20px;
-
     }
     .mess-toast-ml {
         white-space: normal;
@@ -101,9 +109,17 @@ body {
             font-size: 12px;
             user-select: none;
             border: 1px solid #eaeaea;
-
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            &>div {
+                cursor: pointer;
+                &:hover {
+                    color: #2565f9 !important;
+                }
+            }
             &:hover {
-                background: #c9cace;
+                background: #c9cace ;
 
             }
         }
@@ -111,6 +127,12 @@ body {
             border: 1px solid #4b7def;
             background: #4b7def !important;
             color: #fff;
+            &>div {
+                color: #ccc !important;
+                &:hover {
+                    color: #fff !important;
+                }
+            }
         }
     }
 
