@@ -19,6 +19,7 @@
   "dependencies": {
     "gulp": "^4.0.2",
     "gulp-download": "0.0.1",
+    "toastr": "^2.1.4",
     "xlsx": "^0.15.0"
   }
 }

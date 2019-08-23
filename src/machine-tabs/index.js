@@ -16,6 +16,28 @@ app.component(componentName,{
 });
 
 function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
+    toastr.options = {
+        "closeButton": false,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": false,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "500000",
+        "timeOut": "500000",
+        "extendedTimeOut": "100000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
+    toastr.success('We do have the Kapua suite available.', 'Success');
+    toastr.warning('We do have the Kapua suite available.', 'Success')
+    toastr.error('We do have the Kapua suite available.', 'Success')
+    toastr.info('We do have the Kapua suite available.', 'Success')
+
 	const REMOVE = 0;
 	const ADD = 1;
 	let self = 	this;

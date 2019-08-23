@@ -34,8 +34,20 @@ body {
         transform: translateY(0);
     }
 }
-
-.toat-success {}
+.toast-top-right {
+    top: 72px !important;
+}
+#toast-container > div {
+  
+    padding: 15px 15px 15px 69px !important;
+    width: 400px !important;
+    margin: 0 0 12px !important;
+    background-position: 25px center !important;
+    box-shadow: 0 0 12px #00000026 !important;
+    opacity: 0.8 !important;
+    backdrop-filter: blur(7px);
+  
+}
 
 .body-dialog-ml {
     padding       : 0 20px;
@@ -90,9 +102,9 @@ body {
         }
 
         .new-project {
-            color        : #4b7def;
+            color        : #0674da;
             padding      : 10px;
-            border       : 1px solid #4b7def;
+            border       : 1px solid #0674da;
             border-radius: 2px;
             cursor       : pointer;
         }
@@ -130,8 +142,8 @@ body {
         }
 
         .selectedProject {
-            border    : 1px solid #4b7def;
-            background: #4b7def !important;
+            border    : 1px solid #0674da;
+            background: #0674da !important;
             color     : #fff;
 
             &>div {
@@ -168,7 +180,7 @@ body {
         }
 
         .active {
-            background: #4B7DEF;
+            background: #0674da;
             color     : #fff;
         }
     }
@@ -183,7 +195,7 @@ machine-tabs {
     .menu {
         font-family           : Roboto, system-ui, sans-serif;
         -webkit-font-smoothing: antialiased;
-        background            : #4B7DEF;
+        background            : #0674da;
         text-transform        : uppercase;
         letter-spacing        : 0.5px;
         display               : flex;
@@ -240,7 +252,7 @@ machine-tabs {
                 left                     : 120px;
                 width                    : 50px;
                 height                   : 100px;
-                background               : #4b7def;
+                background               : #0674da;
                 border-top-left-radius   : 100px;
                 border-bottom-left-radius: 100px;
                 color                    : #fff;
@@ -276,7 +288,7 @@ machine-tabs {
                 left                      : -120px;
                 width                     : 50px;
                 height                    : 100px;
-                background                : #4b7def;
+                background                : #0674da;
                 border-top-right-radius   : 100px;
                 border-bottom-right-radius: 100px;
                 color                     : #fff;
@@ -350,7 +362,7 @@ machine-tabs {
 
     .btn-default:hover {
         background-color: #ffffff;
-        border-color    : #4B7DEF;
+        border-color    : #0674da;
         transition      : all ease-in 0.3s;
         box-shadow      : none;
     }
@@ -393,6 +405,6 @@ machine-tabs {
         color           : #fff;
         text-decoration : none;
         outline         : 0;
-        background-color: #4b7def;
+        background-color: #0674da;
     }
 }
