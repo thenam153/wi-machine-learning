@@ -16,23 +16,23 @@ app.component(componentName,{
 });
 
 function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
-    // toastr.options = {
-    //     "closeButton": false,
-    //     "debug": false,
-    //     "newestOnTop": false,
-    //     "progressBar": false,
-    //     "positionClass": "toast-top-right",
-    //     "preventDuplicates": false,
-    //     "onclick": null,
-    //     "showDuration": "300",
-    //     "hideDuration": "500000",
-    //     "timeOut": "500000",
-    //     "extendedTimeOut": "100000",
-    //     "showEasing": "swing",
-    //     "hideEasing": "linear",
-    //     "showMethod": "fadeIn",
-    //     "hideMethod": "fadeOut"
-    // }
+    toastr.options = {
+        "closeButton": false,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": false,
+        "positionClass": "toast-top-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "300",
+        "hideDuration": "500000",
+        "timeOut": "500000",
+        "extendedTimeOut": "100000",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut"
+    }
     // toastr.success('We do have the Kapua suite available.', 'Success');
     // toastr.warning('We do have the Kapua suite available.', 'Success')
     // toastr.error('We do have the Kapua suite available.', 'Success')
@@ -164,31 +164,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         self.showDialogOpenMlProject = true;
         wiApi.getMlProjectListPromise()
         .then((listMlProject) => {
-            // self.listMlProject = listMlProject.map(i => {
-            //     return {
-            //         data: {
-            //             label: i.name
-            //         },
-            //         properties: i
-            //     }
-            // })
-            // console.log(self.listMlProject);
             $timeout(() => {
                 self.listMlProject = listMlProject;            
             })
         });
-        // self.listMlProject = self.listMlProject.map(i => {
-        //     return {
-        //         data: {
-        //             label: i.name
-        //         },
-        //         properties: i
-        //     }
-        // })
-        // console.log(self.listMlProject);
-        // $timeout(() => {
-        //     self.showDialogOpenMlProject = true;            
-        // })
     }
     this.openDialogSaveMlProject = function() { 
         if(self.mlProjectSelected) {
@@ -277,7 +256,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                                             payload: content.model.payload,
                                             sync: false
                                         };
-                // self.updateNNConfig();
                 self.stateWorkflow = content.stateWorkflow || {
                                                                 state : -1, // -1 is nothing 0 was train 1 was verify, predict
                                                                 waitResult: false,
@@ -321,10 +299,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             self.currentSelectedMlProject = mlProject.name;
         });
     }
-    // this.onItemMlProjectChange = function(itemProps) {
-    //     self.currentSelectedMlProject = itemProps ? itemProps.name : self.currentSelectedMlProject;
-    //     self.mlProjectSelected = itemProps;
-    // }
     this.onClickButtonNew = function() {
         $timeout(() => {
             self.mlNameProject = null;

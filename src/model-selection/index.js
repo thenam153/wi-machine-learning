@@ -73,9 +73,7 @@ function ModelSelectionController($scope, $compile){
 		})
 		value = validate(item.type, value);
 		if(value === '') value = item.example;
-		// this.itemValue = value;
 		item.value = value;			
-		// return
 	}
 	let fnSetValue = {};
 	this.getFnSetValue = function(type) {
@@ -102,7 +100,6 @@ function ModelSelectionController($scope, $compile){
 					})
 					value = validate(item.type, value);
 					if(value === '') value = item.example;
-					// this.itemValue = value;
 					item.value = value;		
 				}
 			}
