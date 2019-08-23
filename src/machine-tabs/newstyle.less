@@ -48,6 +48,9 @@ body {
     backdrop-filter: blur(7px);
   
 }
+.toast {
+    animation: show-toast 0.5s ease;
+}
 
 .body-dialog-ml {
     padding       : 0 20px;
@@ -239,7 +242,19 @@ machine-tabs {
         background: #F7F9FD;
         height    : calc(100% - 60px);
         position  : relative;
-
+        .user-setting {
+            position: absolute;
+            height: 100%;
+            width: 315px;
+            z-index: 1;
+            background: #000;
+            right: -315px;
+            transition: all ease-in 0.3s;
+        }
+        .show-user-setting {
+            right: 0;
+            transition: all ease-in 0.3s;
+        }
         .next {
             position: absolute;
             height  : 100%;

@@ -11,7 +11,7 @@
 			<span ng-repeat="name in self.titleTabs track by $index" class="menu-item"
 				ng-class="{active: self.current_tab === $index}" ng-click="changeTab($index);">{{name}}</span>
 				<span style="font-size: 15px;" class="menu-item active ti ti-settings"></span>
-				<span style="font-size: 15px;" class="menu-item active ti ti-arrow-circle-down"></span>
+				<span style="font-size: 15px;" class="menu-item active ti ti-arrow-circle-down" ng-click="self.userSetting=!self.userSetting"></span>
 		</div>
 	</div>
 
@@ -21,6 +21,9 @@
 		</div>
 		<div class="next">
 			<span class="ti ti-arrow-right" ng-click="changeTab('next');"></span>
+		</div>
+		<div class="user-setting" ng-class="{'show-user-setting':self.userSetting}">
+
 		</div>
 		<model-selection id="model-selection" ng-show="self.titleTabs[self.current_tab] === 'Model Selection'"
 			set-props-model="self.setPropsModel" set-model-selected="self.setModelSelected" nn-config="self.nnConfig"set-layers="self.setLayers" nn-config-n-layer-changed="self.nnConfigNLayerChanged" nn-config="self.nnConfig" layer-change="self.layerChange" update-layer="self.updateLayer" current-selected-model="self.currentSelectedModel.name"
@@ -95,6 +98,7 @@
 		<div class="header-dl-ml" style="justify-content: flex-start;">
 			<div class="header-dl-ml-title">Save projects</div>
 		</div>
+		<input ng-init="nameMlProject = 'new project'" ng-model="nameMlProject">
 		<div class="footer-dl-ml">
 			<div class="footer-dl-ml-btn" ng-click="self.showDialogSaveMlProject=false;">CANCEL</div>
 			<div class="footer-dl-ml-btn active" ng-click="self.onClickButtonSave(nameMlProject)">SAVE</div>
