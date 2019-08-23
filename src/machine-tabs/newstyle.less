@@ -1,3 +1,4 @@
+@primary-color:   #0674da;
 body {
     width : 100vw;
     height: 100vh;
@@ -49,10 +50,11 @@ body {
   
 }
 .toast {
-    animation: show-toast 0.5s ease;
+    animation: show-toast 1s ease;
 }
 
 .body-dialog-ml {
+    font-size: 12px;
     padding       : 0 20px;
     display       : flex;
     flex-direction: column;
@@ -80,7 +82,6 @@ body {
             align-items: center;
             background: #ec7363;
             color: #fff;
-            font-size: 12px;
             top: 20px;
             line-height: 1;
             border-radius: 2px;
@@ -198,7 +199,7 @@ machine-tabs {
     .menu {
         font-family           : Roboto, system-ui, sans-serif;
         -webkit-font-smoothing: antialiased;
-        background            : #0674da;
+        background            : @primary-color;
         text-transform        : uppercase;
         letter-spacing        : 0.5px;
         display               : flex;
@@ -244,12 +245,55 @@ machine-tabs {
         position  : relative;
         .user-setting {
             position: absolute;
+            display: flex;
+            padding: 20px;
+            flex-direction: column;
             height: 100%;
             width: 315px;
-            z-index: 1;
-            background: #000;
+            z-index: 5;
+            background: #fff;
             right: -315px;
             transition: all ease-in 0.3s;
+            box-shadow: 0 10px 10px #00000029;
+            .login {
+
+            }
+            .setting {
+                display: flex;
+                justify-content: space-between;
+                margin-top: 20px;
+                .color {
+                    border-radius: 50%;
+                    border: 3px solid #ccc;
+                }
+            }
+            .font-size {
+                margin-top: 30px;
+                height: 2px;
+                background: #dedede;
+                position: relative;
+                align-items: center;
+                display: flex;
+                justify-content: space-between;
+                &>div {
+                    background: #d4d4d4;
+                    width: 10px;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    height: 10px;
+                    border: 1px solid #ccc;
+                    transition: all ease-in 0.3s;
+                }
+                .choose-font-size {
+                    background: #0674da;
+                    border: 1px solid #0674da;
+                    transform: scale(1.5);
+                    transition: all ease-in 0.3s;
+                }
+            }
+            .about {
+
+            }
         }
         .show-user-setting {
             right: 0;

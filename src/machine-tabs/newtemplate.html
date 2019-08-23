@@ -10,8 +10,7 @@
 			
 			<span ng-repeat="name in self.titleTabs track by $index" class="menu-item"
 				ng-class="{active: self.current_tab === $index}" ng-click="changeTab($index);">{{name}}</span>
-				<span style="font-size: 15px;" class="menu-item active ti ti-settings"></span>
-				<span style="font-size: 15px;" class="menu-item active ti ti-arrow-circle-down" ng-click="self.userSetting=!self.userSetting"></span>
+				<span style="font-size: 15px;" class="menu-item active ti ti-settings" ng-click="self.userSetting=!self.userSetting"></span>
 		</div>
 	</div>
 
@@ -23,7 +22,59 @@
 			<span class="ti ti-arrow-right" ng-click="changeTab('next');"></span>
 		</div>
 		<div class="user-setting" ng-class="{'show-user-setting':self.userSetting}">
+			<div style="position: absolute; right: 13px; top: -20px; z-index: 8; border: 10px solid transparent; border-bottom-color: #fff;">
+			</div>
+			<div class="login">
+			</div>
+			<div class="header" style="display: none;">
+				<span class="title">
+					<span class="ti ti-palette" style="margin-right: 15px;"></span>
+					Color theme
+				</span>
+				<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
+			</div>
+			<div class="setting" style="display: none;">
+				<div ng-click="self.changeTheme('rgb(6, 116, 218)')">
+					<svg class="color" width="30" height="30">
+						<rect width="30" height="30" style="fill:rgb(6, 116, 218)" />
+					</svg>
+				</div>
+				<div ng-click="self.changeTheme('rgb(65, 173, 245)')">
+					<svg class="color" width="30" height="30">
+						<rect width="30" height="30" style="fill:rgb(65, 173, 245)" />
+					</svg>
+				</div><div ng-click="self.changeTheme('rgb(78, 78, 78)')">
+					<svg class="color" width="30" height="30">
+						<rect width="30" height="30" style="fill:rgb(78, 78, 78)" />
+					</svg>
+				</div><div ng-click="self.changeTheme('rgb(82, 95, 222)')">
+					<svg class="color" width="30" height="30">
+						<rect width="30" height="30" style="fill:rgb(82, 95, 222)" />
+					</svg>
+				</div>
+			</div>
+			<div class="header">
+				<span class="title">
+					<span class="ti ti-shortcode" style="margin-right: 15px;"></span>
+					Font size
+				</span>
+				<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
+			</div>
+			<div class="font-size">
+				<div ng-click="self.selectedFontSize = 10; self.changeFontSize('10px')" ng-class="{'choose-font-size':self.selectedFontSize === 10}"></div>
+				<div ng-click="self.selectedFontSize = 12; self.changeFontSize('12px')" ng-class="{'choose-font-size':self.selectedFontSize === 12}"></div>
+				<div ng-click="self.selectedFontSize = 14; self.changeFontSize('14px')" ng-class="{'choose-font-size':self.selectedFontSize === 14}"></div>
+				<div ng-click="self.selectedFontSize = 16; self.changeFontSize('16px')" ng-class="{'choose-font-size':self.selectedFontSize === 16}"></div>
+			</div>
+			<div class="font-size" style="background: none;">
+				<span>10</span>
+				<span>12</span>
+				<span>14</span>
+				<span>16</span>
+			</div>
+			<div class="about">
 
+			</div>
 		</div>
 		<model-selection id="model-selection" ng-show="self.titleTabs[self.current_tab] === 'Model Selection'"
 			set-props-model="self.setPropsModel" set-model-selected="self.setModelSelected" nn-config="self.nnConfig"set-layers="self.setLayers" nn-config-n-layer-changed="self.nnConfigNLayerChanged" nn-config="self.nnConfig" layer-change="self.layerChange" update-layer="self.updateLayer" current-selected-model="self.currentSelectedModel" type-model-selected="self.typeModelSelected" set-type-model-selected="self.setTypeModelSelected" on-model-changed="self.onModelChanged" model-selected-props="self.selectedModelProps" get-fn-set-value-el-model="self.getFnSetValueElModel" tab="self.tab" set-tab="self.setTab"
@@ -97,8 +148,11 @@
 	<div  class="body-dialog-ml slim-scroller">
 		<div class="header-dl-ml" style="justify-content: flex-start;">
 			<div class="header-dl-ml-title">Save projects</div>
-		</div>
-		<input ng-init="nameMlProject = 'new project'" ng-model="nameMlProject">
+		</div> 
+		<input ng-init="nameMlProject = 'new project'" 
+		autofocus
+		ng-model="nameMlProject" 
+		style="margin: 20px 0; background: #efefef; line-height: 1; font-size: 12px; padding: 15px 20px; border-radius: 2px;">
 		<div class="footer-dl-ml">
 			<div class="footer-dl-ml-btn" ng-click="self.showDialogSaveMlProject=false;">CANCEL</div>
 			<div class="footer-dl-ml-btn active" ng-click="self.onClickButtonSave(nameMlProject)">SAVE</div>

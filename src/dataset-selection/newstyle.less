@@ -1,3 +1,4 @@
+@primary-color:   #0674da;
 .dragging {
 	background   : #fff !important;
 	border-radius: 10px !important;
@@ -107,6 +108,33 @@
 
 	}
 }
+.header {
+	display       : flex;
+	flex-direction: column;
+}
+
+.title {
+	font-size    : 14px;
+	font-weight  : bold;
+	color        : #000;
+	margin-bottom: 10px;
+	margin-right : 30px;
+	display      : flex;
+	align-items: center;
+}
+
+.sticky {
+	background    : #EDEFF3;
+	padding-bottom: 20px;
+	position      : sticky;
+	top           : 0;
+}
+
+.sub {
+	color    : #8793A1;
+	font-size: 12px;
+}
+
 
 dataset-selection {
 
@@ -171,7 +199,7 @@ dataset-selection {
 					transition     : all ease-in 0.2s;
 
 					&.active {
-						background: #0674da;
+						background: @primary-color;
 						color     : #fff;
 						transition: all ease-in 0.3s;
 					}

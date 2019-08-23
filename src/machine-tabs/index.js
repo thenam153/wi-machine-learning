@@ -40,7 +40,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
 
 	const REMOVE = 0;
 	const ADD = 1;
-	let self = 	this;
+    let self = 	this;
+    self.currentColor = 'rgb(6, 116, 218)';
+    self.currentFontSize = '12px';
+
     let functionCache = [];
     let functionCacheSteps = {
         training: {
@@ -159,6 +162,18 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         }
         self.typeModelSelected = 'classification';
         if(self.token && self.token.length) window.localStorage.setItem('token',self.token);
+    }
+    this.changeTheme = function (color){
+        $("body").find(".menu").filter(function() {
+            return( $(this).css("background-color") == self.currentColor );
+        }).css("background", color);
+        self.currentColor = color;
+    }
+    this.changeFontSize = function (size){
+        $("body").find("*").filter(function() {
+            return( $(this).css("font-size") == self.currentFontSize );
+        }).css("font-size", size);
+        self.currentFontSize = size;
     }
     this.setTypeModelSelected = function(type) {
         self.typeModelSelected = type;
@@ -892,14 +907,14 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         if(self.indexItemDelete > -1 ) {
             wiApi.deleteMlProjectPromise(self.listMlProject[self.indexItemDelete].idMlProject)
             .then((res) => {
-                toastr.success('Delete Ml Project Success', 'Success');
+                toastr.success('Delete "' + self.listMlProject[self.indexItemDelete].name + '" Project Success', 'Success');
                 _.remove(self.listMlProject, (d, i) => {
                     console.log(d, i);
                     return i === self.indexItemDelete;
                 });
             })
             .catch((err) => {
-                toastr.error('Delete Ml Project Error', 'Error');
+                toastr.error('Delete "' + self.listMlProject[self.indexItemDelete].name + '" Project Error', 'Error');
             })
             .finally(() => {
                 $timeout(() => {
