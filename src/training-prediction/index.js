@@ -88,12 +88,11 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 url: url,
                 data: data,
             }).then((response) => {
-            	console.log(response);
+            	// console.log(response);
                 if (response.status === 200) resolve(response.data);
                 if (response.status === 201) resolve(response.data);
                 else reject(new Error(response.data.reason));
             }, (err) => {
-            	console.log('err',err);
             	if(err.status === 400 && err.data.status === 'existed') {
             		resolve({existed : true});
             	}
@@ -135,19 +134,36 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 		self.running = true;
 		switch(step) {
 			case 0: 
-				train(function(){
-					console.log('run',step);
-					self.running = false;
-				});
+				// train(function(err, data){
+				// 	if(err) {
+				// 		console.log(err);
+				// 	}
+				// 	console.log('run',step, data);
+				// 	$timeout(() => {
+				// 		self.running = false;						
+				// 	})
+				// });
+				train()
+				.then(data => {
+					console.log('run',step, data);
+				})
+				.catch(err => {
+					console.error(err)
+				})
+				.finally(() => {
+					$timeout(() => {
+						self.running = false;						
+					})
+				})
 				break;				
 			case 1:
-				verify(function(){
+				verify(function(err, data){
 					console.log('run',step);
 					self.running = false;
 				})	
 				break;	
 			case 2:
-				prediction(function(){
+				prediction(function(err, data){
 					console.log('run',step);
 					self.running = false;
 				})
@@ -155,38 +171,54 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 		}
 	}
 
-	async function train(cb) {
-		console.log(self.model);
-		if(!self.stepDatas[TRAIN_STEP_STATE].datasets.length) return cb();
-		let res = await createModelAndBucketId();
-		console.log(self.stepDatas[TRAIN_STEP_STATE].datasets);
-		async.each(self.stepDatas[TRAIN_STEP_STATE].datasets, function(dataset,_cb){
-			if(isRun(dataset)) {
-				evaluateExpr(dataset,dataset.discrmnt)
-				.then((curves) => {
-					getDataCurveAndFilter(dataset, curves).then(async (dataCurves) => {
-						let payload = {
-							bucket_id: self.bucket_id,
-							data: dataCurves
-						}
-						let res = await putDataOfTrain(payload);
-						_cb();
+	function train() {
+		return new Promise((resolve, reject) => {
+			if(!self.stepDatas[TRAIN_STEP_STATE].datasets.length) {
+				// return cb(new Error('Please drop dataset'));
+				reject(new Error('Please drop dataset'))				
+			} 
+			createModelAndBucketId()
+			.then((res) => {
+				async.each(self.stepDatas[TRAIN_STEP_STATE].datasets, function(dataset, _cb) {
+					if(!isRun(dataset)) {
+						reject(new Error('Please select curve for dataset'));
+					}
+					evaluateExpr(dataset,dataset.discrmnt)
+					.then((curves) => {
+						getDataCurveAndFilter(dataset, curves).then(async (dataCurves) => {
+							let payload = {
+								bucket_id: self.bucket_id,
+								data: dataCurves
+							}
+							putDataOfTrain(payload)
+							.then((res) => {
+								console.log(res);
+								_cb();
+							})
+						});
+					})
+					.catch(err => {
+						reject(err);
 					});
+				}, async function(err) {
+					if(err) {
+						reject(err)
+					}
+					let request = createPayloadForTrain();
+					postTrainByBucketData(request)
+					.then((res) => {
+						console.log(res);
+						doAfterTrain();
+						resolve(res);
+					})
+					.catch((err) => {
+						reject(err)
+					})
 				})
-				.catch(err => {
-					console.error(err);
-					_cb(err);
-				});
-			}else {
-				_cb();
-			}
-		}, async function(err) {
-			if(err) console.error(err);
-			let request = createPayloadForTrain();
-			let res = await postTrainByBucketData(request);
-			doAfterTrain();
-			console.log('train ',res);
-			cb();	
+			})
+			.catch((err) => {
+				reject(err)
+			})
 		})
 	}
 

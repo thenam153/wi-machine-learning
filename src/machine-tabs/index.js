@@ -245,11 +245,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                         }
                     }
                 }
+
                 self.typeSelected = content.type || 'curve';
                 self.inputCurveSpecs = content.inputCurveSpecs;
                 self.targetCurveSpec = content.targetCurveSpec;
-                self.makeSelectionList();
-                console.log(self.inputCurveSpecs);
+                self.makeSelectionList();                    
                 self.currentSelectedModel = {
                                             name: content.model.name,
                                             payload: content.model.payload,
@@ -651,9 +651,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
 	                }
 	            	selectionList.push(dataInformation);
 			}
-            $timeout(() => {
+            // $timeout(() => {
                 self.selectionList = angular.copy(selectionList);  
-            })
+            // })
         }  
     }
     this.onChangeType = function(button) {
