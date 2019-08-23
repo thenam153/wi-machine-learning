@@ -25,6 +25,7 @@ app.component(componentName,{
         setBucketId: '<',
         somVisualize: '<',
         showSomVisualize: '<',
+        setState: '<'
     }
 });
 function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, somModelService){
@@ -134,15 +135,6 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 		self.running = true;
 		switch(step) {
 			case 0: 
-				// train(function(err, data){
-				// 	if(err) {
-				// 		console.log(err);
-				// 	}
-				// 	console.log('run',step, data);
-				// 	$timeout(() => {
-				// 		self.running = false;						
-				// 	})
-				// });
 				train()
 				.then(data => {
 					console.log('run',step, data);
@@ -157,15 +149,31 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 				})
 				break;				
 			case 1:
-				verify(function(err, data){
+				verify()
+				.then(() => {
 					console.log('run',step);
-					self.running = false;
-				})	
+				})
+				.catch(err => {
+					console.error(err)
+				})
+				.finally(() => {
+					$timeout(() => {
+						self.running = false;						
+					})
+				})
 				break;	
 			case 2:
-				prediction(function(err, data){
+				prediction()
+				.then(() => {
 					console.log('run',step);
-					self.running = false;
+				})
+				.catch(err => {
+					console.error(err)
+				})
+				.finally(() => {
+					$timeout(() => {
+						self.running = false;						
+					})
 				})
 				break;
 		}
@@ -222,44 +230,61 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 		})
 	}
 
-	async function verify(cb) {
-		async.each(self.stepDatas[VERIFY_STEP_STATE].datasets, function(dataset,_cb){
-			if(isRun(dataset)) {
+	function verify() {
+		return new Promise((resolve, reject) => {
+			if(self.stateWorkflow.state === -1 ) reject(new Error('Please train before verify'));
+			if(self.stepDatas[VERIFY_STEP_STATE].datasets) {
+				reject(new Error('Please drop dataset'))
+			}
+			async.each(self.stepDatas[VERIFY_STEP_STATE].datasets, function(dataset,_cb){
+				if(!isRun(dataset)) {
+					reject(new Error('Please select curve for dataset'));
+				}
 				evaluateExpr(dataset, dataset.discrmnt)
 				.then(function(curves) {
 					getDataCurveAndFilter(dataset, curves)
 					.then(async function(dataCurves) {
 						let targetFilter = dataCurves.pop();
-						// console.log(target,dataCurves);	
 						let payload = {
 							features: dataCurves,
 							model_id: self.model_id
 						}
-						let dataVerify = await postPredict(payload);
-						handleResultVerify(dataset, dataVerify)
-						.then(newCurve => {
-							console.log(newCurve);
-							_cb();
-						})	
+						// let dataVerify = await postPredict(payload);
+						postPredict(payload)
+						.then((dataVerify) => {
+							handleResultVerify(dataset, dataVerify)
+							.then(newCurve => {
+								console.log(newCurve);
+								_cb();
+							});
+						});	
 					});
 				})
 				.catch(err => {
 					console.error(err);
 					_cb(err);
 				});
-			}else {
-				_cb();
-				// cb();
-			}
-		},err => {
-			if(err) console.error(err);
-			cb();	
-		});
+				
+			},err => {
+				if(err) {
+						console.error(err);
+						reject(err);
+					};
+				resovle();	
+			});
+		})
 	}
 
-	async function prediction(cb) {
-		async.each(self.stepDatas[PREDICT_STEP_STATE].datasets, function(dataset,_cb){
-			if(isRun(dataset)) {
+	async function prediction() {
+		return new Promise((resolve, reject) => {
+			if(self.stateWorkflow.state === -1 ) reject(new Error('Please train before prediction'));
+			if(self.stepDatas[PREDICT_STEP_STATE].datasets) {
+				reject(new Error('Please drop dataset'))
+			}
+			async.each(self.stepDatas[PREDICT_STEP_STATE].datasets, function(dataset,_cb){
+				if(isRun(dataset)) {
+					reject(new Error('Please drop dataset'))
+				}
 				evaluateExpr(dataset,dataset.discrmnt)
 				.then(function(curves) {
 					getDataCurveAndFilter(dataset, curves)
@@ -269,25 +294,26 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 							features: dataCurves,
 							model_id: self.model_id
 						}
-						let dataPrediction = await postPredict(payload);	
-						// console.log('predict', dataPrediction);
-						handleResultPrediction(dataset, dataPrediction)
-						.then((newCurve) => {
-							_cb();
-						});
+						// let dataPrediction = await postPredict(payload);	
+						postPredict(payload)
+						.then((dataPrediction) => {
+							handleResultPrediction(dataset, dataPrediction)
+							.then((newCurve) => {
+								_cb();
+							});
+						});	
 					});
 				})
 				.catch(err => {
-					console.error(err);
 					_cb(err);
 				});
-			}else {
-				_cb();
-				// cb();
-			}
-		},err => {
-			if(err) console.error(err);
-			cb();	
+			},err => {
+				if(err) {
+					reject(err);
+					console.error(err);
+				}
+				resolve();
+			})
 		})
 	}
 
@@ -416,33 +442,56 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     }
 
     async function createModelAndBucketId() {
-    	console.log(self.model);
-    	let payload = {};
-    	let params = self.model.payload.params;
-		params.forEach(i => {
-			payload[i.name] = i.value;
-			if(i.name === 'model_id') self.model_id = i.value;
-		})
-		console.log(payload);
-		let resModelId = await postCreateModel(payload);
-		self.setModelId(self.model_id);
-		self.bucket_id = self.model_id + Date.now()
-		let request = {
-			bucket_id: self.bucket_id,
-			dims: self.inputCurveSpecs.length + 1
-		}
-		let resBucketId = await postCreateBucketId(request);
-		self.setBucketId(self.bucket_id)
-		if(resBucketId.existed) {
-			request.override_flag = true;
-			resBucketId = await postCreateBucketId(request);
-		}
-		return new Promise((resolve) => {
-			resolve({
-				model_id: resModelId,
-				bucket_id: resBucketId
+    	return new Promise((resolve, reject) => {
+    		console.log(self.model);
+	    	let payload = {};
+	    	let params = self.model.payload.params;
+			params.forEach(i => {
+				payload[i.name] = i.value;
+				if(i.name === 'model_id') self.model_id = i.value;
 			})
-		})
+			console.log(payload);
+			// let resModelId = await postCreateModel(payload);
+			postCreateModel(payload)
+			.then((resModelId) => {
+				self.setModelId(self.model_id);
+				self.bucket_id = self.model_id + Date.now()
+				let request = {
+					bucket_id: self.bucket_id,
+					dims: self.inputCurveSpecs.length + 1
+				}
+				// let resBucketId = await postCreateBucketId(request);
+				postCreateBucketId(request)
+				.then((resBucketId) => {
+					self.setBucketId(self.bucket_id)
+					if(resBucketId.existed) {
+						request.override_flag = true;
+						// resBucketId = await postCreateBucketId(request);
+						postCreateBucketId(request)
+						.then((resBucketId) => {
+							resolve({
+								model_id: resModelId,
+								bucket_id: resBucketId
+							})
+						})
+					}else {
+						resolve({
+								model_id: resModelId,
+								bucket_id: resBucketId
+							})
+					}
+				})
+			})
+			.catch((err) => {
+				reject(err);
+			})
+    	})
+		// return new Promise((resolve) => {
+		// 	resolve({
+		// 		model_id: resModelId,
+		// 		bucket_id: resBucketId
+		// 	})
+		// })
     }
 
 	function getDataCurveAndFilter(dataset, curves, callback) {
@@ -511,12 +560,31 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 
 	this.runAll = async function() {
 		self.running = true;
-		train(function() {
-			verify(function() {
-				prediction(function() {
-					console.log('Run All');
-					self.running = false;
-				})
+		// train(function() {
+		// 	verify(function() {
+		// 		prediction(function() {
+		// 			console.log('Run All');
+		// 			self.running = false;
+		// 		})
+		// 	})
+		// })
+		train()
+		.then(() => {
+			return verify();
+		})
+		.then(() => {
+			return prediction();
+		})
+		.then(() => {
+			console.log('complete')
+		})
+		.catch((err) => {
+			console.log(err);
+		})
+		.finally(() => {
+			console.log('Run All');
+			$timeout(() => {
+				self.running = false;
 			})
 		})
 	}

@@ -90,7 +90,7 @@
 
 		<training-prediction step-datas="self.dataStepsForTrainPredict" input-curve-specs="self.inputCurveSpecs"
 			target-curve-spec="self.targetCurveSpec" model="self.selectedModelProps" state-workflow="self.stateWorkflow" set-model-id="self.setModelId" set-bucket-id="self.setBucketId"
-			ng-show="self.titleTabs[self.current_tab] === 'Training and Prediction'" som-visualize="self.dataSomVisualize" show-som-visualize="self.showSomVisualize"></training-prediction>
+			ng-show="self.titleTabs[self.current_tab] === 'Training and Prediction'" som-visualize="self.dataSomVisualize" show-som-visualize="self.showSomVisualize" set-state="self.setStateWorkflow"></training-prediction>
 		<wi-neural-network container="self.nnConfig.container" input-curves="self.nnConfig.inputs"
 						    output-curves="self.nnConfig.outputs" 
 						    hidden-layer="self.nnConfig.layers"></wi-neural-network>

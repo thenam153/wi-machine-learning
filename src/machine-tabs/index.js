@@ -59,6 +59,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             drop: null,
         },
     }
+    this.setStateWorkflow = function(state) {
+        self.stateWorkflow.state = state;
+    }
     this.showSomVisualize = false;
     this.showDialogOpenMlProject = false;
     this.currentSelectedMlProject = null;
