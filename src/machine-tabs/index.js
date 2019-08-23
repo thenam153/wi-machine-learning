@@ -157,8 +157,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             model_id: null,
             bucket_id: null
         }
-        // self.dataStepsForTrainPredict = angular.copy(self.machineLearnSteps);
+        self.typeModelSelected = 'classification';
         if(self.token && self.token.length) window.localStorage.setItem('token',self.token);
+    }
+    this.setTypeModelSelected = function(type) {
+        self.typeModelSelected = type;
     }
     this.openDialogOpenMlProject = function() {
         self.showDialogOpenMlProject = true;
@@ -251,11 +254,15 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 self.inputCurveSpecs = content.inputCurveSpecs;
                 self.targetCurveSpec = content.targetCurveSpec;
                 self.makeSelectionList();                    
+                self.typeModelSelected = content.model.type;
                 self.currentSelectedModel = {
                                             name: content.model.name,
                                             payload: content.model.payload,
                                             sync: false
                                         };
+                self.modelSelectedProps = content.model;
+                let props = Object.assign({}, {properties: self.modelSelectedProps}, {name: self.modelSelectedProps.label});
+                self.selectedModelProps = props;
                 self.stateWorkflow = content.stateWorkflow || {
                                                                 state : -1, // -1 is nothing 0 was train 1 was verify, predict
                                                                 waitResult: false,
@@ -349,8 +356,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             }
             self.mlProjectSelected = null;
             self.showSomVisualize = false;
-            self.selectedModelProps.name = self.model[0].name;
-            self.selectedModelProps.properties = self.model[0].properties;
+            self.selectedModelProps.name = self.model.classification[0].name;
+            self.selectedModelProps.properties = self.model.classification[0].properties;
             self.inputCurveSpecs = [
                 {
                     label: 'Input Curve',
@@ -381,15 +388,15 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
 	this.setPropsModel = function(data) {
 	   self.model = data;
 	}
-	this.setModelSelected = function(selectedModelProps) {
-        if(!self.currentSelectedModel.sync && self.currentSelectedModel.name) {
-            self.selectedModelProps = selectedModelProps;
-            self.selectedModelProps.properties.payload = self.currentSelectedModel.payload;
-            self.currentSelectedModel.sync = true;
-        }else{
-            self.selectedModelProps = selectedModelProps;
-        }
-	}
+	// this.setModelSelected = function(selectedModelProps) {
+ //        if(!self.currentSelectedModel.sync && self.currentSelectedModel.name) {
+ //            self.selectedModelProps = selectedModelProps;
+ //            self.selectedModelProps.properties.payload = self.currentSelectedModel.payload;
+ //            self.currentSelectedModel.sync = true;
+ //        }else{
+ //            self.selectedModelProps = selectedModelProps;
+ //        }
+	// }
     this.getFnOnInputChanged = function($index) {
         if (!functionCache[$index])
             functionCache[$index] = function(selectedItemProps) {
@@ -867,7 +874,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         let model = {
             name: angular.copy(self.selectedModelProps.name),
             payload: angular.copy(self.selectedModelProps.properties.payload),
-            url: self.selectedModelProps.properties.url
+            url: self.selectedModelProps.properties.url,
+            type: self.typeModelSelected,
         }
         let inputCurveSpecs = self.inputCurveSpecs.map(i => {
             return i
@@ -907,6 +915,92 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                     self.indexItemDelete = -1;
                 })
             })
+        }
+    }
+    // ============model==============
+    this.modelSelectedProps = {};
+    this.tab = 2;
+    this.setTab = function(idx) {
+        self.tab = idx;
+    }
+    this.onModelChanged = function(modelSelectedProps){
+        self.modelSelectedProps = modelSelectedProps;
+        let props = Object.assign({}, {properties: this.selectedItem.properties}, {name: this.selectedItem.properties.label});
+        self.selectedModelProps = props;
+        if(!props.properties.nnnw) {
+            $timeout(() => {
+                self.tab = 1;
+            })
+            let element = document.getElementById("tab-layer");
+            element.classList.add("hide");
+            let changePosition = document.getElementById("model-selection");
+            changePosition.classList.add("position-static");
+        }else {
+            self.updateLayer();
+            let element = document.getElementById("tab-layer");
+            element.classList.remove("hide");
+            let changePosition = document.getElementById("model-selection");
+            changePosition.classList.remove("position-static");
+        }
+    }
+    let fnSetValue = {};
+    this.getFnSetValueElModel = function(type) {
+        if(type === 'params') {
+            if(!fnSetValue.params) {
+                fnSetValue.params = function(param, value) {
+                    console.log(param, value);
+                    let item = self.modelSelectedProps.payload.params.find(i => {
+                        return i.name == param
+                    })
+                    value = validate(item.type, value);
+                    if(value === '') value = item.example;
+                    // this.itemValue = value;
+                    item.value = value;     
+                }
+            }
+            return fnSetValue.params;
+        }else {
+            if(!fnSetValue.train) {
+                fnSetValue.train = function(param, value) {
+                    console.log(param, value);
+                    let item = self.modelSelectedProps.payload.train.find(i => {
+                        return i.name == param
+                    })
+                    value = validate(item.type, value);
+                    if(value === '') value = item.example;
+                    item.value = value;     
+                }
+            }
+            return fnSetValue.train;
+        }
+    }
+    function validate(type,value) {
+        switch(type){
+            case 'string' : return value; 
+
+            case 'integer': 
+                value = Number(value);
+                if(Number.isInteger(value)) {
+                    return value;
+                }
+                return '';
+            case 'number':
+                value = Number(value);
+                if (!isNaN(value)) {
+                    return value;
+                }
+                return '';
+            case 'boolean':
+                if(value.toString().toLowerCase() == 'true') {
+                    // return 'true';
+                    return true;
+                }
+                if(value.toString().toLowerCase() == 'false') {
+                    // return 'false';
+                    return false;
+                }
+                return '';
+            default: return '';
         }
     }
 }
