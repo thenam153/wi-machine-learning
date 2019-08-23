@@ -274,6 +274,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 // self.modelSelectedProps = content.model;
                 // let props = Object.assign({}, {properties: self.modelSelectedProps}, {name: self.modelSelectedProps.label});
                 self.selectedModelProps = content.model;
+                self.selectedModelProps.sync = true;
                 console.log(self.selectedModelProps)
                 self.stateWorkflow = content.stateWorkflow || {
                                                                 state : -1, // -1 is nothing 0 was train 1 was verify, predict
@@ -370,6 +371,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             self.showSomVisualize = false;
             // self.selectedModelProps.name = self.model.classification[0].name;
             self.selectedModelProps = self.model.classification[0].properties;
+            self.typeModelSelected = 'classification';
+            self.currentSelectedModel = self.model.classification[0].properties.label;
             self.inputCurveSpecs = [
                 {
                     label: 'Input Curve',
@@ -516,7 +519,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         });
     }
     function updateNNConfig() {
-        console.log('update nn config')
         self.nnConfig.inputs = self.inputCurveSpecs.map(i => {
                                         return {
                                                 label: i.currentSelect,  
@@ -539,7 +541,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 self.nnConfig.container.wiNNCtrl.update(self.nnConfig);                
             }
         });
-        console.log(self.nnConfig, self.selectedModelProps);
     }   
     this.updateNNConfig = _.debounce(updateNNConfig);
     setInterval(self.updateNNConfig(), 1000);
@@ -931,9 +932,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         self.tab = idx;
     }
     this.onModelChanged = function(modelSelectedProps){
-        // self.modelSelectedProps = modelSelectedProps;
-        // let props = Object.assign({}, {properties: this.selectedItem.properties}, {name: this.selectedItem.properties.label});
-        self.selectedModelProps = modelSelectedProps || self.selectedModelProps;
+        console.log(modelSelectedProps);
+        self.selectedModelProps = self.selectedModelProps.sync ? self.selectedModelProps : modelSelectedProps;
+        self.selectedModelProps.sync = false;
         console.log(self.selectedModelProps)
         if(!self.selectedModelProps.nnnw) {
             $timeout(() => {
