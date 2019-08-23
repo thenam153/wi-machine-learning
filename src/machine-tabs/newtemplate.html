@@ -50,11 +50,11 @@
 					Delete project?
 				</div>
 				<div style="display: flex">
-					<div ng-click=""
+					<div ng-click="self.delProject=false;self.indexItemDelete=-1"
 						style="margin-left: 12px; cursor: pointer; padding: 12px; font-weight: bold; color: #ffffff; letter-spacing: 1px; border-radius: 2px;">
 						CANCEL
 					</div>
-					<div ng-click=""
+					<div ng-click="self.confirmDeleteItemMlProject()"
 						style="background: #ff988b; cursor: pointer; padding: 12px; font-weight: bold; color: #ffffff; letter-spacing: 1px; border-radius: 2px;">
 						DELETE
 					</div>
@@ -73,14 +73,14 @@
 			current-select='self.currentSelectedMlProject' on-item-changed="self.onItemMlProjectChange"></wi-dropdown-list> -->
 			<div ng-repeat="project in self.listMlProject | filter:searchProject track by $index" 
 			ng-class="{selectedProject: self.mlNameProject === project.name}" 
-			ng-click="self.mlProjectCache=project;self.mlNameProject=project.name"
+			ng-click="self.mlProjectCache=project;self.mlNameProject=project.name;"
 			class="item-list-of-dl">
 				{{project.name}}
-				<div style="color: #9e9e9e;" class="ti ti-close" ng-click="self.delProject = !self.delProject"></div>
+				<div style="color: #9e9e9e;" class="ti ti-close" ng-click="self.selectItemDelete($index)"></div>
 			</div>
 		</div>
 		<div class="footer-dl-ml">
-			<div class="footer-dl-ml-btn" ng-click="self.showDialogOpenMlProject=false;self.mlNameProject=self.mlProjectSelected.name">CANCEL</div>
+			<div class="footer-dl-ml-btn" ng-click="self.showDialogOpenMlProject=false;self.mlNameProject=self.mlProjectSelected.name;self.delProject=false;self.indexItemDelete=-1">CANCEL</div>
 			<div class="footer-dl-ml-btn active" ng-click="self.onClickButtonOpen(self.mlProjectCache)">OPEN</div>
 		</div>
 	</div>

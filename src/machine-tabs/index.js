@@ -16,27 +16,27 @@ app.component(componentName,{
 });
 
 function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
-    toastr.options = {
-        "closeButton": false,
-        "debug": false,
-        "newestOnTop": false,
-        "progressBar": false,
-        "positionClass": "toast-top-right",
-        "preventDuplicates": false,
-        "onclick": null,
-        "showDuration": "300",
-        "hideDuration": "500000",
-        "timeOut": "500000",
-        "extendedTimeOut": "100000",
-        "showEasing": "swing",
-        "hideEasing": "linear",
-        "showMethod": "fadeIn",
-        "hideMethod": "fadeOut"
-    }
-    toastr.success('We do have the Kapua suite available.', 'Success');
-    toastr.warning('We do have the Kapua suite available.', 'Success')
-    toastr.error('We do have the Kapua suite available.', 'Success')
-    toastr.info('We do have the Kapua suite available.', 'Success')
+    // toastr.options = {
+    //     "closeButton": false,
+    //     "debug": false,
+    //     "newestOnTop": false,
+    //     "progressBar": false,
+    //     "positionClass": "toast-top-right",
+    //     "preventDuplicates": false,
+    //     "onclick": null,
+    //     "showDuration": "300",
+    //     "hideDuration": "500000",
+    //     "timeOut": "500000",
+    //     "extendedTimeOut": "100000",
+    //     "showEasing": "swing",
+    //     "hideEasing": "linear",
+    //     "showMethod": "fadeIn",
+    //     "hideMethod": "fadeOut"
+    // }
+    // toastr.success('We do have the Kapua suite available.', 'Success');
+    // toastr.warning('We do have the Kapua suite available.', 'Success')
+    // toastr.error('We do have the Kapua suite available.', 'Success')
+    // toastr.info('We do have the Kapua suite available.', 'Success')
 
 	const REMOVE = 0;
 	const ADD = 1;
@@ -907,6 +907,32 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             model: model,
             stateWorkflow: self.stateWorkflow,
             steps: steps
+        }
+    }
+    self.selectItemDelete = function($index) {
+        self.delProject = true;
+        self.indexItemDelete = $index;
+    }
+    self.confirmDeleteItemMlProject = function() {
+        console.log(self.indexItemDelete)
+        if(self.indexItemDelete > -1 ) {
+            wiApi.deleteMlProjectPromise(self.listMlProject[self.indexItemDelete].idMlProject)
+            .then((res) => {
+                toastr.success('Delete Ml Project Success', 'Success');
+                _.remove(self.listMlProject, (d, i) => {
+                    console.log(d, i);
+                    return i === self.indexItemDelete;
+                });
+            })
+            .catch((err) => {
+                toastr.error('Delete Ml Project Error', 'Error');
+            })
+            .finally(() => {
+                $timeout(() => {
+                    self.delProject = false;
+                    self.indexItemDelete = -1;
+                })
+            })
         }
     }
 }
