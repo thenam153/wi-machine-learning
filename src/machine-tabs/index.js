@@ -43,7 +43,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     let self = 	this;
     self.currentColor = 'rgb(6, 116, 218)';
     self.currentFontSize = '12px';
-
     let functionCache = [];
     let functionCacheSteps = {
         training: {
@@ -407,15 +406,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
 	this.setPropsModel = function(data) {
 	   self.model = data;
 	}
-	// this.setModelSelected = function(selectedModelProps) {
- //        if(!self.currentSelectedModel.sync && self.currentSelectedModel.name) {
- //            self.selectedModelProps = selectedModelProps;
- //            self.selectedModelProps.properties.payload = self.currentSelectedModel.payload;
- //            self.currentSelectedModel.sync = true;
- //        }else{
- //            self.selectedModelProps = selectedModelProps;
- //        }
-	// }
     this.getFnOnInputChanged = function($index) {
         if (!functionCache[$index])
             functionCache[$index] = function(selectedItemProps) {
@@ -462,9 +452,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             }  
         }, 500);
         handle()
-        // for(let i in self.machineLearnSteps) {
-        //  self.handleDrop(i,$index, REMOVE);
-        // }
     }
     this.onAddInputItem = function() {
         console.log('add');
@@ -475,9 +462,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             value: null,
             currentSelect: '[no choose]'
         });
-        // for(let i in self.machineLearnSteps) {
-        //  self.handleDrop(i,self.inputCurveSpecs.length - 1, ADD);
-        // }
         let handle = _.debounce(() => {
             for(let i in self.machineLearnSteps) {
              self.handleDrop(i,self.inputCurveSpecs.length - 1, ADD);
@@ -492,7 +476,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                     for(let node of datasets) {
                         let valueDataset = angular.copy(node);
                         if (self.equals(self.machineLearnSteps[step].datasets,valueDataset) < 0 && valueDataset.idDataset && valueDataset.idWell) {
-                            // self.machineLearnSteps[step].datasets.push(valueDataset);
                             self.machineLearnSteps[step].datasets = _.concat(self.machineLearnSteps[step].datasets, valueDataset);
                             if(step == 'training') {
                                 self.mergeCurves.push(valueDataset.curves);
@@ -502,7 +485,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                     self.makeSelectionList();
                     var handle = _.debounce(() => {self.handleDrop(step)}, 1000);  
                     handle();
-                    // self.handleDrop(step);
                 })
             }
         }
@@ -570,7 +552,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         self.updateNNConfig();
     }
     this.layerChange = function(index, value) {
-        // layer.value = value;
         let params = self.selectedModelProps.payload.params;
         let layer = (params || []).find(i => {
             return i.name === 'hidden_layer_sizes';
@@ -600,7 +581,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         self.updateNNConfig();
     }
     this.makeSelectionList = function() {
-    	// console.log('make',self.inputCurveSpecs);
         var curves = _.intersectionBy(...self.mergeCurves,'name');
         let selectionList = [{
             data: {
@@ -671,9 +651,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
 	                }
 	            	selectionList.push(dataInformation);
 			}
-            // $timeout(() => {
-                self.selectionList = angular.copy(selectionList);  
-            // })
+            self.selectionList = angular.copy(selectionList);  
         }  
     }
     this.onChangeType = function(button) {
@@ -808,8 +786,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                                 },
                                 properties: null
                             }];
-                            // console.log(curve);
-                            if((curve.idFamily == (inputSpecs[i].value || {}).idFamily )&& curve.idFamily ) dataStep.selectionList[i].push(dataInformation);
+                            if((curve.idFamily == (inputSpecs[i].value || {}).idFamily ) && curve.idFamily ) dataStep.selectionList[i].push(dataInformation);
                         }
                     break;
                     case 'main_family':
@@ -824,7 +801,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                                             },
                                             properties: null
                                         }];
-                                        if(mainFamily.familyGroup == (inputSpecs[i].value || {}).familyGroup  ) dataStep.selectionList[i].push(dataInformation);
+                                        if(mainFamily.familyGroup == (inputSpecs[i].value || {}).familyGroup ) dataStep.selectionList[i].push(dataInformation);
                                     }   
                                 }
                             }catch(e) {
@@ -844,7 +821,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 }];
             }
         }
-        // set input curve for each dataset
+
         for(let dataset of dataStep.datasets) {
             if(step === 'training' && self.typeSelected === 'curve') {
                 dataset.inputCurveSpecs = angular.copy(inputSpecs);
@@ -876,7 +853,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         }
     }
     function saveWorkflow() {
-        let steps = angular.copy(self.dataStepsForTrainPredict); // copy data
+        let steps = angular.copy(self.dataStepsForTrainPredict); 
         for(let i in steps) {
             steps[i].datasets = steps[i].datasets.map(d => {
                 return {
@@ -930,9 +907,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             })
         }
     }
-    // ============model==============
-    // this.modelSelectedProps = {};
-    this.tab = 2;
+    this.tab = 1;
     this.setTab = function(idx) {
         self.tab = idx;
     }
