@@ -262,7 +262,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                             valueDatasetTrainPredict.inputCurveSpecs = cacheDataset.inputCurveSpecs;
                             valueDatasetTrainPredict.resultCurveName = cacheDataset.resultCurveName;
                             valueDatasetTrainPredict.patternCurveName = '_' + i.toUpperCase();
-                            valueDatasetTrainPredict.active = cacheDataset.active || true;
+                            valueDatasetTrainPredict.active = cacheDataset.active;
+                            valueDatasetTrainPredict.discrmnt = cacheDataset.discrmnt;
                             self.dataStepsForTrainPredict[i].datasets.push(valueDatasetTrainPredict)
                         }
                     }
@@ -883,7 +884,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                     idDataset: d.idDataset,
                     name: d.name,
                     resultCurveName: d.resultCurveName,
-                    active: d.active
+                    active: d.active,
+                    discrmnt: d.discrmnt
                 }
             })
         }

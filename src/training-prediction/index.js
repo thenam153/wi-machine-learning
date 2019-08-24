@@ -57,7 +57,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     this.model_id = null;
 	this.onDiscriminator = function(dataset) {
 		// console.log(dataset.curves);
-		wiDialog.discriminator(dataset.discrmnt,dataset.curves,function(res) {
+		wiDialog.discriminator(dataset.discrmnt, dataset.curves, function(res) {
 			dataset.discrmnt = res;
 			console.log(res);
 		})
@@ -590,7 +590,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 	}
 
 	this.onToggleActiveOutput = function(dataset) {
-		dataset.active = !dataset.active;
+		$timeout(() => {
+			dataset.active = !dataset.active;
+		})
 	}
 
 	async function saveCurve(curveInfo, dataset, callback) {
