@@ -180,7 +180,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     this.setTypeModelSelected = function(type) {
         self.typeModelSelected = type;
     }
-    this.openDialogOpenMlProject = function() {
+    this.openMlProject = function() {
         self.showDialogOpenMlProject = true;
         wiApi.getMlProjectListPromise()
         .then((listMlProject) => {
@@ -189,7 +189,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             })
         });
     }
-    this.openDialogSaveMlProject = function() { 
+    this.saveMlProject = function() { 
         if(self.mlProjectSelected) {
             saveWorkflow();
             self.showNotiSave = true;
@@ -308,8 +308,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             });
         }
     }
-    this.onClickButtonSave = function(name) {
-        console.log('save workflow', name);
+    this.createMlProject = function(name) {
+        console.log('save', name);
         self.showDialogSaveMlProject = false;
         saveWorkflow();
         wiApi.createMlProjectPromise({
@@ -324,7 +324,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             })
         });
     }
-    this.onClickButtonNew = function() {
+    this.newMlProject = function() {
         $timeout(() => {
             $scope.nameMlProject = 'new project';
             self.mlNameProject = null;
@@ -891,7 +891,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                     return i === self.indexItemDelete;
                 });
                 if(self.mlProjectSelected && id === self.mlProjectSelected.idMlProject) {
-                    self.onClickButtonNew();
+                    self.newMlProject();
                 }
             })
             .catch((err) => {
