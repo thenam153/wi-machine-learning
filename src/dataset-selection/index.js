@@ -28,10 +28,9 @@ app.component(componentName,{
     }
 });
 
-function DatasetSelectionController($scope,wiApi,$timeout){
+function DatasetSelectionController($scope, wiApi, $timeout){
 	let self = 	this;
 	this.treedata;
-    // this.isActive = 0;
     this.buttons = [{
         label: 'Curve',
         type: 'curve',
@@ -45,7 +44,6 @@ function DatasetSelectionController($scope,wiApi,$timeout){
         type: 'main_family',
         icon: 'family-group-16x16'
     }];
-    // this.typeSelected = self.buttons[0].type;
     this.getLabel = function (node) {
         return (node||{}).name || 'no name';
     }	
@@ -100,14 +98,6 @@ function DatasetSelectionController($scope,wiApi,$timeout){
         return node.name.includes(filter);
     }
     this.$onInit = function() {
-        // self.typeSelected = self.buttons[0].type;
-    	// (async ()=>{
-    	// 	try{
-    	// 		self.treedata = await wiApi.getWellsPromise(self.idProject);
-    	// 	}catch (e){
-    	// 		console.error(e);
-    	// 	}
-    	// })();
         (async() => {
             try {
                 self.treedata = await wiApi.getProjectsPromise();

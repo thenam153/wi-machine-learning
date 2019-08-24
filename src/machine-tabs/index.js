@@ -267,7 +267,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                         }
                     }
                 }
-
                 self.typeSelected = content.type || 'curve';
                 self.inputCurveSpecs = content.inputCurveSpecs;
                 self.targetCurveSpec = content.targetCurveSpec;
@@ -279,12 +278,13 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 self.selectedModelProps = content.model;
                 self.selectedModelProps.sync = true;
                 console.log(self.selectedModelProps)
-                self.stateWorkflow = content.stateWorkflow || {
-                                                                state : -1, // -1 is nothing 0 was train 1 was verify, predict
-                                                                waitResult: false,
-                                                                model_id: null,
-                                                                bucket_id: null
-                                                            };
+                self.stateWorkflow = content.stateWorkflow;
+                // || {
+                // state : -1, 
+                // waitResult: false,
+                // model_id: null,
+                // bucket_id: null
+                // };
                 if(self.stateWorkflow.model_id && content.model.name === 'Supervise Som') {
                     $http({
                         method: 'GET',
@@ -318,12 +318,15 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         })
         .then((mlProject) => {
             if(!mlProject) return console.error(new Error("Don't create Ml Project"))
-            self.mlProjectSelected = mlProject;
-            self.currentSelectedMlProject = mlProject.name;
+            $timeout(() => {
+                self.mlProjectSelected = mlProject;
+                self.currentSelectedMlProject = mlProject.name;
+            })
         });
     }
     this.onClickButtonNew = function() {
         $timeout(() => {
+            $scope.nameMlProject = 'new project';
             self.mlNameProject = null;
             self.currentSelectedModel = '';
             self.currentSelectedMlProject = null;
@@ -341,7 +344,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 training: {
                     datasets: [],
                     selectionList: [],
-                    // inputCurveSpecs: [],
                     target: true,
                     name: 'Train',
                     index: 0
@@ -349,7 +351,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 verify: {
                     datasets: [],
                     selectionList: [],
-                    // inputCurveSpecs: [],
                     target: true,
                     name: 'Verify',
                     index: 1
@@ -357,7 +358,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 prediction: {
                     datasets: [],
                     selectionList: [],
-                    // inputCurveSpecs: [],
                     target: false,
                     name: 'Predict',
                     index: 2
@@ -365,7 +365,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             };
             self.dataStepsForTrainPredict = angular.copy(self.machineLearnSteps);
             self.stateWorkflow = {
-                state : -1, // -1 is nothing 0 was train 1 was verify, predict
+                state : -1,
                 waitResult: false,
                 model_id: null,
                 bucket_id: null
@@ -409,7 +409,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     this.getFnOnInputChanged = function($index) {
         if (!functionCache[$index])
             functionCache[$index] = function(selectedItemProps) {
-                // console.log(selectedItemProps);
                 self.inputCurveSpecs[$index].value = selectedItemProps;
                 if(selectedItemProps){
                     self.inputCurveSpecs[$index].currentSelect = selectedItemProps.name;
@@ -680,8 +679,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         return -1;
     }
     this.handleDrop = function(step,index = -1,type = null) {
-    	let datasetSource = Object.assign([],self.machineLearnSteps[step].datasets);
-    	let datasetDestination = Object.assign([],self.dataStepsForTrainPredict[step].datasets);
+    	let datasetSource = Object.assign([], self.machineLearnSteps[step].datasets);
+    	let datasetDestination = Object.assign([], self.dataStepsForTrainPredict[step].datasets);
     	let ds = _.intersectionBy(datasetDestination, datasetSource, 'idDataset');
     	let ds1 = _.pullAllBy(datasetSource, ds, 'idDataset');
     	for(let i in ds1) {
@@ -691,21 +690,21 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             ds1[i].active = true;
     		ds1[i]._selected = false;
     	}
-    	self.dataStepsForTrainPredict[step].datasets = [...ds,...ds1];
+    	self.dataStepsForTrainPredict[step].datasets = [...ds, ...ds1];
     	handleSelectionList(self.dataStepsForTrainPredict[step],step ,index,type);
         self.updateNNConfig();
     }
     function handleSelectionList(dataStep, step, index = -1, type = null) {
         let inputSpecs = [...self.inputCurveSpecs,self.targetCurveSpec];
         let mergeCurves = [];
-        // Initialize the initial value for each dataset
         for(let dataset of dataStep.datasets) {
             if(!dataset.inputCurveSpecs) {
-                if(dataStep.target) {
-                    dataset.inputCurveSpecs = new Array(self.inputCurveSpecs.length + 1);
-                }else {
-                    dataset.inputCurveSpecs = new Array(self.inputCurveSpecs.length);
-                }
+                // if(dataStep.target) {
+                //     dataset.inputCurveSpecs = new Array(self.inputCurveSpecs.length + 1);
+                // }else {
+                //     dataset.inputCurveSpecs = new Array(self.inputCurveSpecs.length);
+                // }
+                dataset.inputCurveSpecs = dataStep.target ? new Array(self.inputCurveSpecs.length + 1) : new Array(self.inputCurveSpecs.length);
             } 
             if(index != -1 && type == ADD) {
                 if(dataStep.target) {
@@ -731,16 +730,13 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             }
             mergeCurves.push(dataset.curves);
         }
-        // get all curves
         let curves = _.intersectionBy(...mergeCurves,'name');
-        //
-        if(dataStep.target) {
-            dataStep.selectionList = new Array(self.inputCurveSpecs.length + 1);
-        }else {
-            dataStep.selectionList = new Array(self.inputCurveSpecs.length);
-        }
-        // Special case step == training and type == curve
-        // get list curves for select
+        // if(dataStep.selectionList) {
+        //     dataStep.selectionList = new Array(self.inputCurveSpecs.length + 1);
+        // }else {
+        //     dataStep.selectionList = new Array(self.inputCurveSpecs.length);
+        // }
+        dataStep.selectionList = dataStep.selectionList ? new Array(self.inputCurveSpecs.length + 1) : new Array(self.inputCurveSpecs.length);
         if (step === 'training' && self.typeSelected === 'curve') {
             for(let i = 0; i < dataStep.selectionList.length; i++) {
                 if(!dataStep.selectionList[i]) dataStep.selectionList[i] = [];
@@ -765,7 +761,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                     },
                     icon: 'curve-16x16'
                 }
-                // get list curve
                 switch(self.typeSelected) {
                     case 'curve': 
                         for(let i = 0; i < dataStep.selectionList.length; i++) {
@@ -888,13 +883,16 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     self.confirmDeleteItemMlProject = function() {
         console.log(self.indexItemDelete)
         if(self.indexItemDelete > -1 ) {
-            wiApi.deleteMlProjectPromise(self.listMlProject[self.indexItemDelete].idMlProject)
+            let id = self.listMlProject[self.indexItemDelete].idMlProject;
+            wiApi.deleteMlProjectPromise(id)
             .then((res) => {
-                toastr.success('Delete "' + self.listMlProject[self.indexItemDelete].name + '" Project Success', 'Success');
+                toastr.success('Delete "' + res.name + '" Project Success', 'Success');
                 _.remove(self.listMlProject, (d, i) => {
-                    console.log(d, i);
                     return i === self.indexItemDelete;
                 });
+                if(self.mlProjectSelected && id === self.mlProjectSelected.idMlProject) {
+                    self.onClickButtonNew();
+                }
             })
             .catch((err) => {
                 toastr.error('Delete "' + self.listMlProject[self.indexItemDelete].name + '" Project Error', 'Error');
@@ -913,6 +911,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     }
     this.onModelChanged = function(modelSelectedProps){
         console.log(modelSelectedProps);
+        if(!modelSelectedProps) return;
         self.selectedModelProps = self.selectedModelProps.sync ? self.selectedModelProps : modelSelectedProps;
         self.selectedModelProps.sync = false;
         console.log(self.selectedModelProps)
