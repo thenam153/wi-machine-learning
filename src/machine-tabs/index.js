@@ -772,7 +772,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         $timeout(() => {
             $scope.nameMlProject = 'new project';
             self.mlNameProject = null;
-            self.currentSelectedModel = '';
+            // self.currentSelectedModel = '';
             self.currentSelectedMlProject = null;
             self.dataSomVisualize = {
                 distributionMaps: [{
@@ -918,6 +918,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         if(!modelSelectedProps) return;
         self.selectedModelProps = self.selectedModelProps.sync ? self.selectedModelProps : modelSelectedProps;
         self.selectedModelProps.sync = false;
+        self.currentSelectedModel = self.selectedModelProps.label;
         console.log(self.selectedModelProps)
         if(!self.selectedModelProps.nnnw) {
             $timeout(() => {
