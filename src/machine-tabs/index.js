@@ -270,7 +270,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 self.typeSelected = content.type || 'curve';
                 self.inputCurveSpecs = content.inputCurveSpecs;
                 self.targetCurveSpec = content.targetCurveSpec;
-                self.makeSelectionList();                    
+                self.createSelectionList();                    
                 self.typeModelSelected = content.model.type;
                 self.currentSelectedModel = content.model.label;
                 // self.modelSelectedProps = content.model;
@@ -418,7 +418,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 }
                 let handle = _.debounce(() => {
                     for(let i in self.machineLearnSteps) {
-                     self.handleDrop(i);
+                     self.handleDropDatasets(i);
                     }  
                 }, 500);
                 handle()
@@ -434,7 +434,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         }
         let handle = _.debounce(() => {
             for(let i in self.machineLearnSteps) {
-             self.handleDrop(i);
+             self.handleDropDatasets(i);
             }  
         }, 500);
         handle()
@@ -447,7 +447,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         }
         let handle = _.debounce(() => {
             for(let i in self.machineLearnSteps) {
-             self.handleDrop(i,$index, REMOVE);
+             self.handleDropDatasets(i,$index, REMOVE);
             }  
         }, 500);
         handle()
@@ -463,7 +463,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         });
         let handle = _.debounce(() => {
             for(let i in self.machineLearnSteps) {
-             self.handleDrop(i,self.inputCurveSpecs.length - 1, ADD);
+             self.handleDropDatasets(i,self.inputCurveSpecs.length - 1, ADD);
             }  
         }, 500);
         handle()
@@ -481,8 +481,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                             }
                         }
                     }
-                    self.makeSelectionList();
-                    var handle = _.debounce(() => {self.handleDrop(step)}, 1000);  
+                    self.createSelectionList();
+                    var handle = _.debounce(() => {self.handleDropDatasets(step)}, 1000);  
                     handle();
                 })
             }
@@ -499,8 +499,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 }
                 return index !== $index;
             });
-            self.makeSelectionList();
-            self.handleDrop(step);
+            self.createSelectionList();
+            self.handleDropDatasets(step);
         });
     }
     function updateNNConfig() {
@@ -579,7 +579,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         } 
         self.updateNNConfig();
     }
-    this.makeSelectionList = function() {
+    this.createSelectionList = function() {
         var curves = _.intersectionBy(...self.mergeCurves,'name');
         let selectionList = [{
             data: {
@@ -667,9 +667,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 value: null,
                 currentSelect: '[no choose]'
             }
-        self.makeSelectionList();
+        self.createSelectionList();
         for(let i in self.machineLearnSteps) {
-        	self.handleDrop(i);
+        	self.handleDropDatasets(i);
         }
     }
     this.equals = function(arrayData, data){
@@ -678,7 +678,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         }
         return -1;
     }
-    this.handleDrop = function(step,index = -1,type = null) {
+    this.handleDropDatasets = function(step,index = -1,type = null) {
     	let datasetSource = Object.assign([], self.machineLearnSteps[step].datasets);
     	let datasetDestination = Object.assign([], self.dataStepsForTrainPredict[step].datasets);
     	let ds = _.intersectionBy(datasetDestination, datasetSource, 'idDataset');
@@ -691,10 +691,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     		ds1[i]._selected = false;
     	}
     	self.dataStepsForTrainPredict[step].datasets = [...ds, ...ds1];
-    	handleSelectionList(self.dataStepsForTrainPredict[step],step ,index,type);
+    	handleCreateSelectionList(self.dataStepsForTrainPredict[step],step ,index,type);
         self.updateNNConfig();
     }
-    function handleSelectionList(dataStep, step, index = -1, type = null) {
+    function handleCreateSelectionList(dataStep, step, index = -1, type = null) {
         let inputSpecs = [...self.inputCurveSpecs,self.targetCurveSpec];
         let mergeCurves = [];
         for(let dataset of dataStep.datasets) {
