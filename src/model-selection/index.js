@@ -27,7 +27,8 @@ app.component(componentName,{
     	modelSelectedProps: '<',
     	getFnSetValueElModel: '<',
     	tab: '<',
-    	setTab: '<'
+    	setTab: '<',
+    	getFnSetValueElEnumModel: '<'
     }
 });
 
@@ -68,5 +69,5 @@ function ModelSelectionController($scope, $compile){
 
 	$scope.isSet = function(tabNum){
 		return self.tab === tabNum;
-	};
+	};	
 }

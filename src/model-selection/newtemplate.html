@@ -37,11 +37,21 @@
                     <span class="title">Advance</span>
                     <span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
                 </div>
-                <div ng-if="self.modelSelectedProps.payload.train" class="editable-custom" ng-repeat="(key, props) in self.modelSelectedProps.payload.train" ng-init="props.value = props.value || props.example">
+                <div ng-if="self.modelSelectedProps.payload.train" class="editable-custom" ng-repeat="(key, props) in self.modelSelectedProps.payload.train" ng-init="props.value = props.value === undefined ? props.example : props.value">
                    <editable item-value="props.value" item-label="props.name"
-                       label-style="{'min-width':'130px'}" enabled="true" set-value="self.setValue"
-                       params="props.name" ng-if="props.type != 'array'">
+                       label-style="{'min-width':'130px'}" enabled="true" set-value="self.getFnSetValueElModel('train')"
+                       params="props.name" ng-if="props.type != 'array' && props.type != 'List' && props.type != 'enum' ">
                    </editable>
+                   <div ng-if=" props.type == 'enum' ">
+                       <div>
+                           {{props.name}}
+                       </div>
+                        <div>
+                            <wi-dropdown-list place-holder="value" items="props.enum" current-select='props.value
+                            || props.example' on-item-changed="self.getFnSetValueElEnumModel(props.name, 'train')">
+                            </wi-dropdown-list>
+                        </div>
+                   </div>
                </div>
             </div>
         </div>
