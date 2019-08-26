@@ -27,7 +27,8 @@ app.component(componentName,{
     	modelSelectedProps: '<',
     	getFnSetValueElModel: '<',
     	tab: '<',
-    	setTab: '<'
+    	setTab: '<',
+    	getFnSetValueElEnumModel: '<'
     }
 });
 
@@ -68,65 +69,5 @@ function ModelSelectionController($scope, $compile){
 
 	$scope.isSet = function(tabNum){
 		return self.tab === tabNum;
-	};
-	// let fnSetValue = {};
-	// this.getFnSetValueElModel = function(type) {
-	// 	if(type === 'params') {
-	// 		if(!fnSetValue.params) {
-	// 			fnSetValue.params = function(param, value) {
-	// 				console.log(param, value);
-	// 				let item = self.modelSelectedProps.payload.params.find(i => {
-	// 					return i.name == param
-	// 				})
-	// 				value = validate(item.type, value);
-	// 				if(value === '') value = item.example;
-	// 				// this.itemValue = value;
-	// 				item.value = value;		
-	// 			}
-	// 		}
-	// 		return fnSetValue.params;
-	// 	}else {
-	// 		if(!fnSetValue.train) {
-	// 			fnSetValue.train = function(param, value) {
-	// 				console.log(param, value);
-	// 				let item = self.modelSelectedProps.payload.train.find(i => {
-	// 					return i.name == param
-	// 				})
-	// 				value = validate(item.type, value);
-	// 				if(value === '') value = item.example;
-	// 				item.value = value;		
-	// 			}
-	// 		}
-	// 		return fnSetValue.train;
-	// 	}
-	// }
-	// function validate(type,value) {
-	// 	switch(type){
-	// 		case 'string' : return value; 
-
-	// 		case 'integer': 
-	// 			value = Number(value);
-	// 			if(Number.isInteger(value)) {
-	// 				return value;
-	// 			}
-	// 			return '';
-	// 		case 'number':
-	// 			value = Number(value);
-	// 			if (!isNaN(value)) {
-	// 				return value;
-	// 			}
-	// 			return '';
-	// 		case 'boolean':
-	// 			if(value.toString().toLowerCase() == 'true') {
-	// 				// return 'true';
-	// 				return true;
-	// 			}
-	// 			if(value.toString().toLowerCase() == 'false') {
-	// 				// return 'false';
-	// 				return false;
-	// 			}
-	// 			return '';
-	// 		default: return '';
-	// 	}
-	// }
+	};	
 }

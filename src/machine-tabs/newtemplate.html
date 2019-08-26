@@ -2,10 +2,10 @@
 
 	<div class="menu">
 		<div class="active menu-item">
-			<span ng-if="self.currentSelectedMlProject" ng-click="self.openDialogOpenMlProject();" class="ml-project-name">{{self.currentSelectedMlProject ? self.currentSelectedMlProject: ''}}</span>
-			<span  class="menu-item active ti ti-new-window"  ng-click="self.openDialogOpenMlProject();"></span>
-			<span  class="menu-item active ti ti-save " ng-click="self.openDialogSaveMlProject()"></span>
-			<span  class="menu-item active ti ti-plus " ng-click="self.onClickButtonNew()"></span>
+			<span ng-if="self.currentSelectedMlProject" ng-click="self.openMlProject();" class="ml-project-name">{{self.currentSelectedMlProject ? self.currentSelectedMlProject: ''}}</span>
+			<span  class="menu-item active ti ti-new-window"  ng-click="self.openMlProject();"></span>
+			<span  class="menu-item active ti ti-save " ng-click="self.saveMlProject()"></span>
+			<span  class="menu-item active ti ti-plus " ng-click="self.newMlProject()"></span>
 		</div>
 		<div style="display: flex;">
 			
@@ -79,7 +79,7 @@
 			</div>
 		</div>
 		<model-selection id="model-selection" ng-show="self.titleTabs[self.current_tab] === 'Model Selection'"
-			set-props-model="self.setPropsModel" set-model-selected="self.setModelSelected" nn-config="self.nnConfig"set-layers="self.setLayers" nn-config-n-layer-changed="self.nnConfigNLayerChanged" nn-config="self.nnConfig" layer-change="self.layerChange" update-layer="self.updateLayer" current-selected-model="self.currentSelectedModel" type-model-selected="self.typeModelSelected" set-type-model-selected="self.setTypeModelSelected" on-model-changed="self.onModelChanged" model-selected-props="self.selectedModelProps" get-fn-set-value-el-model="self.getFnSetValueElModel" tab="self.tab" set-tab="self.setTab"
+			set-props-model="self.setPropsModel" set-model-selected="self.setModelSelected" nn-config="self.nnConfig"set-layers="self.setLayers" nn-config-n-layer-changed="self.nnConfigNLayerChanged" nn-config="self.nnConfig" layer-change="self.layerChange" update-layer="self.updateLayer" current-selected-model="self.currentSelectedModel" type-model-selected="self.typeModelSelected" set-type-model-selected="self.setTypeModelSelected" on-model-changed="self.onModelChanged" model-selected-props="self.selectedModelProps" get-fn-set-value-el-model="self.getFnSetValueElModel" tab="self.tab" set-tab="self.setTab" get-fn-set-value-el-enum-model="self.getFnSetValueElEnumModel"
 			></model-selection>
 
 		<dataset-selection ng-show="self.titleTabs[self.current_tab] === 'Dataset Selection'"
@@ -92,7 +92,7 @@
 
 		<training-prediction step-datas="self.dataStepsForTrainPredict" input-curve-specs="self.inputCurveSpecs"
 			target-curve-spec="self.targetCurveSpec" model="self.selectedModelProps" state-workflow="self.stateWorkflow" set-model-id="self.setModelId" set-bucket-id="self.setBucketId"
-			ng-show="self.titleTabs[self.current_tab] === 'Training and Prediction'" som-visualize="self.dataSomVisualize" show-som-visualize="self.showSomVisualize"></training-prediction>
+			ng-show="self.titleTabs[self.current_tab] === 'Training and Prediction'" som-visualize="self.dataSomVisualize" show-som-visualize="self.showSomVisualize" set-state="self.setStateWorkflow"></training-prediction>
 		<wi-neural-network container="self.nnConfig.container" input-curves="self.nnConfig.inputs"
 						    output-curves="self.nnConfig.outputs" 
 						    hidden-layer="self.nnConfig.layers"></wi-neural-network>
@@ -157,7 +157,7 @@
 		style="margin: 20px 0; background: #efefef; line-height: 1; font-size: 12px; padding: 15px 20px; border-radius: 2px;">
 		<div class="footer-dl-ml">
 			<div class="footer-dl-ml-btn" ng-click="self.showDialogSaveMlProject=false;">CANCEL</div>
-			<div class="footer-dl-ml-btn active" ng-click="self.onClickButtonSave(nameMlProject)">SAVE</div>
+			<div class="footer-dl-ml-btn active" ng-click="self.createMlProject(nameMlProject)">SAVE</div>
 		</div>
 	</div>
 </div>
