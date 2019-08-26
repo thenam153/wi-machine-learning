@@ -232,8 +232,8 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 
 	function verify() {
 		return new Promise((resolve, reject) => {
-			if(self.stateWorkflow.state === -1 ) reject(new Error('Please train before verify'));
-			if(self.stepDatas[VERIFY_STEP_STATE].datasets) {
+			// if(self.stateWorkflow.state === -1 ) reject(new Error('Please train before verify'));
+			if(!self.stepDatas[VERIFY_STEP_STATE].datasets) {
 				reject(new Error('Please drop dataset'))
 			}
 			async.each(self.stepDatas[VERIFY_STEP_STATE].datasets, function(dataset,_cb){
@@ -270,19 +270,19 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 						console.error(err);
 						reject(err);
 					};
-				resovle();	
+				resolve();	
 			});
 		})
 	}
 
 	async function prediction() {
 		return new Promise((resolve, reject) => {
-			if(self.stateWorkflow.state === -1 ) reject(new Error('Please train before prediction'));
-			if(self.stepDatas[PREDICT_STEP_STATE].datasets) {
+			// if(self.stateWorkflow.state === -1 ) reject(new Error('Please train before prediction'));
+			if(!self.stepDatas[PREDICT_STEP_STATE].datasets) {
 				reject(new Error('Please drop dataset'))
 			}
 			async.each(self.stepDatas[PREDICT_STEP_STATE].datasets, function(dataset,_cb){
-				if(isRun(dataset)) {
+				if(!isRun(dataset)) {
 					reject(new Error('Please drop dataset'))
 				}
 				evaluateExpr(dataset,dataset.discrmnt)
