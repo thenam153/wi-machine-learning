@@ -98,12 +98,30 @@ function DatasetSelectionController($scope, wiApi, $timeout){
         return node.name.includes(filter);
     }
     this.$onInit = function() {
-        (async() => {
-            try {
-                self.treedata = await wiApi.getProjectsPromise();
-            }catch (e) {
-                console.error(e);
-            }
-        })();
+        // (async() => {
+        //     try {
+        //         self.treedata = await wiApi.getProjectsPromise();
+        //     }catch (e) {
+        //         console.error(e);
+        //     }
+        // })();
+        $scope.$watch(function () {
+			return localStorage.getItem('token');
+		}, async function (newValue, oldValue) {
+			if ((localStorage.getItem("token")) !== null) {
+                setTimeout(function () {
+					(async() => {
+                        try {
+                            self.treedata = await wiApi.getProjectsPromise();
+                        }catch (e) {
+                            console.error(e);
+                        }
+                    })();
+                    console.log("okokokok")
+				}, 1400);
+                
+			}
+		});
+       
     }
 }
