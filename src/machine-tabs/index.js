@@ -78,6 +78,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         },
     }
     this.$onInit = async function() {
+        console.log()
+        // $timeout(() => {
+            window.localStorage.setItem('__BASE_URL', 'https://api-1.i2g.cloud');
+        // })
+        wiApi.baseUrl = window.localStorage.getItem('__BASE_URL') || 'https://api-1.i2g.cloud';
         self.loginUrl = 'https://users.i2g.cloud/login';
         self.queryString = queryString.parse(location.search);
         self.token = wiToken.getToken();

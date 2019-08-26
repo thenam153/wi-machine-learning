@@ -107,19 +107,15 @@ function DatasetSelectionController($scope, wiApi, $timeout){
         // })();
         $scope.$watch(function () {
 			return localStorage.getItem('token');
-		}, async function (newValue, oldValue) {
+		}, function (newValue, oldValue) {
 			if ((localStorage.getItem("token")) !== null) {
-                setTimeout(function () {
-					(async() => {
-                        try {
-                            self.treedata = await wiApi.getProjectsPromise();
-                        }catch (e) {
-                            console.error(e);
-                        }
-                    })();
-                    console.log("okokokok")
-				}, 1400);
-                
+                wiApi.getProjectsPromise()
+                .then((data) => {
+                    $timeout(() => {
+                        self.treedata = data;
+                    })
+                })
+                console.log("okokokok")
 			}
 		});
        
