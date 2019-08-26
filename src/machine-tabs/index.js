@@ -1,8 +1,9 @@
 const moduleName = "machineTabs";
 const componentName = "machineTabs";
 module.exports.name = moduleName;
+const queryString = require('query-string')
 
-var app = angular.module(moduleName, ['modelSelection','datasetSelection','trainingPrediction','wiApi','wiNeuralNetwork']);
+var app = angular.module(moduleName, ['modelSelection','datasetSelection','trainingPrediction','wiApi','wiNeuralNetwork','wiLogin','wiToken']);
 
 app.component(componentName,{
 	template: require('./newtemplate.html'),
@@ -10,8 +11,7 @@ app.component(componentName,{
     style: require('./newstyle.less'),
     controllerAs: 'self',
     bindings: {
-    	token: '<',
-    	idProject: '<'
+    	token: '<'
     }
 });
 
@@ -43,6 +43,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     let self = 	this;
     self.currentColor = 'rgb(6, 116, 218)';
     self.currentFontSize = '12px';
+    this.selectedFontSize = 12;
 
     let functionCache = [];
     let functionCacheSteps = {
@@ -116,6 +117,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         return self.current_tab === index;
     }
     this.$onInit = async function() {
+        self.loginUrl = 'https://users.i2g.cloud/login';
+        self.queryString = queryString.parse(location.search);
+        self.token = wiToken.getToken();
+       
         self.currentSelectedModel = '';
         self.dataSomVisualize = {
             distributionMaps: [{

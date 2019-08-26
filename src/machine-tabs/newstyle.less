@@ -467,3 +467,84 @@ machine-tabs {
         background-color: #0674da;
     }
 }
+
+.ngdialog .btn {
+    padding: 9px;
+    text-align: center;
+  }
+  
+  // .codeflask__code {
+  //   display: block;
+  //   font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  //   overflow: hidden;
+  //   white-space: normal;
+  // }
+  .newDialog {
+    padding: 5px 13px 0 13px;
+    font-size: 15px;
+    font-weight: bold;
+  
+    >div {
+      margin-bottom: 15px;
+    }
+    .searchInput{
+      text-align: left;
+      color: #0074c5;
+      background-color: #ffffff;
+      border: 1px solid #cecece;
+      border-radius: 70px;
+      font-size: 12px;
+      font-weight: bold;
+      padding: 8px 13px;
+      width: auto;
+      transition: border 0.5s;
+    }
+    
+    .newDialogContent {
+      >form{
+        display: flex;
+      }
+      .list-project {
+        margin: 0;
+        list-style-type: none;
+        padding: 0;
+        text-align: left;
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        >li {
+          padding: 4px 13px;
+          border-radius: 3px;
+          background: #dcdcdc80;
+          border: 1px solid #f4f4f4;
+          margin: 0 0 8px 0;
+          font-size: 12px;
+          cursor: pointer;
+          transition: border 0.5s;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          .del {
+            color: #d2d2d2;
+            &:hover{
+              color: rgb(202, 120, 120);
+            }
+          }
+          &.selectedProject {
+            border: 1px solid #0077be;
+            color: #0077be;
+          }
+        }
+  
+        >li:hover {
+          border: 1px solid #0077be;
+          transition: border 0.5s;
+  
+        }
+      }
+    }
+  }
+  .ngdialog.ngdialog-theme-default .ngdialog-button {
+    padding: 11px 18px !important;
+    border: 1px solid;
+  }

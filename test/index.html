@@ -8,6 +8,7 @@
 	<script src="../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
 	<script src="../bower_components/toastr/toastr.js"></script>
 	<script src="../bower_components/angular/angular.min.js"></script>
+	<script src="../bower_components/ng-dialog/js/ngDialog.min.js"></script>
 	<script src="../bower_components/angular-resizable/angular-resizable.min.js"></script>
 	<script src="../bower_components/angular-ui-select/dist/select.min.js"></script>
 	<script src="../bower_components/angular-sanitize/angular-sanitize.js"></script>
@@ -39,7 +40,7 @@
 
 </head>
 <body ng-app="myApp" ng-controller="myCtr as self">
-	<machine-tabs token="'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InR1bmdoeCIsIndob2FtaSI6Im1haW4tc2VydmljZSIsInJvbGUiOjAsImNvbXBhbnkiOiJJMkciLCJpYXQiOjE1NjY1MzE5OTQsImV4cCI6MTU2NzM5NTk5NH0.YwozS1_EOgYR1WLNU3RQaJMrgzqI2F_pwCiMbZC613Y'"></machine-tabs>
+	<machine-tabs></machine-tabs>
 	<script>
 		angular.module('myApp',['machineTabs'])
 		.controller('myCtr', ['$scope', function($scope){

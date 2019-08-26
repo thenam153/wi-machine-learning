@@ -1,4 +1,5 @@
 <div style="display: flex;flex-direction: column;flex: 1;" class="slim-scroller">
+
 	<div class="menu">
 		<div class="active menu-item">
 			<span ng-if="self.currentSelectedMlProject" ng-click="self.openDialogOpenMlProject();" class="ml-project-name">{{self.currentSelectedMlProject ? self.currentSelectedMlProject: ''}}</span>
@@ -13,7 +14,6 @@
 				<span style="font-size: 15px;" class="menu-item active ti ti-settings" ng-click="self.userSetting=!self.userSetting"></span>
 		</div>
 	</div>
-
 	<div class="main">
 		<div class="back">
 			<span class="ti ti-arrow-left" ng-click="changeTab('back');"></span>
@@ -25,6 +25,8 @@
 			<div style="position: absolute; right: 13px; top: -20px; z-index: 8; border: 10px solid transparent; border-bottom-color: #fff;">
 			</div>
 			<div class="login">
+				<wi-login id="custom-login-css" register-url="https://www.i2g.cloud/register-information/" app-name="Wi ML"
+				login-url="{{self.loginUrl}}" query-string="self.queryString"></wi-login>
 			</div>
 			<div class="header" style="display: none;">
 				<span class="title">
