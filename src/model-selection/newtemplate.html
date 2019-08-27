@@ -4,7 +4,7 @@
             <div class="tab-button" ng-class="{'active' : self.tab===1}" ng-click="self.setTab(1)">Model Selection</div>
             <div id="tab-layer" class="tab-button" ng-class="{'active' : self.tab===2}" ng-click="self.setTab(2)">Neural Network</div>
         </div>
-        <div ng-show="isSet(1)" style="padding: 20px; overflow: hidden; height: 100%;">
+        <div ng-show="isSet(1)" style="padding: 20px; height: 100%;" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
             <div class="header" style="text-transform: capitalize;">
                 <span class="title">Type Selection</span>
                 <wi-dropdown-list place-holder="Type" items="self.listType" hide-delete-button='self.hideDeleteButton'
@@ -21,8 +21,7 @@
                 </wi-dropdown-list>
             </div>
             
-            <div onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'
-                style="height: 100%;">
+            <div >
                 <div class="editable-custom" ng-repeat="(key, props) in self.modelSelectedProps.payload.params" ng-init="props.value = props.value === undefined ? props.example : props.value"> 
                     <editable ng-if="props.type!='List'" item-value="props.value" item-label="props.name"
                         label-style="{'min-width':'130px'}" enabled="true" set-value="self.getFnSetValueElModel('params')"
@@ -42,8 +41,8 @@
                        label-style="{'min-width':'130px'}" enabled="true" set-value="self.getFnSetValueElModel('train')"
                        params="props.name" ng-if="props.type != 'array' && props.type != 'List' && props.type != 'enum' ">
                    </editable>
-                   <div ng-if=" props.type == 'enum' ">
-                       <div>
+                   <div ng-if=" props.type == 'enum' " style="margin-top: 15px;">
+                       <div style="font-weight: bold;">
                            {{props.name}}
                        </div>
                         <div>
