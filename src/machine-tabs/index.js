@@ -737,7 +737,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 // model_id: null,
                 // bucket_id: null
                 // };
-                if(self.stateWorkflow.model_id && content.model.name === 'Supervise Som') {
+                if(self.stateWorkflow.model_id && (content.model.label === 'Supervise Som' || content.model.name === 'supervise_som' )) {
                     $http({
                         method: 'GET',
                         url: `${content.model.url}/api/model/som/${self.stateWorkflow.model_id}`,
