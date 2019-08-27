@@ -703,6 +703,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 self.currentSelectedMlProject = self.mlProjectSelected.name;
                 for(let i in content.steps) {
                     for(let j in content.steps[i].datasets) {
+                        // let dataset = await wiApi.getDatasetInfoPromise(content.steps[i].datasets[j].idDataset);
                         let dataset = await wiApi.getDatasetInfoPromise(content.steps[i].datasets[j].idDataset);
                         let valueDataset = angular.copy(dataset);
                             if (self.equals(self.machineLearnSteps[i].datasets, valueDataset) < 0 && valueDataset.idDataset && valueDataset.idWell) {

@@ -2,7 +2,7 @@ const moduleName = "modelSelection";
 const componentName = "modelSelection";
 module.exports.name = moduleName;
 
-const dataJson = require('./model/wi-uservice.json');
+const dataJson = require('../../wi-uservice.json');
 
 var app = angular.module(moduleName, ['wiDropdownList','editable']);
 

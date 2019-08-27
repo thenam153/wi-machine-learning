@@ -1,3 +1,8 @@
 module.exports = {
-	name :'Models'
+	dev: {
+		name :'Models_dev',
+	},
+	product: {
+		name :'Models_prod'
+	}
 }

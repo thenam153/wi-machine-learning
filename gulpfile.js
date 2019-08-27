@@ -6,7 +6,7 @@ gulp.task('pre', function (cb) {
 	var wiMl = require('./excel-to-json.js');
 	stream.on('end', function () {
 		let inputFile = './wi-uservice.xlsx';
-		let outputFile = './src/model-selection/model/wi-uservice.json';
+		let outputFile = './wi-uservice.json';
 		let configFile = './src/config/config.js';
 		wiMl.sheetToJson(inputFile, outputFile, configFile);
 		cb();
