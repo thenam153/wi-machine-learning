@@ -5,7 +5,7 @@
             <div id="tab-layer" class="tab-button" ng-class="{'active' : self.tab===2}" ng-click="self.setTab(2)">Neural Network</div>
         </div>
         <div ng-show="isSet(1)" style="padding: 20px; overflow: hidden; height: 100%;">
-            <div class="header">
+            <div class="header" style="text-transform: capitalize;">
                 <span class="title">Type Selection</span>
                 <wi-dropdown-list place-holder="Type" items="self.listType" hide-delete-button='self.hideDeleteButton'
                     current-select='self.typeModelSelected' on-item-changed="self.setTypeModelSelected">
