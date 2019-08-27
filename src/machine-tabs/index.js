@@ -236,6 +236,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         self.nnConfig.layers = self.nnConfig.layerConfig.map(i => i.value);
         $timeout(function () {
             if(self.nnConfig.container.wiNNCtrl) {
+                console.log('update layers');
                 self.nnConfig.container.wiNNCtrl.update(self.nnConfig);                
             }
         });
@@ -644,22 +645,27 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     this.saveMlProject = function() { 
         if(self.mlProjectSelected) {
             saveWorkflow();
-            self.showNotiSave = true;
+            // self.showNotiSave = true;
             wiApi.editMlProjectPromise({
                 name: self.mlProjectSelected.name,
                 idMlProject: self.mlProjectSelected.idMlProject,
                 content: self.workflow
             })
             .then((mlProject)=>{
-                $timeout(()=>{
-                    self.showNotiSave = false;
-                },1000)
+                toastr.success('Save machine learning project success', 'Success');
+                // $timeout(()=>{
+                //     self.showNotiSave = false;
+                // },1000)
+            })
+            .catch((err) => {
+                toastr.error('Save machine learning project fail', 'Error');
             })
         }else {
             self.showDialogSaveMlProject = true;
         }
     }
     this.onClickButtonOpen = async function(mlProject) {
+        if(!mlProject) return;
         console.log(mlProject);
         self.mlProjectSelected = mlProject;
         self.mlNameProject = mlProject.name;
@@ -715,6 +721,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                             valueDatasetTrainPredict.patternCurveName = '_' + i.toUpperCase();
                             valueDatasetTrainPredict.active = cacheDataset.active;
                             valueDatasetTrainPredict.discrmnt = cacheDataset.discrmnt;
+                            valueDatasetTrainPredict.wellName = cacheDataset.wellName;
                             self.dataStepsForTrainPredict[i].datasets.push(valueDatasetTrainPredict)
                         }
                     }
@@ -757,6 +764,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                     })
                 }
                 self.sprinnerMl  = false;
+                toastr.success('Open machine learning project success', 'Success');
             });
         }
     }
@@ -769,15 +777,20 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             content: self.workflow
         })
         .then((mlProject) => {
-            if(!mlProject) return console.error(new Error("Don't create Ml Project"))
+            // if(!mlProject) return console.error(new Error("Don't create Ml Project"))
+            toastr.success('Create machine learing project fail','Success')
             $timeout(() => {
                 self.mlProjectSelected = mlProject;
                 self.currentSelectedMlProject = mlProject.name;
             })
-        });
+        })
+        .catch((err) => {
+            toastr.error('Create machine learing project fail','Error')
+        })
     }
     this.newMlProject = function() {
         $timeout(() => {
+            toastr.info('New machine learing project', 'Info');
             $scope.nameMlProject = 'new project';
             self.mlNameProject = null;
             // self.currentSelectedModel = '';
@@ -868,7 +881,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                     name: d.name,
                     resultCurveName: d.resultCurveName,
                     active: d.active,
-                    discrmnt: d.discrmnt
+                    discrmnt: d.discrmnt,
+                    wellName: d.wellName
                 }
             })
         }

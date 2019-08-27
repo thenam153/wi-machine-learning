@@ -11,8 +11,8 @@ $ npm install http-server -g
 ### Run
 
 ```shell
-$ gulp pre
-$ webpack
-$ npm start
+gulp pre
+webpack
+npm start
 ```
 

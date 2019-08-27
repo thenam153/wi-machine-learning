@@ -25,7 +25,8 @@ app.component(componentName,{
         setBucketId: '<',
         somVisualize: '<',
         showSomVisualize: '<',
-        setState: '<'
+		setState: '<',
+		saveMlProject: '<'
     }
 });
 function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, somModelService){
@@ -69,13 +70,13 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 		verify: {},
 		prediction: {}
 	}
-	this.showWapper = function () {
-		let element = document.getElementById("wapper");
-		element.classList.toggle("show");
-	}
+	// this.showWapper = function () {
+	// 	let element = document.getElementById("wapper");
+	// 	element.classList.toggle("show");
+	// }
 	this.setItemOnChange = function(dataset, index, item) {
 		console.log(dataset, index, item);
-		if(dataset.inputCurveSpecs.length === index + 1 && dataset.patternCurveName) {
+		if(dataset.inputCurveSpecs.length === index + 1 && dataset.patternCurveName && dataset.patternCurveName !== '_PREDICTION') {
 			dataset.resultCurveName = item.data.label.toUpperCase() !== '[NO CHOOSE]' ? item.data.label.toUpperCase() + dataset.patternCurveName : dataset.patternCurveName ;
 		}
 		dataset.inputCurveSpecs[index].value = item.properties;
@@ -182,14 +183,15 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 	function train() {
 		return new Promise((resolve, reject) => {
 			if(!self.stepDatas[TRAIN_STEP_STATE].datasets.length) {
-				// return cb(new Error('Please drop dataset'));
-				reject(new Error('Please drop dataset'))				
+				toastr.error('Dataset is not none', 'Error');
+				return reject(new Error('Please drop dataset'))				
 			} 
 			createModelAndBucketId()
 			.then((res) => {
 				async.each(self.stepDatas[TRAIN_STEP_STATE].datasets, function(dataset, _cb) {
 					if(!isRun(dataset)) {
-						reject(new Error('Please select curve for dataset'));
+						toastr.error('Curve in dataset is not [no choose]', 'Error');
+						return reject(new Error('Please select curve for dataset'));
 					}
 					evaluateExpr(dataset,dataset.discrmnt)
 					.then((curves) => {
@@ -217,9 +219,12 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 					.then((res) => {
 						console.log(res);
 						doAfterTrain();
+						self.saveMlProject();
+						toastr.success('Train success', 'Success');
 						resolve(res);
 					})
 					.catch((err) => {
+						toastr.error('Training fail', 'Error');
 						reject(err)
 					})
 				})
@@ -234,11 +239,13 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 		return new Promise((resolve, reject) => {
 			// if(self.stateWorkflow.state === -1 ) reject(new Error('Please train before verify'));
 			if(!self.stepDatas[VERIFY_STEP_STATE].datasets) {
-				reject(new Error('Please drop dataset'))
+				toastr.error('Dataset is not none', 'Error');
+				return reject(new Error('Please drop dataset'))
 			}
 			async.each(self.stepDatas[VERIFY_STEP_STATE].datasets, function(dataset,_cb){
 				if(!isRun(dataset)) {
-					reject(new Error('Please select curve for dataset'));
+					toastr.error('Curve in dataset is not [no choose]', 'Error');
+					return reject(new Error('Please select curve for dataset'));
 				}
 				evaluateExpr(dataset, dataset.discrmnt)
 				.then(function(curves) {
@@ -255,6 +262,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 							handleResultVerify(dataset, dataVerify)
 							.then(newCurve => {
 								console.log(newCurve);
+								toastr.success('Create new curve success', 'Success');
 								_cb();
 							});
 						});	
@@ -262,6 +270,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 				})
 				.catch(err => {
 					console.error(err);
+					toastr.error('Some thing went wrong', 'Error');
 					_cb(err);
 				});
 				
@@ -270,20 +279,23 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 						console.error(err);
 						reject(err);
 					};
+				self.saveMlProject();
 				resolve();	
 			});
 		})
 	}
 
-	async function prediction() {
+	function prediction() {
 		return new Promise((resolve, reject) => {
 			// if(self.stateWorkflow.state === -1 ) reject(new Error('Please train before prediction'));
 			if(!self.stepDatas[PREDICT_STEP_STATE].datasets) {
-				reject(new Error('Please drop dataset'))
+				toastr.error('Dataset is not none', 'Error');
+				return reject(new Error('Please drop dataset'))
 			}
 			async.each(self.stepDatas[PREDICT_STEP_STATE].datasets, function(dataset,_cb){
 				if(!isRun(dataset)) {
-					reject(new Error('Please drop dataset'))
+					toastr.error('Curve in dataset is not [no choose]', 'Error');
+					return reject(new Error('Please drop dataset'))
 				}
 				evaluateExpr(dataset,dataset.discrmnt)
 				.then(function(curves) {
@@ -299,12 +311,14 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 						.then((dataPrediction) => {
 							handleResultPrediction(dataset, dataPrediction)
 							.then((newCurve) => {
+								toastr.success('New curve success', 'success')
 								_cb();
 							});
 						});	
 					});
 				})
 				.catch(err => {
+					toastr.error('Some thing went wrong', 'Error')
 					_cb(err);
 				});
 			},err => {
@@ -312,6 +326,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 					reject(err);
 					console.error(err);
 				}
+				self.saveMlProject();
 				resolve();
 			})
 		})
@@ -441,7 +456,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 		return isValid;
     }
 
-    async function createModelAndBucketId() {
+    function createModelAndBucketId() {
     	return new Promise((resolve, reject) => {
     		console.log(self.model);
 	    	let payload = {};
@@ -560,14 +575,6 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 
 	this.runAll = async function() {
 		self.running = true;
-		// train(function() {
-		// 	verify(function() {
-		// 		prediction(function() {
-		// 			console.log('Run All');
-		// 			self.running = false;
-		// 		})
-		// 	})
-		// })
 		train()
 		.then(() => {
 			return verify();
@@ -771,7 +778,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 		}
     }
     // ============================================================================
-    this.getDistributionMaps = function (data) {
+    	this.getDistributionMaps = function (data) {
 			return data.distributionMaps;
 		}
 
