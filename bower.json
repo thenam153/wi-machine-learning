@@ -24,5 +24,9 @@
     "jspanel3": "^3.11.2",
     "som-visualization": "git://github.com/thenam153/som-visualization-angularjs.git",
     "toastr": "^2.1.3"
+  },
+  "resolutions": {
+    "angular": "1.7.8",
+    "jquery": "3.4.1"
   }
 }
