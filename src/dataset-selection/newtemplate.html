@@ -4,15 +4,26 @@
 			<span class="title">
 				<span class="ti ti-import" style="margin-right: 15px;"></span>
 				Input Selection</span>
-			<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
+			<span class="sub">Select the types below or Add new input curve.</span>
 		</div>
 		<div class="button-input">
 			<!-- <div class="button ti ti-comments" ng-repeat="button in self.buttons track by $index"
 				ng-click="self.isActive = $index;self.onChangeType(button);" -->
-			<div class="button ti ti-comments" ng-repeat="button in self.buttons track by $index"
+			<!-- <div class="button ti ti-comments" ng-repeat="button in self.buttons track by $index"
 				ng-click="self.onChangeType(button);"
-				ng-class="{'active': self.isActive == $index || self.typeSelected == button.type}"></div>
-			<div class="button ti ti-plus" ng-click="self.onAddInputItem()"></div>
+				ng-class="{'active': self.isActive == $index || self.typeSelected == button.type}"></div> -->
+			<div title="Curve" class="button" ng-class="{'active': self.typeSelected == self.buttons[0].type}" ng-click="self.onChangeType(self.buttons[0])">
+				<div class="ml-curve-16x16"></div>
+			</div>
+			<div title="Family" class="button" ng-class="{'active': self.typeSelected == self.buttons[1].type}" ng-click="self.onChangeType(self.buttons[1])">
+				<div class="ml-family-16x16"></div>
+			</div>
+			<div title="Family Group" class="button" ng-class="{'active': self.typeSelected == self.buttons[2].type}" ng-click="self.onChangeType(self.buttons[2])">
+				<div class="ml-family-group-16x16"></div>
+			</div>
+			<div title="Add input curve" class="button" ng-click="self.onAddInputItem()">
+				<div class="ml-new-16x16"></div>
+			</div>
 		</div>
 		<div style="margin-top: 20px;">
 			<div class="title">
@@ -27,8 +38,8 @@
 		<div class="list-input">
 			<div class="list-scroll" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
 				<div class="input-curve" ng-repeat="item in self.inputCurveSpecs track by $index">
-					<div style=" height: 45px; width: 45px; margin-right: 15px; background: #a6d4ff;">
-					</div>
+					<!-- <div style=" height: 45px; width: 45px; margin-right: 15px; background: #a6d4ff;">
+					</div> -->
 					<div style="flex: 1;">
 						<div style="display: flex; margin-bottom: 10px; justify-content: space-between;">
 							<div style="font-weight: bold; font-size: 12px; ">
@@ -52,16 +63,16 @@
 		<div style="flex: 1; overflow: hidden;">
 			<div class="header sticky">
 				<span class="title">Traning</span>
-				<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
+				<span class="sub">Drag datasets from project list</span>
 			</div>
 
 			<wi-droppable container-style="{'flex':'1','display':'flex'}" onmouseover=this.style.overflow='overlay'
 				onmouseout=this.style.overflow='hidden' on-drop="self.drop('training')"
 				style="display: flex;height: calc(100% - 67px); overflow-x: hidden;">
-				<div class="no-datasets" ng-show="!self.machineLearnSteps['training'].datasets.length">
-					<div class="ti ti-import" style="font-size: 40px;
+				<div class="no-datasets" ng-show="!self.machineLearnSteps['training'].datasets.length" style="background-image:url('../bg-datasets.png')">
+					<!-- <div class="ti ti-import" style="font-size: 40px;
 								margin-bottom: 20px;;"></div>
-					<div>Drop datasets here</div>
+					<div>Drop datasets here</div> -->
 				</div>
 				<div ng-show="self.machineLearnSteps['training'].datasets.length"
 					style="display: flex; flex: 1;flex-direction: column;">
@@ -85,15 +96,15 @@
 		<div style="flex: 1; overflow: hidden; margin-left: 20px;">
 			<div class="header sticky">
 				<span class="title">Verify</span>
-				<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
+				<span class="sub">Drag datasets from project list</span>
 			</div>
 			<wi-droppable container-style="{'flex':'1','display':'flex'}" onmouseover=this.style.overflow='overlay'
 				onmouseout=this.style.overflow='hidden' on-drop="self.drop('verify')"
 				style="display: flex;height: calc(100% - 67px); overflow-x: hidden;">
-				<div class="no-datasets" ng-show="!self.machineLearnSteps['verify'].datasets.length">
-					<div class="ti ti-import" style="font-size: 40px;
+				<div class="no-datasets" ng-show="!self.machineLearnSteps['verify'].datasets.length" style="background-image:url('../bg-datasets.png')">
+					<!-- <div class="ti ti-import" style="font-size: 40px;
 									margin-bottom: 20px;"></div>
-					<div>Drop datasets here</div>
+					<div>Drop datasets here</div> -->
 				</div>
 				<div ng-show="self.machineLearnSteps['verify'].datasets.length"
 					style="display: flex; flex: 1;flex-direction: column;">
@@ -117,15 +128,15 @@
 		<div style="flex: 1; overflow: hidden; margin-left: 20px;">
 			<div class="header sticky">
 				<span class="title">Prediction</span>
-				<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
+				<span class="sub">Drag datasets from project list</span>
 			</div>
 			<wi-droppable container-style="{'flex':'1','display':'flex'}" onmouseover=this.style.overflow='overlay'
 				onmouseout=this.style.overflow='hidden' on-drop="self.drop('prediction')"
 				style="display: flex;height: calc(100% - 67px); overflow-x: hidden;">
-				<div class="no-datasets" ng-show="!self.machineLearnSteps['prediction'].datasets.length">
-					<div class="ti ti-import" style="font-size: 40px;
+				<div class="no-datasets" ng-show="!self.machineLearnSteps['prediction'].datasets.length" style="background-image:url('../bg-datasets.png')">
+					<!-- <div class="ti ti-import" style="font-size: 40px;
 										margin-bottom: 20px;"></div>
-					<div>Drop datasets here</div>
+					<div>Drop datasets here</div> -->
 				</div>
 				<div ng-show="self.machineLearnSteps['prediction'].datasets.length"
 					style="display: flex; flex: 1;flex-direction: column;">
@@ -154,7 +165,7 @@
 				<span class="ti ti-align-left" style="margin-right: 15px;"></span>
 					Project list
 			</span>
-			<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
+			<span class="sub">Project sync from i2G cloud, please login to get ít</span>
 		</div>
 		<div style="height: 100%; margin: 0 -20px;">
 			<wi-tree-view-virtual tree-root="self.treedata" hide-unmatched='true' get-children="self.getChildren"

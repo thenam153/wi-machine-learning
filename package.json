@@ -21,6 +21,7 @@
     "gulp-download": "0.0.1",
     "query-string": "^6.8.2",
     "toastr": "^2.1.4",
+    "url-loader": "^2.1.0",
     "xlsx": "^0.15.0"
   }
 }
