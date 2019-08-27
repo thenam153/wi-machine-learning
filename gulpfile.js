@@ -1,5 +1,6 @@
 const gulp = require('gulp');
 const downloadFile = require("gulp-download");
+const changed = require('gulp-changed');
 
 gulp.task('pre', function (cb) {
 	let stream = downloadFile('http://file.i2g.cloud/wi-xlsx/wi-uservice.xlsx').pipe(gulp.dest("./"));
@@ -18,4 +19,9 @@ gulp.task('pre', function (cb) {
 	// let outputFile = './src/model-selection/model/wi-uservice.json';
 	// let configFile = './src/config/config.js';
 	// return wiMl.sheetToJson(inputFile, outputFile, configFile);
+});
+
+gulp.task('bower', function () {
+    var DEST = 'public/bower_components';
+    return gulp.src('bower_components/**/*').pipe(changed(DEST)).pipe(gulp.dest(DEST));
 });
