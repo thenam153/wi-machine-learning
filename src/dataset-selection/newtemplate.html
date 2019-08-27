@@ -18,7 +18,7 @@
 			<div class="title">
 				{{self.targetCurveSpec.label}}
 			</div>
-			<div style="margin-left: 20px;">
+			<div>
 				<wi-dropdown-list place-holder="Curve" items="self.selectionList" hide-delete-button='true'
 					current-select='self.targetCurveSpec.currentSelect' on-item-changed="self.onTargetItemChanged">
 				</wi-dropdown-list>
@@ -26,19 +26,22 @@
 		</div>
 		<div class="list-input">
 			<div class="list-scroll" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
-				<div style="margin-bottom: 15px;" ng-repeat="item in self.inputCurveSpecs track by $index">
-					<div class="title" style="font-weight: 400; font-size: 12px;">
-						<div style="margin-right: 10px; cursor: pointer;" ng-click="self.onRemoveInputItem($index)">
-							<i class="ti ti-close"></i>
-						</div>
-						{{item.label}} {{$index+1}}
+				<div class="input-curve" ng-repeat="item in self.inputCurveSpecs track by $index">
+					<div style=" height: 45px; width: 45px; margin-right: 15px; background: #a6d4ff;">
 					</div>
-					<div style="margin-left: 20px;">
-						<wi-dropdown-list place-holder="Curve" items="self.selectionList" hide-delete-button='true'
+					<div style="flex: 1;">
+						<div style="display: flex; margin-bottom: 10px; justify-content: space-between;">
+							<div style="font-weight: bold; font-size: 12px; ">
+								{{item.label}} {{$index+1}}
+							</div>
+							<div style="margin:0 10px; cursor: pointer; display: flex; align-items: center;" ng-click="self.onRemoveInputItem($index)">
+								<i class="ti ti-close"></i>
+							</div>
+						</div>
+						<wi-dropdown-list style="width: 100%;" place-holder="Curve" items="self.selectionList" hide-delete-button='true'
 							on-item-changed="self.getFnOnInputChanged($index)" current-select="item.currentSelect">
 						</wi-dropdown-list>
 					</div>
-
 				</div>
 			</div>
 

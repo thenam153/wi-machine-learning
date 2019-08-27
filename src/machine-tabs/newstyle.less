@@ -52,7 +52,30 @@ body {
 .toast {
     animation: show-toast 1s ease;
 }
-
+wi-login > div {
+    position: absolute;
+    z-index: 4;
+    right: 0;
+    top: 0;
+    width: 100%;
+    padding: 18px;
+    justify-content: space-between;
+    display: flex;
+    align-items: center;
+    >span {
+        border: none;
+        color: #0674da6b;
+        background: none;
+    }
+    > div.online {
+        direction: rtl;
+        color: #0674da;
+    }
+    > div span.icon {
+        padding-left: 0;
+        padding-right: 15px;
+    }
+}
 .body-dialog-ml {
     font-size: 12px;
     padding       : 0 20px;
@@ -230,7 +253,7 @@ machine-tabs {
             padding      : 5px 10px;
             margin-right : 20px;
             border-radius: 2px;
-            border       : 1px solid #fff;
+            // border       : 1px solid #fff;
         }
 
         .active {
@@ -256,15 +279,21 @@ machine-tabs {
             transition: all ease-in 0.3s;
             box-shadow: 0 10px 10px #00000029;
             .login {
-
+                position: absolute;
+                bottom: 20px;
+                width: calc(100% - 40px);
+                height: 60px;
+                background: #0674da1c;
+                border: 1px solid #0674da6e;
+                border-radius: 2px;
             }
             .setting {
                 display: flex;
                 justify-content: space-between;
                 margin-top: 20px;
                 .color {
-                    border-radius: 50%;
-                    border: 3px solid #ccc;
+                    border-radius: 2px;
+                    border: 1px solid #ccc;
                 }
             }
             .font-size {

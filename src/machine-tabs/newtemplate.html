@@ -3,9 +3,19 @@
 	<div class="menu">
 		<div class="active menu-item">
 			<span ng-if="self.currentSelectedMlProject" ng-click="self.openMlProject();" class="ml-project-name">{{self.currentSelectedMlProject ? self.currentSelectedMlProject: ''}}</span>
-			<span  class="menu-item active ti ti-new-window"  ng-click="self.openMlProject();"></span>
-			<span  class="menu-item active ti ti-save " ng-click="self.saveMlProject()"></span>
-			<span  class="menu-item active ti ti-plus " ng-click="self.newMlProject()"></span>
+			<div ng-click="self.openMlProject();" style="align-items: center;display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
+				<span  class="ti ti-new-window" style="margin-right: 10px;"></span>
+				<span>OPEN</span>
+			</div>
+			<div ng-click="self.saveMlProject();" style="align-items: center;margin-left: 10px; display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
+				<span  class="ti ti-save" style="margin-right: 10px;"></span>
+				<span>SAVE</span>
+			</div>
+			<div ng-click="self.newMlProject();" style="align-items: center;margin-left: 10px;  display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
+				<span  class="ti ti-plus" style="margin-right: 10px;"></span>
+				<span>NEW</span>
+			</div>
+			
 		</div>
 		<div style="display: flex;">
 			
@@ -28,14 +38,14 @@
 				<wi-login id="custom-login-css" register-url="https://www.i2g.cloud/register-information/" app-name="Wi ML"
 				login-url="{{self.loginUrl}}" query-string="self.queryString"></wi-login>
 			</div>
-			<div class="header" style="display: none;">
+			<div class="header" >
 				<span class="title">
 					<span class="ti ti-palette" style="margin-right: 15px;"></span>
 					Color theme
 				</span>
 				<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
 			</div>
-			<div class="setting" style="display: none;">
+			<div class="setting" >
 				<div ng-click="self.changeTheme('rgb(6, 116, 218)')">
 					<svg class="color" width="30" height="30">
 						<rect width="30" height="30" style="fill:rgb(6, 116, 218)" />
@@ -55,7 +65,20 @@
 					</svg>
 				</div>
 			</div>
-			<div class="header">
+			<div class="header" style="margin-top: 20px;">
+				<span class="title" style="justify-content: space-between; align-items: center; margin-right: 0;">
+					<div style="display: flex; align-items: center;">
+						<span class="ti ti-shortcode" style="margin-right: 15px;"></span>
+						Title example
+					</div>
+					<label class="switch">
+						<input type="checkbox" ng-checked="">
+						<span class="slider round" ng-click=""></span>
+					</label>
+				</span>
+				<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
+			</div>
+			<div class="header" style="margin-top: 20px;">
 				<span class="title">
 					<span class="ti ti-shortcode" style="margin-right: 15px;"></span>
 					Font size
@@ -74,8 +97,9 @@
 				<span>14</span>
 				<span>16</span>
 			</div>
+			
+			
 			<div class="about">
-
 			</div>
 		</div>
 		<model-selection id="model-selection" ng-show="self.titleTabs[self.current_tab] === 'Model Selection'"
