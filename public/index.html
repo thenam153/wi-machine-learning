@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Machine tool</title>
+	<script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/jquery-ui/jquery-ui.min.js"></script>
+	<script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+	<script src="bower_components/toastr/toastr.js"></script>
+	<script src="bower_components/angular/angular.min.js"></script>
+	<script src="bower_components/ng-dialog/js/ngDialog.min.js"></script>
+	<script src="bower_components/angular-resizable/angular-resizable.min.js"></script>
+	<script src="bower_components/angular-ui-select/dist/select.min.js"></script>
+	<script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+	<script src="bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+	<script src="bower_components/lodash/dist/lodash.min.js"></script>
+	<script src="bower_components/ng-file-upload/ng-file-upload.min.js"></script>
+	<script src="bower_components/angular-modal-service/dst/angular-modal-service.min.js"></script>
+	<script src="bower_components/virtual-list/vlist.js"></script>
+    <script src="bower_components/wi-vlist/index.js"></script>
+    <script src="bower_components/resize-sensor/ResizeSensor.js"></script>
+    <script src='bower_components/d3/d3.min.js'></script>
+	<script src="bower_components/misc-component/dist/misc-components.js"></script>
+	<script src="bower_components/som-visualization/dist/index.bundle.js"></script>
+	<script src="bower_components/jspanel3/source/jquery.jspanel-compiled.min.js"></script> 
+	<script src="bower_components/async/dist/async.min.js"></script>
+	<script src="./main.js"></script>
+	
+    <link rel="stylesheet" href="bower_components/jquery-ui/themes/base/jquery-ui.min.css">
+    <link rel="stylesheet" href="bower_components/angular-ui-select/dist/select.min.css">
+    <link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog.min.css">
+    <link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog-theme-default.min.css">
+    <link rel="stylesheet" href="bower_components/bootstrap-css/css/bootstrap.min.css">
+	<link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.min.css">
+	<link rel="stylesheet" href="bower_components/themify-icons/css/themify-icons.css">
+	<link rel="stylesheet" href="bower_components/angular-resizable/angular-resizable.min.css">
+	<link rel="stylesheet" href="bower_components/jspanel3/source/jquery.jspanel.css">
+	<link rel="stylesheet" href="bower_components/toastr/toastr.css">
+
+
+</head>
+<body ng-app="myApp" ng-controller="myCtr as self">
+	<machine-tabs></machine-tabs>
+	<script>
+		angular.module('myApp',['machineTabs'])
+		.controller('myCtr', ['$scope', function($scope){
+		}]);
+	</script>
+</body>
+</html>
