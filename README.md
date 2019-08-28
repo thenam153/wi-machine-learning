@@ -9,10 +9,17 @@ $ npm install gulp-cli -g
 $ npm install http-server -g
 ```
 ### Run
-
+#### Dev
 ```shell
-gulp pre
-webpack
+SET NODE_ENV=development || dev
+gulp build
+webpack --mode=development
 npm start
 ```
-
+#### Production
+```shell
+SET NODE_ENV=production || prod
+gulp build
+webpack --mode=production
+npm start
+```
