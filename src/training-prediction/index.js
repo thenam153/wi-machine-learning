@@ -2,7 +2,6 @@ const moduleName = "trainingPrediction";
 const componentName = "trainingPrediction";
 module.exports.name = moduleName;
 
-var config = require('../config/config.js');
 var app = angular.module(moduleName, ['wiDialog',
 	'wiDiscriminator',
 	'wiApi',  
@@ -29,6 +28,8 @@ app.component(componentName,{
 		saveMlProject: '<'
     }
 });
+TrainingPredictionController.$inject = ['$scope', '$timeout', 'wiDialog', 'wiApi', '$http', 'somModelService']
+
 function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, somModelService){
 	let self = this;
 	const TRAIN_STEP_NAME = 'Train';

@@ -27,6 +27,7 @@ app.component(componentName,{
         drop: '<',
     }
 });
+DatasetSelectionController.$inject = ['$scope', 'wiApi', '$timeout']
 
 function DatasetSelectionController($scope, wiApi, $timeout){
 	let self = 	this;

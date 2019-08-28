@@ -7,4 +7,4 @@ wi-uservice.json
 /.idea/
 /src/model-selection/model/wi-uservice.json
 /public/bower_components
-./public/main.js
+/public/main.js

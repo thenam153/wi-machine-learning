@@ -2,10 +2,16 @@ const moduleName = "machineTabs";
 const componentName = "machineTabs";
 module.exports.name = moduleName;
 const queryString = require('query-string')
+var config = require('../config/config').default;
+if(process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development') {
+    config = require('../config/config').development
+}else if(process.env.NODE_ENV === 'prod' || process.env.NODE_ENV === 'production') {
+    config = require('../config/config').production
+}
 
 var app = angular.module(moduleName, ['modelSelection','datasetSelection','trainingPrediction','wiApi','wiNeuralNetwork','wiLogin','wiToken']);
 
-app.component(componentName,{
+app.component(componentName, {
 	template: require('./newtemplate.html'),
     controller: MachineTabsController,
     style: require('./newstyle.less'),
@@ -14,7 +20,7 @@ app.component(componentName,{
     	token: '<'
     }
 });
-
+MachineTabsController.$inject = ['$scope', '$timeout', 'wiToken', 'wiApi', '$http']
 function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     // toastr.options = {
     //     "closeButton": false,
@@ -78,12 +84,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         },
     }
     this.$onInit = async function() {
-        console.log()
-        // $timeout(() => {
-            window.localStorage.setItem('__BASE_URL', 'https://api-1.i2g.cloud');
-        // })
+        window.localStorage.setItem('__BASE_URL', config.backend);
         wiApi.baseUrl = window.localStorage.getItem('__BASE_URL') || 'https://api-1.i2g.cloud';
-        self.loginUrl = 'https://users.i2g.cloud/login';
+        self.loginUrl = config.login;
         self.queryString = queryString.parse(location.search);
         self.token = wiToken.getToken();
         self.currentColor = 'rgb(6, 116, 218)';

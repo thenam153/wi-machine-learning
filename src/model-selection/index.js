@@ -31,6 +31,7 @@ app.component(componentName,{
     	getFnSetValueElEnumModel: '<'
     }
 });
+ModelSelectionController.$inject = ['$scope', '$compile']
 
 function ModelSelectionController($scope, $compile){
 	let self = 	this;

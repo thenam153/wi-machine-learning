@@ -8,7 +8,7 @@ gulp.task('pre', function (cb) {
 	stream.on('end', function () {
 		let inputFile = './wi-uservice.xlsx';
 		let outputFile = './wi-uservice.json';
-		let configFile = './src/config/config.js';
+		let configFile = './src/config/config.json';
 		wiMl.sheetToJson(inputFile, outputFile, configFile);
 		cb();
 	});
@@ -25,3 +25,7 @@ gulp.task('bower', function () {
     var DEST = 'public/bower_components';
     return gulp.src('bower_components/**/*').pipe(changed(DEST)).pipe(gulp.dest(DEST));
 });
+
+gulp.task('build', gulp.parallel('pre', 'bower'), function(done) {
+	done();
+})
