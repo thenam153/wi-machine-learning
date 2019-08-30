@@ -23,9 +23,9 @@
             
             <div >
                 <div class="editable-custom" ng-repeat="(key, props) in self.modelSelectedProps.payload.params" ng-init="props.value = props.value === undefined ? props.example : props.value"> 
-                    <editable ng-if="props.type!='List'" item-value="props.value" item-label="props.name"
+                    <editable ng-if="props.type != 'array' && props.type != 'List' && props.type != 'enum'" item-value="props.value" item-label="props.name"
                         label-style="{'min-width':'130px'}" enabled="true" set-value="self.getFnSetValueElModel('params')"
-                        params="props.name" ng-if="props.type != 'array' && props.type != 'List' && props.type != 'enum'">
+                        params="props.name">
                     </editable>
                     <div class="header" ng-if="props.type=='List'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
                         <span class="title" style="font-size: 13px;">{{props.name}}</span>
