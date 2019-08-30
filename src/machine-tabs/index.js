@@ -1038,7 +1038,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 return '';
             case 'number':
                 value = Number(value);
-                if (!isNaN(value)) {
+                if(!isNaN(value)) {
                     return value;
                 }
                 return '';
@@ -1050,6 +1050,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 if(value.toString().toLowerCase() == 'false') {
                     // return 'false';
                     return false;
+                }
+                return '';
+            case 'float': 
+                value = parseFloat(value);
+                if(!isNaN(value)) {
+                    return value;
                 }
                 return '';
             default: return '';
