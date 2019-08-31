@@ -38,46 +38,6 @@
 				<wi-login id="custom-login-css" register-url="https://www.i2g.cloud/register-information/" app-name="Wi ML"
 				login-url="{{self.loginUrl}}" query-string="self.queryString"></wi-login>
 			</div>
-			<!-- <div class="header" >
-				<span class="title">
-					<span class="ti ti-palette" style="margin-right: 15px;"></span>
-					Color theme
-				</span>
-				<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
-			</div>
-			<div class="setting" >
-				<div ng-click="self.changeTheme('rgb(6, 116, 218)')">
-					<svg class="color" width="30" height="30">
-						<rect width="30" height="30" style="fill:rgb(6, 116, 218)" />
-					</svg>
-				</div>
-				<div ng-click="self.changeTheme('rgb(65, 173, 245)')">
-					<svg class="color" width="30" height="30">
-						<rect width="30" height="30" style="fill:rgb(65, 173, 245)" />
-					</svg>
-				</div><div ng-click="self.changeTheme('rgb(78, 78, 78)')">
-					<svg class="color" width="30" height="30">
-						<rect width="30" height="30" style="fill:rgb(78, 78, 78)" />
-					</svg>
-				</div><div ng-click="self.changeTheme('rgb(82, 95, 222)')">
-					<svg class="color" width="30" height="30">
-						<rect width="30" height="30" style="fill:rgb(82, 95, 222)" />
-					</svg>
-				</div>
-			</div>
-			<div class="header" style="margin-top: 20px;">
-				<span class="title" style="justify-content: space-between; align-items: center; margin-right: 0;">
-					<div style="display: flex; align-items: center;">
-						<span class="ti ti-shortcode" style="margin-right: 15px;"></span>
-						Title example
-					</div>
-					<label class="switch">
-						<input type="checkbox" ng-checked="">
-						<span class="slider round" ng-click=""></span>
-					</label>
-				</span>
-				<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
-			</div> -->
 			<div class="header" style="margin-top: 20px;">
 				<span class="title">
 					<span class="ti ti-shortcode" style="margin-right: 15px;"></span>
@@ -103,24 +63,30 @@
 			</div>
 		</div>
 		<model-selection id="model-selection" ng-show="self.titleTabs[self.current_tab] === 'Model Selection'"
-			set-props-model="self.setPropsModel" set-model-selected="self.setModelSelected" nn-config="self.nnConfig"set-layers="self.setLayers" nn-config-n-layer-changed="self.nnConfigNLayerChanged" nn-config="self.nnConfig" layer-change="self.layerChange" update-layer="self.updateLayer" current-selected-model="self.currentSelectedModel" type-model-selected="self.typeModelSelected" set-type-model-selected="self.setTypeModelSelected" on-model-changed="self.onModelChanged" model-selected-props="self.selectedModelProps" get-fn-set-value-el-model="self.getFnSetValueElModel" tab="self.tab" set-tab="self.setTab" get-fn-set-value-el-enum-model="self.getFnSetValueElEnumModel"
+			set-props-model="self.setPropsModel" set-model-selected="self.setModelSelected" nn-config="self.nnConfig"set-layers="self.setLayers" nn-config-n-layer-changed="self.nnConfigNLayerChanged" nn-config="self.nnConfig" layer-change="self.layerChange" update-layer="self.updateLayer" current-selected-model-label="self.currentSelectedModelLabel" current-selected-type-model="self.currentSelectedTypeModel" set-type-model="self.setTypeModel" on-model-changed="self.onModelChanged" current-selected-model="self.currentSelectedModel" get-fn-set-value-el-model="self.getFnSetValueElModel" tab="self.tab" set-tab="self.setTab" get-fn-set-value-el-enum-model="self.getFnSetValueElEnumModel" list-type-model="self.listTypeModel" list-selection-model="self.listSelectionModel" is-set="self.isSet"
 			></model-selection>
 
-		<dataset-selection ng-show="self.titleTabs[self.current_tab] === 'Dataset Selection'"
+		 <dataset-selection ng-show="self.titleTabs[self.current_tab] === 'Dataset Selection'"
 			id-project="self.idProject" input-curve-specs="self.inputCurveSpecs"
-			target-curve-spec="self.targetCurveSpec" machine-learn-steps="self.machineLearnSteps" type-selected="self.typeSelected" on-add-input-item="self.onAddInputItem" get-fn-on-input-changed="self.getFnOnInputChanged"
+			target-curve-spec="self.targetCurveSpec" machine-learn-steps="self.machineLearnSteps" type-input="self.typeInput" on-add-input-item="self.onAddInputItem" get-fn-on-input-changed="self.getFnOnInputChanged"
 			on-target-item-changed="self.onTargetItemChanged" on-remove-input-item="self.onRemoveInputItem"
 			on-change-type="self.onChangeType" drop="self.getFnDrop" selection-list="self.selectionList" 
 			merge-curves="self.mergeCurves" make-selection-list="self.makeSelectionList" 
 			on-remove-dataset="self.onRemoveDataset"></dataset-selection>
-
-		<training-prediction step-datas="self.dataStepsForTrainPredict" input-curve-specs="self.inputCurveSpecs"
-			target-curve-spec="self.targetCurveSpec" model="self.selectedModelProps" state-workflow="self.stateWorkflow" set-model-id="self.setModelId" set-bucket-id="self.setBucketId"
+		
+		<training-prediction machine-learn-steps="self.machineLearnSteps" input-curve-specs="self.inputCurveSpecs"
+			target-curve-spec="self.targetCurveSpec" model="self.currentSelectedModel" state-workflow="self.stateWorkflow" set-model-id="self.setModelId" set-bucket-id="self.setBucketId"
 			ng-show="self.titleTabs[self.current_tab] === 'Training and Prediction'" som-visualize="self.dataSomVisualize" show-som-visualize="self.showSomVisualize" set-state="self.setStateWorkflow"
-			save-ml-project="self.saveMlProject"></training-prediction>
+			save-ml-project="self.saveMlProject" 
+			set-on-item-curve-changed="self.setOnItemCurveChanged"
+			on-toggle-active-output="self.onToggleActiveOutput" 
+			on-discriminator="self.onDiscriminator" 
+			run-all="self.runAll"
+			run-task="self.runTask"
+			></training-prediction>
 		<wi-neural-network container="self.nnConfig.container" input-curves="self.nnConfig.inputs"
 						    output-curves="self.nnConfig.outputs" 
-						    hidden-layer="self.nnConfig.layers"></wi-neural-network>
+						    hidden-layer="self.nnConfig.layers"></wi-neural-network> 
 	</div>
 </div>
 <div ng-show="self.showDialogOpenMlProject" style="z-index: 10; background: #00000052; position: absolute; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center;"> 
@@ -150,8 +116,6 @@
 			</div>
 		</div>
 		<div class="main-dl-ml">
-			<!-- <wi-dropdown-list place-holder="Machine learning project" items="self.listMlProject" hide-delete-button='false'
-			current-select='self.currentSelectedMlProject' on-item-changed="self.onItemMlProjectChange"></wi-dropdown-list> -->
 			<div ng-repeat="project in self.listMlProject | filter:searchProject track by $index" 
 			ng-class="{selectedProject: self.mlNameProject === project.name}" 
 			ng-click="self.mlProjectCache=project;self.mlNameProject=project.name;"
@@ -185,4 +149,4 @@
 			<div class="footer-dl-ml-btn active" ng-click="self.createMlProject(nameMlProject)">SAVE</div>
 		</div>
 	</div>
-</div>
+</div> 

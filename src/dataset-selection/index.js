@@ -10,20 +10,27 @@ app.component(componentName,{
     style: require('./newstyle.less'),
     controllerAs: 'self',
     bindings: {
-    	idProject: '<',
         inputCurveSpecs: '<',
         targetCurveSpec: '<',
+
         machineLearnSteps: '<',
-        typeSelected: '<',
+
+        // typeSelected: '<',
+        typeInput: '<',
+
         selectionList: '<',
-        mergeCurves: '<',
+        // mergeCurves: '<',
         onAddInputItem: '<',
+
         getFnOnInputChanged: '<',
+
         onTargetItemChanged: '<',
         onRemoveInputItem: '<',
         onChangeType: '<',
         onRemoveDataset: '<',
-        makeSelectionList: '<',
+
+        // makeSelectionList: '<',
+
         drop: '<',
     }
 });
@@ -31,20 +38,24 @@ DatasetSelectionController.$inject = ['$scope', 'wiApi', '$timeout']
 
 function DatasetSelectionController($scope, wiApi, $timeout){
 	let self = 	this;
-	this.treedata;
-    this.buttons = [{
-        label: 'Curve',
-        type: 'curve',
-        icon: 'curve-16x16'
-    },{
-        label: 'Family Curve',
-        type: 'family_curve',
-        icon: 'family-16x16'
-    },{
-        label: 'Main Family',
-        type: 'main_family',
-        icon: 'family-group-16x16'
-    }];
+	this.listMlProject;
+    this.buttons = [
+        {
+            label: 'Curve',
+            type: 'curve',
+            icon: 'curve-16x16'
+        },
+        {
+            label: 'Family Curve',
+            type: 'family_curve',
+            icon: 'family-16x16'
+        },
+        {
+            label: 'Main Family',
+            type: 'main_family',
+            icon: 'family-group-16x16'
+        }
+    ];
     this.getLabel = function (node) {
         return (node||{}).name || 'no name';
     }	
@@ -72,16 +83,13 @@ function DatasetSelectionController($scope, wiApi, $timeout){
         return [];
     }
     this.getChildrenDataset = function(node) {
-        // if (!node) return [];
-        // if (node.idWell && node.idProject) {
-        //     return node.datasets || [];
-        // }
         return [];
     }
     this.clickFn = function(event,node,selectIds,rootnode) {
+        // console.log(node)
         if(node.idProject && node.wells) return;
         if(node.idWell && node.datasets) return;
-        if(node.idProject) {
+        if(node.idProject && !node.idDataset) {
             wiApi.getFullInfoPromise(node.idProject, node.owner, node.name).then(dataProject => {
                 console.log(dataProject);
                 $timeout(()=>{
@@ -89,6 +97,7 @@ function DatasetSelectionController($scope, wiApi, $timeout){
                     for(let i of node.wells) {
                         for(let j of i.datasets) {
                             j.wellName = i.name;
+                            j.idProject = node.idProject;
                         }
                     }   
                 })
@@ -99,13 +108,6 @@ function DatasetSelectionController($scope, wiApi, $timeout){
         return node.name.includes(filter);
     }
     this.$onInit = function() {
-        // (async() => {
-        //     try {
-        //         self.treedata = await wiApi.getProjectsPromise();
-        //     }catch (e) {
-        //         console.error(e);
-        //     }
-        // })();
         $scope.$watch(function () {
 			return localStorage.getItem('token');
 		}, function (newValue, oldValue) {
@@ -113,10 +115,9 @@ function DatasetSelectionController($scope, wiApi, $timeout){
                 wiApi.getProjectsPromise()
                 .then((data) => {
                     $timeout(() => {
-                        self.treedata = data;
+                        self.listMlProject = data;
                     })
                 })
-                console.log("okokokok")
 			}
 		});
        

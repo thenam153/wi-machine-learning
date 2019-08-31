@@ -4,20 +4,20 @@
             <div class="tab-button" ng-class="{'active' : self.tab===1}" ng-click="self.setTab(1)">Model Selection</div>
             <div id="tab-layer" class="tab-button" ng-class="{'active' : self.tab===2}" ng-click="self.setTab(2)">Neural Network</div>
         </div>
-        <div ng-show="isSet(1)" style="padding: 20px; height: 100%;" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
+        <div ng-show="self.isSet(1)" style="padding: 20px; height: 100%;" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
             <div class="header" style="text-transform: capitalize;">
                 <span class="title">Type Selection</span>
-                <wi-dropdown-list place-holder="Type" items="self.listType" hide-delete-button='self.hideDeleteButton'
-                    current-select='self.typeModelSelected' on-item-changed="self.setTypeModelSelected">
+                <wi-dropdown-list place-holder="Type" items="self.listTypeModel" hide-delete-button='self.hideDeleteButton'
+                    current-select='self.currentSelectedTypeModel' on-item-changed="self.setTypeModel">
                 </wi-dropdown-list>
             </div>
             <div class="header">
                 <span class="title">Model Selection</span>
-                <wi-dropdown-list ng-if="self.typeModelSelected==='classification'" place-holder="Model" items="self.listModel.classification" hide-delete-button='self.hideDeleteButton'
-                    current-select='self.currentSelectedModel' on-item-changed="self.onModelChanged">
+                <wi-dropdown-list ng-if="self.currentSelectedTypeModel==='classification'" place-holder="Model" items="self.listSelectionModel.classification" hide-delete-button='self.hideDeleteButton'
+                    current-select='self.currentSelectedModelLabel' on-item-changed="self.onModelChanged">
                 </wi-dropdown-list>
-                <wi-dropdown-list ng-if="self.typeModelSelected!=='classification'" place-holder="Model" items="self.listModel.regression" hide-delete-button='self.hideDeleteButton'
-                    current-select='self.currentSelectedModel' on-item-changed="self.onModelChanged">
+                <wi-dropdown-list ng-if="self.currentSelectedTypeModel!=='classification'" place-holder="Model" items="self.listSelectionModel.regression" hide-delete-button='self.hideDeleteButton'
+                    current-select='self.currentSelectedModelLabel' on-item-changed="self.onModelChanged">
                 </wi-dropdown-list>
             </div>
             
@@ -42,11 +42,11 @@
                         </div>
                    </div>
                 </div>
-                <div ng-if="self.modelSelectedProps.payload.train" class="header" style="margin-top: 20px;">
+                <div ng-if="self.currentSelectedModel.payload.train" class="header" style="margin-top: 20px;">
                     <span class="title">Advance</span>
                     <span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
                 </div>
-                <div ng-if="self.modelSelectedProps.payload.train" class="editable-custom" ng-repeat="(key, props) in self.modelSelectedProps.payload.train" ng-init="props.value = props.value === undefined ? props.example : props.value">
+                <div ng-if="self.currentSelectedModel.payload.train" class="editable-custom" ng-repeat="(key, props) in self.currentSelectedModel.payload.train" ng-init="props.value = props.value === undefined ? props.example : props.value">
                    <editable item-value="props.value" item-label="props.name"
                        label-style="{'min-width':'130px'}" enabled="true" set-value="self.getFnSetValueElModel('train')"
                        params="props.name" ng-if="props.type != 'array' && props.type != 'List' && props.type != 'enum' ">
@@ -64,7 +64,7 @@
                </div>
             </div>
         </div>
-        <div ng-show="isSet(2)" style="padding: 20px; overflow: hidden;">
+        <div ng-show="self.isSet(2)" style="padding: 20px; overflow: hidden;">
             <div class="hidden-layers">
                 <div class="add ti ti-minus" ng-click="self.nnConfig.nLayer = self.nnConfig.nLayer - 1; self.nnConfigNLayerChanged(self.nnConfig.nLayer)"></div>
                 <input class="inputs" ng-model='self.nnConfig.nLayer'  class="form-control wi-form-control" ng-change="self.nnConfigNLayerChanged(self.nnConfig.nLayer)" min="1">
@@ -94,7 +94,7 @@
                 </div>
             </div> -->
         </div>
-        <!-- <div ng-show="isSet(3)" style="padding: 20px;">
+        <!-- <div ng-show="self.isSet(3)" style="padding: 20px;">
             
         </div> -->
     </div>

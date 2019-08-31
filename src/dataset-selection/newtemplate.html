@@ -11,14 +11,14 @@
 				ng-click="self.isActive = $index;self.onChangeType(button);" -->
 			<!-- <div class="button ti ti-comments" ng-repeat="button in self.buttons track by $index"
 				ng-click="self.onChangeType(button);"
-				ng-class="{'active': self.isActive == $index || self.typeSelected == button.type}"></div> -->
-			<div title="Curve" class="button" ng-class="{'active': self.typeSelected == self.buttons[0].type}" ng-click="self.onChangeType(self.buttons[0])">
+				ng-class="{'active': self.isActive == $index || self.typeInput == button.type}"></div> -->
+			<div title="Curve" class="button" ng-class="{'active': self.typeInput == self.buttons[0].type}" ng-click="self.onChangeType(self.buttons[0])">
 				<div class="ml-curve-16x16"></div>
 			</div>
-			<div title="Family" class="button" ng-class="{'active': self.typeSelected == self.buttons[1].type}" ng-click="self.onChangeType(self.buttons[1])">
+			<div title="Family" class="button" ng-class="{'active': self.typeInput == self.buttons[1].type}" ng-click="self.onChangeType(self.buttons[1])">
 				<div class="ml-family-16x16"></div>
 			</div>
-			<div title="Family Group" class="button" ng-class="{'active': self.typeSelected == self.buttons[2].type}" ng-click="self.onChangeType(self.buttons[2])">
+			<div title="Family Group" class="button" ng-class="{'active': self.typeInput == self.buttons[2].type}" ng-click="self.onChangeType(self.buttons[2])">
 				<div class="ml-family-group-16x16"></div>
 			</div>
 			<div title="Add input curve" class="button" ng-click="self.onAddInputItem()">
@@ -168,7 +168,7 @@
 			<span class="sub">Project sync from i2G cloud, please login to get ít</span>
 		</div>
 		<div style="height: 100%; margin: 0 -20px;">
-			<wi-tree-view-virtual tree-root="self.treedata" hide-unmatched='true' get-children="self.getChildren"
+			<wi-tree-view-virtual tree-root="self.listMlProject" hide-unmatched='true' get-children="self.getChildren"
 				click-fn='self.clickFn' get-label="self.getLabel" get-icon='self.getIcon' run-match='self.runMatch'
 				keep-chidren='true'>
 			</wi-tree-view-virtual>
