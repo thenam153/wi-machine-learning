@@ -23,6 +23,7 @@
     "query-string": "^6.8.2",
     "toastr": "^2.1.4",
     "url-loader": "^2.1.0",
+    "webpack-stream": "^5.2.1",
     "xlsx": "^0.15.0"
   }
 }

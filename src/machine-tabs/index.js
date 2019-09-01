@@ -207,6 +207,15 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         self.targetCurveSpec.value = selectedItemProps;
         if(selectedItemProps){
             self.targetCurveSpec.currentSelect = selectedItemProps.name;
+            if(self.typeInput === 'curve') {
+                self.machineLearnSteps['prediction'].datasets.forEach(e => {
+                    e.resultCurveName = selectedItemProps.name + e.patternCurveName;
+                })
+            }else {
+                self.machineLearnSteps['prediction'].datasets.forEach(e => {
+                    e.resultCurveName = e.patternCurveName;
+                })
+            }
         }else {
             self.targetCurveSpec.currentSelect = '[no choose]';
         }
@@ -376,20 +385,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         }  
     }
     this.handleDropDatasets = function(step, index = -1, type = null) {
-    	// let datasetSource = Object.assign([], self.machineLearnSteps[step].datasets);
-    	// let datasetDestination = Object.assign([], self.dataStepsForTrainPredict[step].datasets);
-    	// let ds = _.intersectionBy(datasetDestination, datasetSource, 'idDataset');
-    	// let ds1 = _.pullAllBy(datasetSource, ds, 'idDataset');
-    	// for(let i in ds1) {
-     //        if(step != 'training') {
-     //            ds1[i].resultCurveName = ds1[i].patternCurveName = '_' + step.toUpperCase();
-     //        }
-     //        ds1[i].active = true;
-    	// 	ds1[i]._selected = false;
-    	// }
-    	// self.dataStepsForTrainPredict[step].datasets = [...ds, ...ds1];
-        // handleCreateSelectionList(self.dataStepsForTrainPredict[step],step ,index,type);
-
     	handleCreateSelectionList(self.machineLearnSteps[step],step ,index,type);
         self.updateNNConfig();
     }
@@ -621,18 +616,19 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                         let dataset = await wiApi.getDatasetInfoPromise(content.steps[i].datasets[j].idDataset);
                         let valueDataset = angular.copy(dataset);
                         if (equals(self.machineLearnSteps[i].datasets, valueDataset) < 0 && valueDataset.idDataset && valueDataset.idWell) {
-                            // valueDataset
+                            // valueDatase
+                            if(i == 'training') {
+                                self.mergeCurves.push(valueDataset.curves);
+                            }else {
+                                valueDataset.resultCurveName = content.steps[i].datasets[j].resultCurveName;
+                                valueDataset.patternCurveName = '_' + i.toUpperCase();
+                            }
                             valueDataset.inputCurveSpecs = content.steps[i].datasets[j].inputCurveSpecs;
-                            valueDataset.resultCurveName = content.steps[i].datasets[j].resultCurveName;
-                            valueDataset.patternCurveName = '_' + i.toUpperCase();
                             valueDataset.active = content.steps[i].datasets[j].active;
                             valueDataset.discrmnt = content.steps[i].datasets[j].discrmnt;
                             valueDataset.wellName = content.steps[i].datasets[j].wellName;
                             valueDataset.idProject = content.steps[i].datasets[j].idProject;
                             self.machineLearnSteps[i].datasets = _.concat(self.machineLearnSteps[i].datasets, valueDataset);
-                            if(i == 'training') {
-                                self.mergeCurves.push(valueDataset.curves);
-                            }
                         }
                     }
                 }
@@ -1104,6 +1100,21 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         console.log(dataset, index, item);
         if(dataset.inputCurveSpecs.length === index + 1 && dataset.patternCurveName && dataset.patternCurveName !== '_PREDICTION') {
             dataset.resultCurveName = item.data.label.toUpperCase() !== '[NO CHOOSE]' ? item.data.label.toUpperCase() + dataset.patternCurveName : dataset.patternCurveName ;
+        }else if(dataset.inputCurveSpecs.length === index + 1 && !dataset.resultCurveName) {
+            // if(item.data.label.toUpperCase() !== '[NO CHOOSE]') {
+            //     self.machineLearnSteps['prediction'].datasets.forEach(e => {
+            //         e.resultCurveName = item.data.label.toUpperCase() + e.patternCurveName;
+            //     })
+            // }else {
+            //     self.machineLearnSteps['prediction'].datasets.forEach(e => {
+            //         e.resultCurveName = e.patternCurveName;
+            //     })
+            // }
+            item.data.label.toUpperCase() !== '[NO CHOOSE]' ? self.machineLearnSteps['prediction'].datasets.forEach(e => {
+                    e.resultCurveName = item.data.label.toUpperCase() + e.patternCurveName;
+                }) : self.machineLearnSteps['prediction'].datasets.forEach(e => {
+                    e.resultCurveName = e.patternCurveName;
+                })
         }
         dataset.inputCurveSpecs[index].value = item.properties;
         dataset.inputCurveSpecs[index].currentSelect = item.data.label;
@@ -1481,6 +1492,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                             orderNum: currentOrderNum
                         })
                         .then((line) => {
+                            toastr.success('Create log plot success', 'Success')
                             if (line) { //scale
                                 if (curve.minValue != undefined && curve.maxValue != undefined) {
                                     line.minValue = curve.minValue;
@@ -1760,6 +1772,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     }
     function createModelAndBucketId() {
      return new Promise((resolve, reject) => {
+        if(!self.currentSelectedMlProject) {
+            self.saveMlProject();
+            toastr.error('Must save machine learning project')
+            reject();
+        }
          console.log(self.currentSelectedModel);
          let payload = {};
          let params = self.currentSelectedModel.payload.params;
@@ -1960,7 +1977,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     function createBlankPlot(_step, namePlot) {
         return wiApi.createLogplotPromise({
             idProject: _step.datasets[0].idProject,
-            name: `${namePlot}-${localStorage.getItem('username') || 'none'}`,
+            name: `${namePlot} - ${localStorage.getItem('username') || 'none'} - ${self.currentSelectedMlProject.idMlProject}`,
             override: true,
             option: 'blank-plot'
         });
