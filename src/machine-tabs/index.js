@@ -539,9 +539,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     }
     //
 
-    this.setStateWorkflow = function(state) {
-        self.stateWorkflow.state = state;
-    }
+    // this.setStateWorkflow = function(state) {
+    //     self.stateWorkflow.state = state;
+    // }
     this.openMlProject = function() {
         self.showDialogOpenMlProject = true;
         wiApi.getMlProjectListPromise()
@@ -638,18 +638,13 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 self.createSelectionList();                    
                 self.currentSelectedTypeModel = content.model.type;
                 self.currentSelectedModelLabel = content.model.label;
-                // self.modelSelectedProps = content.model;
-                // let props = Object.assign({}, {properties: self.modelSelectedProps}, {name: self.modelSelectedProps.label});
+
                 self.currentSelectedModel = content.model;
+                console.log(self.currentSelectedModel);
+
                 self.currentSelectedModel.sync = true;
                 console.log(self.currentSelectedModel)
                 self.stateWorkflow = content.stateWorkflow;
-                // || {
-                // state : -1, 
-                // waitResult: false,
-                // model_id: null,
-                // bucket_id: null
-                // };
                 if(self.stateWorkflow.model_id && (content.model.label === 'Supervise Som' || content.model.name === 'supervise_som' )) {
                     $http({
                         method: 'GET',
@@ -767,15 +762,15 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
             self.nnConfig = { inputs: [], outputs: [], layers: [], container: {}, nLayer: 2, layerConfig: [{label: 'label 0', value: 10}, {label: 'label 1', value: 10}] };
             self.updateNNConfig();
 
-            self.saveMlProject()
+            // self.saveMlProject()
         })
     }
-    this.setModelId = function(modelId) {
-        self.stateWorkflow.model_id = modelId;
-    }
-    this.setBucketId = function(bucketId) {
-        self.stateWorkflow.bucket_id = bucketId;
-    }
+    // this.setModelId = function(modelId) {
+    //     self.stateWorkflow.model_id = modelId;
+    // }
+    // this.setBucketId = function(bucketId) {
+    //     self.stateWorkflow.bucket_id = bucketId;
+    // }
     function saveWorkflow() {
         // let steps = angular.copy(self.dataStepsForTrainPredict); 
         let steps = angular.copy(self.machineLearnSteps); 
@@ -867,8 +862,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         }
     }
 
-    self.model = self.listSelectionModel;
-    console.log(self.model);
+    // self.model = self.listSelectionModel;
+    // console.log(self.model);
     this.nnConfig = { inputs: [], outputs: [], layers: [], container: {}, nLayer: 2, layerConfig: [{label: 'label 0', value: 10}, {label: 'label 1', value: 10}] };
     function updateNNConfig() {
         self.nnConfig.inputs = self.inputCurveSpecs.map(i => {
@@ -947,6 +942,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         } 
         self.updateNNConfig();
     }
+
     this.tab = 1;
     this.setTab = function(idx) {
         self.tab = idx;
@@ -954,10 +950,13 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     this.isSet = function(tabNum){
         return self.tab === tabNum;
     };  
+
     this.onModelChanged = function(modelSelectedProps){
         console.log(modelSelectedProps);
         if(!modelSelectedProps) return;
         self.currentSelectedModel = self.currentSelectedModel.sync ? self.currentSelectedModel : modelSelectedProps;
+        // self.currentSelectedModel = self.currentSelectedModel.sync ? Object.assign(modelSelectedProps, self.currentSelectedModel) : modelSelectedProps;
+        
         self.currentSelectedModel.sync = false;
         self.currentSelectedModelLabel = self.currentSelectedModel.label;
         console.log(self.currentSelectedModel)
@@ -1101,15 +1100,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         if(dataset.inputCurveSpecs.length === index + 1 && dataset.patternCurveName && dataset.patternCurveName !== '_PREDICTION') {
             dataset.resultCurveName = item.data.label.toUpperCase() !== '[NO CHOOSE]' ? item.data.label.toUpperCase() + dataset.patternCurveName : dataset.patternCurveName ;
         }else if(dataset.inputCurveSpecs.length === index + 1 && !dataset.resultCurveName) {
-            // if(item.data.label.toUpperCase() !== '[NO CHOOSE]') {
-            //     self.machineLearnSteps['prediction'].datasets.forEach(e => {
-            //         e.resultCurveName = item.data.label.toUpperCase() + e.patternCurveName;
-            //     })
-            // }else {
-            //     self.machineLearnSteps['prediction'].datasets.forEach(e => {
-            //         e.resultCurveName = e.patternCurveName;
-            //     })
-            // }
             item.data.label.toUpperCase() !== '[NO CHOOSE]' ? self.machineLearnSteps['prediction'].datasets.forEach(e => {
                     e.resultCurveName = item.data.label.toUpperCase() + e.patternCurveName;
                 }) : self.machineLearnSteps['prediction'].datasets.forEach(e => {
@@ -1662,6 +1652,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 .then(() => {
                     toastr.success('Do after train success', 'Success');
                     self.stateWorkflow.state = 0;
+                    self.saveMlProject()
                     resolve();
                 })
                 .catch((err) => {
@@ -1718,6 +1709,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 }, err => {
                     // self.saveMlProject();
                     self.stateWorkflow.state = 1;
+                    self.saveMlProject()
                     resolve();  
                 });
             })
@@ -1765,6 +1757,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 }, err => {
                     // self.saveMlProject();
                     self.stateWorkflow.state = 2;
+                    self.saveMlProject()
                     resolve();
                 })
             })
@@ -1790,10 +1783,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
              // self.setModelId(self.model_id);
              self.stateWorkflow.model_id = resModelId.model_id
              // console.log(resModelId);
-             self.stateWorkflow.bucket_id = self.stateWorkflow.model_id + Date.now()
+             self.stateWorkflow.bucket_id = self.stateWorkflow.model_id + localStorage.getItem('username') + self.mlProjectSelected.idMlProject
              let request = {
                  bucket_id: self.stateWorkflow.bucket_id,
-                 dims: self.inputCurveSpecs.length + 1
+                 dims: self.inputCurveSpecs.length + 1,
+                 override_flag : true
              }
              postCreateBucketId(request)
              .then((resBucketId) => {
@@ -1977,7 +1971,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     function createBlankPlot(_step, namePlot) {
         return wiApi.createLogplotPromise({
             idProject: _step.datasets[0].idProject,
-            name: `${namePlot} - ${localStorage.getItem('username') || 'none'} - ${self.currentSelectedMlProject.idMlProject}`,
+            name: `${namePlot} - ${localStorage.getItem('username') || 'none'} - ${self.mlProjectSelected.idMlProject}`,
             override: true,
             option: 'blank-plot'
         });
