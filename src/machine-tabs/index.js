@@ -638,11 +638,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 self.createSelectionList();                    
                 self.currentSelectedTypeModel = content.model.type;
                 self.currentSelectedModelLabel = content.model.label;
-
                 self.currentSelectedModel = content.model;
-                console.log(self.currentSelectedModel);
-
                 self.currentSelectedModel.sync = true;
+                
                 console.log(self.currentSelectedModel)
                 self.stateWorkflow = content.stateWorkflow;
                 if(self.stateWorkflow.model_id && (content.model.label === 'Supervise Som' || content.model.name === 'supervise_som' )) {
@@ -679,7 +677,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
         })
         .then((mlProject) => {
             // if(!mlProject) return console.error(new Error("Don't create Ml Project"))
-            toastr.success('Create machine learing project fail','Success')
+            toastr.success('Create machine learing project success','Success')
             $timeout(() => {
                 self.mlProjectSelected = mlProject;
                 self.currentSelectedMlProject = mlProject.name;
@@ -954,7 +952,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
     this.onModelChanged = function(modelSelectedProps){
         console.log(modelSelectedProps);
         if(!modelSelectedProps) return;
-        self.currentSelectedModel = self.currentSelectedModel.sync ? self.currentSelectedModel : modelSelectedProps;
+        self.currentSelectedModel = self.currentSelectedModel.sync ? Object.assign(modelSelectedProps, {payload: self.currentSelectedModel.payload}) : modelSelectedProps;
         // self.currentSelectedModel = self.currentSelectedModel.sync ? Object.assign(modelSelectedProps, self.currentSelectedModel) : modelSelectedProps;
         
         self.currentSelectedModel.sync = false;
@@ -1780,14 +1778,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
          console.log(payload);
          postCreateModel(payload)
          .then((resModelId) => {
-             // self.setModelId(self.model_id);
              self.stateWorkflow.model_id = resModelId.model_id
-             // console.log(resModelId);
-             self.stateWorkflow.bucket_id = self.stateWorkflow.model_id + localStorage.getItem('username') + self.mlProjectSelected.idMlProject
+             // self.stateWorkflow.bucket_id = self.stateWorkflow.model_id + localStorage.getItem('username') + self.mlProjectSelected.idMlProject
+             self.stateWorkflow.bucket_id = self.stateWorkflow.model_id + localStorage.getItem('username') + Date.now();
              let request = {
                  bucket_id: self.stateWorkflow.bucket_id,
                  dims: self.inputCurveSpecs.length + 1,
-                 override_flag : true
              }
              postCreateBucketId(request)
              .then((resBucketId) => {
