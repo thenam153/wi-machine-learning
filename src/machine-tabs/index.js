@@ -1480,7 +1480,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                             orderNum: currentOrderNum
                         })
                         .then((line) => {
-                            toastr.success('Create log plot success', 'Success')
+                            // toastr.success('Create log plot success', 'Success')
                             if (line) { //scale
                                 if (curve.minValue != undefined && curve.maxValue != undefined) {
                                     line.minValue = curve.minValue;
@@ -1500,7 +1500,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
                 if (err) {
                     callback(err);
                 }else {
-                    toastr.success('Create plot success', 'Success');
+                    toastr.success('Create log plot success', 'Success');
                     callback();
                 }
             })
