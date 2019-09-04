@@ -43,25 +43,29 @@
                    </div>
                 </div>
                 <div ng-if="self.currentSelectedModel.payload.train" class="header" style="margin-top: 20px;">
-                    <span class="title">Advance</span>
-                    <span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
+                    <span class="title">
+                        <div ng-show="!self.showAdvance" class="fa fa-caret-right" style="margin-right: 10px; cursor: pointer;" ng-click="self.showAdvance = !self.showAdvance"></div>
+                        <div ng-show="self.showAdvance"class="fa fa-caret-down" style="margin-right: 10px; cursor: pointer;" ng-click="self.showAdvance = !self.showAdvance"></div>
+                    Advance</span>
                 </div>
-                <div ng-if="self.currentSelectedModel.payload.train" class="editable-custom" ng-repeat="(key, props) in self.currentSelectedModel.payload.train" ng-init="props.value = props.value === undefined ? props.example : props.value">
-                   <editable item-value="props.value" item-label="props.name"
-                       label-style="{'min-width':'130px'}" enabled="true" set-value="self.getFnSetValueElModel('train')"
-                       params="props.name" ng-if="props.type != 'array' && props.type != 'List' && props.type != 'enum' ">
-                   </editable>
-                   <div ng-if=" props.type == 'enum' " style="margin-top: 15px;">
-                       <div style="font-weight: bold;">
-                           {{props.name}}
+                <div ng-show="self.showAdvance">
+                    <div ng-if="self.currentSelectedModel.payload.train" class="editable-custom" ng-repeat="(key, props) in self.currentSelectedModel.payload.train" ng-init="props.value = props.value === undefined ? props.example : props.value">
+                       <editable item-value="props.value" item-label="props.name"
+                           label-style="{'min-width':'130px'}" enabled="true" set-value="self.getFnSetValueElModel('train')"
+                           params="props.name" ng-if="props.type != 'array' && props.type != 'List' && props.type != 'enum' ">
+                       </editable>
+                       <div ng-if=" props.type == 'enum' " style="margin-top: 15px;">
+                           <div style="font-weight: bold;">
+                               {{props.name}}
+                           </div>
+                            <div>
+                                <wi-dropdown-list place-holder="value" items="props.enum" current-select='props.value
+                                || props.example' on-item-changed="self.getFnSetValueElEnumModel(props.name, 'train')">
+                                </wi-dropdown-list>
+                            </div>
                        </div>
-                        <div>
-                            <wi-dropdown-list place-holder="value" items="props.enum" current-select='props.value
-                            || props.example' on-item-changed="self.getFnSetValueElEnumModel(props.name, 'train')">
-                            </wi-dropdown-list>
-                        </div>
                    </div>
-               </div>
+                </div>
             </div>
         </div>
         <div ng-show="self.isSet(2)" style="padding: 20px; overflow: hidden;">
