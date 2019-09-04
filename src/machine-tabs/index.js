@@ -78,6 +78,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         self.token = wiToken.getToken();
         self.currentColor = 'rgb(6, 116, 218)';
         self.currentFontSize = '12px';
+        self.selectedFontSize = 12;
 
         self.showSomVisualize = false;
         self.showDialogOpenMlProject = false;
