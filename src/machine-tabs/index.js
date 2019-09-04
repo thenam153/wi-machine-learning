@@ -9,7 +9,15 @@ if(process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development') {
     config = require('../config/config').production
 }
 
-var app = angular.module(moduleName, ['modelSelection','datasetSelection','trainingPrediction','wiApi','wiNeuralNetwork','wiLogin','wiToken']);
+var app = angular.module(moduleName, ['modelSelection',
+    'datasetSelection',
+    'trainingPrediction',
+    'wiApi',
+    'wiNeuralNetwork',
+    'wiLogin',
+    'wiToken',
+    'wiDialog',
+    'wiDiscriminator']);
 
 app.component(componentName, {
 	template: require('./newtemplate.html'),
@@ -20,8 +28,8 @@ app.component(componentName, {
     	token: '<'
     }
 });
-MachineTabsController.$inject = ['$scope', '$timeout', 'wiToken', 'wiApi', '$http']
-function MachineTabsController($scope, $timeout, wiToken, wiApi, $http){
+MachineTabsController.$inject = ['$scope', '$timeout', 'wiToken', 'wiApi', '$http', 'wiDialog']
+function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog){
     $scope.changeTab = function(index) {
         if ( index === 'back' ) {
             if ( self.current_tab === 0){
