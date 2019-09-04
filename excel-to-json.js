@@ -12,16 +12,13 @@ function sheetToJson(xlsxFile, outputFile, configFile) {
 	    config = require(configFile).production
 	}
 	let sheetName = config.sheet_name;
-	// if(!process.env.NODE_ENV || process.env.NODE_ENV === 'dev') {
-	// 	sheetName = config.dev.name;
-	// }else {
-	// 	sheetName = config.product.name;
-	// }
 	let sheet = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
 	sheet.forEach(i => {
 		i.payload = JSON.parse(i.payload);
 	})
-	fs.writeFileSync(outputFile, JSON.stringify(sheet));	
+	sheetName = config.list_type;
+	let sheetListType = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+	fs.writeFileSync(outputFile, JSON.stringify({model: sheet, type: sheetListType}));	
 	
 }
 exports.sheetToJson = sheetToJson;

@@ -8,17 +8,17 @@
             <div class="header" style="text-transform: capitalize;">
                 <span class="title">Type Selection</span>
                 <wi-dropdown-list place-holder="Type" items="self.listTypeModel" hide-delete-button='self.hideDeleteButton'
-                    current-select='self.currentSelectedTypeModel' on-item-changed="self.setTypeModel">
+                    current-select='self.currentSelectedTypeModel.label' on-item-changed="self.setTypeModel">
                 </wi-dropdown-list>
             </div>
             <div class="header">
                 <span class="title">Model Selection</span>
-                <wi-dropdown-list ng-if="self.currentSelectedTypeModel==='classification'" place-holder="Model" items="self.listSelectionModel.classification" hide-delete-button='self.hideDeleteButton'
+                <wi-dropdown-list ng-repeat="type in self.listTypeModel track by $index" ng-if="self.currentSelectedTypeModel.type===type.properties.type" place-holder="Model" items="self.listSelectionModel[type.properties.type]" hide-delete-button='self.hideDeleteButton'
                     current-select='self.currentSelectedModelLabel' on-item-changed="self.onModelChanged">
                 </wi-dropdown-list>
-                <wi-dropdown-list ng-if="self.currentSelectedTypeModel!=='classification'" place-holder="Model" items="self.listSelectionModel.regression" hide-delete-button='self.hideDeleteButton'
+               <!--  <wi-dropdown-list ng-if="self.currentSelectedTypeModel!=='classification'" place-holder="Model" items="self.listSelectionModel.regression" hide-delete-button='self.hideDeleteButton'
                     current-select='self.currentSelectedModelLabel' on-item-changed="self.onModelChanged">
-                </wi-dropdown-list>
+                </wi-dropdown-list> -->
             </div>
             
             <div >

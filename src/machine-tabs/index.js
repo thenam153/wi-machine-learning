@@ -156,7 +156,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             model_id: null,
             bucket_id: null
         }
-        self.currentSelectedTypeModel = 'classification';
+        console.log(self.listTypeModel)
+        self.currentSelectedTypeModel = self.listTypeModel[0].properties;
         if(self.token && self.token.length) window.localStorage.setItem('token',self.token);
     }
     // 
@@ -644,7 +645,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 self.inputCurveSpecs = content.inputCurveSpecs;
                 self.targetCurveSpec = content.targetCurveSpec;
                 self.createSelectionList();                    
-                self.currentSelectedTypeModel = content.model.type;
+                // self.currentSelectedTypeModel = content.model.type;
+                self.currentSelectedTypeModel = content.typeModel;
                 self.currentSelectedModelLabel = content.model.label;
                 self.currentSelectedModel = content.model;
                 self.currentSelectedModel.sync = true;
@@ -746,7 +748,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             self.showSomVisualize = false;
             // self.currentSelectedModel.name = self.model.classification[0].name;
             self.currentSelectedModel = self.listSelectionModel.classification[0].properties;
-            self.currentSelectedTypeModel = 'classification';
+            self.currentSelectedTypeModel = self.listTypeModel[0].properties;
             self.currentSelectedModelLabel = self.listSelectionModel.classification[0].properties.label;
             self.inputCurveSpecs = [
                 {
@@ -804,6 +806,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             inputCurveSpecs: inputCurveSpecs,
             targetCurveSpec: targetCurveSpec,
             type: self.typeInput,
+            typeModel: self.currentSelectedTypeModel,
             model: model,
             stateWorkflow: self.stateWorkflow,
             steps: steps
@@ -844,27 +847,59 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     self.listTypeModel = [
         {
             data: {
-                label: 'classification'
+                label: 'Classification'
             },
-            properties: 'classification'
+            properties: {
+                type: 'classification',
+                label: 'Classification'
+            }
         }, 
         {
             data: {
-                label: 'regression'
+                label: 'Regression'
             },
-            properties: 'regression'
+            properties: {
+                type: 'regression',
+                label: 'Regression'
+            }
         }
     ];
     self.listSelectionModel = {
-            regression: [],
-            classification: []
+            // regression: [],
+            // classification: []
         }
+    self.listTypeModel = [];
     const dataJsonModels = require('../../wi-uservice.json');
-    for(let i in dataJsonModels) {
-        if(dataJsonModels[i].type === 'classification') {
-            self.listSelectionModel.classification.push({data: {label: dataJsonModels[i].label}, properties: dataJsonModels[i]});
-        }else {
-            self.listSelectionModel.regression.push({data: {label: dataJsonModels[i].label}, properties: dataJsonModels[i]});
+    // console.log(dataJsonModels.model)
+    // for(let i in dataJsonModels.model) {
+    //     if(dataJsonModels.model[i].type === 'classification') {
+    //         self.listSelectionModel.classification.push({data: {label: dataJsonModels.model[i].label}, properties: dataJsonModels.model[i]});
+    //     }else {
+    //         self.listSelectionModel.regression.push({data: {label: dataJsonModels.model[i].label}, properties: dataJsonModels.model[i]});
+    //     }
+    // }
+    for(let t of dataJsonModels.type) {
+        self.listTypeModel.push({
+            data: {
+                label: t.label
+            },
+            properties: {
+                type: t.type,
+                label: t.label
+            }
+        })
+    }
+    for(let t of self.listTypeModel) {
+        self.listSelectionModel[t.properties.type] = [];
+        for(let j of dataJsonModels.model) {
+            if(j.type === t.properties.type) {
+                self.listSelectionModel[t.properties.type].push({
+                    data: {
+                        label: j.label
+                    },
+                    properties: j
+                })
+            }
         }
     }
 
