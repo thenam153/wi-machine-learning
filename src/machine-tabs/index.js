@@ -1150,6 +1150,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     return value;
                 }
                 return '';
+            case 'array':
+
+                value = value.toString().replace(/\s/g,'').split(',');
+                console.log(value);
+                return ([...new Set(value)]); 
             default: return '';
         }
     }
