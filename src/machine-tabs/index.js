@@ -431,15 +431,23 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }
         let curves = _.intersectionBy(...mergeCurves,'name');
         dataStep.selectionList = dataStep.selectionList ? new Array(self.inputCurveSpecs.length + 1) : new Array(self.inputCurveSpecs.length);
-        if (step === 'training' && self.typeInput === 'curve') {
+        if (self.typeInput === 'curve') {
             for(let i = 0; i < dataStep.selectionList.length; i++) {
                 if(!dataStep.selectionList[i]) dataStep.selectionList[i] = [];
-                dataStep.selectionList[i] = [{
+                let c = curves.find((t) => {
+                    return t.name === inputSpecs[i].currentSelect;
+                })
+                dataStep.selectionList[i] = c ? [{
                     data: {
                         label: inputSpecs[i].currentSelect
                     },
                     properties: inputSpecs[i].value
-                }];
+                }] : [{
+                    data: {
+                        label: '[no choose]'
+                    },
+                    properties: null
+                }]
             }
         }else if(curves && curves.length) {
              for(let curve of curves) {
@@ -512,8 +520,33 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }
 
         for(let dataset of dataStep.datasets) {
-            if(step === 'training' && self.typeInput === 'curve') {
-                dataset.inputCurveSpecs = angular.copy(inputSpecs);
+            if(self.typeInput === 'curve') {
+                // dataset.inputCurveSpecs = angular.copy(inputSpecs);
+                for(let i = 0; i < dataset.inputCurveSpecs.length; i++) {
+                    if(!dataset.inputCurveSpecs[i]) {
+                        dataset.inputCurveSpecs[i] = {
+                            label: 'Input Curve',
+                            value: null,
+                            currentSelect: '[no choose]'
+                        }
+                    }
+                    let c = dataStep.selectionList[i].find((t) => {
+                        return t.data.label === inputSpecs[i].currentSelect;
+                    });
+                    if(c) {
+                        dataset.inputCurveSpecs[i] = angular.copy(inputSpecs[i]);
+                    }else {
+                        dataset.inputCurveSpecs[i] = {
+                            label: 'Input Curve',
+                            value: null,
+                            currentSelect: '[no choose]'
+                        }
+                    }
+                }
+                if(step === 'verify') {
+                    let name = dataset.inputCurveSpecs[dataset.inputCurveSpecs.length - 1].currentSelect;
+                    dataset.resultCurveName = name === '[no choose]' ?  dataset.patternCurveName : name + dataset.patternCurveName;
+                }
             }else {
                 for(let i = 0; i < dataset.inputCurveSpecs.length; i++) {
                     if(!dataset.inputCurveSpecs[i]) {
@@ -1439,7 +1472,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         // // console.log(newCurve);
         // callback(newCurve);
         saveCurve(curveInfo, dataset, function(curveProps) {
-            function hanlde(errorCurveInfo) {
+            function handle(errorCurveInfo) {
                 let orderNum = dataset.idDataset.toString() + '1';
                 // delete curveInfo.data;
                 let errorCurve = null;
@@ -1468,7 +1501,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     callback();
                 });
             }
-            hanlde();
+            handle();
         })
     }
     async function saveCurve(curveInfo, dataset, callback) {
