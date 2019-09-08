@@ -253,17 +253,32 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         console.log('add');
         self.indexInputCurve = self.inputCurveSpecs.length - 1;
         self.formatCurve = ADD;
-        self.inputCurveSpecs.push({
+        // self.inputCurveSpecs.push({
+        //     label: 'Input Curve',
+        //     value: null,
+        //     currentSelect: '[no choose]'
+        // });
+        self.inputCurveSpecs = _.concat(self.inputCurveSpecs, {
             label: 'Input Curve',
             value: null,
             currentSelect: '[no choose]'
-        });
+        })
         let handle = _.debounce(() => {
             for(let i in self.machineLearnSteps) {
              self.handleDropDatasets(i,self.inputCurveSpecs.length - 1, ADD);
             }  
         }, 500);
         handle()
+    }
+    this.updateInputModel = function() {
+        for (let i of self.currentSelectedModel.payload.params) {
+            if (i.type === 'input') {
+                i.value = [];
+                for (let j = 0; j <= self.inputCurveSpecs.length; j++) {
+                    i.value = _.concat(i.value, i.pattern + (Number(j) + 1))
+                }
+            }
+        }
     }
     //
     this.getFnDrop = function(step) {
@@ -397,6 +412,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     this.handleDropDatasets = function(step, index = -1, type = null) {
     	handleCreateSelectionList(self.machineLearnSteps[step],step ,index,type);
         self.updateNNConfig();
+        self.updateInputModel();
     }
     function handleCreateSelectionList(dataStep, step, index = -1, type = null) {
         let inputSpecs = [...self.inputCurveSpecs, self.targetCurveSpec];
@@ -1031,7 +1047,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         if(!modelSelectedProps) return;
         self.currentSelectedModel = self.currentSelectedModel.sync ? Object.assign(modelSelectedProps, {payload: self.currentSelectedModel.payload}) : modelSelectedProps;
         // self.currentSelectedModel = self.currentSelectedModel.sync ? Object.assign(modelSelectedProps, self.currentSelectedModel) : modelSelectedProps;
-        
+        self.updateInputModel();
         self.currentSelectedModel.sync = false;
         self.currentSelectedModelLabel = self.currentSelectedModel.label;
         console.log(self.currentSelectedModel)
@@ -1861,8 +1877,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
          postCreateModel(payload)
          .then((resModelId) => {
              self.stateWorkflow.model_id = resModelId.model_id
-             // self.stateWorkflow.bucket_id = self.stateWorkflow.model_id + localStorage.getItem('username') + self.mlProjectSelected.idMlProject
-             self.stateWorkflow.bucket_id = self.stateWorkflow.model_id + localStorage.getItem('username') + Date.now();
+             self.stateWorkflow.bucket_id = self.stateWorkflow.model_id + localStorage.getItem('username') + self.mlProjectSelected.idMlProject
+             // self.stateWorkflow.bucket_id = self.stateWorkflow.model_id + localStorage.getItem('username') + Date.now();
              let request = {
                  bucket_id: self.stateWorkflow.bucket_id,
                  dims: self.inputCurveSpecs.length + 1,
