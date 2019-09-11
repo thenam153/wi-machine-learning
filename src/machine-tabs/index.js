@@ -274,7 +274,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         for (let i of self.currentSelectedModel.payload.params) {
             if (i.type === 'input') {
                 i.value = [];
-                for (let j = 0; j <= self.inputCurveSpecs.length; j++) {
+                for (let j = 0; j < self.inputCurveSpecs.length; j++) {
                     i.value = _.concat(i.value, i.pattern + (Number(j) + 1))
                 }
             }
