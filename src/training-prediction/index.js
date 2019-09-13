@@ -878,17 +878,17 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 	}
 
 	this.visualizationMapLabelColors = [
-	"rgba(255,0,0,0.6)",
-	"rgba(0,255,0,0.6)",
-	"rgba(0,0,255,0.6)",
-	"rgba(255,255,0,0.6)",
-	"rgba(0,255,255,0.6)",
-	"violet",
-	"springgreen"
+		'#0674da',
+		'#3aa2ff',
+		'#03bfda',
+		'#3da581',
+		'#51f5f5',
+		'#9362e6',
+		'#afe662'
 	]
 
 	this.visualizationMapFeatureColors = [
-	'red', 'green', 'blue', 'yellow'
+	'#0674da', '#3aa2ff', '#03bfda', '#3da581'
 	]
 
 	this.getFittedModel = async function () {

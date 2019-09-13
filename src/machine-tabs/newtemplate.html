@@ -42,7 +42,7 @@
 					<span class="ti ti-shortcode" style="margin-right: 15px;"></span>
 					Font size
 				</span>
-				<span class="sub">Lorem Ipsum is simply dummy text of the printing</span>
+				<span class="sub">Select font size for Machine Learning website</span>
 			</div>
 			<div class="font-size">
 				<div ng-click="self.selectedFontSize = 10; self.changeFontSize('10px')" ng-class="{'choose-font-size':self.selectedFontSize === 10}"></div>
@@ -147,7 +147,7 @@
 </script>
 <script type="text/ng-template" id="templateOpenProject">
     <div class="ngdialog-buttons">
-        <div class="newDialog">
+        <div class="newDialog slim-scroller">
             <div style="display: flex; align-items: center; justify-content: space-between;">
                 <div>Open Projects</div>
                 <input class="searchInput" type="text" placeholder="Search project" ng-model="searchProject">
@@ -222,13 +222,13 @@
                         border: 1px solid;
                         overflow: hidden;
                         white-space: nowrap;
-                        margin: 0;
+                        margin-right: 15px;
                         text-overflow: ellipsis;
                         letter-spacing: 0;
                         text-transform: none;" 
                         class="ngdialog-button ngdialog-button-primary" ng-click="self.cancelDeletePrj()"> CANCEL </a>
                     <div>
-                        <input type="submit" style="max-width: fit-content;" value="DELETE" class="ngdialog-button ngdialog-button-primary" ng-click="self.acceptDeletePrj()">
+                        <input type="submit" style="max-width: fit-content; border: 1px solid #3188e6;" value="DELETE" class="ngdialog-button ngdialog-button-primary" ng-click="self.acceptDeletePrj()">
                     </div>
                 </form>
             </div>

@@ -3,6 +3,29 @@ body {
     width : 100vw;
     height: 100vh;
 }
+.ngdialog.ngdialog-theme-default .ngdialog-content {
+    background: #fff !important;
+}
+a:focus, a:hover {
+    text-decoration: unset !important;
+}
+.new-circle {
+    background: #f4f4f4;
+    width: 33px;
+    height: 33px;
+    display: flex;
+    border: 1px solid #0077be;
+    border-radius: 2px;
+    align-items: center;
+    justify-content: center;
+    color: #0077be;
+    transition: ease-in 0.2s;
+    cursor: pointer;
+    &:hover {
+      transform: scale(1.2);
+      transition: ease-in 0.2s;
+    }
+  }
 
 .slim-scroller {
     ::-webkit-scrollbar {
@@ -496,7 +519,19 @@ machine-tabs {
         background-color: #0674da;
     }
 }
-
+.newDialog input {
+    text-align: left;
+    flex: 1;
+    color: #0074c5;
+    background-color: #ffffff;
+    border: 1px solid #cecece;
+    border-radius: 2px;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 13px;
+    width: auto;
+    transition: border 0.5s;
+}
 .ngdialog .btn {
     padding: 9px;
     text-align: center;
@@ -518,13 +553,15 @@ machine-tabs {
     }
     .searchInput{
       text-align: left;
+      flex: 1;
+        margin: 0 20px;
       color: #0074c5;
       background-color: #ffffff;
       border: 1px solid #cecece;
-      border-radius: 70px;
+      border-radius: 2px;
       font-size: 12px;
       font-weight: bold;
-      padding: 8px 13px;
+      padding: 4px 13px;
       width: auto;
       transition: border 0.5s;
     }
