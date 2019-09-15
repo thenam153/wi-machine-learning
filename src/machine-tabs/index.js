@@ -1717,7 +1717,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         // callback();
     }
     function isRun(dataset) {
-        if(!dataset.active) return false;
+        // if(!dataset.active) return false;
         let isValid = true;
         for(let i of dataset.inputCurveSpecs) {
             if(i.currentSelect == '[no choose]') {
@@ -1828,6 +1828,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     toastr.error('Curve in dataset is not [no choose]', 'Error');
                     return reject(new Error('Please select curve for dataset'));
                 }
+                if(!dataset.active) return _cb();
                 evaluateExpr(dataset, dataset.discrmnt)
                 .then((curves) => {
                     return getDataCurveAndFilter(dataset, curves)
@@ -1888,6 +1889,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                         toastr.error('Curve in dataset is not [no choose]', 'Error');
                         return reject(new Error('Please select curve for dataset'));
                     }
+                    if(!dataset.active) return _cb();
                     evaluateExpr(dataset, dataset.discrmnt)
                     .then(function(curves) {
                         return getDataCurveAndFilter(dataset, curves)
@@ -1940,6 +1942,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                         toastr.error('Curve in dataset is not [no choose]', 'Error');
                         return reject(new Error('Please drop dataset'))
                     }
+                    if(!dataset.active) return _cb();
                     evaluateExpr(dataset,dataset.discrmnt)
                     .then(function(curves) {
                         return getDataCurveAndFilter(dataset, curves)
