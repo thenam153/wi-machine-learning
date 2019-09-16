@@ -105,7 +105,7 @@ function DatasetSelectionController($scope, wiApi, $timeout){
         }
     }
     this.runMatch = function(node,filter) {
-        return node.name.includes(filter);
+        return node.name.includes(filter.toUpperCase());
     }
     this.$onInit = function() {
         $scope.$watch(function () {
