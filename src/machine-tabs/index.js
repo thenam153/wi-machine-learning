@@ -974,13 +974,29 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                                 return dataset.inputCurveSpecs[i].currentSelect === d.data.label;
                             });
                             if(!input) {
-                                dataset.inputCurveSpecs[i] = {
-                                    label: 'Input Curve',
-                                    value: null,
-                                    currentSelect: '[no choose]'
+                                if(dataStep.selectionList[i][1]) {
+                                    dataset.inputCurveSpecs[i] = {
+                                        label: 'Input Curve',
+                                        value: dataStep.selectionList[i][1].properties,
+                                        currentSelect: dataStep.selectionList[i][1].data.label
+                                    }
+                                }else {
+                                    dataset.inputCurveSpecs[i] = {
+                                        label: 'Input Curve',
+                                        value: null,
+                                        currentSelect: '[no choose]'
+                                    }
                                 }
                                 dataset.resultCurveName = dataset.patternCurveName;
-                            } 
+                            }else {
+                                if(!input.properties) {
+                                    dataset.inputCurveSpecs[i] = {
+                                        label: 'Input Curve',
+                                        value: dataStep.selectionList[i][1].properties,
+                                        currentSelect: dataStep.selectionList[i][1].data.label
+                                    }
+                                }
+                            }
                         }
                     }
                 }   
