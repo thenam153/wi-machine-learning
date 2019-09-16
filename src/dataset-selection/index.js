@@ -120,6 +120,13 @@ function DatasetSelectionController($scope, wiApi, $timeout){
                 })
 			}
 		});
-       
+    }
+    this.refeshProject = function() {
+        wiApi.getProjectsPromise()
+        .then((data) => {
+            $timeout(() => {
+                self.listMlProject = data;
+            })
+        })
     }
 }
