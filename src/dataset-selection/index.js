@@ -57,7 +57,7 @@ function DatasetSelectionController($scope, wiApi, $timeout){
         }
     ];
     this.getLabel = function (node) {
-        return (node||{}).name || 'no name';
+        return (node||{}).displayName || (node||{}).name || 'no name';
     }	
     this.getIcon = function (node) {
     	if(!node) return;
