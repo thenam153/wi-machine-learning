@@ -1,5 +1,9 @@
 <div style="display: flex;flex-direction: column;flex: 1;" class="slim-scroller">
 	<div class="menu">
+        <div style="display: flex;">
+            <span ng-repeat="name in self.titleTabs track by $index" class="menu-item"
+                ng-class="{active: self.current_tab === $index}" ng-click="changeTab($index);">{{name}}</span>
+        </div>
 		<div class="active menu-item">
 			<span ng-if="self.currentSelectedMlProject" ng-click="self.findAllProjects();" class="ml-project-name">{{self.currentSelectedMlProject ? self.currentSelectedMlProject: ''}}</span>
 			<div ng-click="self.findAllProjects();" style="align-items: center;display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
@@ -14,14 +18,10 @@
 				<span  class="ml-new-16x16" style="margin-right: 10px;filter: saturate(0) brightness(6)"></span>
 				<span>NEW</span>
 			</div>
+            <span style="font-size: 15px; margin-left: 20px; padding: 0;" class="menu-item active ti ti-settings" ng-click="self.userSetting=!self.userSetting"></span>
 			
 		</div>
-		<div style="display: flex;">
-			
-			<span ng-repeat="name in self.titleTabs track by $index" class="menu-item"
-				ng-class="{active: self.current_tab === $index}" ng-click="changeTab($index);">{{name}}</span>
-				<span style="font-size: 15px;" class="menu-item active ti ti-settings" ng-click="self.userSetting=!self.userSetting"></span>
-		</div>
+		
 	</div>
 	<div class="main">
 		<div class="back">
