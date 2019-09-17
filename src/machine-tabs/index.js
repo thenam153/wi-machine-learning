@@ -347,7 +347,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     })
                 })
                 .catch((err) => {
-                    toastr.error('Create machine learing project fail','Error')
+                    toastr.error("Project's name already exists",'Error')
                 })
             }
         }
