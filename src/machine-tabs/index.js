@@ -318,7 +318,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         wiApi.getMlProjectListPromise()
             .then((listMlProject) => {
                 $timeout(() => {
-                    self.allProjects = listMlProject;
+                    self.allProjects = listMlProject.sort((a,b) => a.name.localeCompare(b.name));
                 })
             });
     }
