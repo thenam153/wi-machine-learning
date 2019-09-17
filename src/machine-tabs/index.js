@@ -286,7 +286,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }
     }
     this.delProject = function (project) {
-        ngDialog.open({
+        var dialog = ngDialog.open({
             template: 'templateDeleteProject',
             className: 'ngdialog-theme-default',
             scope: $scope,
@@ -295,11 +295,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             wiApi.deleteMlProjectPromise(project.idMlProject)
             .then((res) => {
                 toastr.success('Delete "' + res.name + '" Project Success', 'Success');
-                _.remove(self.listMlProject, (d, i) => {
+                _.remove(self.allProjects, (d, i) => {
                     return d == project;
                 });
                 self.newMlProject();
-                ngDialog.close();
+                dialog.close();
             })
             .catch((err) => {
                 toastr.error('Delete "' + project.name + '" Project Error', 'Error');
