@@ -513,6 +513,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 model_id: null,
                 bucket_id: null
             }
+            self.listSelectionModel = angular.copy(self.cacheListSelectionModel);
             self.mlProjectSelected = null;
             self.showSomVisualize = false;
             self.currentSelectedModel = self.listSelectionModel.classification[0].properties;
@@ -1005,53 +1006,57 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     }
     // ===================================================================================================
 
-    self.listTypeModel = [
-        {
-            data: {
-                label: 'Classification'
-            },
-            properties: {
-                type: 'classification',
-                label: 'Classification'
+    function initModels() {
+        self.listTypeModel = [
+            {
+                data: {
+                    label: 'Classification'
+                },
+                properties: {
+                    type: 'classification',
+                    label: 'Classification'
+                }
+            }, 
+            {
+                data: {
+                    label: 'Regression'
+                },
+                properties: {
+                    type: 'regression',
+                    label: 'Regression'
+                }
             }
-        }, 
-        {
-            data: {
-                label: 'Regression'
-            },
-            properties: {
-                type: 'regression',
-                label: 'Regression'
+        ];
+        self.listSelectionModel = {}
+        self.listTypeModel = [];
+        const dataJsonModels = require('../../wi-uservice.json');
+        for(let t of dataJsonModels.type) {
+            self.listTypeModel.push({
+                data: {
+                    label: t.label
+                },
+                properties: {
+                    type: t.type,
+                    label: t.label
+                }
+            })
+        }
+        for(let t of self.listTypeModel) {
+            self.listSelectionModel[t.properties.type] = [];
+            for(let j of dataJsonModels.model) {
+                if(j.type === t.properties.type) {
+                    self.listSelectionModel[t.properties.type].push({
+                        data: {
+                            label: j.label
+                        },
+                        properties: j
+                    })
+                }
             }
         }
-    ];
-    self.listSelectionModel = {}
-    self.listTypeModel = [];
-    const dataJsonModels = require('../../wi-uservice.json');
-    for(let t of dataJsonModels.type) {
-        self.listTypeModel.push({
-            data: {
-                label: t.label
-            },
-            properties: {
-                type: t.type,
-                label: t.label
-            }
-        })
+        self.cacheListSelectionModel = angular.copy(self.listSelectionModel);
     }
-    for(let t of self.listTypeModel) {
-        self.listSelectionModel[t.properties.type] = [];
-        for(let j of dataJsonModels.model) {
-            if(j.type === t.properties.type) {
-                self.listSelectionModel[t.properties.type].push({
-                    data: {
-                        label: j.label
-                    },
-                    properties: j
-                })
-            }
-        }
-    }
+    initModels();
     this.nnConfig = { inputs: [], outputs: [], layers: [], container: {}, nLayer: 2, layerConfig: [{label: 'label 0', value: 10}, {label: 'label 1', value: 10}] };
     function updateNNConfig() {
         self.nnConfig.inputs = self.inputCurveSpecs.map(i => {
