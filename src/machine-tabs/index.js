@@ -617,15 +617,15 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         self.targetCurveSpec.value = selectedItemProps;
         if(selectedItemProps){
             self.targetCurveSpec.currentSelect = selectedItemProps.name;
-            if(self.typeInput === 'curve') {
-                self.machineLearnSteps['prediction'].datasets.forEach(e => {
-                    e.resultCurveName = selectedItemProps.name + e.patternCurveName;
-                })
-            }else {
-                self.machineLearnSteps['prediction'].datasets.forEach(e => {
-                    e.resultCurveName = e.patternCurveName;
-                })
-            }
+            // if(self.typeInput === 'curve') {
+            //     self.machineLearnSteps['prediction'].datasets.forEach(e => {
+            //         e.resultCurveName = selectedItemProps.name + e.patternCurveName;
+            //     })
+            // }else {
+            //     self.machineLearnSteps['prediction'].datasets.forEach(e => {
+            //         e.resultCurveName = e.patternCurveName;
+            //     })
+            // }
         }else {
             self.targetCurveSpec.currentSelect = '[no choose]';
         }
@@ -694,6 +694,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                             // valueDataset._selected = false;
                             // self.machineLearnSteps[step].datasets = _.concat(self.machineLearnSteps[step].datasets, valueDataset);
                             // self.handleDropDatasets(step);
+                            valueDataset.ofStep = step;
                             if(step == 'training') {
                                 self.mergeCurves.push(valueDataset.curves);
                                 valueDataset.active = true;
@@ -701,7 +702,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                                 self.machineLearnSteps[step].datasets = _.concat(self.machineLearnSteps[step].datasets, valueDataset);
                                 self.handleDropDatasets(step);
                             }else if(self.machineLearnSteps[step].datasets.length == 0 || self.machineLearnSteps[step].datasets[0].idProject === valueDataset.idProject){
-                                valueDataset.resultCurveName = valueDataset.patternCurveName = '_' + step.toUpperCase();
+                                // valueDataset.resultCurveName = valueDataset.patternCurveName = '_' + step.toUpperCase();
                                 valueDataset.active = true;
                                 valueDataset._selected = false;
                                 self.machineLearnSteps[step].datasets = _.concat(self.machineLearnSteps[step].datasets, valueDataset);
@@ -808,7 +809,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }  
     }
     this.handleDropDatasets = function(step, index = -1, type = null) {
-    	handleCreateSelectionList(self.machineLearnSteps[step],step ,index,type);
+    	handleCreateSelectionList(self.machineLearnSteps[step], step, index, type);
         self.updateNNConfig();
         self.updateInputModel();
     }
@@ -816,6 +817,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         let inputSpecs = [...self.inputCurveSpecs, self.targetCurveSpec];
         let mergeCurves = [];
         for(let dataset of dataStep.datasets) {
+            if(dataset.ofStep !== 'training') {
+                dataset.resultCurveName = dataset.patternCurveName = '-' + self.currentSelectedModel.infix + '-' + step.toUpperCase();
+            }
             if(!dataset.inputCurveSpecs) {
                 dataset.inputCurveSpecs = dataStep.target ? new Array(self.inputCurveSpecs.length + 1) : new Array(self.inputCurveSpecs.length);
             } 
@@ -961,6 +965,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     let name = dataset.inputCurveSpecs[dataset.inputCurveSpecs.length - 1].currentSelect;
                     dataset.resultCurveName = name === '[no choose]' ?  dataset.patternCurveName : name + dataset.patternCurveName;
                 }
+                if(step === 'prediction') {
+                    dataset.resultCurveName = self.targetCurveSpec.currentSelect === '[no choose]' ?  dataset.patternCurveName : self.targetCurveSpec.currentSelect + dataset.patternCurveName;
+                }
             }else {
                 for(let i = 0; i < dataset.inputCurveSpecs.length; i++) {
                     if(!dataset.inputCurveSpecs[i]) {
@@ -990,7 +997,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                                 }
                                 dataset.resultCurveName = dataset.patternCurveName;
                             }else {
-                                if(!input.properties) {
+                                if(!input.properties && dataStep.selectionList[i][1]) {
                                     dataset.inputCurveSpecs[i] = {
                                         label: 'Input Curve',
                                         value: dataStep.selectionList[i][1].properties,
@@ -998,6 +1005,13 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                                     }
                                 }
                             }
+                        }
+                        if(step === 'verify' && self.typeInput === 'curve') {
+                            let name = dataset.inputCurveSpecs[dataset.inputCurveSpecs.length - 1].currentSelect;
+                            dataset.resultCurveName = name === '[no choose]' ?  dataset.patternCurveName : name + dataset.patternCurveName;
+                        }
+                        if(step === 'prediction' && self.typeInput === 'curve') {
+                            dataset.resultCurveName = self.targetCurveSpec.currentSelect === '[no choose]' ?  dataset.patternCurveName : self.targetCurveSpec.currentSelect + dataset.patternCurveName;
                         }
                     }
                 }   
@@ -1166,6 +1180,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             let changePosition = document.getElementById("model-selection");
             changePosition.classList.remove("position-static");
         }
+        let handle = _.debounce(() => {
+            for(let i in self.machineLearnSteps) {
+             self.handleDropDatasets(i);
+            }  
+        }, 500);
+        handle()
     }
     this.setTypeModel = function(type) {
         self.currentSelectedTypeModel = type;
@@ -1293,7 +1313,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     }
     this.setOnItemCurveChanged= function(dataset, index, item) {
         console.log(dataset, index, item);
-        if(dataset.inputCurveSpecs.length === index + 1 && dataset.patternCurveName && dataset.patternCurveName !== '_PREDICTION') {
+        if(dataset.inputCurveSpecs.length === index + 1 && dataset.patternCurveName && dataset.ofStep !== 'prediction') {
             dataset.resultCurveName = item.data.label.toUpperCase() !== '[NO CHOOSE]' ? item.data.label.toUpperCase() + dataset.patternCurveName : dataset.patternCurveName ;
         }else if(dataset.inputCurveSpecs.length === index + 1 && !dataset.resultCurveName) {
             item.data.label.toUpperCase() !== '[NO CHOOSE]' ? self.machineLearnSteps['prediction'].datasets.forEach(e => {
