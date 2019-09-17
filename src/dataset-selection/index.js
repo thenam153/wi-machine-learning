@@ -93,8 +93,9 @@ function DatasetSelectionController($scope, wiApi, $timeout){
             wiApi.getFullInfoPromise(node.idProject, node.owner, node.name).then(dataProject => {
                 console.log(dataProject);
                 $timeout(()=>{
-                    node.wells = dataProject.wells;   
+                    node.wells = dataProject.wells.sort((a,b) => a.name.localeCompare(b.name));   
                     for(let i of node.wells) {
+                        i.datasets = i.datasets.sort((a,b) => a.name.localeCompare(b.name));   
                         for(let j of i.datasets) {
                             j.wellName = i.name;
                             j.idProject = node.idProject;
@@ -115,7 +116,7 @@ function DatasetSelectionController($scope, wiApi, $timeout){
                 wiApi.getProjectsPromise()
                 .then((data) => {
                     $timeout(() => {
-                        self.listMlProject = data;
+                        self.listMlProject = data.sort((a,b) => a.name.localeCompare(b.name));
                     })
                 })
 			}
@@ -125,7 +126,7 @@ function DatasetSelectionController($scope, wiApi, $timeout){
         wiApi.getProjectsPromise()
         .then((data) => {
             $timeout(() => {
-                self.listMlProject = data;
+                self.listMlProject = data.sort((a,b) => a.name.localeCompare(b.name));
             })
         })
     }
