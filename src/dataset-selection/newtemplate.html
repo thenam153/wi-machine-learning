@@ -166,6 +166,7 @@
 					Project list
 			</span>
 			<span class="sub">Project sync from i2G cloud, please login to get ít</span>
+			<div ng-click="self.refeshProject()">refesh pj</div>
 		</div>
 		<div style="height: 100%; margin: 0 -20px;">
 			<wi-tree-view-virtual tree-root="self.listMlProject" hide-unmatched='true' get-children="self.getChildren"
