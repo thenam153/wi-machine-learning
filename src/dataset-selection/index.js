@@ -126,10 +126,12 @@ function DatasetSelectionController($scope, wiApi, $timeout){
 		});
     }
     this.refeshProject = function() {
+        self.reloadPrj = true;
         wiApi.getProjectsPromise()
         .then((data) => {
             $timeout(() => {
                 self.listMlProject = data.sort((a,b) => a.name.localeCompare(b.name));
+                self.reloadPrj = !self.reloadPrj;
             })
         })
     }
