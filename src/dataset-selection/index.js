@@ -64,7 +64,13 @@ function DatasetSelectionController($scope, wiApi, $timeout){
         if(node.idCurve) {
     		return "curve-16x16";
     	} else if(node.idDataset){
-    		return "curve-data-16x16";
+            if(node.step == "0"){
+                return "dataset-new-16x16"
+            } else if (node.name === "INDEX") {
+                return "reference-dataset-16x16";
+            }else {
+                return "curve-data-16x16";
+            }
     	} else if(node.idWell) {
 	        return "well-16x16";
  		} else if(node.idProject) {
