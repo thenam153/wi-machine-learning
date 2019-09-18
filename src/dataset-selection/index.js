@@ -62,7 +62,13 @@ function DatasetSelectionController($scope, wiApi, $timeout){
     this.getIcon = function (node) {
     	if(!node) return;
         if(node.idCurve) {
-    		return "curve-16x16";
+            if(node.type === "TEXT"){
+                return "text-curve-16x16"
+            } else if (node.type === "ARRAY") {
+                return "array-curve-16x16";
+            }else {
+                return "curve-16x16";
+            }
     	} else if(node.idDataset){
             if(node.step == "0"){
                 return "dataset-new-16x16"
