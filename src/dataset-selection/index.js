@@ -93,14 +93,16 @@ function DatasetSelectionController($scope, wiApi, $timeout){
             wiApi.getFullInfoPromise(node.idProject, node.owner, node.name).then(dataProject => {
                 console.log(dataProject);
                 $timeout(()=>{
-                    node.wells = dataProject.wells.sort((a,b) => a.name.localeCompare(b.name));   
+                    node.wells = dataProject.wells.sort((a,b) => a.name.localeCompare(b.name));
+                    node.wells = dataProject.wells;
                     for(let i of node.wells) {
                         i.datasets = i.datasets.sort((a,b) => a.name.localeCompare(b.name));   
                         for(let j of i.datasets) {
                             j.wellName = i.name;
                             j.idProject = node.idProject;
                         }
-                    }   
+                    }
+                    sortProjectData(node);   
                 })
             });
         }
@@ -130,5 +132,39 @@ function DatasetSelectionController($scope, wiApi, $timeout){
                 self.listMlProject = data.sort((a,b) => a.name.localeCompare(b.name));
             })
         })
+    }
+    function sortProjectData(projectData) {
+        if (!projectData.wells) return;
+        projectData.wells.sort((a, b) => {
+            let nameA = a.name.toUpperCase();
+            let nameB = b.name.toUpperCase();
+            return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+        });
+        projectData.wells.forEach(well => {
+            well.datasets.sort((a, b) => {
+                let nameA = a.name.toUpperCase();
+                let nameB = b.name.toUpperCase();
+                return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+            });
+            well.datasets.forEach(dataset => {
+                dataset.curves.sort((a, b) => {
+                    let nameA = a.name.toUpperCase();
+                    let nameB = b.name.toUpperCase();
+                    return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+                });
+            });
+            well.zonesets.sort((a, b) => {
+                let nameA = a.name.toUpperCase();
+                let nameB = b.name.toUpperCase();
+                return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+            });
+            well.zonesets.forEach(function (zoneset) {
+                zoneset.zones.sort((a, b) => {
+                    let depthA = parseFloat(a.startDepth);
+                    let depthB = parseFloat(b.startDepth);
+                    return depthA - depthB;
+                })
+            })
+        });
     }
 }
