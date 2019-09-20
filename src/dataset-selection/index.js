@@ -108,9 +108,9 @@ function DatasetSelectionController($scope, wiApi, $timeout){
                     node.wells = dataProject.wells.sort((a,b) => a.name.localeCompare(b.name));
                     node.wells = dataProject.wells;
                     for(let i of node.wells) {
-                        i.datasets = i.datasets.sort((a,b) => a.name.localeCompare(b.name));   
+                        i.datasets.sort((a,b) => a.name.localeCompare(b.name));   
                         for(let j of i.datasets) {
-                            j.sort((a,b) => a.name.localeCompare(b.name));   
+                            j.curves.sort((a,b) => a.name.localeCompare(b.name));   
                             j.wellName = i.name;
                             j.idProject = node.idProject;
                         }

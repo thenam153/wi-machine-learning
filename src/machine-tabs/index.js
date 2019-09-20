@@ -613,17 +613,14 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     for(let node of datasets) {
                         let valueDataset = angular.copy(node);
                         if (equals(self.machineLearnSteps[step].datasets, valueDataset) < 0 && valueDataset.idDataset && valueDataset.idWell) {
-                            // valueDataset.ofStep = step;
+                            valueDataset.active = true;
+                            valueDataset._selected = false;
                             if(step == 'training') {
                                 self.mergeCurves.push(valueDataset.curves);
-                                valueDataset.active = true;
-                                valueDataset._selected = false;
                                 self.machineLearnSteps[step].datasets = _.concat(self.machineLearnSteps[step].datasets, valueDataset);
                                 self.handleDropDatasets(step);
                             }else if(self.machineLearnSteps[step].datasets.length == 0 || self.machineLearnSteps[step].datasets[0].idProject === valueDataset.idProject){
                                 // valueDataset.resultCurveName = valueDataset.patternCurveName = '_' + step.toUpperCase();
-                                valueDataset.active = true;
-                                valueDataset._selected = false;
                                 self.machineLearnSteps[step].datasets = _.concat(self.machineLearnSteps[step].datasets, valueDataset);
                                 self.handleDropDatasets(step);
                             }else {
