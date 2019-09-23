@@ -159,24 +159,27 @@
 			</wi-droppable>
 		</div>
 	</div>
-	<div class="input-selection">
-		<div ng-click="self.refeshProject()" style="cursor: pointer; position: absolute; right: 25px; /* top: 5px; */ padding-top: 4px; font-size: 12px; " class="explorer-reload-16x16"></div>
-		<div class="header">
-			<span class="title">
-				<span class="ti ti-align-left" style="margin-right: 15px;"></span>
-					Project list
-			</span>
-			<span class="sub">Project sync from i2G cloud, please login to get ít</span>
-			<!-- <div ng-click="self.refeshProject()">refesh pj</div> -->
+	<side-bar my-default-width="315" orientation="w" collapsed="false">
+
+		<div class="input-selection" style="height: unset; padding-bottom: 0;">
+			<div ng-click="self.refeshProject()" style="cursor: pointer; position: absolute; right: 25px; /* top: 5px; */ padding-top: 4px; font-size: 12px; " class="ti ti-reload"></div>
+			<div class="header">
+				<span class="title">
+					<span class="ti ti-align-left" style="margin-right: 15px;"></span>
+						Project list
+				</span>
+				<span class="sub">Project sync from i2G cloud, please login to get ít</span>
+				<!-- <div ng-click="self.refeshProject()">refesh pj</div> -->
+			</div>
+			
 		</div>
-		<div style="height: 100%; margin: 0 -20px;">
+		<div style="height: calc(100% - 93px);">
 			<wi-tree-view-virtual tree-root="self.listMlProject" hide-unmatched='true' get-children="self.getChildren"
 				click-fn='self.clickFn' get-label="self.getLabel" get-icon='self.getIcon' run-match='self.runMatch'
 				keep-chidren='true'>
 			</wi-tree-view-virtual>
 		</div>
-
-	</div>
+	</side-bar>
 	<div ng-show="self.reloadPrj" style="z-index: 10; background: #ffffffc9; height: 100vh; width: 100vw; z-index: 5; position: absolute; display: flex; align-items: center; justify-content: center;">
 		<div >
 			<!-- <div class="loader08"></div> -->

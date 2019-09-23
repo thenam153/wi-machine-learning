@@ -5,8 +5,12 @@
                 ng-class="{active: self.current_tab === $index}" ng-click="changeTab($index);">{{name}}</span>
         </div>
 		<div class="active menu-item">
-			<span ng-if="self.currentSelectedMlProject" ng-click="self.findAllProjects();" class="ml-project-name">{{self.currentSelectedMlProject ? self.currentSelectedMlProject: ''}}</span>
-			<div ng-click="self.findAllProjects();" style="align-items: center;display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
+            <span ng-if="self.currentSelectedMlProject" ng-click="self.findAllProjects();" class="ml-project-name">{{self.currentSelectedMlProject ? self.currentSelectedMlProject: ''}}</span>
+            <div ng-if="self.currentSelectedMlProject" ng-click="self.renameProject();" style="align-items: center;margin-left: 10px; display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
+                <span  class="rename-16x16" style="margin-right: 10px;filter: saturate(0) brightness(6)"></span>
+                <span>RENAME</span>
+            </div>
+            <div ng-click="self.findAllProjects();" style="align-items: center;display: flex; background: #ffffff40; margin-left: 10px; padding: 5px 10px; border-radius: 2px;">
 				<span  class="ml-open-16x16" style="margin-right: 10px; filter: saturate(0) brightness(6)"></span>
 				<span>OPEN</span>
 			</div>
@@ -208,6 +212,30 @@
                 <form>
                     <input style="flex: 1;" type="text" placeholder="Enter project name" ng-model="self.nameNewProject">
                     <input style="max-width: fit-content;" type="submit" value="New" class="ngdialog-button ngdialog-button-primary" ng-click="self.acceptNewPrj()">
+                </form>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="templateRenamePrj">
+    <style>
+        .ngdialog-overlay{
+            pointer-events: auto;
+        }
+    </style>
+    <div class="ngdialog-buttons">
+        <div class="newDialog">
+            <div style="display: flex;align-items: center;">
+                <i class="rename-wi-python-32x32" style="margin-right: 20px; color: #00c571;font-size: 25px;">
+                </i>Rename Project
+            </div>
+            <div style="border-bottom: 1px solid #f1f0f0; margin-bottom: 15px;"></div>
+            <div style="font-weight: 300; color: #666; font-size: 13px; font-style: italic;">
+                Please enter new name:</div>
+            <div class="newDialogContent">
+                <form>
+                    <input style="flex: 1;" type="text" placeholder="Enter project name" ng-model="self.currentSelectedMlProject">
+                    <input style="max-width: fit-content;" type="submit" value="Rename" class="ngdialog-button ngdialog-button-primary" ng-click="self.acceptRenamePrj()">
                 </form>
             </div>
         </div>

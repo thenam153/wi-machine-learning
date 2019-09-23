@@ -251,7 +251,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         let projectName;
         if (!projectName) {
             ngDialog.open({
-                template: 'templateNewPrj',
+                template: 'templatePrj',
                 className: 'ngdialog-theme-default',
                 scope: $scope,
             });
@@ -273,6 +273,34 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 })
                 .catch((err) => {
                     toastr.error("Project's name already exists",'Error')
+                })
+            }
+        }
+    }
+    this.renameProject = function () {
+        let projectName;
+        if (!projectName) {
+            ngDialog.open({
+                template: 'templateRenamePrj',
+                className: 'ngdialog-theme-default',
+                scope: $scope,
+            });
+            self.acceptRenamePrj = function () {
+                saveWorkflow();
+                wiApi.editMlProjectPromise({
+                    name: self.currentSelectedMlProject,
+                    idMlProject: self.mlProjectSelected.idMlProject,
+                    content: self.workflow
+                })
+                .then((mlProject)=>{
+                    $timeout(()=>{
+                        toastr.success('Rename project success', 'Success');
+                        wiToken.setCurrentProjectName(mlProject.name);
+                        ngDialog.close();
+                    })
+                })
+                .catch((err) => {
+                    toastr.error('Rename project fail', 'Error');
                 })
             }
         }
