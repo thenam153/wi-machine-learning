@@ -90,7 +90,15 @@
 </div>
 <div ng-show="self.sprinnerMl || self.showNotiSave" style="z-index: 10; background: #ffffffc9; height: 100vh; width: 100vw; z-index: 5; position: absolute; display: flex; align-items: center; justify-content: center;">
     <div >
-        <div class="loader08"></div>
+        <!-- <div class="loader08"></div> -->
+        <div style="
+            height: 80px;
+            width: 80px;
+            transform: translate(-50%, -50%);
+            position: absolute;
+            background-image: url(./spinner.gif);
+            background-size: contain;">
+        </div>
     </div>
 </div>
 <script type="text/ng-template" id="templateRestore">
