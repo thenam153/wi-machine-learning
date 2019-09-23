@@ -66,7 +66,6 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 	// }
 	$(document).click(function(event) {
 		if(event.target.id === 'dropdown-list' ) {
-			event.stopPropagation();
             return false;
 		}
         else {
