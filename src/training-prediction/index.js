@@ -66,7 +66,6 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 	// }
 	$(document).click(function(event) {
 		if(event.target.id === 'dropdown-list' ) {
-			$(".dropdown-list").removeClass("ng-hide");
 			event.stopPropagation();
             return false;
 		}
