@@ -75,10 +75,10 @@
                             style="overflow: visible;">
                             <div style="position: relative;">
                                 <div style="width: 100px; display: flex; align-items: center; justify-content: space-between;">{{dataset.inputCurveSpecs[idxInput].currentSelect}}
-                                    <div ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]; self.showWapper()" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
+                                    <div ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]; self.showWapper()" id="dropdown-list" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
                                 </div>
-                                <div ng-show="dataset.showList[idxInput]" class="dropdown-list">
-                                    <span class="dropdown-list-caret"></span>
+                                <div ng-show="dataset.showList[idxInput]" class="dropdown-list" id="dropdown-list">
+                                    <span class="dropdown-list-caret" id="dropdown-list"></span>
                                     <div style="overflow: auto; max-height: 185px;" >
                                         <div ng-repeat="i in self.machineLearnSteps['training'].selectionList[idxInput] track by i.data.label" 
                                             ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]; self.setOnItemCurveChanged(dataset, idxInput, i)">
