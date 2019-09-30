@@ -2,7 +2,7 @@
     <div class="input-selection" >
         <div class="tab">
             <div class="tab-button" ng-class="{'active' : self.tab===1}" ng-click="self.setTab(1)">Model Selection</div>
-            <div id="tab-layer" class="tab-button" ng-class="{'active' : self.tab===2}" ng-click="self.setTab(2)">Neural Network</div>
+            <!-- <div id="tab-layer" class="tab-button" ng-class="{'active' : self.tab===2}" ng-click="self.setTab(2)">Neural Network</div> -->
         </div>
         <div ng-show="self.isSet(1)" style="padding: 20px; height: 100%;" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
             <div class="header" style="text-transform: capitalize;">
@@ -54,7 +54,27 @@
                         <span class="title" style="font-size: 13px;">{{props.name}}</span>
                         <span class="sub" style="margin-bottom: 10px;">{{props.value}}</span>
                     </div> -->
-
+                    
+                </div>
+                <div ng-show="self.currentSelectedModel.nnnw" style="padding: 20px; overflow: hidden;">
+                    <div class="hidden-layers">
+                        <div class="add ti ti-minus" ng-click="self.nnConfig.nLayer = self.nnConfig.nLayer - 1; self.nnConfigNLayerChanged(self.nnConfig.nLayer)"></div>
+                        <input class="inputs" ng-model='self.nnConfig.nLayer'  class="form-control wi-form-control" ng-change="self.nnConfigNLayerChanged(self.nnConfig.nLayer)" min="1">
+                        <div class="remove ti ti-plus" ng-click="self.nnConfig.nLayer = self.nnConfig.nLayer + 1; self.nnConfigNLayerChanged(self.nnConfig.nLayer)"></div>
+                    </div>
+                    <div style="height: 100%;" onmouseover=this.style.overflow='auto' onmouseout=this.style.overflow='hidden'>
+                        <div ng-repeat="layer in self.nnConfig.layerConfig track by $index" class="input-number">
+                            <div style="display: flex; align-items: center;">
+                                <div class="layer-16x16" style="margin-right: 10px; min-width: 16px;"></div>
+                                <div class="name">{{layer.label}}</div>
+                                <input style="font-weight: bold;" class="form-control wi-form-control" ng-model="layer.value" ng-change="self.layerChange(layer, layer.value)" min="1">
+                            </div>
+                            <div style="display: flex;">
+                                <div class="add ti ti-minus" ng-click="layer.value = layer.value - 1; self.layerChange($index, layer.value)"></div>
+                                <div class="remove ti ti-plus" ng-click="layer.value = layer.value + 1; self.layerChange($index, layer.value)"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div ng-if="self.currentSelectedModel.payload.train" class="header" style="margin-top: 20px;">
                     <span class="title">
@@ -94,7 +114,7 @@
                 </div>
             </div>
         </div>
-        <div ng-show="self.isSet(2)" style="padding: 20px; overflow: hidden;">
+        <!-- <div ng-show="self.isSet(2)" style="padding: 20px; overflow: hidden;">
             <div class="hidden-layers">
                 <div class="add ti ti-minus" ng-click="self.nnConfig.nLayer = self.nnConfig.nLayer - 1; self.nnConfigNLayerChanged(self.nnConfig.nLayer)"></div>
                 <input class="inputs" ng-model='self.nnConfig.nLayer'  class="form-control wi-form-control" ng-change="self.nnConfigNLayerChanged(self.nnConfig.nLayer)" min="1">
@@ -113,19 +133,6 @@
                     </div>
                 </div>
             </div>
-            <!-- <div class="header">
-                Hidden Layers
-                <input ng-model='self.nnConfig.nLayer' type="number" ng-change="self.nnConfigNLayerChanged(self.nnConfig.nLayer)" min="1">
-            </div>
-            <div class="header">
-                <div ng-repeat="layer in self.nnConfig.layerConfig track by $index">
-                    <span>{{layer.label}}</span>
-                    <input class="form-control wi-form-control" ng-model="layer.value" type="number" ng-change="self.layerChange(layer, layer.value)" min="1">
-                </div>
-            </div> -->
-        </div>
-        <!-- <div ng-show="self.isSet(3)" style="padding: 20px;">
-            
         </div> -->
     </div>
     <div id="workspace" class="workspace">
