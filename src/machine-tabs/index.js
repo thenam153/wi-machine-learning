@@ -256,7 +256,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         let projectName;
         if (!projectName) {
             ngDialog.open({
-                template: 'templatePrj',
+                template: 'templateNewPrj',
                 className: 'ngdialog-theme-default',
                 scope: $scope,
             });

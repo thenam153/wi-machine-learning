@@ -23,7 +23,7 @@
             
             <div >
                 <div class="editable-custom" ng-repeat="(key, props) in self.currentSelectedModel.payload.params" ng-init="props.value = props.value === undefined ? props.example : props.value"> 
-                    <editable ng-if="props.type != 'List' && props.type != 'enum'" item-value="props.value" item-label="props.label"
+                    <editable ng-if="props.type != 'List' && props.type != 'enum' && props.type != 'boolean'" item-value="props.value" item-label="props.label"
                         label-style="{'min-width':'130px'}" enabled="true" set-value="self.getFnSetValueElModel('params')"
                         params="props.name">
                     </editable>
@@ -36,8 +36,16 @@
                            {{props.label}}
                        </div>
                         <div>
-                            <wi-dropdown-list place-holder="value" items="props.enum" current-select='props.value
-                            || props.example' on-item-changed="self.getFnSetValueElEnumModel(props.name, 'params')">
+                            <wi-dropdown-list place-holder="value" items="props.enum" current-select='props.value' on-item-changed="self.getFnSetValueElEnumModel(props.name, 'params')">
+                            </wi-dropdown-list>
+                        </div>
+                   </div>
+                   <div ng-if=" props.type == 'boolean' " style="margin-top: 15px;">
+                       <div style="font-weight: bold;">
+                           {{props.label}}
+                       </div>
+                        <div>
+                            <wi-dropdown-list place-holder="value" items="self.valueItemBoolean" current-select='props.value === false ? "false" : "true"' on-item-changed="self.getFnSetValueElEnumModel(props.name, 'params')">
                             </wi-dropdown-list>
                         </div>
                    </div>
@@ -58,7 +66,7 @@
                     <div ng-if="self.currentSelectedModel.payload.train" class="editable-custom" ng-repeat="(key, props) in self.currentSelectedModel.payload.train" ng-init="props.value = props.value === undefined ? props.example : props.value">
                        <editable item-value="props.value" item-label="props.label"
                            label-style="{'min-width':'130px'}" enabled="true" set-value="self.getFnSetValueElModel('train')"
-                           params="props.name" ng-if="props.type != 'List' && props.type != 'enum' ">
+                           params="props.name" ng-if="props.type != 'List' && props.type != 'enum' && props.type != 'boolean'">
                        </editable>
                        <div class="header" ng-if="props.type=='List'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
                             <span class="title" style="font-size: 13px;">{{props.label}}</span>
@@ -69,11 +77,19 @@
                                {{props.label}}
                            </div>
                             <div>
-                                <wi-dropdown-list place-holder="value" items="props.enum" current-select='props.value
-                                || props.example' on-item-changed="self.getFnSetValueElEnumModel(props.name, 'train')">
+                                <wi-dropdown-list place-holder="value" items="props.enum" current-select='props.value' on-item-changed="self.getFnSetValueElEnumModel(props.name, 'train')">
                                 </wi-dropdown-list>
                             </div>
                        </div>
+                       <div ng-if=" props.type == 'boolean' " style="margin-top: 15px;">
+                            <div style="font-weight: bold;">
+                                {{props.label}}
+                            </div>
+                                <div>
+                                    <wi-dropdown-list place-holder="value" items="self.valueItemBoolean" current-select='props.value === false ? "false" : "true"' on-item-changed="self.getFnSetValueElEnumModel(props.name, 'params')">
+                                    </wi-dropdown-list>
+                                </div>
+                        </div>
                    </div>
                 </div>
             </div>

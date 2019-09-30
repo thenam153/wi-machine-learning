@@ -38,4 +38,17 @@ function ModelSelectionController($scope){
 	self.hideDeleteButton = false;	
 	this.$onInit = function() {
 	}
+	self.valueItemBoolean = [
+		{
+			data: {
+				label: "true"
+			},
+			properties: true
+		}, {
+			data: {
+				label: "false"
+			},
+			properties: false
+		}
+	]
 }
