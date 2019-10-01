@@ -2,7 +2,7 @@
     <div class="input-selection" >
         <div class="tab">
             <div class="tab-button" ng-class="{'active' : self.tab===1}" ng-click="self.setTab(1)">Model Selection</div>
-            <!-- <div id="tab-layer" class="tab-button" ng-class="{'active' : self.tab===2}" ng-click="self.setTab(2)">Neural Network</div> -->
+            <div id="tab-layer" class="tab-button" ng-class="{'active' : self.tab===2}" ng-click="self.setTab(2)">Neural Network</div>
         </div>
         <div ng-show="self.isSet(1)" style="padding: 20px; height: 100%;" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
             <div class="header" style="text-transform: capitalize;">
@@ -56,7 +56,7 @@
                     </div> -->
                     
                 </div>
-                <div ng-show="self.currentSelectedModel.nnnw" style="padding: 20px; overflow: hidden;">
+                <!-- <div ng-show="self.currentSelectedModel.nnnw" style="padding: 20px; overflow: hidden;">
                     <div class="hidden-layers">
                         <div class="add ti ti-minus" ng-click="self.nnConfig.nLayer = self.nnConfig.nLayer - 1; self.nnConfigNLayerChanged(self.nnConfig.nLayer)"></div>
                         <input class="inputs" ng-model='self.nnConfig.nLayer'  class="form-control wi-form-control" ng-change="self.nnConfigNLayerChanged(self.nnConfig.nLayer)" min="1">
@@ -75,7 +75,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <div ng-if="self.currentSelectedModel.payload.train" class="header" style="margin-top: 20px;">
                     <span class="title">
                         <div ng-show="!self.showAdvance" class="fa fa-caret-right" style="margin-right: 10px; cursor: pointer;" ng-click="self.showAdvance = !self.showAdvance"></div>
@@ -114,7 +114,7 @@
                 </div>
             </div>
         </div>
-        <!-- <div ng-show="self.isSet(2)" style="padding: 20px; overflow: hidden;">
+        <div ng-show="self.isSet(2)" style="padding: 20px; overflow: hidden;">
             <div class="hidden-layers">
                 <div class="add ti ti-minus" ng-click="self.nnConfig.nLayer = self.nnConfig.nLayer - 1; self.nnConfigNLayerChanged(self.nnConfig.nLayer)"></div>
                 <input class="inputs" ng-model='self.nnConfig.nLayer'  class="form-control wi-form-control" ng-change="self.nnConfigNLayerChanged(self.nnConfig.nLayer)" min="1">
@@ -133,7 +133,7 @@
                     </div>
                 </div>
             </div>
-        </div> -->
+        </div>
     </div>
     <div id="workspace" class="workspace">
         
