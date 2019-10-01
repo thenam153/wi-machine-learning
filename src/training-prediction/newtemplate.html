@@ -1,7 +1,7 @@
 <!-- <div id="wapper" style="display: none; background: #00000008; height: 100%; width: 100%; z-index: 4; position: absolute;"
     ng-click="self.showWapper()"></div> -->
 <div ng-show="self.running" style="background: #ffffffc9; height: 100%; width: 100%; z-index: 5; position: absolute; display: flex; align-items: center; justify-content: center;">
-    <div >
+    <div>
         <!-- <div class="loader08"></div> -->
         <div style="
             height: 80px;
@@ -13,18 +13,13 @@
         </div>
     </div>
 </div>
-<div style="display:flex;flex-direction: column;width: 100vw;height: 100%; position: relative; padding: 40px; background: #EDEFF3;"
-    class="slim-scroller">
+<div style="display:flex;flex-direction: column;width: 100vw;height: 100%; position: relative; padding: 40px; background: #EDEFF3;" class="slim-scroller">
     <div class="toolbar">
         <div class="tab">
-            <div class="tab-button" ng-class="{'active' : isSet(1)}" ng-click="setTab(1)"
-                style="border-right: 1px solid #edeff3;">Train</div>
-            <div class="tab-button" ng-class="{'active' : isSet(2)}" ng-click="setTab(2)"
-                style="border-right: 1px solid #edeff3;border-left: 1px solid #edeff3;">Verify</div>
-            <div class="tab-button" ng-class="{'active' : isSet(3)}" ng-click="setTab(3)"
-                style="border-left: 1px solid #edeff3;">Predict</div>
-             <div class="tab-button" ng-class="{'active' : isSet(4)}" ng-show="self.showSomVisualize" ng-click="setTab(4)"
-            style="border-left: 1px solid #edeff3;">Som Visualize</div>
+            <div class="tab-button" ng-class="{'active' : isSet(1)}" ng-click="setTab(1)" style="border-right: 1px solid #edeff3;">Train</div>
+            <div class="tab-button" ng-class="{'active' : isSet(2)}" ng-click="setTab(2)" style="border-right: 1px solid #edeff3;border-left: 1px solid #edeff3;">Verify</div>
+            <div class="tab-button" ng-class="{'active' : isSet(3)}" ng-click="setTab(3)" style="border-left: 1px solid #edeff3;">Predict</div>
+            <div class="tab-button" ng-class="{'active' : isSet(4)}" ng-show="self.showSomVisualize" ng-click="setTab(4)" style="border-left: 1px solid #edeff3;">Som Visualize</div>
         </div>
     </div>
     <div class="workspace">
@@ -41,47 +36,39 @@
             </div>
             <div style="overflow: hidden; display: flex; flex-direction: column; height: 100%;">
                 <div class="table-main">
-                    <div class='table-row'
-                        style="color: #4e555f; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #fff; border: none; box-shadow: 0 5px 6px #00000012;">
-                        <div class="table-block"
-                            style="width: 70px; min-width: 70px; position: sticky; left: 0;">Active
+                    <div class='table-row' style="color: #4e555f; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #fff; border: none; box-shadow: 0 5px 6px #00000012;">
+                        <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0;">Active
                         </div>
                         <div class="table-block" style="width: 70px; min-width: 70px;">Filter</div>
                         <div class="table-block">Well</div>
                         <div class="table-block">Dataset </div>
-                        <div class="table-block" ng-repeat="input in self.inputCurveSpecs track by $index"
-                            style="width: 120px">{{input.label}}</div>
+                        <div class="table-block" ng-repeat="input in self.inputCurveSpecs track by $index" style="width: 120px">{{input.label}}</div>
                         <div class="table-block" ng-if="self.machineLearnSteps['training'].target">Target {{}}</div>
                         <div class="table-block" ng-if="self.machineLearnSteps['training'].name != 'Train'">
                             {{self.machineLearnSteps['training'].name}} curve name</div>
                     </div>
-                    <div class='table-row' ng-repeat="(indexDataset,dataset) in self.machineLearnSteps['training'].datasets | filter:searchTraining track by $index"
-                        ng-init="dataset.showList = [];">
-                        <div class="table-block"
-                            style="width: 70px; min-width: 70px; position: sticky; left: 0; z-index: 1;">
+                    <div class='table-row' ng-repeat="(indexDataset,dataset) in self.machineLearnSteps['training'].datasets | filter:searchTraining track by $index" ng-init="dataset.showList = [];">
+                        <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0; z-index: 1;">
                             <label class="switch">
                                 <input type="checkbox" ng-checked="dataset.active">
                                 <span class="slider round" ng-click="self.onToggleActiveOutput(dataset)"></span>
                             </label>
                         </div>
-                        <div class="table-block" style="width: 70px; min-width: 70px;"
-                            ng-click="self.onDiscriminator(dataset)">
+                        <div class="table-block" style="width: 70px; min-width: 70px;" ng-click="self.onDiscriminator(dataset)">
                             <span class="ti ti-more"></span>
                         </div>
                         <div class="table-block" title='{{dataset.wellName}}'>{{dataset.wellName}}</div>
                         <div class="table-block" title='{{dataset.name}}'>{{dataset.name}}</div>
 
-                        <div class="table-block" ng-repeat="(idxInput,input) in dataset.inputCurveSpecs track by $index"
-                            style="overflow: visible;">
+                        <div class="table-block" ng-repeat="(idxInput,input) in dataset.inputCurveSpecs track by $index" style="overflow: visible;">
                             <div style="position: relative;">
                                 <div style="width: 100px; display: flex; align-items: center; justify-content: space-between;">{{dataset.inputCurveSpecs[idxInput].currentSelect}}
                                     <div ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]; self.showWapper()" id="dropdown-list" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
                                 </div>
                                 <div ng-show="dataset.showList[idxInput]" class="dropdown-list" id="dropdown-list">
                                     <span class="dropdown-list-caret" id="dropdown-list"></span>
-                                    <div style="overflow: auto; max-height: 185px;" >
-                                        <div ng-repeat="i in self.machineLearnSteps['training'].selectionList[idxInput] track by i.data.label" 
-                                            ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]; self.setOnItemCurveChanged(dataset, idxInput, i)">
+                                    <div style="overflow: auto; max-height: 185px;">
+                                        <div ng-repeat="i in self.machineLearnSteps['training'].selectionList[idxInput] track by i.data.label" ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]; self.setOnItemCurveChanged(dataset, idxInput, i)">
                                             {{i.data.label}}
                                         </div>
                                     </div>
@@ -112,37 +99,30 @@
             <div style="overflow: hidden; display: flex; flex-direction: column;  height: 100%;">
 
                 <div class="table-main">
-                    <div class='table-row'
-                        style="color: #4e555f; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #fff; border: none;box-shadow: 0 5px 6px #00000012;">
-                        <div class="table-block"
-                            style="width: 70px; min-width: 70px; position: sticky; left: 0;">Active
+                    <div class='table-row' style="color: #4e555f; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #fff; border: none;box-shadow: 0 5px 6px #00000012;">
+                        <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0;">Active
                         </div>
                         <div class="table-block" style="width: 70px; min-width: 70px;">Filter</div>
                         <div class="table-block">Well</div>
                         <div class="table-block">Dataset </div>
-                        <div class="table-block" ng-repeat="input in self.inputCurveSpecs track by $index"
-                            style="width: 120px">{{input.label}}</div>
+                        <div class="table-block" ng-repeat="input in self.inputCurveSpecs track by $index" style="width: 120px">{{input.label}}</div>
                         <div class="table-block" ng-if="self.machineLearnSteps['verify'].target">Target {{}}</div>
                         <div class="table-block" ng-if="self.machineLearnSteps['verify'].name != 'Train'">
                             {{self.machineLearnSteps['verify'].name}} curve name</div>
                     </div>
-                    <div class='table-row' ng-repeat="(indexDataset,dataset) in self.machineLearnSteps['verify'].datasets | filter:searchVerify track by $index"
-                        ng-init="dataset.showList = [];">
-                        <div class="table-block"
-                            style="width: 70px; min-width: 70px; background: #fff; position: sticky; left: 0;z-index: 1;">
+                    <div class='table-row' ng-repeat="(indexDataset,dataset) in self.machineLearnSteps['verify'].datasets | filter:searchVerify track by $index" ng-init="dataset.showList = [];">
+                        <div class="table-block" style="width: 70px; min-width: 70px; background: #fff; position: sticky; left: 0;z-index: 1;">
                             <label class="switch">
                                 <input type="checkbox" ng-checked="dataset.active">
                                 <span class="slider round" ng-click="self.onToggleActiveOutput(dataset)"></span>
                             </label>
                         </div>
-                        <div class="table-block" style="width: 70px; min-width: 70px;"
-                            ng-click="self.onDiscriminator(dataset)">
+                        <div class="table-block" style="width: 70px; min-width: 70px;" ng-click="self.onDiscriminator(dataset)">
                             <span class="ti ti-more"></span>
                         </div>
                         <div class="table-block" title='{{dataset.wellName}}'>{{dataset.wellName}}</div>
                         <div class="table-block" title='{{dataset.name}}'>{{dataset.name}}</div>
-                        <div class="table-block" ng-repeat="(idxInput,input) in dataset.inputCurveSpecs track by $index"
-                            style="overflow: visible;">
+                        <div class="table-block" ng-repeat="(idxInput,input) in dataset.inputCurveSpecs track by $index" style="overflow: visible;">
                             <div style="position: relative;">
                                 <div style="width: 100px; display: flex; align-items: center; justify-content: space-between;">{{dataset.inputCurveSpecs[idxInput].currentSelect}}
                                     <div ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
@@ -150,9 +130,7 @@
                                 <div ng-show="dataset.showList[idxInput]" class="dropdown-list">
                                     <span class="dropdown-list-caret"></span>
                                     <div style="overflow: auto; max-height: 185px;">
-                                        <div
-                                            ng-repeat="i in self.machineLearnSteps['verify'].selectionList[idxInput] track by i.data.label"
-                                            ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput];
+                                        <div ng-repeat="i in self.machineLearnSteps['verify'].selectionList[idxInput] track by i.data.label" ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput];
                                                     self.setOnItemCurveChanged(dataset, idxInput, i)">
                                             {{i.data.label}}
                                         </div>
@@ -184,37 +162,30 @@
             <div style="overflow: hidden; display: flex; flex-direction: column;  height: 100%;">
 
                 <div class="table-main">
-                    <div class='table-row'
-                        style="color: #4e555f; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #fff; border: none;    box-shadow: 0 5px 6px #00000012;">
-                        <div class="table-block"
-                            style="width: 70px; min-width: 70px; position: sticky; left: 0;">Active
+                    <div class='table-row' style="color: #4e555f; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #fff; border: none;    box-shadow: 0 5px 6px #00000012;">
+                        <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0;">Active
                         </div>
                         <div class="table-block" style="width: 70px; min-width: 70px;">Filter</div>
                         <div class="table-block">Well</div>
                         <div class="table-block">Dataset </div>
-                        <div class="table-block" ng-repeat="input in self.inputCurveSpecs track by $index"
-                            style="width: 120px">{{input.label}}</div>
+                        <div class="table-block" ng-repeat="input in self.inputCurveSpecs track by $index" style="width: 120px">{{input.label}}</div>
                         <div class="table-block" ng-if="self.machineLearnSteps['prediction'].target">Target {{}}</div>
                         <div class="table-block" ng-if="self.machineLearnSteps['prediction'].name != 'Train'">
                             {{self.machineLearnSteps['prediction'].name}} curve name</div>
                     </div>
-                    <div class='table-row' ng-repeat="(indexDataset,dataset) in self.machineLearnSteps['prediction'].datasets| filter:searchPrediction track by $index" 
-                        ng-init="dataset.showList = [];">
-                        <div class="table-block"
-                            style="width: 70px; min-width: 70px; background: #fff; position: sticky; left: 0;z-index: 1;">
+                    <div class='table-row' ng-repeat="(indexDataset,dataset) in self.machineLearnSteps['prediction'].datasets| filter:searchPrediction track by $index" ng-init="dataset.showList = [];">
+                        <div class="table-block" style="width: 70px; min-width: 70px; background: #fff; position: sticky; left: 0;z-index: 1;">
                             <label class="switch">
                                 <input type="checkbox" ng-checked="dataset.active">
                                 <span class="slider round" ng-click="self.onToggleActiveOutput(dataset)"></span>
                             </label>
                         </div>
-                        <div class="table-block" style="width: 70px; min-width: 70px;"
-                            ng-click="self.onDiscriminator(dataset)">
+                        <div class="table-block" style="width: 70px; min-width: 70px;" ng-click="self.onDiscriminator(dataset)">
                             <span class="ti ti-more"></span>
                         </div>
                         <div class="table-block" title='{{dataset.wellName}}'>{{dataset.wellName}}</div>
                         <div class="table-block" title='{{dataset.name}}'>{{dataset.name}}</div>
-                        <div class="table-block" ng-repeat="(idxInput,input) in dataset.inputCurveSpecs track by $index"
-                            style="overflow: visible;">
+                        <div class="table-block" ng-repeat="(idxInput,input) in dataset.inputCurveSpecs track by $index" style="overflow: visible;">
                             <div style="position: relative;">
                                 <div style="width: 100px; display: flex; align-items: center; justify-content: space-between;">{{dataset.inputCurveSpecs[idxInput].currentSelect}}
                                     <div ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
@@ -222,9 +193,7 @@
                                 <div ng-show="dataset.showList[idxInput]" class="dropdown-list">
                                     <span class="dropdown-list-caret"></span>
                                     <div style="overflow: auto; max-height: 185px;">
-                                        <div
-                                            ng-repeat="i in self.machineLearnSteps['prediction'].selectionList[idxInput] track by i.data.label"
-                                            ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput];
+                                        <div ng-repeat="i in self.machineLearnSteps['prediction'].selectionList[idxInput] track by i.data.label" ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput];
                                             self.setOnItemCurveChanged(dataset, idxInput, i)">
                                             {{i.data.label}}
                                         </div>
@@ -245,42 +214,21 @@
         <div ng-show="isSet(4)" class="workspace-main" style="height: calc(100vh - 200px);">
             <div ng-if="self.showSomVisualize" style="display: flex; overflow: hidden;">
                 <div style="width: calc(100vw - 300px); overflow: auto hidden;">
-                    <distribution-map
-                    data="self.somVisualize"
-                    colors="self.getDistributionMapColors"
-                    color-scale="self.distributionMapColorScale"
-                    get-maps="self.getDistributionMaps"
-                    get-header="self.getDistributionMapHeader"
-                    get-rows="self.getDistributionMapRows"
-                    get-cells="self.getDistributionMapCells"
-                    get-weight="self.getDistributionMapWeight"
-                    get-scaled-weight="self.getDistributionMapScaledWeight"
-                    get-label="self.getDistributionMapLabel"
-                    click-fn="self.distributionMapClickFn"
-                    >
+                    <distribution-map ng-show="!self.model.heatmap" data="self.somVisualize" colors="self.getDistributionMapColors" color-scale="self.distributionMapColorScale" get-maps="self.getDistributionMaps" get-header="self.getDistributionMapHeader" get-rows="self.getDistributionMapRows"
+                        get-cells="self.getDistributionMapCells" get-weight="self.getDistributionMapWeight" get-scaled-weight="self.getDistributionMapScaledWeight" get-label="self.getDistributionMapLabel" click-fn="self.distributionMapClickFn">
                     </distribution-map>
+                    <heat-map ng-show="self.model.heatmap" data="self.somVisualize" get-map="self.getVisualizationMap" get-cells="self.getVisualizationMapCells" get-features="self.getVisualizationMapFeatures" get-label="self.getVisualizationMapLabel" get-labels="self.getVisualizationMapLabels"
+                        max-weight=1 get-feature-names="self.getVisualizationMapFeatureNames" feature-colors="self.heatmapColors" label-colors="self.heatmapColors">
+                    </heat-map>
                 </div>
                 <div>
-                    <visualization-map
-                    data="self.somVisualize"
-                    get-map="self.getVisualizationMap"
-                    get-cells="self.getVisualizationMapCells"
-                    get-features="self.getVisualizationMapFeatures"
-                    get-label="self.getVisualizationMapLabel"
-                    get-labels="self.getVisualizationMapLabels"
-                    get-feature-weight="self.getVisualizationMapFeatureWeight"
-                    get-feature-scaled-weight="self.getVisualizationMapFeatureScaledWeight"
-                    max-weight=1
-                    get-feature-name="self.getVisualizationMapFeatureName"
-                    get-feature-names="self.getVisualizationMapFeatureNames"
-                    feature-colors="self.visualizationMapFeatureColors"
-                    label-colors="self.visualizationMapLabelColors"
-                    click-fn="self.visualizationMapClickFn"
-                    >
+                    <visualization-map data="self.somVisualize" get-map="self.getVisualizationMap" get-cells="self.getVisualizationMapCells" get-features="self.getVisualizationMapFeatures" get-label="self.getVisualizationMapLabel" get-labels="self.getVisualizationMapLabels"
+                        get-feature-weight="self.getVisualizationMapFeatureWeight" get-feature-scaled-weight="self.getVisualizationMapFeatureScaledWeight" max-weight=1 get-feature-name="self.getVisualizationMapFeatureName" get-feature-names="self.getVisualizationMapFeatureNames"
+                        feature-colors="self.visualizationMapFeatureColors" label-colors="self.visualizationMapLabelColors" click-fn="self.visualizationMapClickFn">
                     </visualization-map>
                 </div>
             </div>
-         <!-- <button ng-click="self.getFittedModel()">Test</button> -->
+            <!-- <button ng-click="self.getFittedModel()">Test</button> -->
         </div>
     </div>
 </div>

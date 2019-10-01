@@ -401,7 +401,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
 
                 console.log(self.currentSelectedModel)
                 self.stateWorkflow = content.stateWorkflow;
-                if (self.stateWorkflow.model_id && (content.model.label === 'Supervise Som' || content.model.name === 'supervise_som')) {
+                if (self.stateWorkflow.model_id && (content.model.label === 'Supervise Som' || content.model.name === 'supervise_som' || content.model['som-visualization'])) {
                     $http({
                             method: 'GET',
                             url: `${content.model.url}/api/model/som/${self.stateWorkflow.model_id}`,
