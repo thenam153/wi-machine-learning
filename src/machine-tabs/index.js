@@ -1319,7 +1319,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         })
     }
 
-    function postPromise(url, data, method, options = {}) {
+    function httpPromise(url, data, method, options = {}) {
         return new Promise(function(resolve, reject) {
             $http({
                 method: method,
@@ -1343,27 +1343,27 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     }
 
     function postCreateModel(payload) {
-        return postPromise(`${self.currentSelectedModel.url}/api/model/create/${self.currentSelectedModel.create}`, payload, 'POST', { service: self.currentSelectedModel.service });
+        return httpPromise(`${self.currentSelectedModel.url}/api/model/create/${self.currentSelectedModel.create}`, payload, 'POST', { service: self.currentSelectedModel.service });
     }
 
     function postCreateBucketId(payload) {
-        return postPromise(`${self.currentSelectedModel.url}/api/data`, payload, 'POST', { service: self.currentSelectedModel.service });
+        return httpPromise(`${self.currentSelectedModel.url}/api/data`, payload, 'POST', { service: self.currentSelectedModel.service });
     }
 
     function putDataOfTrain(payload) {
-        return postPromise(`${self.currentSelectedModel.url}/api/data`, payload, 'PUT', { service: self.currentSelectedModel.service });
+        return httpPromise(`${self.currentSelectedModel.url}/api/data`, payload, 'PUT', { service: self.currentSelectedModel.service });
     }
 
     function postTrainByBucketData(payload) {
-        return postPromise(`${self.currentSelectedModel.url}/api/model/train_by_bucket_data`, payload, 'POST', { service: self.currentSelectedModel.service });
+        return httpPromise(`${self.currentSelectedModel.url}/api/model/train_by_bucket_data`, payload, 'POST', { service: self.currentSelectedModel.service });
     }
 
     function postPredict(payload) {
-        return postPromise(`${self.currentSelectedModel.url}/api/model/predict`, payload, 'POST', { service: self.currentSelectedModel.service });
+        return httpPromise(`${self.currentSelectedModel.url}/api/model/predict`, payload, 'POST', { service: self.currentSelectedModel.service });
     }
 
     function getBucket() {
-        return postPromise(`${self.currentSelectedModel.url}/api/bucket/list`, {}, 'GET', { service: self.currentSelectedModel.service });
+        return httpPromise(`${self.currentSelectedModel.url}/api/bucket/list`, {}, 'GET', { service: self.currentSelectedModel.service });
     }
 
     function fillNullInCurve(fillArr, curve, cb) {
