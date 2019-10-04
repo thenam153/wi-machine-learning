@@ -135,6 +135,11 @@ function DatasetSelectionController($scope, wiApi, $timeout){
                         self.listMlProject = data.sort((a,b) => a.name.localeCompare(b.name));
                     })
                 })
+                .catch((err) => {
+                    if(err.status === 401) {
+                        delete window.localStorage.token;
+                    }
+                })
 			}
 		});
     }
