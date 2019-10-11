@@ -57,11 +57,11 @@ gulp.task('run-webpack', function(done) {
     .pipe(gulp.dest('./public'));	
     done();
 })
-gulp.task('bower', function () {
-    var DEST = 'public/bower_components';
-    return gulp.src('bower_components/**/*').pipe(changed(DEST)).pipe(gulp.dest(DEST));
-});
+// gulp.task('bower', function () {
+//     var DEST = 'public/bower_components';
+//     return gulp.src('bower_components/**/*').pipe(changed(DEST)).pipe(gulp.dest(DEST));
+// });
 
-gulp.task('build', gulp.series(gulp.parallel('pre', 'bower'), 'run-webpack'), function(done) {
+gulp.task('build', gulp.series('pre', 'run-webpack'), function(done) {
 	done();
 })
