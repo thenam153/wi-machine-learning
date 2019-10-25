@@ -18,7 +18,9 @@ var app = angular.module(moduleName, ['modelSelection',
     'wiToken',
     'wiDialog',
     'wiDiscriminator',
-    'ngDialog'
+    'ngDialog',
+    'somModelService',
+    'heatMap'
 ]);
 
 app.component(componentName, {
@@ -698,8 +700,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 console.log('run');
                 (async() => {
                     for (let curve of curves) {
-                        let familyCurve = await wiApi.getFamily(curve.idFamily);
-                        if (!familyCurve) break;
+                        let familyCurve = wiApi.getFamily(curve.idFamily);
+                        if (!familyCurve) continue;
                         let dataInformation = {
                             data: {
                                 label: familyCurve.name
@@ -721,8 +723,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 (async() => {
                     let familyGroups = [];
                     for (let curve of curves) {
-                        let familyCurve = await wiApi.getFamily(curve.idFamily);
-                        if (!familyCurve) break;
+                        let familyCurve = wiApi.getFamily(curve.idFamily);
+                        if (!familyCurve) continue;
 
                         let dataInformation = {
                             data: {
