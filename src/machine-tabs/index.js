@@ -700,7 +700,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 console.log('run');
                 (async() => {
                     for (let curve of curves) {
-                        let familyCurve = wiApi.getFamily(curve.idFamily);
+                        let familyCurve = await wiApi.getFamily(curve.idFamily);
                         if (!familyCurve) continue;
                         let dataInformation = {
                             data: {
@@ -715,15 +715,17 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                         }
                         selectionList.push(dataInformation);
                     }
-                    selectionList = _.uniqBy(selectionList, 'data.label');
-                    self.selectionList = angular.copy(selectionList);
+                    $timeout(() => {
+                        selectionList = _.uniqBy(selectionList, 'data.label');
+                        self.selectionList = angular.copy(selectionList);
+                    });
                 })();
                 break;
             case 'main_family':
                 (async() => {
                     let familyGroups = [];
                     for (let curve of curves) {
-                        let familyCurve = wiApi.getFamily(curve.idFamily);
+                        let familyCurve = await wiApi.getFamily(curve.idFamily);
                         if (!familyCurve) continue;
 
                         let dataInformation = {
@@ -738,8 +740,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                         }
                         selectionList.push(dataInformation);
                     }
-                    selectionList = _.uniqBy(selectionList, 'data.label');
-                    self.selectionList = angular.copy(selectionList);
+                    $timeout(() => {
+                        selectionList = _.uniqBy(selectionList, 'data.label');
+                        self.selectionList = angular.copy(selectionList);
+                    });
                 })();
                 break;
             default:
@@ -758,7 +762,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     }
                     selectionList.push(dataInformation);
                 }
-                self.selectionList = angular.copy(selectionList);
+                $timeout(() => {
+                    self.selectionList = angular.copy(selectionList);
+                });
         }
     }
     this.handleDropDatasets = function(step, index = -1, type = null) {
@@ -772,9 +778,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         let inputSpecs = [...self.inputCurveSpecs, self.targetCurveSpec];
         let mergeCurves = [];
         for (let dataset of dataStep.datasets) {
-            // if(dataset.ofStep !== 'training') {
-            //     dataset.resultCurveName = dataset.patternCurveName = '-' + self.currentSelectedModel.infix + '-' + step.toUpperCase();
-            // }
             if (!dataset.inputCurveSpecs) {
                 dataset.inputCurveSpecs = dataStep.target ? new Array(self.inputCurveSpecs.length + 1) : new Array(self.inputCurveSpecs.length);
             }
