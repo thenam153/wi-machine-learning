@@ -3,18 +3,21 @@
 		"sheet_name": "models_dev",
 		"backend": "http://dev.i2g.cloud",
 		"login": "http://admin.dev.i2g.cloud/login",
+		"base_url": "https://users.i2g.cloud",
 		"list_type": "type_model"
 	},
 	"development": {
 		"sheet_name": "models_dev",
 		"backend": "http://dev.i2g.cloud",
 		"login": "http://admin.dev.i2g.cloud/login",
+		"base_url": "https://users.i2g.cloud",
 		"list_type": "type_model"
 	},
 	"production": {
 		"sheet_name": "models_prod",
 		"backend": "https://api-1.i2g.cloud",
 		"login": "https://users.i2g.cloud/login",
+		"base_url": "https://users.i2g.cloud",
 		"list_type": "type_model"
 	}
 }
