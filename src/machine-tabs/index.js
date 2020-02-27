@@ -263,10 +263,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 scope: $scope,
             });
             self.acceptNewPrj = function() {
-                console.log(this.nameNewProject);
+                self.newMlProject();
+                console.log(self.nameNewProject);
                 saveWorkflow();
                 wiApi.createMlProjectPromise({
-                        name: this.nameNewProject,
+                        name: self.nameNewProject,
                         content: self.workflow
                     })
                     .then((mlProject) => {
@@ -280,6 +281,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     })
                     .catch((err) => {
                         toastr.error("Project's name already exists", 'Error')
+                    })
+                    .finally(() => {
+                        self.nameNewProject = "";
                     })
             }
         }
