@@ -125,7 +125,7 @@
                     <div style="display: flex; align-items: center;">
                         <div class="layer-16x16" style="margin-right: 10px; min-width: 16px;"></div>
                         <div class="name">{{layer.label}}</div>
-                        <input style="font-weight: bold;" class="form-control wi-form-control" ng-model="layer.value" ng-change="self.layerChange(layer, layer.value)" min="1">
+                        <input style="font-weight: bold;" type="number" class="form-control wi-form-control" ng-model="layer.value" ng-change="self.layerChange($index, layer.value)" min="1">
                     </div>
                     <div style="display: flex;">
                         <div class="add ti ti-minus" ng-click="layer.value = layer.value - 1; self.layerChange($index, layer.value)"></div>

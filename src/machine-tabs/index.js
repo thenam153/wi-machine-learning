@@ -721,7 +721,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     }
                     $timeout(() => {
                         selectionList = _.uniqBy(selectionList, 'data.label');
-                        self.selectionList = angular.copy(selectionList);
+                        self.selectionList = angular.copy([selectionList.shift(), ...selectionList.sort((a, b) => {
+                            let nameA = a.data.label.toUpperCase();
+                            let nameB = b.data.label.toUpperCase();
+                            return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+                        })]);
                     });
                 })();
                 break;
@@ -746,7 +750,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     }
                     $timeout(() => {
                         selectionList = _.uniqBy(selectionList, 'data.label');
-                        self.selectionList = angular.copy(selectionList);
+                        self.selectionList = angular.copy([selectionList.shift(), ...selectionList.sort((a, b) => {
+                            let nameA = a.data.label.toUpperCase();
+                            let nameB = b.data.label.toUpperCase();
+                            return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+                        })]);
                     });
                 })();
                 break;
@@ -767,7 +775,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     selectionList.push(dataInformation);
                 }
                 $timeout(() => {
-                    self.selectionList = angular.copy(selectionList);
+                    self.selectionList = angular.copy([selectionList.shift(), ...selectionList.sort((a, b) => {
+                        let nameA = a.data.label.toUpperCase();
+                        let nameB = b.data.label.toUpperCase();
+                        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+                    })]);
                 });
         }
     }
@@ -1112,12 +1124,13 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         self.updateNNConfig();
     }
     this.layerChange = function(index, value) {
-        let params = self.currentSelectedModel.payload.params;
-        let layer = (params || []).find(i => {
-            return i.name === 'hidden_layer_sizes';
-        })
-        self.nnConfig.layerConfig[index].value = value;
-        layer.value[index] = value;
+        if(!isNaN(value)) {
+            self.nnConfig.layerConfig[index].value = parseInt(value);
+            let layer = (self.currentSelectedModel.payload.params || []).find(i => {
+                return i.name === 'hidden_layer_sizes';
+            })
+            layer.value[index] = parseInt(value);
+        }
         self.updateNNConfig();
     }
     this.updateLayer = function() {
