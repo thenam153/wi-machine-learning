@@ -1761,6 +1761,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 return train();
             })
             .then(() => {
+                if(!self.machineLearnSteps[VERIFY_STEP_STATE].datasets || !self.machineLearnSteps[VERIFY_STEP_STATE].datasets.length) {
+                    return;
+                }
                 return verify();
             })
             .then(() => {
