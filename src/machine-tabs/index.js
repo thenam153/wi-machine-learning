@@ -2127,7 +2127,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                             idWell: dataset.idWell,
                             name: "error verify curve",
                             data: dataError,
-                            unit: '',
+                            unit: dataset.inputCurveSpecs.slice(-1).pop().value.unit || null ,
                             minValue: 0,
                             maxValue: 1
                         }
