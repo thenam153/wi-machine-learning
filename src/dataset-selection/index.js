@@ -121,8 +121,8 @@ function DatasetSelectionController($scope, wiApi, $timeout){
         }
     }
     this.runMatch = function(node, filter) {
-        // return node.name.toUpperCase().includes(filter.toUpperCase());
-        return node.name.includes(filter);
+        return node.displayName.toLowerCase().includes(filter.toLowerCase());
+        // return node.name.includes(filter);
     }
     this.$onInit = function() {
         $scope.$watch(function () {
