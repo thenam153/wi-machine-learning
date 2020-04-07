@@ -62,7 +62,8 @@
 
                         <div class="table-block" ng-repeat="(idxInput,input) in dataset.inputCurveSpecs track by $index" style="overflow: visible;">
                             <div style="position: relative;">
-                                <div style="width: 100px; display: flex; align-items: center; justify-content: space-between;">{{dataset.inputCurveSpecs[idxInput].currentSelect}}
+                                <div style="width: 100px; display: flex; align-items: center; justify-content: space-between;">
+                                    <div style="white-space: nowrap; text-overflow: ellipsis; overflow: hidden; ">{{dataset.inputCurveSpecs[idxInput].currentSelect}}</div>
                                     <div ng-click="dataset.showList[idxInput]=!dataset.showList[idxInput]; self.showWapper()" id="dropdown-list" class="fa fa-caret-down " style=" margin-left: 10px; color: #a5acb4; cursor: pointer; "></div>
                                 </div>
                                 <div ng-show="dataset.showList[idxInput]" class="dropdown-list" id="dropdown-list">
