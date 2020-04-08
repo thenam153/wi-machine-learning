@@ -12,25 +12,15 @@ app.component(componentName,{
     bindings: {
         inputCurveSpecs: '<',
         targetCurveSpec: '<',
-
         machineLearnSteps: '<',
-
-        // typeSelected: '<',
         typeInput: '<',
-
         selectionList: '<',
-        // mergeCurves: '<',
         onAddInputItem: '<',
-
         getFnOnInputChanged: '<',
-
         onTargetItemChanged: '<',
         onRemoveInputItem: '<',
         onChangeType: '<',
         onRemoveDataset: '<',
-
-        // makeSelectionList: '<',
-
         drop: '<',
     }
 });

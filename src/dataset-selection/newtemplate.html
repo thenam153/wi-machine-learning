@@ -25,7 +25,7 @@
 				<div class="ml-new-16x16"></div>
 			</div>
 		</div>
-		<div style="margin-top: 20px;">
+		<!-- <div style="margin-top: 20px;">
 			<div class="title">
 				{{self.targetCurveSpec.label}}
 			</div>
@@ -34,7 +34,36 @@
 					current-select='self.targetCurveSpec.currentSelect' on-item-changed="self.onTargetItemChanged">
 				</wi-dropdown-list>
 			</div>
-		</div>
+			<div style='display:flex;margin-right:0.5em;align-items:center;'>
+				<span ng-click='self.targetCurveSpec.transform="linear";'>
+					<input type='radio' ng-model="self.targetCurveSpec.transform"
+						value="linear">
+					<span class="curve-transform"><span
+							style="line-height: 1.5em">X</span></span>
+				</span>
+				<span ng-click='self.targetCurveSpec.transform="logarithmic";'>
+					<input type='radio' ng-model="self.targetCurveSpec.transform"
+						value="logarithmic">
+					<span class="curve-transform">
+						<span
+							style="line-height: 1.5em">
+							log(X)
+						</span>
+					</span>
+				</span>
+				<span ng-click='self.targetCurveSpec.transform="exponential";' >
+					<input type='radio' ng-model="self.targetCurveSpec.transform"
+						value="exponential">
+					<span class="curve-transform">
+						<span
+							style="line-height: 1.5em">
+							10
+						</span>
+						<i style="vertical-align:super">X</i>
+					</span>
+				</span>
+			</div>
+		</div> -->
 		<div class="list-input">
 			<div class="list-scroll" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
 				<div class="input-curve" ng-repeat="item in self.inputCurveSpecs track by $index">
@@ -43,7 +72,7 @@
 					<div style="flex: 1;">
 						<div style="display: flex; margin-bottom: 10px; justify-content: space-between;">
 							<div style="font-weight: bold; font-size: 12px; ">
-								{{item.label}} {{$index+1}}
+								{{item.label}} {{item.isTarget ? '' : $index}}
 							</div>
 							<div style="margin:0 10px; cursor: pointer; display: flex; align-items: center;" ng-click="self.onRemoveInputItem($index)">
 								<i class="ti ti-close"></i>
@@ -52,6 +81,35 @@
 						<wi-dropdown-list style="width: 100%;" place-holder="Curve" items="self.selectionList" hide-delete-button='true'
 							on-item-changed="self.getFnOnInputChanged($index)" current-select="item.currentSelect">
 						</wi-dropdown-list>
+						<div style='display:flex;margin-right:0.5em;align-items:center;'>
+							<span ng-click='item.transform="linear";'>
+								<input type='radio' ng-model="item.transform"
+									value="linear">
+								<span class="curve-transform"><span
+										style="line-height: 1.5em">X</span></span>
+							</span>
+							<span ng-click='item.transform="logarithmic";'>
+								<input type='radio' ng-model="item.transform"
+									value="logarithmic">
+								<span class="curve-transform">
+									<span
+										style="line-height: 1.5em">
+										log(X)
+									</span>
+								</span>
+							</span>
+							<span ng-click='item.transform="exponential";' >
+								<input type='radio' ng-model="item.transform"
+									value="exponential">
+								<span class="curve-transform">
+									<span
+										style="line-height: 1.5em">
+										10
+									</span>
+									<i style="vertical-align:super">X</i>
+								</span>
+							</span>
+						</div>
 					</div>
 				</div>
 			</div>

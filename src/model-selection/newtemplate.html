@@ -88,7 +88,7 @@
                            label-style="{'min-width':'130px'}" enabled="true" set-value="self.getFnSetValueElModel('train')"
                            params="props.name" ng-if="props.type != 'List' && props.type != 'enum' && props.type != 'boolean' && props.type != 'input'">
                        </editable>
-                       <div class="header" ng-if="props.type=='List' && props.type=='input'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
+                       <div class="header" ng-if="props.type=='List' || props.type=='input'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
                             <span class="title" style="font-size: 13px;">{{props.label}}</span>
                             <span class="sub" style="margin-bottom: 10px;">{{props.value.toString()}}</span>
                         </div>

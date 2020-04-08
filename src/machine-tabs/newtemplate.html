@@ -65,31 +65,74 @@
 			<div class="about">
 			</div>
 		</div>
-		<model-selection id="model-selection" ng-show="self.titleTabs[self.current_tab] === 'Model Selection'"
-			set-props-model="self.setPropsModel" set-model-selected="self.setModelSelected" nn-config="self.nnConfig"set-layers="self.setLayers" nn-config-n-layer-changed="self.nnConfigNLayerChanged" nn-config="self.nnConfig" layer-change="self.layerChange" update-layer="self.updateLayer" current-selected-model-label="self.currentSelectedModelLabel" current-selected-type-model="self.currentSelectedTypeModel" set-type-model="self.setTypeModel" on-model-changed="self.onModelChanged" current-selected-model="self.currentSelectedModel" get-fn-set-value-el-model="self.getFnSetValueElModel" tab="self.tab" set-tab="self.setTab" get-fn-set-value-el-enum-model="self.getFnSetValueElEnumModel" list-type-model="self.listTypeModel" list-selection-model="self.listSelectionModel" is-set="self.isSet"
-			></model-selection>
+        <model-selection 
+            id="model-selection" 
+            ng-show="self.titleTabs[self.current_tab] === 'Model Selection'"
+            set-props-model="self.setPropsModel" 
+            set-model-selected="self.setModelSelected" 
+            nn-config="self.nnConfig"
+            set-layers="self.setLayers" 
+            nn-config-n-layer-changed="self.nnConfigNLayerChanged" 
+            nn-config="self.nnConfig" 
+            layer-change="self.layerChange" 
+            update-layer="self.updateLayer" 
+            current-selected-model-label="self.currentSelectedModelLabel" 
+            current-selected-type-model="self.currentSelectedTypeModel" 
+            set-type-model="self.setTypeModel" 
+            on-model-changed="self.onModelChanged" 
+            current-selected-model="self.currentSelectedModel"
+            get-fn-set-value-el-model="self.getFnSetValueElModel" 
+            tab="self.tab" set-tab="self.setTab" 
+            get-fn-set-value-el-enum-model="self.getFnSetValueElEnumModel" 
+            list-type-model="self.listTypeModel"
+            list-selection-model="self.listSelectionModel" 
+            is-set="self.isSet">
+        </model-selection>
 
-		 <dataset-selection ng-show="self.titleTabs[self.current_tab] === 'Dataset Selection'"
-			id-project="self.idProject" input-curve-specs="self.inputCurveSpecs"
-			target-curve-spec="self.targetCurveSpec" machine-learn-steps="self.machineLearnSteps" type-input="self.typeInput" on-add-input-item="self.onAddInputItem" get-fn-on-input-changed="self.getFnOnInputChanged"
-			on-target-item-changed="self.onTargetItemChanged" on-remove-input-item="self.onRemoveInputItem"
-			on-change-type="self.onChangeType" drop="self.getFnDrop" selection-list="self.selectionList" 
-			merge-curves="self.mergeCurves" make-selection-list="self.makeSelectionList" 
-			on-remove-dataset="self.onRemoveDataset"></dataset-selection>
+        <dataset-selection 
+            ng-show="self.titleTabs[self.current_tab] === 'Dataset Selection'"
+            id-project="self.idProject" 
+            input-curve-specs="self.inputCurveSpecs"
+            target-curve-spec="self.targetCurveSpec" 
+            machine-learn-steps="self.machineLearnSteps" 
+            type-input="self.typeInput" 
+            on-add-input-item="self.onAddInputItem" 
+            get-fn-on-input-changed="self.getFnOnInputChanged"
+            on-target-item-changed="self.onTargetItemChanged" 
+            on-remove-input-item="self.onRemoveInputItem"
+            on-change-type="self.onChangeType" 
+            drop="self.getFnDrop" 
+            selection-list="self.selectionList" 
+            merge-curves="self.mergeCurves" 
+            make-selection-list="self.makeSelectionList" 
+            on-remove-dataset="self.onRemoveDataset">
+        </dataset-selection>
 		
-		<training-prediction machine-learn-steps="self.machineLearnSteps" input-curve-specs="self.inputCurveSpecs"
-			target-curve-spec="self.targetCurveSpec" model="self.currentSelectedModel" state-workflow="self.stateWorkflow" set-model-id="self.setModelId" set-bucket-id="self.setBucketId"
-			ng-show="self.titleTabs[self.current_tab] === 'Training and Prediction'" som-visualize="self.dataSomVisualize" show-som-visualize="self.showSomVisualize" set-state="self.setStateWorkflow"
+        <training-prediction 
+            machine-learn-steps="self.machineLearnSteps" 
+            input-curve-specs="self.inputCurveSpecs"
+            target-curve-spec="self.targetCurveSpec"
+            model="self.currentSelectedModel" 
+            state-workflow="self.stateWorkflow" 
+            set-model-id="self.setModelId" 
+            set-bucket-id="self.setBucketId"
+            ng-show="self.titleTabs[self.current_tab] === 'Training and Prediction'" 
+            som-visualize="self.dataSomVisualize" 
+            show-som-visualize="self.showSomVisualize" 
+            set-state="self.setStateWorkflow"
 			save-ml-project="self.saveMlProject" 
 			set-on-item-curve-changed="self.setOnItemCurveChanged"
 			on-toggle-active-output="self.onToggleActiveOutput" 
 			on-discriminator="self.onDiscriminator" 
 			run-all="self.runAll"
-			run-task="self.runTask"
-			></training-prediction>
-		<wi-neural-network container="self.nnConfig.container" input-curves="self.nnConfig.inputs"
-						    output-curves="self.nnConfig.outputs" 
-						    hidden-layer="self.nnConfig.layers"></wi-neural-network> 
+            run-task="self.runTask">
+        </training-prediction>
+        <wi-neural-network 
+            container="self.nnConfig.container" 
+            input-curves="self.nnConfig.inputs"
+            output-curves="self.nnConfig.outputs" 
+            hidden-layer="self.nnConfig.layers">
+        </wi-neural-network> 
 	</div>
 </div>
 <div ng-show="self.sprinnerMl || self.showNotiSave" style="z-index: 10; background: #ffffffc9; height: 100vh; width: 100vw; z-index: 5; position: absolute; display: flex; align-items: center; justify-content: center;">
