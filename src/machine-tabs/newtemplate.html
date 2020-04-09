@@ -65,7 +65,29 @@
 			<div class="about">
 			</div>
 		</div>
+        <dataset-selection 
+            ng-show="self.titleTabs[self.current_tab] === 'Dataset Selection'"
+            id-project="self.idProject" 
+            input-curve-specs="self.inputCurveSpecs"
+            target-curve-spec="self.targetCurveSpec" 
+            type-input="self.typeInput" 
+            on-add-input-item="self.onAddInputItem" 
+            get-fn-on-input-changed="self.getFnOnInputChanged"
+            on-target-item-changed="self.onTargetItemChanged" 
+            on-remove-input-item="self.onRemoveInputItem"
+            on-change-type="self.onChangeType" 
+            drop="self.getFnDrop" 
+            selection-list="self.selectionList" 
+            make-selection-list="self.makeSelectionList" 
+            on-remove-dataset="self.onRemoveDataset"
+            
+            list-dataset="self.listDataset"
+            controller="self"
+            >
+        </dataset-selection>
+
         <model-selection 
+            controller="self"
             id="model-selection" 
             ng-show="self.titleTabs[self.current_tab] === 'Model Selection'"
             set-props-model="self.setPropsModel" 
@@ -88,27 +110,9 @@
             list-selection-model="self.listSelectionModel" 
             is-set="self.isSet">
         </model-selection>
-
-        <dataset-selection 
-            ng-show="self.titleTabs[self.current_tab] === 'Dataset Selection'"
-            id-project="self.idProject" 
-            input-curve-specs="self.inputCurveSpecs"
-            target-curve-spec="self.targetCurveSpec" 
-            machine-learn-steps="self.machineLearnSteps" 
-            type-input="self.typeInput" 
-            on-add-input-item="self.onAddInputItem" 
-            get-fn-on-input-changed="self.getFnOnInputChanged"
-            on-target-item-changed="self.onTargetItemChanged" 
-            on-remove-input-item="self.onRemoveInputItem"
-            on-change-type="self.onChangeType" 
-            drop="self.getFnDrop" 
-            selection-list="self.selectionList" 
-            merge-curves="self.mergeCurves" 
-            make-selection-list="self.makeSelectionList" 
-            on-remove-dataset="self.onRemoveDataset">
-        </dataset-selection>
-		
+        
         <training-prediction 
+            controller="self"
             machine-learn-steps="self.machineLearnSteps" 
             input-curve-specs="self.inputCurveSpecs"
             target-curve-spec="self.targetCurveSpec"
@@ -127,12 +131,12 @@
 			run-all="self.runAll"
             run-task="self.runTask">
         </training-prediction>
-        <wi-neural-network 
+        <!-- <wi-neural-network 
             container="self.nnConfig.container" 
             input-curves="self.nnConfig.inputs"
             output-curves="self.nnConfig.outputs" 
             hidden-layer="self.nnConfig.layers">
-        </wi-neural-network> 
+        </wi-neural-network>  -->
 	</div>
 </div>
 <div ng-show="self.sprinnerMl || self.showNotiSave" style="z-index: 10; background: #ffffffc9; height: 100vh; width: 100vw; z-index: 5; position: absolute; display: flex; align-items: center; justify-content: center;">

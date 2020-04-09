@@ -16,19 +16,11 @@ gulp.task('pre', function (cb) {
 	stream.on('error', function (e) {
 		console.log("Loi ", e)
 	});
-	// let inputFile = './wi-uservice.xlsx';
-	// let outputFile = './src/model-selection/model/wi-uservice.json';
-	// let configFile = './src/config/config.js';
-	// return wiMl.sheetToJson(inputFile, outputFile, configFile);
 });
 gulp.task('run-webpack', function(done) {
 	gulp.src('./src/main.js')
     .pipe(webpackStream({
-		// context: __dirname + '/src',
 		mode: process.env.NODE_ENV === 'prod' ? "production" : "development",
-		// entry: {
-		// 	main: "./main.js",
-		// },
 		output: {
 			filename:'main.js'
 		},
@@ -56,12 +48,7 @@ gulp.task('run-webpack', function(done) {
 	}, webpack))
     .pipe(gulp.dest('./public'));	
     done();
-})
-// gulp.task('bower', function () {
-//     var DEST = 'public/bower_components';
-//     return gulp.src('bower_components/**/*').pipe(changed(DEST)).pipe(gulp.dest(DEST));
-// });
-
+});
 gulp.task('build', gulp.series('pre', 'run-webpack'), function(done) {
 	done();
 })

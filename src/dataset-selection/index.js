@@ -22,6 +22,9 @@ app.component(componentName,{
         onChangeType: '<',
         onRemoveDataset: '<',
         drop: '<',
+
+        listDataset: '<',
+        controller: '<'
     }
 });
 DatasetSelectionController.$inject = ['$scope', 'wiApi', '$timeout']
@@ -29,8 +32,7 @@ DatasetSelectionController.$inject = ['$scope', 'wiApi', '$timeout']
 function DatasetSelectionController($scope, wiApi, $timeout){
 	let self = 	this;
 	this.listMlProject;
-    this.buttons = [
-        {
+    this.buttons = [{
             label: 'Curve',
             type: 'curve',
             icon: 'curve-16x16'
@@ -46,6 +48,9 @@ function DatasetSelectionController($scope, wiApi, $timeout){
             icon: 'family-group-16x16'
         }
     ];
+    this.noDrag = function(node) {
+        return !(node && node.idDataset && node.idWell);
+    }
     this.getLabel = function (node) {
         return (node||{}).displayName || (node||{}).name || 'no name';
     }	
@@ -87,8 +92,7 @@ function DatasetSelectionController($scope, wiApi, $timeout){
     this.getChildrenDataset = function(node) {
         return [];
     }
-    this.clickFn = function(event,node,selectIds,rootnode) {
-        // console.log(node)
+    this.clickFn = function(event, node, selectIds,rootnode) {
         if(node.idProject && node.wells) return;
         if(node.idWell && node.datasets) return;
         if(node.idProject && !node.idDataset) {
