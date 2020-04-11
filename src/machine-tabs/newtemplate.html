@@ -87,30 +87,11 @@
         </dataset-selection>
 
         <model-selection 
-            controller="self"
+            controller="self.getModelSelection()"
             id="model-selection" 
-            ng-show="self.titleTabs[self.current_tab] === 'Model Selection'"
-            set-props-model="self.setPropsModel" 
-            set-model-selected="self.setModelSelected" 
-            nn-config="self.nnConfig"
-            set-layers="self.setLayers" 
-            nn-config-n-layer-changed="self.nnConfigNLayerChanged" 
-            nn-config="self.nnConfig" 
-            layer-change="self.layerChange" 
-            update-layer="self.updateLayer" 
-            current-selected-model-label="self.currentSelectedModelLabel" 
-            current-selected-type-model="self.currentSelectedTypeModel" 
-            set-type-model="self.setTypeModel" 
-            on-model-changed="self.onModelChanged" 
-            current-selected-model="self.currentSelectedModel"
-            get-fn-set-value-el-model="self.getFnSetValueElModel" 
-            tab="self.tab" set-tab="self.setTab" 
-            get-fn-set-value-el-enum-model="self.getFnSetValueElEnumModel" 
-            list-type-model="self.listTypeModel"
-            list-selection-model="self.listSelectionModel" 
-            is-set="self.isSet">
+            ng-if="self.titleTabs[self.current_tab] === 'Model Selection'">
         </model-selection>
-        
+
         <training-prediction 
             controller="self"
             machine-learn-steps="self.machineLearnSteps" 
@@ -131,12 +112,6 @@
 			run-all="self.runAll"
             run-task="self.runTask">
         </training-prediction>
-        <!-- <wi-neural-network 
-            container="self.nnConfig.container" 
-            input-curves="self.nnConfig.inputs"
-            output-curves="self.nnConfig.outputs" 
-            hidden-layer="self.nnConfig.layers">
-        </wi-neural-network>  -->
 	</div>
 </div>
 <div ng-show="self.sprinnerMl || self.showNotiSave" style="z-index: 10; background: #ffffffc9; height: 100vh; width: 100vw; z-index: 5; position: absolute; display: flex; align-items: center; justify-content: center;">

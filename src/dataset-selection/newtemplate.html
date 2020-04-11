@@ -25,9 +25,9 @@
 				{{self.targetCurveSpec.label}}
 			</div>
 			<div>
-				<wi-dropdown-list place-holder="Curve" items="self.selectionList" hide-delete-button='true'
+				<wi-dropdown-list-new place-holder="Curve" items="self.selectionList" hide-delete-button='true'
 					current-select='self.targetCurveSpec.currentSelect' on-item-changed="self.onTargetItemChanged">
-				</wi-dropdown-list>
+				</wi-dropdown-list-new>
 			</div>
 			<div style='display:flex;margin-right:0.5em;align-items:center;'>
 				<span ng-click='self.targetCurveSpec.transform="linear";'>
@@ -71,9 +71,12 @@
 								<i class="ti ti-close"></i>
 							</div>
 						</div>
-						<wi-dropdown-list style="width: 100%;" place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionList" hide-delete-button='true'
+						<!-- <wi-dropdown-list-new style="width: 100%;" place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionList" hide-delete-button='true'
 							on-item-changed="self.getFnOnInputChanged($index)" current-select="item.currentSelect">
-						</wi-dropdown-list>
+						</wi-dropdown-list-new> -->
+						<wi-dropdown-list-new style="width: 100%;" place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionList" hide-delete-button='true'
+							on-item-changed="self.controller.onInputItemChange" current-select="item.currentSelect" params="item">
+						</wi-dropdown-list-new>
 						<div style='display:flex;margin-right:0.5em;align-items:center;'>
 							<span ng-click='item.transform="linear";'>
 								<input type='radio' ng-model="item.transform"
@@ -106,7 +109,6 @@
 					</div>
 				</div>
 			</div>
-
 		</div>
 
 	</div>

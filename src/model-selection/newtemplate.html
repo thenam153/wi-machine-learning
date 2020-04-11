@@ -1,103 +1,77 @@
 <div class="main-content slim-scroller" style="width: 315px;">
     <div class="input-selection" >
         <div class="tab">
-            <div class="tab-button" ng-class="{'active' : self.tab===1}" ng-click="self.setTab(1)">Model Selection</div>
-            <div id="tab-layer" class="tab-button" ng-class="{'active' : self.tab===2}" ng-click="self.setTab(2)">Neural Network</div>
+            <div class="tab-button" ng-class="{'active' : tab===1}" ng-click="setTab(1)">Model Selection</div>
+            <div class="tab-button" ng-class="{'active' : tab===2}" ng-click="setTab(2)" ng-show="self.controller.currentModel.value.nnnw">Neural Network</div>
         </div>
-        <div ng-show="self.isSet(1)" style="padding: 20px; height: 100%;" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
+        <div ng-show="tab == 1" style="padding: 20px; height: 100%;" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
             <div class="header" style="text-transform: capitalize;">
                 <span class="title">Type Selection</span>
-                <wi-dropdown-list place-holder="Type" items="self.listTypeModel" hide-delete-button='self.hideDeleteButton'
-                    current-select='self.currentSelectedTypeModel.label' on-item-changed="self.setTypeModel">
-                </wi-dropdown-list>
+                <wi-dropdown-list-new place-holder="Type model" items="self.controller.listTypeModel" hide-delete-button='self.controller.hideDeleteButton'
+                    current-select='self.controller.currentTypeModel.label' on-item-changed="self.controller.onChangeTypeModel">
+                </wi-dropdown-list-new>
             </div>
             <div class="header">
                 <span class="title">Model Selection</span>
-                <wi-dropdown-list ng-repeat="type in self.listTypeModel track by $index" ng-if="self.currentSelectedTypeModel.type===type.properties.type" place-holder="Model" items="self.listSelectionModel[type.properties.type]" hide-delete-button='self.hideDeleteButton'
-                    current-select='self.currentSelectedModelLabel' on-item-changed="self.onModelChanged">
-                </wi-dropdown-list>
-               <!--  <wi-dropdown-list ng-if="self.currentSelectedTypeModel!=='classification'" place-holder="Model" items="self.listSelectionModel.regression" hide-delete-button='self.hideDeleteButton'
-                    current-select='self.currentSelectedModelLabel' on-item-changed="self.onModelChanged">
-                </wi-dropdown-list> -->
+                <wi-dropdown-list-new place-holder="Model" items="self.controller.listModel[self.controller.currentTypeModel.type]" hide-delete-button='self.controller.hideDeleteButton'
+                    current-select='self.controller.currentModel.label' on-item-changed="self.controller.onChangeModel">
+                </wi-dropdown-list-new>
             </div>
-            
+
             <div >
-                <div class="editable-custom" ng-repeat="(key, props) in self.currentSelectedModel.payload.params" ng-init="props.value = props.value === undefined ? props.example : props.value"> 
-                    <editable ng-if="props.type != 'List' && props.type != 'enum' && props.type != 'boolean' && props.type != 'input'" item-value="props.value" item-label="props.label"
-                        label-style="{'min-width':'130px'}" enabled="true" set-value="self.getFnSetValueElModel('params')"
-                        params="props.name">
-                    </editable>
-                    <div class="header" ng-if="props.type=='List' || props.type=='input'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
-                        <span class="title" style="font-size: 13px;">{{props.label}}</span>
-                        <span class="sub" style="margin-bottom: 10px;">{{props.value.toString()}}</span>
+                <div class="editable-custom" ng-repeat="(key, props) in self.controller.currentModel.value.payload.params" ng-init="self.controller.initPropertiesPayload(props)"> 
+                    <div ng-if="props.type == 'integer' || props.type == 'float' || props.type == 'string' || props.type == 'number'">
+                        <span class="title" style="min-width: 130px;padding: 10px 0;flex: 1;float: left;margin-right: 0;margin-bottom: 0;font-weight: bold;">{{props.label}}</span>
+                        <input class="sub" ng-model="props.value" ng-change="self.controller.changeValue(props);">
                     </div>
+                    
                     <div ng-if=" props.type == 'enum' " style="margin-top: 15px;">
                        <div style="font-weight: bold;">
                            {{props.label}}
                        </div>
                         <div>
-                            <wi-dropdown-list place-holder="value" items="props.enum" current-select='props.value' on-item-changed="self.getFnSetValueElEnumModel(props.name, 'params')">
+                            <wi-dropdown-list place-holder="value" items="props.enum" params="props" current-select='props.value.data.label' on-item-changed="self.controller.onItemChange">
                             </wi-dropdown-list>
                         </div>
                    </div>
                    <div ng-if=" props.type == 'boolean' " style="margin-top: 15px;">
-                       <div style="font-weight: bold;">
-                           {{props.label}}
-                       </div>
+                        <div style="font-weight: bold;">
+                            {{props.label}}
+                        </div>
                         <div>
-                            <wi-dropdown-list place-holder="value" items="self.valueItemBoolean" current-select='props.value === false ? "false" : "true"' on-item-changed="self.getFnSetValueElEnumModel(props.name, 'params')">
-                            </wi-dropdown-list>
+                            <label>
+                                {{props.value? 'TRUE' : 'FALSE'}} 
+                                <input type="checkbox" ng-model="props.value">
+                            </label>
                         </div>
-                   </div>
-
-                   <!-- <div class="header" ng-if="props.type=='array'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
-                        <span class="title" style="font-size: 13px;">{{props.name}}</span>
-                        <span class="sub" style="margin-bottom: 10px;">{{props.value}}</span>
-                    </div> -->
-                    
+                    </div>
+                     <div class="header" ng-if="props.type=='size'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
+                        <span class="title" style="font-size: 13px;">{{props.label}}</span>
+                        <span class="sub" style="margin-bottom: 10px;">{{props.value.toString()}}</span>
+                    </div>    
+                    <div class="header" ng-if="props.type=='input'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
+                        <span class="title" style="font-size: 13px;">{{props.label}}</span>
+                        <span class="sub" style="margin-bottom: 10px;">{{props.value.toString()}}</span>
+                    </div>
                 </div>
-                <!-- <div ng-show="self.currentSelectedModel.nnnw" style="padding: 20px; overflow: hidden;">
-                    <div class="hidden-layers">
-                        <div class="add ti ti-minus" ng-click="self.nnConfig.nLayer = self.nnConfig.nLayer - 1; self.nnConfigNLayerChanged(self.nnConfig.nLayer)"></div>
-                        <input class="inputs" ng-model='self.nnConfig.nLayer'  class="form-control wi-form-control" ng-change="self.nnConfigNLayerChanged(self.nnConfig.nLayer)" min="1">
-                        <div class="remove ti ti-plus" ng-click="self.nnConfig.nLayer = self.nnConfig.nLayer + 1; self.nnConfigNLayerChanged(self.nnConfig.nLayer)"></div>
-                    </div>
-                    <div style="height: 100%;" onmouseover=this.style.overflow='auto' onmouseout=this.style.overflow='hidden'>
-                        <div ng-repeat="layer in self.nnConfig.layerConfig track by $index" class="input-number">
-                            <div style="display: flex; align-items: center;">
-                                <div class="layer-16x16" style="margin-right: 10px; min-width: 16px;"></div>
-                                <div class="name">{{layer.label}}</div>
-                                <input style="font-weight: bold;" class="form-control wi-form-control" ng-model="layer.value" ng-change="self.layerChange(layer, layer.value)" min="1">
-                            </div>
-                            <div style="display: flex;">
-                                <div class="add ti ti-minus" ng-click="layer.value = layer.value - 1; self.layerChange($index, layer.value)"></div>
-                                <div class="remove ti ti-plus" ng-click="layer.value = layer.value + 1; self.layerChange($index, layer.value)"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div> -->
-                <div ng-if="self.currentSelectedModel.payload.train" class="header" style="margin-top: 20px;">
+                <div ng-if="self.controller.currentModel.value.payload.train" class="header" style="margin-top: 20px;">
                     <span class="title">
-                        <div ng-show="!self.showAdvance" class="fa fa-caret-right" style="margin-right: 10px; cursor: pointer;" ng-click="self.showAdvance = !self.showAdvance"></div>
-                        <div ng-show="self.showAdvance"class="fa fa-caret-down" style="margin-right: 10px; cursor: pointer;" ng-click="self.showAdvance = !self.showAdvance"></div>
+                        <div ng-show="!self.controller.showAdvance" class="fa fa-caret-right" style="margin-right: 10px; cursor: pointer;" ng-click="self.controller.showAdvance = !self.controller.showAdvance"></div>
+                        <div ng-show="self.controller.showAdvance"class="fa fa-caret-down" style="margin-right: 10px; cursor: pointer;" ng-click="self.controller.showAdvance = !self.controller.showAdvance"></div>
                     Advance</span>
                 </div>
-                <div ng-show="self.showAdvance">
-                    <div ng-if="self.currentSelectedModel.payload.train" class="editable-custom" ng-repeat="(key, props) in self.currentSelectedModel.payload.train" ng-init="props.value = props.value === undefined ? props.example : props.value">
-                       <editable item-value="props.value" item-label="props.label"
-                           label-style="{'min-width':'130px'}" enabled="true" set-value="self.getFnSetValueElModel('train')"
-                           params="props.name" ng-if="props.type != 'List' && props.type != 'enum' && props.type != 'boolean' && props.type != 'input'">
-                       </editable>
-                       <div class="header" ng-if="props.type=='List' || props.type=='input'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
-                            <span class="title" style="font-size: 13px;">{{props.label}}</span>
-                            <span class="sub" style="margin-bottom: 10px;">{{props.value.toString()}}</span>
+                <div ng-show="self.controller.showAdvance">
+                    <div ng-if="self.controller.currentModel.value.payload.train" class="editable-custom" ng-repeat="(key, props) in self.controller.currentModel.value.payload.train" ng-init="self.controller.initPropertiesPayload(props)">
+                        <div ng-if="props.type == 'integer' || props.type == 'float' || props.type == 'string' || props.type == 'number'">
+                            <span class="title" style="min-width: 130px;padding: 10px 0;flex: 1;float: left;margin-right: 0;margin-bottom: 0;font-weight: bold;">{{props.label}}</span>
+                            <input class="sub" ng-model="props.value" ng-change="self.controller.changeValue(props);">
                         </div>
-                       <div ng-if=" props.type == 'enum' " style="margin-top: 15px;">
+                        <div ng-if=" props.type == 'enum' " style="margin-top: 15px;">
                            <div style="font-weight: bold;">
                                {{props.label}}
                            </div>
                             <div>
-                                <wi-dropdown-list place-holder="value" items="props.enum" current-select='props.value' on-item-changed="self.getFnSetValueElEnumModel(props.name, 'train')">
+                                <wi-dropdown-list place-holder="value" items="props.enum" params="props" current-select='props.value.data.label' on-item-changed="self.controller.onItemChange">
                                 </wi-dropdown-list>
                             </div>
                        </div>
@@ -105,37 +79,58 @@
                             <div style="font-weight: bold;">
                                 {{props.label}}
                             </div>
-                                <div>
-                                    <wi-dropdown-list place-holder="value" items="self.valueItemBoolean" current-select='props.value === false ? "false" : "true"' on-item-changed="self.getFnSetValueElEnumModel(props.name, 'params')">
-                                    </wi-dropdown-list>
-                                </div>
+                            <div>
+                                <label>
+                                    {{props.value? 'TRUE' : 'FALSE'}} 
+                                    <input type="checkbox" ng-model="props.value">
+                                </label>
+                            </div>
+                        </div>
+                        <div class="header" ng-if="props.type=='size'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
+                            <span class="title" style="font-size: 13px;">{{props.label}}</span>
+                            <span class="sub" style="margin-bottom: 10px;">{{props.value.toString()}}</span>
+                        </div>    
+                        <div class="header" ng-if="props.type=='input'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
+                            <span class="title" style="font-size: 13px;">{{props.label}}</span>
+                            <span class="sub" style="margin-bottom: 10px;">{{props.value.toString()}}</span>
                         </div>
                    </div>
                 </div>
             </div>
         </div>
-        <div ng-show="self.isSet(2)" style="padding: 20px; overflow: hidden;">
+        <div ng-show="tab == 2 && self.controller.currentModel.value.nnnw" style="padding: 20px; overflow: hidden;">
             <div class="hidden-layers">
-                <div class="add ti ti-minus" ng-click="self.nnConfig.nLayer = self.nnConfig.nLayer - 1; self.nnConfigNLayerChanged(self.nnConfig.nLayer)"></div>
-                <input class="inputs" ng-model='self.nnConfig.nLayer'  class="form-control wi-form-control" ng-change="self.nnConfigNLayerChanged(self.nnConfig.nLayer)" min="1">
-                <div class="remove ti ti-plus" ng-click="self.nnConfig.nLayer = self.nnConfig.nLayer + 1; self.nnConfigNLayerChanged(self.nnConfig.nLayer)"></div>
+                <div class="add ti ti-minus" ng-click="self.controller.onLayerChange(-1)"></div>
+                <input class="inputs" value='{{self.controller.nnConfig.layers.length}}' disabled class="form-control wi-form-control" min="1">
+                <div class="remove ti ti-plus" ng-click="self.controller.onLayerChange(1)"></div>
             </div>
             <div style="height: 100%;" onmouseover=this.style.overflow='auto' onmouseout=this.style.overflow='hidden'>
-                <div ng-repeat="layer in self.nnConfig.layerConfig track by $index" class="input-number">
+                <div ng-repeat="layer in self.controller.nnConfig.layers track by $index" class="input-number">
                     <div style="display: flex; align-items: center;">
                         <div class="layer-16x16" style="margin-right: 10px; min-width: 16px;"></div>
-                        <div class="name">{{layer.label}}</div>
-                        <input style="font-weight: bold;" type="number" class="form-control wi-form-control" ng-model="layer.value" ng-change="self.layerChange($index, layer.value)" min="1">
+                        <div class="name">Layer {{$index + 1}}</div>
+                        <input style="font-weight: bold;" type="number" class="form-control wi-form-control"disabled ng-model="layer" min="1">
                     </div>
                     <div style="display: flex;">
-                        <div class="add ti ti-minus" ng-click="layer.value = layer.value - 1; self.layerChange($index, layer.value)"></div>
-                        <div class="remove ti ti-plus" ng-click="layer.value = layer.value + 1; self.layerChange($index, layer.value)"></div>
+                        <div class="add ti ti-minus" ng-click="self.controller.onHiddenChange($index, -1)"></div>
+                        <div class="remove ti ti-plus" ng-click="self.controller.onHiddenChange($index, 1)"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
     <div id="workspace" class="workspace">
-        
+        <div style="position: absolute;">
+            {{self.controller.currentModel.value.payload}}
+            {{self.controller.nnnw}}
+        </div>
+       
+        <wi-neural-network 
+            ng-if="self.controller.nnnw"
+            container="self.controller.nnConfig" 
+            input-curves="self.controller.nnConfig.inputs"
+            output-curves="self.controller.nnConfig.outputs" 
+            hidden-layer="self.controller.nnConfig.layers">
+        </wi-neural-network> 
     </div>
 </div>

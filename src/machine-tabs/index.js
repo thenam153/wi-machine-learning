@@ -12,6 +12,7 @@ var config = require('../config/config').production;
 var app = angular.module(moduleName, ['modelSelection',
     'datasetSelection',
     'trainingPrediction',
+    'mlService',
     'wiApi',
     'wiNeuralNetwork',
     'wiLogin',
@@ -20,9 +21,9 @@ var app = angular.module(moduleName, ['modelSelection',
     'wiDiscriminator',
     'ngDialog',
     'somModelService',
-    'heatMap'
+    'heatMap',
+    'wiDropdownListNew'
 ]);
-
 app.component(componentName, {
     template: require('./newtemplate.html'),
     controller: MachineTabsController,
@@ -32,7 +33,7 @@ app.component(componentName, {
         token: '<'
     }
 });
-MachineTabsController.$inject = ['$scope', '$timeout', 'wiToken', 'wiApi', '$http', 'wiDialog', 'ngDialog']
+MachineTabsController.$inject = ['$scope', '$timeout', 'wiToken', 'wiApi', '$http', 'wiDialog', 'ngDialog','mlService']
 
 const LINEAR = 'linear';
 const LOGA = 'logarithmic';
@@ -50,7 +51,7 @@ const FAMILY_GROUP = 'main_family';
 const REMOVE = 0;
 const ADD = 1;  
 
-function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog, ngDialog) {
+function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog, ngDialog, mlService) {
     $scope.isActive = function(index) {
         return self.current_tab === index;
     }
@@ -74,7 +75,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }
     }
     let self = this;
-    let functionCache = [];
     let functionCacheSteps = {
         training: {
             status: true,
@@ -101,16 +101,13 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         self.current_tab = 0;
         initMlProject();
         if (self.token && self.token.length) window.localStorage.setItem('token', self.token);
+        console.log(mlService.value);
     }
     function initMlProject() {
         self.selectionList = [
             {
-                data: {
-                    label: LABEL_DEFAULT
-                },
-                properties: {
-                    value: null
-                }
+                label: LABEL_DEFAULT,
+                properties: null
             }
         ];
         self.listDataset = {
@@ -184,7 +181,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             bucket_id: null
         }
     }
-
     this.onChangeType = function(button) {
         self.typeInput = button;
         self.makeListOfDatasetSelection();
@@ -194,28 +190,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 currentSelect: LABEL_DEFAULT
             }));
         })
-        // self.createSelectionList();
-        // for (let i in self.machineLearnSteps) {
-        //     self.handleDropDatasets(i);
-        // }
     }
-    this.getFnOnInputChanged = function($index) {
-        if (!functionCache[$index])
-            functionCache[$index] = function(selectedItemProps) {
-                self.curveSpecs[$index].value = selectedItemProps;
-                if (selectedItemProps) {
-                    self.curveSpecs[$index].currentSelect = selectedItemProps.name;
-                } else {
-                    self.curveSpecs[$index].currentSelect = LABEL_DEFAULT;
-                }
-                // let handle = _.debounce(() => {
-                //     for (let i in self.machineLearnSteps) {
-                //         self.handleDropDatasets(i);
-                //     }
-                // }, 500);
-                // handle()
-            }
-        return functionCache[$index];
+    this.onInputItemChange = function(i, item) {
+        item.currentSelect = i.label;
+        item.value = i;
     }
     this.onRemoveInputItem = function($index) {
         if (self.curveSpecs.length > 2 && !self.curveSpecs[$index].isTarget) {
@@ -229,16 +207,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             value: null,
             transform: LINEAR
         });
-    }
-    this.updateInputModel = function() {
-        for (let i of self.currentSelectedModel.payload.params) {
-            if (i.type === 'input') {
-                i.value = [];
-                for (let j = 0; j < self.inputCurveSpecs.length; j++) {
-                    i.value = _.concat(i.value, i.pattern + (Number(j) + 1))
-                }
-            }
-        }
     }
     this.getFnDrop = function(step) {
         if (!functionCacheSteps[step].drop) {
@@ -287,12 +255,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             preProcessCurves.push(...i.curves);
         })
         var curves = _.intersectionBy(preProcessCurves, 'name');
-        // self.selectionList = [{
-        //     data: {
-        //         label: LABEL_DEFAULT
-        //     },
-        //     properties: null
-        // }];
         self.selectionList = [];
         switch(self.typeInput.type) {
             case FAMILY_CURVE:
@@ -301,34 +263,41 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     if (c.idFamily !== undefined && c.idFamily) {
                         let fl = await wiApi.getFamily(c.idFamily);
                         if(fl) {
+                            // self.selectionList.push({
+                            //     data: {
+                            //         label: fl.name
+                            //     },
+                            //     properties: {
+                            //         familyCurveSpec: fl.family_spec,
+                            //         familyGroup: fl.familyGroup,
+                            //         familyCurve: fl.name,
+                            //         name: fl.name,
+                            //         // idFamily: fl.idFamily
+                            //     },
+                            //     icon: 'family-16x16'
+                            // })
                             self.selectionList.push({
-                                data: {
-                                    label: fl.name
-                                },
-                                properties: {
-                                    familyCurveSpec: fl.family_spec,
-                                    familyGroup: fl.familyGroup,
-                                    familyCurve: fl.name,
-                                    name: fl.name,
-                                    // idFamily: fl.idFamily
-                                },
+                                label: fl.name,
+                                familyCurveSpec: fl.family_spec,
+                                familyGroup: fl.familyGroup,
+                                familyCurve: fl.name,
+                                name: fl.name,
+                                // idFamily: fl.idFamily
                                 icon: 'family-16x16'
                             })
                         }
                     }
                 }, (err) => {
                     if(err) console.log("Have a error!");
-                    self.selectionList = _.uniqBy(self.selectionList, 'data.label');
+                    self.selectionList = _.uniqBy(self.selectionList, 'label');
                     self.selectionList.sort((a, b) => {
-                                        let nameA = a.data.label.toUpperCase();
-                                        let nameB = b.data.label.toUpperCase();
+                                        let nameA = a.label.toUpperCase();
+                                        let nameB = b.label.toUpperCase();
                                         return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
                                     });
                     self.selectionList.unshift({
-                        data: {
-                            label: LABEL_DEFAULT
-                        },
-                        properties: null
+                        label: LABEL_DEFAULT,
+                        value: null
                     });
                 });
                 break;
@@ -338,68 +307,239 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     if (c.idFamily !== undefined && c.idFamily) {
                         let fl = await wiApi.getFamily(c.idFamily);
                         if(fl) {
+                            // self.selectionList.push({
+                            //     data: {
+                            //         label: fl.familyGroup
+                            //     },
+                            //     properties: {
+                            //         name: fl.familyGroup,
+                            //         familyGroup: fl.familyGroup,
+                            //         familyCurveSpec: fl.family_spec,
+                            //         // idFamily: fl.idFamily
+                            //     },
+                            //     icon: 'family-group-16x16'
+                            // })
                             self.selectionList.push({
-                                data: {
-                                    label: fl.familyGroup
-                                },
-                                properties: {
-                                    name: fl.familyGroup,
-                                    familyGroup: fl.familyGroup,
-                                    familyCurveSpec: fl.family_spec,
-                                    // idFamily: fl.idFamily
-                                },
+                                label: fl.familyGroup,
+                                name: fl.familyGroup,
+                                familyGroup: fl.familyGroup,
+                                familyCurveSpec: fl.family_spec,
+                                // idFamily: fl.idFamily
                                 icon: 'family-group-16x16'
                             })
                         }
                     }
                 }, (err) => {
                     if(err) console.log("Have a error!");
-                    self.selectionList = _.uniqBy(self.selectionList, 'data.label');
+                    self.selectionList = _.uniqBy(self.selectionList, 'label');
                     self.selectionList.sort((a, b) => {
-                                        let nameA = a.data.label.toUpperCase();
-                                        let nameB = b.data.label.toUpperCase();
+                                        let nameA = a.label.toUpperCase();
+                                        let nameB = b.label.toUpperCase();
                                         return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
                                     });
                     self.selectionList.unshift({
-                        data: {
-                            label: LABEL_DEFAULT
-                        },
-                        properties: null
+                        label: LABEL_DEFAULT,
+                        value: null
                     });
                 });
                 break;
             case CURVE:
                 async.eachSeries(curves, (c, next) => {
+                    // self.selectionList.push({
+                    //     data: {
+                    //         label: c.name
+                    //     },
+                    //     properties: {
+                    //         name: c.name,
+                    //         curveType: c.type,
+                    //         // familyGroup: c.familyGroup,
+                    //         // familyCurveSpec: c.family_spec,
+                    //         idFamily: c.idFamily
+                    //     },
+                    //     icon: 'curve-16x16'
+                    // });
                     self.selectionList.push({
-                        data: {
-                            label: c.name
-                        },
-                        properties: {
-                            name: c.name,
-                            curveType: c.type,
-                            // familyGroup: c.familyGroup,
-                            // familyCurveSpec: c.family_spec,
-                            idFamily: c.idFamily
-                        },
+                        label: c.name,
+                        name: c.name,
+                        curveType: c.type,
+                        // familyGroup: c.familyGroup,
+                        // familyCurveSpec: c.family_spec,
+                        idFamily: c.idFamily,
                         icon: 'curve-16x16'
                     });
                     next();
                 }, (err) => {
                     if(err) console.log("Have a error!");
-                    self.selectionList = _.uniqBy(self.selectionList, 'data.label');
+                    self.selectionList = _.uniqBy(self.selectionList, 'label');
                     self.selectionList.sort((a, b) => {
-                                        let nameA = a.data.label.toUpperCase();
-                                        let nameB = b.data.label.toUpperCase();
+                                        let nameA = a.label.toUpperCase();
+                                        let nameB = b.label.toUpperCase();
                                         return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
                                     });
                     self.selectionList.unshift({
-                        data: {
-                            label: LABEL_DEFAULT
-                        },
-                        properties: null
+                        label: LABEL_DEFAULT,
+                        value: null
                     });
                 });
                 break;
         }
     }
+    // ================= modelSelection ====================
+    this.modelSelection = {}
+    const dataJsonModels = require('../../wi-uservice.json');
+    this.modelSelection.listTypeModel = dataJsonModels.type.map(t => {
+        return {
+            label: t.label,
+            type: t.type
+        }
+    }).sort((a, b) => {
+        let nameA = a.label.toUpperCase();
+        let nameB = b.label.toUpperCase();
+        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+    });
+    this.modelSelection.listModel = {};
+    this.modelSelection.listTypeModel.forEach(t => {
+        this.modelSelection.listModel[t.type] = dataJsonModels.model
+                                    .filter(i => i.type == t.type)
+                                    .map(m => {
+                                        return {
+                                            label: m.label,
+                                            name: m.name,
+                                            type: m.type,
+                                            value: m
+                                        } 
+                                    })
+                                    .sort((a, b) => {
+                                        let nameA = a.label.toUpperCase();
+                                        let nameB = b.label.toUpperCase();
+                                        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+                                    });
+
+    });
+    this.modelSelection.currentTypeModel = this.modelSelection.listTypeModel[0];
+    this.modelSelection.currentModel = this.modelSelection.listModel[this.modelSelection.currentTypeModel.type][0];
+    console.log(this.modelSelection.currentTypeModel, this.modelSelection.currentModel, this.modelSelection.listTypeModel, this.modelSelection.listModel);
+    this.modelSelection.onChangeTypeModel = function(item) {
+		self.modelSelection.currentTypeModel = item;
+		self.modelSelection.currentModel = self.modelSelection.listModel[self.modelSelection.currentTypeModel.type][0];
+	}
+	this.modelSelection.onChangeModel = function(item) {
+		self.modelSelection.currentModel = item;
+        self.modelSelection.updateNeuralConfig();
+        self.modelSelection.updateParamInput();
+    }
+    this.modelSelection.updateParamInput = function() {
+        self.modelSelection.currentModel.value.payload.params.forEach(i => {
+            i.type === 'input' ?
+            i.value = self.curveSpecs.filter(x => !x.isTarget).map((x, idx) => i.pattern + (idx + 1)) : null;
+        });
+    }
+	this.modelSelection.initPropertiesPayload = function(properties) {
+		if(properties.value === undefined || properties.value === null) {
+			if(properties.type === 'enum') {
+				properties.value = properties.enum[properties.example];
+				return;
+			}
+			if(properties.type === 'size') {
+				properties.value = properties.example.map(i => i);
+				return;
+            }
+            if(properties.type === 'input') {
+                properties.value = self.curveSpecs.filter(i => !i.isTarget).map((i, idx) => properties.pattern + (idx + 1));
+                return;
+            }
+			properties.value = properties.example;
+			// console.log(properties);
+		}
+	}
+	this.modelSelection.changeValue = function(obj) {
+		console.log(obj);
+		switch (obj.type) {
+            case 'string':
+                break;
+            case 'integer':
+                if (!Number.isInteger(Number(obj.value))) {
+                    obj.value = obj.example;
+                }
+                break;
+            case 'number':
+                if (isNaN(Number(obj.value))) {
+                    obj.value = obj.example;
+                }
+                break;
+            // case 'boolean':
+            //     if (value.toString().toLowerCase() == 'true') {
+            //         return true;
+            //     }
+            //     if (value.toString().toLowerCase() == 'false') {
+            //         return false;
+            //     }
+            //     return '';
+            case 'float':
+                if (isNaN(parseFloat(obj.value))) {
+                    obj.value = obj.example;
+                }
+                break;
+            // case 'array':
+            //     value = value.toString().replace(/\s/g, '').split(',');
+            //     console.log(value);
+			// 	return ([...new Set(value)]);
+        }
+	}
+	this.modelSelection.onItemChange = function(value, properties) {
+		// console.log(value, properties);
+		properties.value = properties.enum.find(e => e.properties === value);
+	}
+	this.modelSelection.nnConfig = {inputs: [], outputs: [], layers: []}
+	this.modelSelection.showNeu = false;
+	this.modelSelection.updateNeuralConfig = function() {
+        self.modelSelection.nnnw = false;
+        if(!self.modelSelection.currentModel.value.nnnw) {
+            return;
+        }
+        $timeout(() => {
+            self.modelSelection.nnConfig.inputs = self.curveSpecs.filter((v, i) => !v.isTarget).map((i) => {
+                return {
+                    label: i.currentSelect,
+                    name: i.currentSelect,
+                    value: i.currentSelect,
+                    class: 'Input Curve',
+                    type: "1"
+                }
+            });
+            let output = self.curveSpecs.find(i => i.isTarget);
+            output ? self.modelSelection.nnConfig.outputs = [{
+                label: self.curveSpecs[0].currentSelect,
+                name: self.curveSpecs[0].currentSelect,
+                value: self.curveSpecs[0].currentSelect,
+                class: 'Target output',
+                type: "1"
+            }] :
+            self.modelSelection.nnConfig.outputs = [{
+                label: output.currentSelect,
+                name: output.currentSelect,
+                value: output.currentSelect,
+                class: 'Target output',
+                type: "1"
+            }]
+            self.modelSelection.nnConfig.layers = self.modelSelection.currentModel.value.payload.params.find(i => i.name === 'hidden_layer_sizes').value;
+            self.modelSelection.nnnw = true;
+        })
+	}
+	this.modelSelection.onLayerChange = function(idx) {
+		idx > 0 ? self.modelSelection.nnConfig.layers.push(10) : self.modelSelection.nnConfig.layers.pop(); 
+        self.modelSelection.updatePaint();
+	}
+	this.modelSelection.onHiddenChange = function(index, idx) {
+		idx > 0 ? self.modelSelection.nnConfig.layers[index]++ : self.modelSelection.nnConfig.layers[index]--;
+        self.modelSelection.updatePaint();
+    }
+    this.modelSelection.updatePaint = function() {
+        self.modelSelection.currentModel.value.nnnw && self.modelSelection.nnConfig.wiNNCtrl ? self.modelSelection.nnConfig.wiNNCtrl.update(self.modelSelection.nnConfig) : null; 
+    }
+    this.getModelSelection = function() {
+        return self.modelSelection;
+    }
+
+    // ================= training ==========================
 }

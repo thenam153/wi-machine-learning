@@ -14,7 +14,7 @@
 		"list_type": "type_model"
 	},
 	"production": {
-		"sheet_name": "models_prod",
+		"sheet_name": "test",
 		"backend": "https://api-1.i2g.cloud",
 		"login": "https://users.i2g.cloud/login",
 		"base_url": "https://users.i2g.cloud",

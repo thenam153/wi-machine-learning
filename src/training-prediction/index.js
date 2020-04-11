@@ -192,27 +192,27 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     this.heatmapColors = [
         'hsla(100, 90%, 58%, 1)', 'hsla(90, 90%, 58%, 1)', 'hsla(80, 90%, 58%, 1)', 'hsla(70, 90%, 58%, 1)', 'hsla(60, 90%, 58%, 1)', 'hsla(50, 90%, 58%, 1)', 'hsla(40, 90%, 58%, 1)', 'hsla(30, 90%, 58%, 1)', 'hsla(20, 90%, 58%, 1)', 'hsla(10, 90%, 58%, 1)'
     ]
-    $scope.$watch(() => {
-        return self.somVisualize.visualizationMap;
-    }, (newData, oldData) => {
-        console.log('change data', newData, oldData);
-        self.visualizationMapLabelColors = {};
-        let listLabel = [];
-        for (let i = 0; i < newData.length; i++) {
-            for (let j = 0; j < newData[i].cells.length; j++) {
-                listLabel.push(newData[i].cells[j].label);
-            }
-        }
-        listLabel = _.sortBy(_.uniq(listLabel)).map((i) => i);
-        console.log(listLabel)
-            // let z = d3.scaleOrdinal(d3.schemeBuGn[9])
-            // .domain(listLabel)
-        let z = d3.scaleLinear().domain([1, listLabel.length + 1])
-            .range(["#000086", "#FFFFDD"])
-        for (let i = 0; i < listLabel.length; i++) {
-            self.visualizationMapLabelColors[listLabel[i]] = z(i + 1);
-        }
-    })
+    // $scope.$watch(() => {
+    //     return self.somVisualize.visualizationMap;
+    // }, (newData, oldData) => {
+    //     console.log('change data', newData, oldData);
+    //     self.visualizationMapLabelColors = {};
+    //     let listLabel = [];
+    //     for (let i = 0; i < newData.length; i++) {
+    //         for (let j = 0; j < newData[i].cells.length; j++) {
+    //             listLabel.push(newData[i].cells[j].label);
+    //         }
+    //     }
+    //     listLabel = _.sortBy(_.uniq(listLabel)).map((i) => i);
+    //     console.log(listLabel)
+    //         // let z = d3.scaleOrdinal(d3.schemeBuGn[9])
+    //         // .domain(listLabel)
+    //     let z = d3.scaleLinear().domain([1, listLabel.length + 1])
+    //         .range(["#000086", "#FFFFDD"])
+    //     for (let i = 0; i < listLabel.length; i++) {
+    //         self.visualizationMapLabelColors[listLabel[i]] = z(i + 1);
+    //     }
+    // })
     this.getFittedModel = async function() {
         if (self.model['som-visualization']) {
             $http({
