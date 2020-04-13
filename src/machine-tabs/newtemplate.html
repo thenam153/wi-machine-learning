@@ -1,8 +1,9 @@
 <div style="display: flex;flex-direction: column;flex: 1;" class="slim-scroller">
 	<div class="menu">
         <div style="display: flex;">
-            <span ng-repeat="name in self.titleTabs track by $index" class="menu-item"
-                ng-class="{active: self.current_tab === $index}" ng-click="changeTab($index);">{{name}}</span>
+            <span class="menu-item" ng-class="{active: self.current_tab == 0}" ng-click="self.current_tab = 0;">Dataset Selection</span>
+            <span class="menu-item" ng-class="{active: self.current_tab == 1}" ng-click="self.current_tab = 1;">Model Selection</span>
+            <span class="menu-item" ng-class="{active: self.current_tab == 2}" ng-click="self.current_tab = 2;self.updateTabTrainingPredictiong();">Training and Prediction</span>
         </div>
 		<div class="active menu-item">
             <span ng-if="self.currentSelectedMlProject" ng-click="self.findAllProjects();" class="ml-project-name">{{self.currentSelectedMlProject ? self.currentSelectedMlProject: ''}}</span>
@@ -93,24 +94,8 @@
         </model-selection>
 
         <training-prediction 
-            controller="self"
-            machine-learn-steps="self.machineLearnSteps" 
-            input-curve-specs="self.inputCurveSpecs"
-            target-curve-spec="self.targetCurveSpec"
-            model="self.currentSelectedModel" 
-            state-workflow="self.stateWorkflow" 
-            set-model-id="self.setModelId" 
-            set-bucket-id="self.setBucketId"
-            ng-show="self.titleTabs[self.current_tab] === 'Training and Prediction'" 
-            som-visualize="self.dataSomVisualize" 
-            show-som-visualize="self.showSomVisualize" 
-            set-state="self.setStateWorkflow"
-			save-ml-project="self.saveMlProject" 
-			set-on-item-curve-changed="self.setOnItemCurveChanged"
-			on-toggle-active-output="self.onToggleActiveOutput" 
-			on-discriminator="self.onDiscriminator" 
-			run-all="self.runAll"
-            run-task="self.runTask">
+            ng-show="self.titleTabs[self.current_tab] === 'Training and Prediction'"
+            controller="self" >
         </training-prediction>
 	</div>
 </div>

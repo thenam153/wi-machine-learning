@@ -30,7 +30,6 @@ app.component(componentName, {
 
         somVisualize: '<',
         showSomVisualize: '<',
-        // mlApi: '<',
 
         stateWorkflow: '<',
         setModelId: '<',
@@ -38,9 +37,8 @@ app.component(componentName, {
         setState: '<',
         saveMlProject: '<',
         model: '<',
-
-
-
+        
+        controller: '<'
     }
 });
 TrainingPredictionController.$inject = ['$scope', '$timeout', 'wiDialog', 'wiApi', '$http', 'somModelService']
@@ -56,16 +54,6 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     $scope.isSet = function(tabNum) {
         return $scope.tab === tabNum;
     };
-
-    // this.showWapper = function () {
-    // 	console.log("showWapper")
-    // 	$('.dropdown-list').toggle(function () {
-    // 		$(".dropdown-list").addClass("displayBlock");
-    // 	}, function () {
-    // 		$(".dropdown-list").removeClass("displayBlock");
-    // 	});
-
-    // }
     $(document).click(function(event) {
         if (event.target.id === 'dropdown-list') {
             return false;
@@ -75,6 +63,10 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
         }
 
     });
+    // ============================================================================
+    this.runTask = function() {
+        
+    }
 
     // ============================================================================
     this.getDistributionMaps = function(data) {

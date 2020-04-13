@@ -122,12 +122,12 @@
 			<wi-droppable container-style="{'flex':'1','display':'flex'}" onmouseover=this.style.overflowY='overlay'
 				onmouseout=this.style.overflowY='hidden' on-drop="self.drop('training')"
 				style="display: flex; height: calc(100% - 67px); overflow: hidden;">
-				<div class="no-datasets" ng-show="!self.controller.listDataset['training'].length" style="background-image:url('./bg-datasets.png')">
+				<div class="no-datasets" ng-show="!self.controller.tabs['training'].listDataset.length" style="background-image:url('./bg-datasets.png')">
 				</div>
-				<div ng-show="self.controller.listDataset['training'].length"
+				<div ng-show="self.controller.tabs['training'].listDataset.length"
 					style="display: flex; flex: 1;flex-direction: column;">
 					<div style="height: 100%;">
-						<div ng-repeat="item in self.controller.listDataset['training'] track by $index">
+						<div ng-repeat="item in self.controller.tabs['training'].listDataset track by $index">
 							<div class="datasets-info">
 								<div class="button ti ti-close" ng-click="self.onRemoveDataset('training', $index)"></div>
 								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
@@ -151,12 +151,12 @@
 			<wi-droppable container-style="{'flex':'1','display':'flex'}" onmouseover=this.style.overflowY='overlay'
 				onmouseout=this.style.overflowY='hidden' on-drop="self.drop('verify')"
 				style="display: flex;height: calc(100% - 67px); overflow: hidden;">
-				<div class="no-datasets" ng-show="!self.controller.listDataset['verify'].length" style="background-image:url('./bg-datasets.png')">
+				<div class="no-datasets" ng-show="!self.controller.tabs['verify'].listDataset.length" style="background-image:url('./bg-datasets.png')">
 				</div>
-				<div ng-show="self.controller.listDataset['verify'].length"
+				<div ng-show="self.controller.tabs['verify'].listDataset.length"
 					style="display: flex; flex: 1;flex-direction: column;">
 					<div style="height: 100%;">
-						<div ng-repeat="item in self.controller.listDataset['verify'] track by $index">
+						<div ng-repeat="item in self.controller.tabs['verify'].listDataset track by $index">
 							<div class="datasets-info">
 								<div class="button ti ti-close" ng-click="self.onRemoveDataset('verify', $index)"></div>
 								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
@@ -180,15 +180,15 @@
 			<wi-droppable container-style="{'flex':'1','display':'flex'}" onmouseover=this.style.overflowY='overlay'
 				onmouseout=this.style.overflowY='hidden' on-drop="self.drop('prediction')"
 				style="display: flex;height: calc(100% - 67px); overflow: hidden;">
-				<div class="no-datasets" ng-show="!self.controller.listDataset['prediction'].length" style="background-image:url('./bg-datasets.png')">
+				<div class="no-datasets" ng-show="!self.controller.tabs['prediction'].listDataset.length" style="background-image:url('./bg-datasets.png')">
 					<!-- <div class="ti ti-import" style="font-size: 40px;
 										margin-bottom: 20px;"></div>
 					<div>Drop datasets here</div> -->
 				</div>
-				<div ng-show="self.controller.listDataset['prediction'].length"
+				<div ng-show="self.controller.tabs['prediction'].listDataset.length"
 					style="display: flex; flex: 1;flex-direction: column;">
 					<div style="height: 100%;">
-						<div ng-repeat="item in self.controller.listDataset['prediction'] track by $index">
+						<div ng-repeat="item in self.controller.tabs['prediction'].listDataset track by $index">
 							<div class="datasets-info">
 								<div class="button ti ti-close" ng-click="self.onRemoveDataset('prediction', $index)">
 								</div>

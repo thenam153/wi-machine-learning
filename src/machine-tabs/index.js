@@ -13,6 +13,7 @@ var app = angular.module(moduleName, ['modelSelection',
     'datasetSelection',
     'trainingPrediction',
     'mlService',
+    'mlApi',
     'wiApi',
     'wiNeuralNetwork',
     'wiLogin',
@@ -33,7 +34,7 @@ app.component(componentName, {
         token: '<'
     }
 });
-MachineTabsController.$inject = ['$scope', '$timeout', 'wiToken', 'wiApi', '$http', 'wiDialog', 'ngDialog','mlService']
+MachineTabsController.$inject = ['$scope', '$timeout', 'wiToken', 'wiApi', '$http', 'wiDialog', 'ngDialog','mlService', 'mlApi']
 
 const LINEAR = 'linear';
 const LOGA = 'logarithmic';
@@ -51,7 +52,7 @@ const FAMILY_GROUP = 'main_family';
 const REMOVE = 0;
 const ADD = 1;  
 
-function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog, ngDialog, mlService) {
+function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog, ngDialog, mlService, mlApi) {
     $scope.isActive = function(index) {
         return self.current_tab === index;
     }
@@ -110,10 +111,19 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 properties: null
             }
         ];
-        self.listDataset = {
-            training: [],
-            verify: [],
-            prediction: []
+        self.tabs = {
+            training: {
+                listDataset: [],
+                selectionList: []
+            },
+            verify: {
+                listDataset: [],
+                selectionList: []
+            },
+            prediction: {
+                listDataset: [],
+                selectionList: []
+            }
         }
         self.typeInput = {
             label: 'Curve',
@@ -192,12 +202,17 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         })
     }
     this.onInputItemChange = function(i, item) {
-        item.currentSelect = i.label;
-        item.value = i;
+        if(i) {
+            item.currentSelect = i.label;
+            item.value = i;
+        }else {
+            item.currentSelect = LABEL_DEFAULT;
+        }
     }
     this.onRemoveInputItem = function($index) {
         if (self.curveSpecs.length > 2 && !self.curveSpecs[$index].isTarget) {
             self.curveSpecs.splice($index, 1);
+            self.updateCurveSpecs($index);
         }
     }
     this.onAddInputItem = function() {
@@ -207,6 +222,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             value: null,
             transform: LINEAR
         });
+        self.updateCurveSpecs();
     }
     this.getFnDrop = function(step) {
         if (!functionCacheSteps[step].drop) {
@@ -214,18 +230,32 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 $timeout(() => {
                     for (let node of datasets) {
                         let vlDs = angular.copy(node);
-                        let ds = self.listDataset[step].find( i => i.idDataset === vlDs.idDataset || i.idProject !== vlDs.idProject);
+                        if(!vlDs.idDataset) continue;
+                        let ds = self.tabs[step].listDataset.find( i => i.idDataset === vlDs.idDataset || i.idProject !== vlDs.idProject);
                         if (ds == null) {
+                            vlDs.active = true;
+                            vlDs.discrmnt = {active: true};
+                            // switch(step) {
+                            //     case STEP_TRAIN: 
+                            //         self.tabs[STEP_TRAIN].listDataset.push(vlDs);
+                            //         // self.makeListOfDatasetSelection();
+                            //     break;
+                            //     case STEP_VERIFY:
+                            //     case STEP_PREDICT:
+                            //         self.tabs[step].listDataset.push(vlDs);
+                            //         break;
+                            // }
                             switch(step) {
                                 case STEP_TRAIN: 
-                                    self.listDataset[STEP_TRAIN].push(vlDs);
-                                    self.makeListOfDatasetSelection();
-                                break;
                                 case STEP_VERIFY:
+                                    vlDs.curveSpecs = self.curveSpecs.map(i => {return {isTarget: i.isTarget, value: null};});
+                                break;
                                 case STEP_PREDICT:
-                                    self.listDataset[step].push(vlDs);
+                                    vlDs.curveSpecs = self.curveSpecs.filter(i => !i.isTarget).map(i => {return {isTarget: i.isTarget, value: null};});
                                     break;
                             }
+                            self.tabs[step].listDataset.push(vlDs);
+                            self.makeListOfDatasetSelection();
                         } else {
                             toastr.error('Already has a dataset or a dataset that is not in the same project');
                         }
@@ -239,22 +269,29 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         $timeout(() => {
             switch(step) {
                 case STEP_TRAIN:
-                    self.listDataset[STEP_TRAIN].splice($index, 1); 
-                    self.makeListOfDatasetSelection();
+                    self.tabs[STEP_TRAIN].listDataset.splice($index, 1); 
+                    // self.makeListOfDatasetSelection();
                 break;
                 case STEP_VERIFY:
                 case STEP_PREDICT:
-                    self.listDataset[step].splice($index, 1);
+                    self.tabs[step].listDataset.splice($index, 1);
                 break;
             }
+            self.makeListOfDatasetSelection();
         });
     }
     this.makeListOfDatasetSelection = function() {
         let preProcessCurves = [];
-        self.listDataset[STEP_TRAIN].forEach(i => {
-            preProcessCurves.push(...i.curves);
+        self.tabs[STEP_TRAIN].listDataset.forEach(i => {
+            preProcessCurves.push(i.curves);
         })
-        var curves = _.intersectionBy(preProcessCurves, 'name');
+        self.tabs[STEP_VERIFY].listDataset.forEach(i => {
+            preProcessCurves.push(i.curves);
+        })
+        self.tabs[STEP_PREDICT].listDataset.forEach(i => {
+            preProcessCurves.push(i.curves);
+        })
+        var curves = _.intersectionBy(...preProcessCurves, 'name');
         self.selectionList = [];
         switch(self.typeInput.type) {
             case FAMILY_CURVE:
@@ -542,4 +579,93 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     }
 
     // ================= training ==========================
+
+    this.updateTabTrainingPredictiong = function() {
+        console.log("switch");
+        self.makeListOfTAP();
+    }   
+    this.updateCurveSpecs = function(remove) {
+        if(remove) {
+            Object.keys(self.tabs).forEach((k) => {
+                self.tabs[k].listDataset.forEach((d) => {
+                    k === STEP_PREDICT ? 
+                    d.curveSpecs.splice(remove - 1, 1) :
+                    d.curveSpecs.splice(remove, 1);
+                });
+            });
+        }else {
+            Object.keys(self.tabs).forEach((k) => {
+                self.tabs[k].listDataset.forEach((d) => {
+                    d.curveSpecs.push({isTarget: false, value: null});
+                });
+            });
+        }
+    }
+    this.makeListOfTAP = function() {
+        Object.keys(self.tabs).forEach((k) => {
+            let list = [];
+            switch(k) {
+                case STEP_TRAIN:
+                case STEP_VERIFY:
+                        list = self.curveSpecs.filter((i, idx) => idx >= 0);
+                    break;
+                case STEP_PREDICT: 
+                        list = self.curveSpecs.filter((i, idx) => idx > 0);
+                    break;
+            }
+            self.tabs[k].selectionList = list;
+            self.tabs[k].listDataset.forEach((d) => {
+                d.listSelection = list.map(i => []);
+                list.forEach((l, idx) => {
+                    if(l.currentSelect !== LABEL_DEFAULT)
+                    {
+                        switch(self.typeInput.type) {
+                            case CURVE:
+                                    curve = d.curves.find(c => c.name === l.currentSelect);
+                                    d.listSelection[idx] = [{data: {label: curve.name}, properties: curve}];
+                                break;
+                            case FAMILY_CURVE:
+                                    d.listSelection[idx] = d.curves.filter(c => {
+                                        return c.LineProperty && c.LineProperty.name === l.currentSelect;
+                                    }).map((c) => {
+                                        return {
+                                            data: {
+                                                label: c.name
+                                            },
+                                            properties: c
+                                        }
+                                    });
+                                break;
+                            case FAMILY_GROUP:
+                                    d.listSelection[idx] = d.curves.filter(c => {
+                                        return c.LineProperty && c.LineProperty.familyGroup === l.currentSelect;
+                                    }).map((c) => {
+                                        return {
+                                            data: {
+                                                label: c.name
+                                            },
+                                            properties: c
+                                        }
+                                    });
+                                break;
+                        }
+                    }else {
+                        d.listSelection[idx] = [{data: {label: LABEL_DEFAULT}, properties: null}];
+                    }
+                    d.curveSpecs[idx].currentSelect =  d.listSelection[idx][0].data.label; 
+                })
+            })
+        });
+    }
+    this.onClickDiscriminator = function(dataset) {
+        wiDialog.discriminator(dataset.discrmnt, dataset.curves, function(res) {
+            dataset.discrmnt = res;
+            console.log(res);
+        })
+    }
+    this.onItemChangeTabTAP = function(v, item) {
+        // if(!v) item.value = 
+        item.value = v;
+        console.log(v);
+    }
 }
