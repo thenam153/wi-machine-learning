@@ -4,66 +4,78 @@ const serviceName = 'mlApi';
 angular.module(serviceName, ['wiApi']).factory(serviceName, function($http, $timeout, wiApi) {
     return new mlApi($http, $timeout, wiApi);
 });
-function httpPromise(url, data, method, options = {}) {
-    return new Promise(function(resolve, reject) {
-        $http({
-            method: method,
-            url: url,
-            data: data,
-            headers: {
-                service: options.service
-            }
-        }).then((response) => {
-            // console.log(response);
-            if (response.status === 200) resolve(response.data);
-            if (response.status === 201) resolve(response.data);
-            else reject(new Error(response.data.reason));
-        }, (err) => {
-            if (err.status === 400 && err.data.status === 'existed') {
-                resolve({ existed: true });
-            }
-            reject(err);
-        })
-    });
-}
 function mlApi($http, $timeout, wiApi) {
+    function httpPromise(url, data, method, options = {}) {
+        return new Promise(function(resolve, reject) {
+            $http({
+                method: method,
+                url: url,
+                data: data,
+                headers: {
+                    service: options.service
+                }
+            }).then((response) => {
+                // console.log(response);
+                if (response.status === 200) resolve(response.data);
+                if (response.status === 201) resolve(response.data);
+                else reject(new Error(response.data.reason));
+            }, (err) => {
+                if (err.status === 400 && err.data.status === 'existed') {
+                    resolve({ existed: true });
+                }
+                reject(err);
+            })
+        });
+    }
+    const self = this;
     this.currentModel;
     this.setBaseCurrentModel = function(model) {
         this.currentModel = model;
     }
     this.getBaseCurrentModel = () => self.currentModel;
     
+    this.postCreateModel = postCreateModel;
     function postCreateModel(payload) {
         return httpPromise(`${self.getBaseCurrentModel().url}/api/model/create/${self.getBaseCurrentModel().create}`, payload, 'POST', { service: self.getBaseCurrentModel().service });
     }
-    this.postCreateModel = postCreateModel;
+    this.postCreateBucketId = postCreateBucketId;
     function postCreateBucketId(payload) {
         return httpPromise(`${self.getBaseCurrentModel().url}/api/data`, payload, 'POST', { service: self.getBaseCurrentModel().service });
     }
-    this.postCreateBucketId = postCreateBucketId;
+    this.putDataOfTrain = putDataOfTrain;
     function putDataOfTrain(payload) {
         return httpPromise(`${self.getBaseCurrentModel().url}/api/data`, payload, 'PUT', { service: self.getBaseCurrentModel().service });
     }
-    this.putDataOfTrain = putDataOfTrain;
+    this.postTrainByBucketData = postTrainByBucketData;
     function postTrainByBucketData(payload) {
         return httpPromise(`${self.getBaseCurrentModel().url}/api/model/train_by_bucket_data`, payload, 'POST', { service: self.getBaseCurrentModel().service });
     }
-    this.postTrainByBucketData = postTrainByBucketData;
+    this.postPredict = postPredict;
     function postPredict(payload) {
         return httpPromise(`${self.getBaseCurrentModel().url}/api/model/predict`, payload, 'POST', { service: self.getBaseCurrentModel().service });
     }
-    this.postPredict = postPredict;
+    this.getBucket = getBucket;
     function getBucket() {
         return httpPromise(`${self.getBaseCurrentModel().url}/api/bucket/list`, {}, 'GET', { service: self.getBaseCurrentModel().service });
     }
-    this.getBucket = getBucket;
-    function fillNullInCurve(fillArr, curve, cb) {
-        for (let i in fillArr) {
-            curve.value.splice(fillArr[i], 0, NaN);
-        }
-        cb && cb(curve);
+    this.getSomVisualizeData = getSomVisualizeData;
+    function getSomVisualizeData(modelId) {
+        return httpPromise(`${self.getBaseCurrentModel().url}/api/model/som/${modelId}`, {}, 'GET', { service: self.getBaseCurrentModel().service });
     }
     this.fillNullInCurve = fillNullInCurve;
+    function fillNullInCurve(fillArr, curves) {
+        return new Promise(resolve => {
+            async.eachSeries(curves, (curve, next) => {
+                for (let i in fillArr) {
+                    curve.value.splice(fillArr[i], 0, NaN);
+                }
+                next();
+            }, err => {
+                resolve(curves);
+            })
+        })
+    }
+    this.filterNull = filterNull;
     function filterNull(curves) {
         // let WELL = [];
         let l = curves.length;
@@ -92,8 +104,7 @@ function mlApi($http, $timeout, wiApi) {
             // well: WELL
         };
     }
-    this.fillNullInCurve = fillNullInCurve;
-
+    this.getDataCurves = getDataCurves;
     function getDataCurves(dataset, curves) {
         return new Promise((resolve) => {
             let listInputCurves = [];
@@ -109,7 +120,7 @@ function mlApi($http, $timeout, wiApi) {
                 //     });
                 // }
                 async.eachOfSeries(curves, (curve, idx, next) => {
-                    let c = dataset.curves.find(v => v.name === curve.name);
+                    let c = dataset.curves.find(v => v.name === curve.value.name);
                     if(!c) {
                         return resolve([]);
                     }
@@ -127,24 +138,19 @@ function mlApi($http, $timeout, wiApi) {
             }
         });
     }
-    this.getDataCurves = getDataCurves;
+   
     function getDataCurveAndFilter(dataset, curves) {
         return new Promise((resolve, reject) => {
             // let arrNaN = [];
             let inputCurveData = [];
-            async.eachSeries(dataset.inputCurveSpecs, function(input, _cb) {
-                (async() => {
-                    let curve = dataset.curves.find(i => {
-                        return i.name === input.currentSelect;
-                    });
+            async.eachSeries(dataset.curveSpecs, async function(input) {
+                    let curve = input.value;
                     let dataCurve = await wiApi.getCurveDataPromise(curve.idCurve);
                     for (let i in dataCurve) {
                         dataCurve[i] = parseFloat(dataCurve[i].x, 4);
                         if (isNaN(dataCurve[i])) curves[i] = false;
                     }
                     inputCurveData.push(dataCurve);
-                    _cb();
-                })();
             }, err => {
                 if (err || !inputCurveData || !inputCurveData.length) {
                     console.log(err);
@@ -267,28 +273,25 @@ function mlApi($http, $timeout, wiApi) {
                         })();
                     }
                 },
-                function(err) {
+                async function(err) {
                     console.log('done!', curvesData);
-                    (async() => {
-                        let data = await wiApi.getCurveDataPromise(curvesInDataset[0].idCurve);
-                        // console.log(data);
-                        length = data.length;
-                        for (let i = 0; i <= length; i++) {
-                            result.push(evaluate(discriminator, i));
-                        }
-                        resolve(result);
-                    })();
+                    let data = await wiApi.getCurveDataPromise(curvesInDataset[0].idCurve);
+                    // console.log(data);
+                    length = data.length;
+                    for (let i = 0; i <= length; i++) {
+                        result.push(evaluate(discriminator, i));
+                    }
+                    resolve(result);
                 }
             );
         })
     }
     this.evaluateExpr = evaluateExpr;
-    async function saveCurveAndCreatePlot(_step, curveInfo, dataset, callback, errorCurveInfo) {
+    async function saveCurveAndCreatePlot(tab, curveInfo, dataset, callback, errorCurveInfo, targetGroupsInfo) {
         saveCurve(curveInfo, dataset, function(curveProps) {
             function handle(errorCurveInfo) {
                 let orderNum = dataset.idDataset.toString() + '1';
-                let errorCurve = null;
-                let inCurves = dataset.inputCurveSpecs.map((ipt) => {
+                let inCurves = dataset.curveSpecs.map((ipt) => {
                     let i = dataset.curves.find((ip) => {
                         return ip.name === ipt.value.name
                     });
@@ -308,11 +311,21 @@ function mlApi($http, $timeout, wiApi) {
                         maxValue: (errorCurveInfo | {}).maxValue
                     })
                 }
-                createLogPlot(_step, dataset, inCurves, orderNum, function() {
+                createLogPlot(tab, dataset, inCurves, orderNum, function() {
                     callback();
                 });
             }
-            handle();
+            if(errorCurveInfo) {
+                saveCurve(errorCurveInfo, dataset, function(errorCurveProps) {
+                    if (errorCurveProps) handle(errorCurveProps);
+                })
+            } else if(targetGroupsInfo) {
+                saveCurve(targetGroupsInfo, dataset, function(targetGroupsCurveProps) {
+                    if (targetGroupsCurveProps) handle(targetGroupsCurveProps);
+                })
+            } else {
+                handle();
+            }
         })
     }
     this.saveCurveAndCreatePlot = saveCurveAndCreatePlot;
@@ -337,32 +350,45 @@ function mlApi($http, $timeout, wiApi) {
             payload.curveName = curveInfo.name
         }
         let newCurve = await wiApi.createCurvePromise(payload);
-        // console.log(newCurve);
         callback(newCurve);
     }
-    function getSomVisualize() {
-        if (self.currentSelectedModel && self.currentSelectedModel['som-visualization']) {
-            $http({
-                    method: 'GET',
-                    url: `${self.currentSelectedModel.url}/api/model/som/${self.stateWorkflow.model_id}`,
-                })
-                .then((res) => {
-                    console.log(res);
-                    if (res.status === 201) {
-                        $timeout(() => {
-                            self.showSomVisualize = true;
-                            self.dataSomVisualize = res.data;
-                            console.log(self.dataSomVisualize);
-                        })
-                    }
-                })
-        } else {
-            $timeout(() => {
-                self.showSomVisualize = false;
+    this.createLogPlot = createLogPlot;
+    function createLogPlot(tab, dataset, inCurves, orderNum, callback) {
+        console.log('_step', tab);
+        let idPlot = tab.plot.idPlot;
+        let currentOrderNum = orderNum;
+        wiApi.createDepthTrackPromise({
+                idPlot: idPlot,
+                width: 0.75,
+                orderNum: currentOrderNum.slice(0, currentOrderNum.length - 1) + '0',
+                widthUnit: 'inch',
+                idWell: dataset.idWell
             })
-        }
+            .then((res) => {
+                async.eachSeries(inCurves, async function(curve) {
+                    let trackData = await wiApi.createLogTrackPromise({
+                        idPlot: idPlot,
+                        orderNum: currentOrderNum,
+                        title: curve.name,
+                        width: 1
+                    });
+                    let line = wiApi.createLinePromise({
+                                    idTrack: trackData.idTrack,
+                                    idCurve: curve.idCurve,
+                                    orderNum: currentOrderNum
+                                })
+                    if (line && curve.minValue != undefined && curve.maxValue != undefined) {
+                            line.minValue = curve.minValue;
+                            line.maxValue = curve.maxValue;
+                            await wiApi.editLinePromise(line);
+                        }
+                }, function(err) {
+                    if (err) return err;
+                    callback()
+                })
+            })
     }
-    this.getSomVisualize = getSomVisualize;
+    this.createBlankPlot = createBlankPlot;
     function createBlankPlot(idProject, idMlProject, namePlot) {
         return wiApi.createLogplotPromise({
             idProject: idProject,
@@ -371,20 +397,16 @@ function mlApi($http, $timeout, wiApi) {
             option: 'blank-plot'
         });
     }
-    this.createBlankPlot = createBlankPlot;
     this.createModelAndBucketId = createModelAndBucketId;
-    function createModelAndBucketId(mlProject, params, dims) {
+    function createModelAndBucketId(mlProject, dims) {
         return new Promise((resolve, reject) => {
             let payload = {};
-            // let params = self.currentSelectedModel.payload.params;
-            params.forEach(i => {
-                payload[i.name] = i.value;
+            self.currentModel.payload.params.forEach(i => {
+                payload[i.name] = i.value.properties || i.value;
             })
-            // console.log(payload);
+            var modelId, bucketId
             postCreateModel(payload)
                 .then((resModel) => {
-                    // self.stateWorkflow.model_id = resModel.model_id
-                    // self.stateWorkflow.bucket_id = self.stateWorkflow.model_id + localStorage.getItem('username') + self.mlProjectSelected.idMlProject\
                     modelId = resModel.model_id;
                     bucketId = `${modelId}_${localStorage.getItem('username')}_${mlProject.idMlProject}`;
                     let payload1 = {
@@ -398,14 +420,14 @@ function mlApi($http, $timeout, wiApi) {
                                 postCreateBucketId(payload1)
                                     .then((resBucketId) => {
                                         resolve({
-                                            model_id: modelId,
-                                            bucket_id: bucketId
+                                            modelId: modelId,
+                                            bucketId: bucketId
                                         })
                                     })
                             } else {
                                 resolve({
-                                    model_id: modelId,
-                                    bucket_id: bucketId
+                                    modelId: modelId,
+                                    bucketId: bucketId
                                 })
                             }
                         })
@@ -414,5 +436,94 @@ function mlApi($http, $timeout, wiApi) {
                     reject(err);
                 })
         })
+    }
+    this.createPayloadForTrain = createPayloadForTrain;
+    function createPayloadForTrain(modelId, bucketId) {
+        if (!self.currentModel.payload.train) {
+            return {
+                model_id: modelId,
+                bucket_id: bucketId
+            }
+        } else {
+            let payload = {
+                model_id: modelId,
+                bucket_id: bucketId
+            };
+            self.currentModel.payload.train.forEach(i => {
+                payload[i.name] = i.value.properties || i.value;
+            })
+            return payload
+        }
+    }
+    this.transformData = transformData;
+    function transformData(dataCurves, curveSpecs) {
+        return new Promise(resolve => {
+            let input = dataCurves.length === curveSpecs.length ? curveSpecs.filter(i => i) : curveSpecs.filter((i, idx) => idx > 0);
+            dataCurves.forEach((curve, idx) => {
+                let transform = input[idx].transform;
+                switch(transform) {
+                    case 'logarithmic':
+                        for (let i in curve) {
+                            if (isNaN(curve[i])) continue;
+                            try {
+                                curve[i] = Math.log10(curve[i]);
+                                if (!isFinite(curve[i])) curve[i] = NaN;
+                            }
+                            catch (err) {
+                                curve[i] = NaN;
+                            }
+                        }
+                        break;
+                    case 'exponential':
+                        for (let i in curve) {
+                            if (isNaN(curve[i])) continue;
+                            try {
+                                curve[i] = Math.pow(10, curve[i]);
+                                if (!isFinite(curve[i])) curve[i] = NaN;
+                            }
+                            catch (err) {
+                                curve[i] = NaN;
+                            }
+                        }
+                }
+            });
+            resolve(dataCurves);
+        })
+    }
+    this.invTransformData = invTransformData;
+    function invTransformData(curve, curveSpecs) {
+        let transform = curveSpecs[0].transform;
+        switch(transform) {
+            case 'logarithmic':
+                for (let i in curve) {
+                    if (isNaN(curve[i])) {
+                        curve[i] = null;
+                        continue;
+                    }
+                    try {
+                        curve[i] = Math.pow(10, curve[i]);
+                        if (!isFinite(curve[i])) curve[i] = NaN;
+                    }
+                    catch (err) {
+                        curve[i] = 0;
+                    }
+                }
+                break;
+            case 'exponential':
+                for (let i in curve) {
+                    if (isNaN(curve[i])) {
+                        curve[i] = null;
+                        continue;
+                    }
+                    try {
+                        curve[i] = Math.log10(curve[i]);
+                        if (!isFinite(curve[i])) curve[i] = NaN;
+                    }
+                    catch (err) {
+                        curve[i] = 0;
+                    }
+                }
+        }
+        return curve;
     }
 }

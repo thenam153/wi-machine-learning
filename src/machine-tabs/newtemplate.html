@@ -6,20 +6,24 @@
             <span class="menu-item" ng-class="{active: self.current_tab == 2}" ng-click="self.current_tab = 2;self.updateTabTrainingPredictiong();">Training and Prediction</span>
         </div>
 		<div class="active menu-item">
-            <span ng-if="self.currentSelectedMlProject" ng-click="self.findAllProjects();" class="ml-project-name">{{self.currentSelectedMlProject ? self.currentSelectedMlProject: ''}}</span>
-            <div ng-if="self.currentSelectedMlProject" ng-click="self.renameProject();" style="align-items: center;margin-left: 10px; display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
+            <span ng-click="self.OpenProject();" class="ml-project-name">{{self.project ? self.project.name: ''}}</span>
+            <div ng-click="self.renameProject();" ng-if="self.project" style="align-items: center;margin-left: 10px; display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
                 <span  class="rename-16x16" style="margin-right: 10px;filter: saturate(0) brightness(6)"></span>
                 <span>RENAME</span>
             </div>
-            <div ng-click="self.findAllProjects();" style="align-items: center;display: flex; background: #ffffff40; margin-left: 10px; padding: 5px 10px; border-radius: 2px;">
+            <div ng-click="self.OpenProject();" style="align-items: center;display: flex; background: #ffffff40; margin-left: 10px; padding: 5px 10px; border-radius: 2px;">
 				<span  class="ml-open-16x16" style="margin-right: 10px; filter: saturate(0) brightness(6)"></span>
 				<span>OPEN</span>
 			</div>
-			<div ng-click="self.saveMlProject();" style="align-items: center;margin-left: 10px; display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
+			<div ng-click="self.saveProject();" ng-if="self.project" style="align-items: center;margin-left: 10px; display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
+				<span  class="ml-save-16x16" style="margin-right: 10px;filter: saturate(0) brightness(6)"></span>
+				<span>SAVE</span>
+            </div>
+            <div ng-click="self.createProject();" ng-if="!self.project" style="align-items: center;margin-left: 10px; display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
 				<span  class="ml-save-16x16" style="margin-right: 10px;filter: saturate(0) brightness(6)"></span>
 				<span>SAVE</span>
 			</div>
-			<div ng-click="self.createNewProject();" style="align-items: center;margin-left: 10px;  display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
+			<div ng-click="self.newProject();" style="align-items: center;margin-left: 10px;  display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
 				<span  class="ml-new-16x16" style="margin-right: 10px;filter: saturate(0) brightness(6)"></span>
 				<span>NEW</span>
 			</div>
@@ -139,7 +143,7 @@
                 class="ngdialog-button ngdialog-button-primary" ng-click="self.acceptRestore()">
                 <i style="margin-right:10px;"class="ti-arrow-left" aria-hidden="true"></i>
                 <b>{{self.curPrj}}</b> </a>
-                <a style="border: 1px solid #0077be;" class="ngdialog-button ngdialog-button-primary" ng-click="self.findAllProjects()">Other<i style="margin-left:10px;"class="ti-arrow-right" aria-hidden="true"></i></a>
+                <a style="border: 1px solid #0077be;" class="ngdialog-button ngdialog-button-primary" ng-click="self.OpenProject()">Other<i style="margin-left:10px;"class="ti-arrow-right" aria-hidden="true"></i></a>
             </div>
         </div>
     </div>
@@ -170,18 +174,18 @@
             <div style="display: flex; align-items: center; justify-content: space-between;">
                 <div>Open Projects</div>
                 <input class="searchInput" type="text" placeholder="Search project" ng-model="searchProject">
-                <a class="new-circle" ng-click="self.createNewProject()"><i class="fa fa-plus"></i></a>
+                <!-- <a class="new-circle" ng-click="self.createNewProject()"><i class="fa fa-plus"></i></a> -->
             </div>
             <div style="border-bottom: 1px solid #f1f0f0; margin-bottom: 15px;"></div>
 
             <div class="newDialogContent" style="overflow-y: auto; max-height: 203px;" >
                 <ul class="list-project">
-                    <li ng-repeat="project in self.allProjects | filter:searchProject track by $index"
-                        ng-click="self.mlNameProject = project.name;self.mlProjectCache=project;"
-                        ng-class="{selectedProject: self.mlNameProject == project.name}">
+                    <li ng-repeat="project in allProjects | filter:searchProject track by $index"
+                        ng-click="clickProject(project);"
+                        ng-class="{selectedProject: projectSelected.name == project.name}">
                         <span ng-bind="project.name"></span>
                         <span class="fa fa-times-circle del"
-                              ng-click="event.stopPropagation(); self.delProject(project);"></span>
+                              ng-click="event.stopPropagation(); self.deleteProject(project);"></span>
                     </li>
                 </ul>
             </div>
@@ -192,7 +196,7 @@
                 </div>
                 <div>
                     <a class="ngdialog-button ngdialog-button-primary"
-                       ng-click="self.openMlProject(self.mlProjectCache);">OPEN</a>
+                       ng-click="openProject();">OPEN</a>
                 </div>
             </div>
 
@@ -217,8 +221,8 @@
                 Please enter the project name:</div>
             <div class="newDialogContent">
                 <form>
-                    <input style="flex: 1;" type="text" placeholder="Enter project name" ng-model="self.nameNewProject">
-                    <input style="max-width: fit-content;" type="submit" value="New" class="ngdialog-button ngdialog-button-primary" ng-click="self.acceptNewPrj()">
+                    <input style="flex: 1;" type="text" placeholder="Enter project name" ng-model="self.nameProject">
+                    <input style="max-width: fit-content;" type="submit" value="New" class="ngdialog-button ngdialog-button-primary" ng-click="createNewProject(nameProject)">
                 </form>
             </div>
         </div>
@@ -241,8 +245,8 @@
                 Please enter new name:</div>
             <div class="newDialogContent">
                 <form>
-                    <input style="flex: 1;" type="text" placeholder="Enter project name" ng-model="self.currentSelectedMlProject">
-                    <input style="max-width: fit-content;" type="submit" value="Rename" class="ngdialog-button ngdialog-button-primary" ng-click="self.acceptRenamePrj()">
+                    <input style="flex: 1;" type="text" placeholder="Enter project name" ng-model="self.projectName">
+                    <input style="max-width: fit-content;" type="submit" value="Rename" class="ngdialog-button ngdialog-button-primary" ng-click="rename()">
                 </form>
             </div>
         </div>
@@ -257,7 +261,7 @@
             </div>
             <div style="border-bottom: 1px solid #f1f0f0; margin-bottom: 15px;"></div>
             <div style="font-weight: 300; color: #666; font-size: 13px; font-style: italic;">
-                Are you sure want delete this project</b></div>
+                Are you sure want delete project <b>{{projectDelete.name}}</b></div>
             <div class="newDialogContent">
                 <form style="justify-content: flex-end;">
                         <a style="background: #fff;
@@ -269,9 +273,9 @@
                         text-overflow: ellipsis;
                         letter-spacing: 0;
                         text-transform: none;" 
-                        class="ngdialog-button ngdialog-button-primary" ng-click="self.cancelDeletePrj()"> CANCEL </a>
+                        class="ngdialog-button ngdialog-button-primary" ng-click="cancelDelete()"> CANCEL </a>
                     <div>
-                        <input type="submit" style="max-width: fit-content; border: 1px solid #3188e6;" value="DELETE" class="ngdialog-button ngdialog-button-primary" ng-click="self.acceptDeletePrj()">
+                        <input type="submit" style="max-width: fit-content; border: 1px solid #3188e6;" value="DELETE" class="ngdialog-button ngdialog-button-primary" ng-click="okDelete()">
                     </div>
                 </form>
             </div>

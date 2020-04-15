@@ -102,9 +102,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         self.current_tab = 0;
         initMlProject();
         if (self.token && self.token.length) window.localStorage.setItem('token', self.token);
-        console.log(mlService.value);
+        // console.log(mlService.value);
     }
     function initMlProject() {
+        self.project = null;
         self.selectionList = [
             {
                 label: LABEL_DEFAULT,
@@ -149,44 +150,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 transform: LINEAR
             }
         ];
-        self.dataSomVisualize = {
-            distributionMaps: [{
-                "header": "feature_0",
-                'row': [{ "cells": [] }]
-            }],
-            visualizationMap: [{
-                "cells": [{
-                    "features": [],
-                    "label": null
-                }]
-            }]
-        }
-        self.steps = {
-            training: {
-                datasets: [], // list dataset
-                selectionList: [], // selection list map list dataset
-                target: true,
-                name: 'Train',
-                index: 0
-            },
-            verify: {
-                datasets: [],
-                selectionList: [],
-                target: true,
-                name: 'Verify',
-                index: 1
-            },
-            prediction: {
-                datasets: [],
-                selectionList: [],
-                target: false,
-                name: 'Predict',
-                index: 2
-            }
-        };
         self.stateWorkflow = {
             state: -1,
-            waitResult: false,
             model_id: null,
             bucket_id: null
         }
@@ -424,38 +389,44 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     // ================= modelSelection ====================
     this.modelSelection = {}
     const dataJsonModels = require('../../wi-uservice.json');
-    this.modelSelection.listTypeModel = dataJsonModels.type.map(t => {
-        return {
-            label: t.label,
-            type: t.type
+    this.modelSelection.initModelSelection = function() {
+        self.modelSelection.listTypeModel = dataJsonModels.type.map(t => {
+            return {
+                label: t.label,
+                type: t.type
+            }
+        }).sort((a, b) => {
+            let nameA = a.label.toUpperCase();
+            let nameB = b.label.toUpperCase();
+            return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+        });
+        self.modelSelection.listModel = {};
+        self.modelSelection.listTypeModel.forEach(t => {
+            self.modelSelection.listModel[t.type] = dataJsonModels.model
+                                        .filter(i => i.type == t.type)
+                                        .map(m => {
+                                            return {
+                                                label: m.label,
+                                                name: m.name,
+                                                type: m.type,
+                                                value: m
+                                            } 
+                                        })
+                                        .sort((a, b) => {
+                                            let nameA = a.label.toUpperCase();
+                                            let nameB = b.label.toUpperCase();
+                                            return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+                                        });
+    
+        });
+        self.modelSelection.currentTypeModel = self.modelSelection.listTypeModel[0];
+        self.modelSelection.currentModel = self.modelSelection.listModel[self.modelSelection.currentTypeModel.type][0];
+        self.modelSelection.currentModel.value.payload.params.forEach(i => self.modelSelection.initPropertiesPayload(i))
+        if(self.modelSelection.currentModel.value.payload.train) {
+            self.modelSelection.currentModel.value.payload.train.forEach(i => self.modelSelection.initPropertiesPayload(i))
         }
-    }).sort((a, b) => {
-        let nameA = a.label.toUpperCase();
-        let nameB = b.label.toUpperCase();
-        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
-    });
-    this.modelSelection.listModel = {};
-    this.modelSelection.listTypeModel.forEach(t => {
-        this.modelSelection.listModel[t.type] = dataJsonModels.model
-                                    .filter(i => i.type == t.type)
-                                    .map(m => {
-                                        return {
-                                            label: m.label,
-                                            name: m.name,
-                                            type: m.type,
-                                            value: m
-                                        } 
-                                    })
-                                    .sort((a, b) => {
-                                        let nameA = a.label.toUpperCase();
-                                        let nameB = b.label.toUpperCase();
-                                        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
-                                    });
-
-    });
-    this.modelSelection.currentTypeModel = this.modelSelection.listTypeModel[0];
-    this.modelSelection.currentModel = this.modelSelection.listModel[this.modelSelection.currentTypeModel.type][0];
-    console.log(this.modelSelection.currentTypeModel, this.modelSelection.currentModel, this.modelSelection.listTypeModel, this.modelSelection.listModel);
+        // console.log(self.modelSelection.currentTypeModel, self.modelSelection.currentModel, self.modelSelection.listTypeModel, self.modelSelection.listModel);
+    }
     this.modelSelection.onChangeTypeModel = function(item) {
 		self.modelSelection.currentTypeModel = item;
 		self.modelSelection.currentModel = self.modelSelection.listModel[self.modelSelection.currentTypeModel.type][0];
@@ -577,12 +548,13 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     this.getModelSelection = function() {
         return self.modelSelection;
     }
-
+    this.modelSelection.initModelSelection();
     // ================= training ==========================
 
     this.updateTabTrainingPredictiong = function() {
         console.log("switch");
         self.makeListOfTAP();
+        mlApi.setBaseCurrentModel(self.modelSelection.currentModel.value);
     }   
     this.updateCurveSpecs = function(remove) {
         if(remove) {
@@ -613,7 +585,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                         list = self.curveSpecs.filter((i, idx) => idx > 0);
                     break;
             }
-            self.tabs[k].selectionList = list;
+            // self.tabs[k].selectionList = list;
             self.tabs[k].listDataset.forEach((d) => {
                 d.listSelection = list.map(i => []);
                 list.forEach((l, idx) => {
@@ -663,9 +635,212 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             console.log(res);
         })
     }
-    this.onItemChangeTabTAP = function(v, item) {
+    this.onItemChangeTabTAP = function(v, arr) {
         // if(!v) item.value = 
-        item.value = v;
+        arr[0].value = v;
+        if(arr[1] && arr[0].isTarget) {
+            if(v) {
+                if(arr[2] == 'Verify') {
+                    arr[1].resultCurveName = `${v.name}-${self.modelSelection.currentModel.value.infix}-${arr[2]}`;
+                }else {
+                    self.tabs[STEP_PREDICT].listDataset.forEach(d => d.resultCurveName = `${v.name}-${self.modelSelection.currentModel.value.infix}-${arr[2]}`)
+                }
+            }else {
+                if(arr[2] == 'Verify') {
+                    arr[1].resultCurveName = `-${self.modelSelection.currentModel.value.infix}-${arr[2]}`;
+                }else {
+                    self.tabs[STEP_PREDICT].listDataset.forEach(d => d.resultCurveName = `-${self.modelSelection.currentModel.value.infix}-${arr[2]}`)
+                }
+            }
+        }
         console.log(v);
+    }
+    // ===========================================================================================
+
+    this.OpenProject = function() {
+        wiApi.getMlProjectListPromise()
+        .then((listMlProject) => {
+            // $timeout(() => {
+                $scope.allProjects = self.project ? listMlProject.filter(l => l.name != self.project.name).sort((a, b) => a.name.localeCompare(b.name)) :
+                listMlProject.sort((a, b) => a.name.localeCompare(b.name)) 
+                $scope.projectSelected = null;
+                $scope.openProject = function() {
+                    console.log($scope.projectSelected);
+                    if($scope.projectSelected) {
+                        self.project = $scope.projectSelected
+                        self.tabs[STEP_TRAIN].listDataset = self.project.content.tabs[STEP_TRAIN] || []
+                        self.tabs[STEP_VERIFY].listDataset = self.project.content.tabs[STEP_VERIFY] || []
+                        self.tabs[STEP_PREDICT].listDataset = self.project.content.tabs[STEP_PREDICT] || []
+                        self.typeInput = self.project.content.typeInput
+                        self.makeListOfDatasetSelection();
+                        self.curveSpecs = self.project.content.curveSpecs
+                        let currentTypeModel = self.modelSelection.listTypeModel.find(t => t.type === self.project.content.model.type);
+                        if(currentTypeModel) self.modelSelection.currentTypeModel = currentTypeModel;
+                        let currentModel = self.modelSelection.listModel[self.modelSelection.currentTypeModel.type].find(m => m.name === self.project.content.model.name);
+                        if(currentModel) {
+                            Object.assign(self.modelSelection.currentModel, self.project.content.model);
+                        }
+                    }
+                }
+                $scope.clickProject = function(project) {
+                    $scope.projectSelected = project;
+                }
+                ngDialog.open({
+                    template: 'templateOpenProject',
+                    className: 'ngdialog-theme-default',
+                    scope: $scope,
+                });
+            // })
+        });
+    }
+    this.renameProject = function() {
+        self.projectName = self.project.name;
+        $scope.rename = function() {
+            if(self.projectName) {
+                wiApi.editMlProjectPromise({
+                    name: self.projectName,
+                    idMlProject: self.project.idMlProject,
+                    content: {
+                        tabs: {
+                            training: self.tabs[STEP_TRAIN].listDataset,
+                            verify: self.tabs[STEP_VERIFY].listDataset,
+                            prediction: self.tabs[STEP_TRAIN].listDataset,
+                        },
+                        curveSpecs: self.curveSpecs,
+                        typeInput: self.typeInput,
+                        model: self.modelSelection.currentModel,
+                        state: self.project.content.state,
+                        modelId: self.project.content.modelId,
+                        bucketId: self.project.content.bucketId
+                    }
+                })
+                .then((mlProject) => {
+                    $timeout(() => {
+                        self.project = mlProject;
+                    })
+                    toastr.success('Rename project success', 'Success');
+                })
+                .catch(err => {
+                    toastr.error('Rename project fail', 'Error');
+                })
+                .finally(() => {
+                    ngDialog.close();
+                })
+            }
+            ngDialog.close();
+        }
+        ngDialog.open({
+            template: 'templateRenamePrj',
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        });
+    }
+    this.saveProject = function() {
+        wiApi.editMlProjectPromise({
+            name: self.project.name,
+            idMlProject: self.project.idMlProject,
+            content: {
+                tabs: {
+                    training: self.tabs[STEP_TRAIN].listDataset,
+                    verify: self.tabs[STEP_VERIFY].listDataset,
+                    prediction: self.tabs[STEP_PREDICT].listDataset,
+                },
+                curveSpecs: self.curveSpecs,
+                typeInput: self.typeInput,
+                model: self.modelSelection.currentModel,
+                state: self.project.content.state,
+                modelId: self.project.content.modelId,
+                bucketId: self.project.content.bucketId
+            }
+        })
+        .then((mlProject) => {
+            // $timeout(() => {
+                toastr.success('Save project success', 'Success');
+               
+            // })
+        })
+        .catch((err) => {
+            toastr.error('Save project fail', 'Error');
+        })
+        .finally(() =>  ngDialog.close())
+    }
+    this.createProject = function() {
+        self.nameProject = "default";
+        $scope.createNewProject = function(name) {
+            if(self.nameProject) {
+                wiApi.createMlProjectPromise({
+                    name: self.nameProject,
+                    content: {
+                        tabs: {
+                            training: self.tabs[STEP_TRAIN].listDataset,
+                            verify: self.tabs[STEP_VERIFY].listDataset,
+                            prediction: self.tabs[STEP_PREDICT].listDataset,
+                        },
+                        curveSpecs: self.curveSpecs,
+                        typeInput: self.typeInput,
+                        model: self.modelSelection.currentModel,
+                        state: -1,
+                        modelId: null,
+                        bucketId: null
+                    }
+                })
+                .then((project) => {
+                    toastr.success('Create machine learing project success', 'Success')
+                    console.log(project);
+                    $timeout(() => {
+                        self.project = project;
+                    })
+                    // $timeout(() => {
+                    //     self.mlProjectSelected = mlProject;
+                    //     self.currentSelectedMlProject = mlProject.name;
+                    //     wiToken.setCurrentProjectName(mlProject.name);
+                    // })
+
+                })
+                .catch((err) => {
+                    toastr.error("Project's name already exists", 'Error')
+                })
+                .finally(() => {
+                    ngDialog.close();
+                })
+            }
+            ngDialog.close();
+        }
+        ngDialog.open({
+            template: 'templateNewPrj',
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        });
+    }
+    this.newProject = function() {   
+        initMlProject();
+        self.modelSelection.initModelSelection();
+    }
+    this.deleteProject = function(project) {
+        $scope.projectDelete = project;
+        $scope.cancelDelete = () => dialog.close();
+        $scope.okDelete = function() {
+            wiApi.deleteMlProjectPromise(project.idMlProject)
+                .then((res) => {
+                    toastr.success('Delete "' + project.name + '" Project Success', 'Success');
+                    if(self.project && project.idMlProject === self.project.idMlProject) {
+                            self.newProject();
+                    }
+                    $timeout(() => {
+                        $scope.allProjects = $scope.allProjects.filter((i) => i.idMlProject != project.idMlProject);
+                    })
+                })
+                .catch((err) => {
+                    toastr.error('Delete "' + project.name + '" Project Error', 'Error');
+                })
+                .finally(() => {
+                    dialog.close();
+                })
+        }
+        let dialog = ngDialog.open({
+            template: 'templateDeleteProject',
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        });
     }
 }

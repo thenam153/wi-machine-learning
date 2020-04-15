@@ -8,7 +8,8 @@ var app = angular.module(moduleName, ['wiDialog',
     'distributionMapModule',
     'visualizationMapModule',
     'somModelService',
-    'heatMap'
+    'heatMap',
+    'mlApi'
 ]);
 
 app.component(componentName, {
@@ -17,33 +18,33 @@ app.component(componentName, {
     style: require('./newstyle.less'),
     controllerAs: 'self',
     bindings: {
-        machineLearnSteps: '<',
-        inputCurveSpecs: '<',
-        targetCurveSpec: '<',
-        // setItemOnChanged: '<',
-        setOnItemCurveChanged: '<',
-        onToggleActiveOutput: '<',
-        onDiscriminator: '<',
-        runAll: '<',
-        runTask: '<',
+        // machineLearnSteps: '<',
+        // inputCurveSpecs: '<',
+        // targetCurveSpec: '<',
+        // // setItemOnChanged: '<',
+        // setOnItemCurveChanged: '<',
+        // onToggleActiveOutput: '<',
+        // onDiscriminator: '<',
+        // runAll: '<',
+        // runTask: '<',
 
 
-        somVisualize: '<',
-        showSomVisualize: '<',
+        // somVisualize: '<',
+        // showSomVisualize: '<',
 
-        stateWorkflow: '<',
-        setModelId: '<',
-        setBucketId: '<',
-        setState: '<',
-        saveMlProject: '<',
-        model: '<',
+        // stateWorkflow: '<',
+        // setModelId: '<',
+        // setBucketId: '<',
+        // setState: '<',
+        // saveMlProject: '<',
+        // model: '<',
         
         controller: '<'
     }
 });
-TrainingPredictionController.$inject = ['$scope', '$timeout', 'wiDialog', 'wiApi', '$http', 'somModelService']
+TrainingPredictionController.$inject = ['$scope', '$timeout', 'wiDialog', 'wiApi', '$http', 'somModelService', 'mlApi']
 
-function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, somModelService) {
+function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, somModelService, mlApi) {
     let self = this;
 
     $scope.tab = 1;
@@ -64,161 +65,315 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 
     });
     // ============================================================================
-    this.runTask = function() {
-        
+    this.modelId = null;
+    this.bucketId = null;
+    this.runTask = function(i) {
+        if(i == -1) {
+            mlApi.createModelAndBucketId({name: 1, idMlProject: 10}, self.controller.curveSpecs.length)
+            .then((res) => {
+                console.log(res);
+                self.modelId = res.modelId;
+                self.bucketId = res.bucketId;
+                train();
+            });
+        }else if(i == 1) {
+            verify();
+        }else if(i == 2) {
+            predict();
+        }
     }
 
-    // ============================================================================
-    this.getDistributionMaps = function(data) {
-        return data.distributionMaps;
+    function beforeTrain() {
+        return new Promise((resolve, reject) => {
+            async.each(self.controller.tabs['training'].listDataset, (dataset, _next) => {
+                mlApi.evaluateExpr(dataset, dataset.discrmnt)
+                .then(curves => {
+                    return mlApi.getDataCurveAndFilter(dataset, curves);
+                })
+                .then(dataCurves => {
+                    return mlApi.transformData(dataCurves, self.controller.curveSpecs);
+                })
+                .then(dataCurves => {
+                    let payload = {
+                        bucket_id: self.bucketId,
+                        data: dataCurves
+                    }
+                    return mlApi.putDataOfTrain(payload);
+                })
+                .then(res => {
+                    resolve();
+                })
+                .catch(err => {
+                    reject(err);
+                })
+            })
+        })
+    }
+    function trainData() {
+        return new Promise((resolve, reject) => {
+            let payload = mlApi.createPayloadForTrain(self.modelId, self.bucketId);
+            mlApi.postTrainByBucketData(payload)
+            .then((res) => {
+                toastr.success('Train success', 'Success');
+                resolve();
+            })
+            .catch((err) => {
+                toastr.error(err || 'Something was wrong', 'Error');
+                reject(err)
+            })
+        })
+    }
+    function afterTrain() {
+        return new Promise((resolve, reject) => {
+            // getSomVisualize();
+            getSomVisualize()
+            resolve();
+        })
+    }
+    function getSomVisualize() {
+        if(mlApi.getBaseCurrentModel()['som-visualization']) {
+            mlApi.getSomVisualizeData(self.modelId)
+            .then(data => {
+                console.log(data);
+            })
+        }
     }
 
-    this.getDistributionMapHeader = function(distributionMap) {
-        return distributionMap.header;
+    function train() {
+        beforeTrain()
+        .then(() => trainData())
+        .then(() => afterTrain())
+        .then(() => console.log('Success'))
+        .catch(() => console.log('Error'))
     }
-
-    this.getDistributionMapRows = function(distributionMap) {
-        return distributionMap.rows;
+    function verify() {
+        beforeVerify()
+        .then(() => console.log('Success'))
+        .catch(() => console.log('Error'))
     }
-
-    this.getDistributionMapCells = function(row) {
-        return row.cells;
+    function predict() {
+        beforePredict()
+        .then(() => console.log('Success'))
+        .catch(() => console.log('Error'))
     }
-
-    this.getDistributionMapWeight = function(cell) {
-        return cell.weight;
+    function beforeVerify() {
+        return new Promise((resolve, reject) => {
+            mlApi.createBlankPlot(1, 10, 'Verification Plot')
+            .then((plot) => {
+                self.controller.tabs['verify'].plot = plot;
+                self.controller.tabs['verify'].plot.username = localStorage.getItem('username') || ''
+                async.each(self.controller.tabs['verify'].listDataset, (dataset, _next) => {
+                    mlApi.evaluateExpr(dataset, dataset.discrmnt)
+                    .then(curves => {
+                        return mlApi.getDataCurveAndFilter(dataset, curves);
+                    })
+                    .then(dataCurves => {
+                        return mlApi.transformData(dataCurves, self.controller.curveSpecs);
+                    })
+                    .then(dataCurves => {
+                        // dataCurves.pop();
+                        dataCurves.shift();
+                        let payload = {
+                            features: dataCurves,
+                            model_id: self.modelId
+                        }
+                        return mlApi.postPredict(payload);
+                    })
+                    .then(res => {
+                        return resultVerify(res, dataset);
+                    })
+                    .then(() => {
+                        _next();
+                    })
+                    .catch(err => {
+                        _next(err);
+                    })
+                }, err => {
+                    err ? reject() : resolve()
+                })
+            })
+        })
     }
+    function resultVerify(res, dataset) {
+        return new Promise((resolve, reject) => {
+            let value = mlApi.invTransformData(res.target, self.controller.curveSpecs);
+            let target = {
+                name: "target",
+                value: value
+            }
+            let curveArr = [target];
+            if (res.target_groups) {
+                curveArr.push({
+                name: 'target_groups',
+                value: res.target_groups
+                })
+            };
+            let tCurve;
+            mlApi.getDataCurves(dataset, dataset.curveSpecs)
+            .then(curves => {
+                tCurve = curves.shift();
+                tCurve = mlApi.filterNull(curves);
+                return mlApi.fillNullInCurve(tCurve.fillNull, curveArr)
+            })
+            .then(curves => {
+                let idDataset = dataset.idDataset;
+                let idFamily = dataset.curveSpecs[0].value.idFamily;
+                let idWell = dataset.idWell;
+                let unit = dataset.curveSpecs[0].value.unit;
 
-    this.getDistributionMapScaledWeight = function(cell) {
-        return cell.scaledWeight;
-    }
-
-    this.getDistributionMapLabel = function(cell) {
-        return cell.label;
-    }
-
-    this.distributionMapClickFn = function(event, cell) {
-        console.log(cell);
-    }
-
-    this.distributionMapColors = ["#FFFFDD", "#AAF191", "#80D385", "#61B385", "#3E9583", "#217681", "#285285", "#1F2D86", "#000086"];
-    this.distributionMapColorRange = d3.range(0, 1, 1.0 / (this.distributionMapColors.length - 1));
-    this.distributionMapColorRange.push(1);
-
-    this.getDistributionMapColors = function() {
-        return self.distributionMapColors;
-    }
-
-    this.distributionMapColorScale = d3.scaleLinear()
-        .domain(this.distributionMapColorRange)
-        .range(this.distributionMapColors)
-
-    // Visualization map function
-    this.getVisualizationMap = function(data) {
-        return data.visualizationMap;
-    }
-
-    this.getVisualizationMapCells = function(row) {
-        return row.cells;
-    }
-
-    this.getVisualizationMapFeatures = function(cell) {
-        return cell.features;
-    }
-
-    this.getVisualizationMapLabel = function(cell) {
-        return cell.label;
-    }
-
-    this.getVisualizationMapLabels = function(data) {
-        let labels = [];
-        for (i = 0; i < data.visualizationMap.length; i++) {
-            cells = data.visualizationMap[i].cells;
-            for (j = 0; j < cells.length; j++) {
-                label = cells[j].label;
-                if (!labels.includes(label)) {
-                    labels.push(label)
+                let target_groups = [], targetGroupsInfo = null;
+                let curveTarget = curves[0].value;
+                if (curves.length == 2) {
+                    target_groups = curves[1].value;
+                    targetGroupsInfo = {
+                        idDataset: idDataset,
+                        idFamily: idFamily,
+                        idWell: idWell,
+                        name: 'target_groups curve',
+                        data: target_groups,
+                        unit: ''
+                    }
                 }
+                let curveInfo = {
+                    idDataset: idDataset,
+                    idFamily: idFamily,
+                    idWell: idWell,
+                    name: dataset.resultCurveName,
+                    data: curveTarget,
+                    unit: unit || null
+                }
+                let errorCurveInfo = null, dataError = null;
+                if (mlApi.getBaseCurrentModel().type == 'regression') {
+                    dataError = curveTarget.map((a, i) => {
+                        return Math.abs((tCurve[i] - a) / a);
+                    })
+                    errorCurveInfo = {
+                        idDataset: idDataset,
+                        idFamily: idFamily,
+                        idWell: idWell,
+                        name: "error verify curve",
+                        data: dataError,
+                        unit: unit || null ,
+                        minValue: 0,
+                        maxValue: 1
+                    }
+                }
+                mlApi.saveCurveAndCreatePlot(self.controller.tabs['verify'], curveInfo, dataset, function() {
+                    resolve();
+                }, errorCurveInfo, targetGroupsInfo)
+            })
+        })
+    }
+    // function verifyData() {}
+    // function afterVerify() {}
+
+    function beforePredict() {
+        return new Promise((resolve, reject) => {
+            mlApi.createBlankPlot(1, 10, 'Prediction Plot')
+            .then(plot => {
+                self.controller.tabs['prediction'].plot = plot
+                self.controller.tabs['prediction'].plot.username = localStorage.getItem('username') || ''
+                async.each(self.controller.tabs['prediction'].listDataset, (dataset, _next) => {
+                    mlApi.evaluateExpr(dataset, dataset.discrmnt)
+                    .then(curves => {
+                        return mlApi.getDataCurveAndFilter(dataset, curves);
+                    })
+                    .then(dataCurves => {
+                        return mlApi.transformData(dataCurves, self.controller.curveSpecs)
+                    })
+                    .then(dataCurves => {
+                        let payload = {
+                            features: dataCurves,
+                            model_id: self.modelId
+                        }
+                        return mlApi.postPredict(payload);
+                    })
+                    .then(res => {
+                        return resultPredict(res, dataset)
+                    })
+                    .then(() => {
+                        _next();
+                    })
+                    .catch(err => {
+                        _next(err);
+                    })
+                }, err => {
+                    err ? reject() : resolve()
+                })
+            })
+        })
+    }
+    function resultPredict(res, dataset) {
+        return new Promise((resolve, reject) => {
+            let value = mlApi.invTransformData(res.target, self.controller.curveSpecs);
+            let target = {
+                name: "target",
+                value: value
+            }
+            let curveArr = [target];
+            if (res.target_groups) {
+                curveArr.push({
+                    name: 'target_groups',
+                    value: res.target_groups
+                    })
+            };
+            let tCurve;
+            mlApi.getDataCurves(dataset, dataset.curveSpecs)
+            .then(curves => {
+                tCurve = mlApi.filterNull(curves);
+                return mlApi.fillNullInCurve(tCurve.fillNull, [target])
+            })
+            .then(curves => {
+                let idDataset = dataset.idDataset;
+                // let idFamily = dataset.curveSpecs[0].value.idFamily;
+                let idWell = dataset.idWell;
+                // let unit = dataset.curveSpecs[0].value.unit;
+
+                let curveTarget = curves[0].value;
+                let target_groups = [], targetGroupsInfo = null;
+                if (curves.length == 2) {
+                    target_groups = curves[1].value;
+                    targetGroupsInfo = {
+                        idDataset: idDataset,
+                        // idFamily: idFamily,
+                        idWell: idWell,
+                        name: 'target_groups curve',
+                        data: target_groups,
+                        // unit: ''
+                    }
+                }
+                let curveInfo = {
+                    idDataset: idDataset,
+                    // idFamily: idFamily,
+                    idWell: idWell,
+                    name: dataset.resultCurveName,
+                    data: curveTarget,
+                    // unit: unit || null
+                }
+                wiApi.getCurveInfoPromise(self.controller.tabs['training'].listDataset[0].curveSpecs[0].value.idCurve)
+                .then(info => {
+                    curveInfo.idFamily = info.idFamily;
+                    curveInfo.unit = info.unit;
+                    if(targetGroupsInfo) {
+                        targetGroupsInfo.idFamily = info.idFamily;
+                        targetGroupsInfo.unit = info.unit;
+                    }
+                    mlApi.saveCurveAndCreatePlot(self.controller.tabs['prediction'], curveInfo, dataset, function() {
+                        resolve();
+                    }, null, targetGroupsInfo)
+                })
+            })
+        })
+    }
+
+    function isRun(dataset) {
+        for (let i of dataset.curveSpecs) {
+            if (!i.value) {
+                return false;
             }
         }
-        return labels;
+        return true;
     }
-
-    this.getVisualizationMapFeatureWeight = function(feature) {
-        return feature.weight;
-    }
-
-    this.getVisualizationMapFeatureScaledWeight = function(feature) {
-        return feature.scaledWeight;
-    }
-
-    this.getVisualizationMapFeatureNames = function(data) {
-        let featureHeaders = []
-        data.visualizationMap[0].cells[0].features.forEach(feature => {
-            featureHeaders.push(feature.header);
-        });
-        return featureHeaders;
-    }
-
-    this.getVisualizationMapFeatureName = function(feature) {
-        return feature.header;
-    }
-
-    this.visualizationMapClickFn = function(event, cell) {
-        console.log(cell);
-    }
-
-    this.visualizationMapLabelColors = [
-        '#0674da',
-        '#3aa2ff',
-        '#03bfda',
-        '#3da581',
-        '#51f5f5',
-        '#9362e6',
-        '#afe662'
-    ]
-
-    this.visualizationMapFeatureColors = [
-        '#0674da', '#3aa2ff', '#03bfda', '#3da581'
-    ]
-    this.heatmapColors = [
-        'hsla(100, 90%, 58%, 1)', 'hsla(90, 90%, 58%, 1)', 'hsla(80, 90%, 58%, 1)', 'hsla(70, 90%, 58%, 1)', 'hsla(60, 90%, 58%, 1)', 'hsla(50, 90%, 58%, 1)', 'hsla(40, 90%, 58%, 1)', 'hsla(30, 90%, 58%, 1)', 'hsla(20, 90%, 58%, 1)', 'hsla(10, 90%, 58%, 1)'
-    ]
-    // $scope.$watch(() => {
-    //     return self.somVisualize.visualizationMap;
-    // }, (newData, oldData) => {
-    //     console.log('change data', newData, oldData);
-    //     self.visualizationMapLabelColors = {};
-    //     let listLabel = [];
-    //     for (let i = 0; i < newData.length; i++) {
-    //         for (let j = 0; j < newData[i].cells.length; j++) {
-    //             listLabel.push(newData[i].cells[j].label);
-    //         }
-    //     }
-    //     listLabel = _.sortBy(_.uniq(listLabel)).map((i) => i);
-    //     console.log(listLabel)
-    //         // let z = d3.scaleOrdinal(d3.schemeBuGn[9])
-    //         // .domain(listLabel)
-    //     let z = d3.scaleLinear().domain([1, listLabel.length + 1])
-    //         .range(["#000086", "#FFFFDD"])
-    //     for (let i = 0; i < listLabel.length; i++) {
-    //         self.visualizationMapLabelColors[listLabel[i]] = z(i + 1);
-    //     }
-    // })
-    this.getFittedModel = async function() {
-        if (self.model['som-visualization']) {
-            $http({
-                    method: 'GET',
-                    url: `${self.model.url}/api/model/som/${self.model_id}`,
-                })
-                .then((res) => {
-                    console.log(res);
-                    if (res.status === 201) {
-                        $timeout(() => {
-                            self.somVisualize = res.data;
-                        })
-                    }
-                });
-        }
-    }
+    // function predictData() {}
+    // function afterPredict() {}
 }
