@@ -50,7 +50,7 @@
                         <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0; z-index: 1;">
                             <label class="switch">
                                 <input type="checkbox" ng-checked="dataset.active">
-                                <span class="slider round"></span>
+                                <span class="slider round" ng-click="self.onToggleActive(dataset)"></span>
                             </label>
                         </div>
                         <div class="table-block" style="width: 70px; min-width: 70px;" ng-click="self.controller.onClickDiscriminator(dataset)">
@@ -96,7 +96,7 @@
                         <div class="table-block" style="width: 70px; min-width: 70px; background: #fff; position: sticky; left: 0;z-index: 1;">
                             <label class="switch">
                                 <input type="checkbox" ng-checked="dataset.active">
-                                <span class="slider round" ng-click="self.onToggleActiveOutput(dataset)"></span>
+                                <span class="slider round" ng-click="self.onToggleActive(dataset)"></span>
                             </label>
                         </div>
                         <div class="table-block" style="width: 70px; min-width: 70px;" ng-click="self.controller.onClickDiscriminator(dataset)">
@@ -145,7 +145,7 @@
                         <div class="table-block" style="width: 70px; min-width: 70px; background: #fff; position: sticky; left: 0;z-index: 1;">
                             <label class="switch">
                                 <input type="checkbox" ng-checked="dataset.active">
-                                <span class="slider round" ></span>
+                                <span class="slider round" ng-click="self.onToggleActive(dataset)"></span>
                             </label>
                         </div>
                         <div class="table-block" style="width: 70px; min-width: 70px;" ng-click="self.controller.onClickDiscriminator(dataset)">

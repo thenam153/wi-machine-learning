@@ -102,6 +102,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         self.current_tab = 0;
         initMlProject();
         if (self.token && self.token.length) window.localStorage.setItem('token', self.token);
+        self.restoreProject();
         // console.log(mlService.value);
     }
     function initMlProject() {
@@ -657,7 +658,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     }
     // ===========================================================================================
 
-    this.OpenProject = function() {
+    this.openProject = function() {
         wiApi.getMlProjectListPromise()
         .then((listMlProject) => {
             // $timeout(() => {
@@ -667,6 +668,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 $scope.openProject = function() {
                     console.log($scope.projectSelected);
                     if($scope.projectSelected) {
+                        wiToken.setCurrentProjectName($scope.projectSelected.name);
                         self.project = $scope.projectSelected
                         self.tabs[STEP_TRAIN].listDataset = self.project.content.tabs[STEP_TRAIN] || []
                         self.tabs[STEP_VERIFY].listDataset = self.project.content.tabs[STEP_VERIFY] || []
@@ -681,6 +683,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                             Object.assign(self.modelSelection.currentModel, self.project.content.model);
                         }
                     }
+                    ngDialog.close()
                 }
                 $scope.clickProject = function(project) {
                     $scope.projectSelected = project;
@@ -714,9 +717,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                         bucketId: self.project.content.bucketId
                     }
                 })
-                .then((mlProject) => {
+                .then((project) => {
                     $timeout(() => {
-                        self.project = mlProject;
+                        self.project = project;
+                        wiToken.setCurrentProjectName(project.name);
                     })
                     toastr.success('Rename project success', 'Success');
                 })
@@ -753,11 +757,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 bucketId: self.project.content.bucketId
             }
         })
-        .then((mlProject) => {
-            // $timeout(() => {
-                toastr.success('Save project success', 'Success');
-               
-            // })
+        .then((project) => {
+            wiToken.setCurrentProjectName(project.name);
+            toastr.success('Save project success', 'Success');
         })
         .catch((err) => {
             toastr.error('Save project fail', 'Error');
@@ -789,6 +791,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     console.log(project);
                     $timeout(() => {
                         self.project = project;
+                        wiToken.setCurrentProjectName(project.name);
                     })
                     // $timeout(() => {
                     //     self.mlProjectSelected = mlProject;
@@ -815,6 +818,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     this.newProject = function() {   
         initMlProject();
         self.modelSelection.initModelSelection();
+        wiToken.setCurrentProjectName('');
     }
     this.deleteProject = function(project) {
         $scope.projectDelete = project;
@@ -842,5 +846,43 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             className: 'ngdialog-theme-default',
             scope: $scope,
         });
+    }
+    this.restoreProject = function() {
+        if(wiToken.getCurrentProjectName()) {
+            self.restoreProjectName = wiToken.getCurrentProjectName();
+            wiApi.getMlProjectListPromise()
+        .then((listMlProject) => {
+            let currentProject = listMlProject.find(p => p.name === wiToken.getCurrentProjectName());
+            if(!currentProject) {
+                wiToken.setCurrentProjectName('');
+                return self.openProject();
+            }
+            $scope.acceptRestore = function() {
+                wiToken.setCurrentProjectName(currentProject.name);
+                self.project = currentProject
+                self.tabs[STEP_TRAIN].listDataset = self.project.content.tabs[STEP_TRAIN] || []
+                self.tabs[STEP_VERIFY].listDataset = self.project.content.tabs[STEP_VERIFY] || []
+                self.tabs[STEP_PREDICT].listDataset = self.project.content.tabs[STEP_PREDICT] || []
+                self.typeInput = self.project.content.typeInput
+                self.makeListOfDatasetSelection();
+                self.curveSpecs = self.project.content.curveSpecs
+                let currentTypeModel = self.modelSelection.listTypeModel.find(t => t.type === self.project.content.model.type);
+                if(currentTypeModel) self.modelSelection.currentTypeModel = currentTypeModel;
+                let currentModel = self.modelSelection.listModel[self.modelSelection.currentTypeModel.type].find(m => m.name === self.project.content.model.name);
+                if(currentModel) {
+                    Object.assign(self.modelSelection.currentModel, self.project.content.model);
+                }
+                ngDialog.close()
+            }
+            ngDialog.open({
+                template: 'templateRestore',
+                className: 'ngdialog-theme-default',
+                scope: $scope,
+            });
+        })
+        }else {
+            wiToken.setCurrentProjectName('');
+            self.openProject();
+        }
     }
 }

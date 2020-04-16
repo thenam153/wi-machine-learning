@@ -6,12 +6,12 @@
             <span class="menu-item" ng-class="{active: self.current_tab == 2}" ng-click="self.current_tab = 2;self.updateTabTrainingPredictiong();">Training and Prediction</span>
         </div>
 		<div class="active menu-item">
-            <span ng-click="self.OpenProject();" class="ml-project-name">{{self.project ? self.project.name: ''}}</span>
+            <span ng-click="self.openProject();" class="ml-project-name">{{self.project ? self.project.name: ''}}</span>
             <div ng-click="self.renameProject();" ng-if="self.project" style="align-items: center;margin-left: 10px; display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
                 <span  class="rename-16x16" style="margin-right: 10px;filter: saturate(0) brightness(6)"></span>
                 <span>RENAME</span>
             </div>
-            <div ng-click="self.OpenProject();" style="align-items: center;display: flex; background: #ffffff40; margin-left: 10px; padding: 5px 10px; border-radius: 2px;">
+            <div ng-click="self.openProject();" style="align-items: center;display: flex; background: #ffffff40; margin-left: 10px; padding: 5px 10px; border-radius: 2px;">
 				<span  class="ml-open-16x16" style="margin-right: 10px; filter: saturate(0) brightness(6)"></span>
 				<span>OPEN</span>
 			</div>
@@ -140,10 +140,10 @@
                 text-overflow: ellipsis;
                 letter-spacing: 0;
                 text-transform: none;" 
-                class="ngdialog-button ngdialog-button-primary" ng-click="self.acceptRestore()">
+                class="ngdialog-button ngdialog-button-primary" ng-click="acceptRestore()">
                 <i style="margin-right:10px;"class="ti-arrow-left" aria-hidden="true"></i>
-                <b>{{self.curPrj}}</b> </a>
-                <a style="border: 1px solid #0077be;" class="ngdialog-button ngdialog-button-primary" ng-click="self.OpenProject()">Other<i style="margin-left:10px;"class="ti-arrow-right" aria-hidden="true"></i></a>
+                <b>{{self.restoreProjectName}}</b> </a>
+                <a style="border: 1px solid #0077be;" class="ngdialog-button ngdialog-button-primary" ng-click="self.openProject()">Other<i style="margin-left:10px;"class="ti-arrow-right" aria-hidden="true"></i></a>
             </div>
         </div>
     </div>

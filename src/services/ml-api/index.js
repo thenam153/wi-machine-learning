@@ -109,16 +109,6 @@ function mlApi($http, $timeout, wiApi) {
         return new Promise((resolve) => {
             let listInputCurves = [];
             if (curves.length) {
-                // for (let i = 0; i < curves.length; i++) {
-                //     let curve = dataset.curves.find(c => {
-                //         return c.name === curves[i].value.name;
-                //     })
-                //     if (!curve) callback([]);
-                //     let curveData = await wiApi.getCurveDataPromise(curve.idCurve);
-                //     listInputCurves[i] = curveData.map(function(d) {
-                //         return parseFloat(d.x);
-                //     });
-                // }
                 async.eachOfSeries(curves, (curve, idx, next) => {
                     let c = dataset.curves.find(v => v.name === curve.value.name);
                     if(!c) {

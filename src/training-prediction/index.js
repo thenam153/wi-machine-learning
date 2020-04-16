@@ -65,15 +65,21 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 
     });
     // ============================================================================
-    this.modelId = null;
-    this.bucketId = null;
+    // this.modelId = null;
+    // this.bucketId = null;
     this.runTask = function(i) {
+        if(!self.controller.project) {
+            self.controller.createProject();
+         return   
+        }
         if(i == -1) {
             mlApi.createModelAndBucketId({name: 1, idMlProject: 10}, self.controller.curveSpecs.length)
             .then((res) => {
                 console.log(res);
                 self.modelId = res.modelId;
                 self.bucketId = res.bucketId;
+                self.controller.project.content.modelId = res.modelId;
+                self.controller.project.content.bucketId = res.bucketId;
                 train();
             });
         }else if(i == 1) {
@@ -82,10 +88,33 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             predict();
         }
     }
-
+    this.runAll = function() {
+        mlApi.createModelAndBucketId({name: 1, idMlProject: 10}, self.controller.curveSpecs.length)
+        .then((res) => {
+            console.log(res);
+            self.modelId = res.modelId;
+            self.bucketId = res.bucketId;
+            self.controller.project.content.modelId = res.modelId;
+            self.controller.project.content.bucketId = res.bucketId;
+            return train();
+        })
+        .then(() => verify())
+        .then(() => predict())
+        .then(() => console.log('run all success'))
+        .catch(() => console.log('run all fail'))
+    }
     function beforeTrain() {
         return new Promise((resolve, reject) => {
+            if(self.controller.tabs['training'].listDataset.length == 0) {
+                return reject(new Error('Please drop datasets for training'));
+            }
             async.each(self.controller.tabs['training'].listDataset, (dataset, _next) => {
+                if(!isRun(dataset)) {
+                    return reject(new Error('Curve in dataset must be select'))
+                }
+                if(!dataset.active) {
+                    return _next();
+                }
                 mlApi.evaluateExpr(dataset, dataset.discrmnt)
                 .then(curves => {
                     return mlApi.getDataCurveAndFilter(dataset, curves);
@@ -94,32 +123,18 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     return mlApi.transformData(dataCurves, self.controller.curveSpecs);
                 })
                 .then(dataCurves => {
+                    dataCurves.push(dataCurves.shift());
                     let payload = {
-                        bucket_id: self.bucketId,
+                        bucket_id: self.controller.project.content.bucketId,
                         data: dataCurves
                     }
                     return mlApi.putDataOfTrain(payload);
                 })
-                .then(res => {
-                    resolve();
+                .finally(() => {
+                    _next();
                 })
-                .catch(err => {
-                    reject(err);
-                })
-            })
-        })
-    }
-    function trainData() {
-        return new Promise((resolve, reject) => {
-            let payload = mlApi.createPayloadForTrain(self.modelId, self.bucketId);
-            mlApi.postTrainByBucketData(payload)
-            .then((res) => {
-                toastr.success('Train success', 'Success');
-                resolve();
-            })
-            .catch((err) => {
-                toastr.error(err || 'Something was wrong', 'Error');
-                reject(err)
+            }, err => {
+                !err ? resolve() : reject(); 
             })
         })
     }
@@ -130,9 +145,21 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             resolve();
         })
     }
+    function trainData() {
+        return new Promise((resolve, reject) => {
+            let payload = mlApi.createPayloadForTrain(self.controller.project.content.modelId, self.controller.project.content.bucketId);
+            mlApi.postTrainByBucketData(payload)
+            .then((res) => {
+                resolve();
+            })
+            .catch((err) => {
+                reject(err)
+            })
+        })
+    }
     function getSomVisualize() {
         if(mlApi.getBaseCurrentModel()['som-visualization']) {
-            mlApi.getSomVisualizeData(self.modelId)
+            mlApi.getSomVisualizeData(self.controller.project.content.modelId)
             .then(data => {
                 console.log(data);
             })
@@ -140,29 +167,86 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     }
 
     function train() {
-        beforeTrain()
-        .then(() => trainData())
-        .then(() => afterTrain())
-        .then(() => console.log('Success'))
-        .catch(() => console.log('Error'))
+        return new Promise(resolve => {
+            self.running = true;
+            beforeTrain()
+            .then(() => trainData())
+            .then(() => afterTrain())
+            .then(() => {
+                console.log('Success')
+                toastr.success('Training success');
+                self.controller.project.content.state = 1;
+                self.controller.saveProject();
+            })
+            .catch(err => {
+                console.log('Error')
+                toastr.error(err ? err.message : err || 'Something went error' );
+            })
+            .finally(() => {
+                self.running = false;
+                resolve();
+            })
+        })
     }
     function verify() {
-        beforeVerify()
-        .then(() => console.log('Success'))
-        .catch(() => console.log('Error'))
+        return new Promise(resolve => {
+            self.running = true;
+            beforeVerify()
+            .then(() => {
+                toastr.success('Verify success');
+                console.log('Success')
+                self.controller.saveProject();
+            })
+            .catch(err => {
+                toastr.error(err ? err.message : err || 'Something went error' );
+                console.log('Error')
+            })
+            .finally(() => {
+                self.running = false;
+                resolve();
+            })
+        })
     }
     function predict() {
-        beforePredict()
-        .then(() => console.log('Success'))
-        .catch(() => console.log('Error'))
+        return new Promise(resolve => {
+            self.running = true;
+            beforePredict()
+            .then(() => {
+                toastr.success('Prediction success');
+                console.log('Success')
+                self.controller.saveProject();
+            })
+            .catch(err => {
+                toastr.error(err ? err.statusText : err || 'Something went error' );
+                console.log('Error')
+            })
+            .finally(() => {
+                self.running = false;
+                resolve();
+            })
+        })
     }
+
     function beforeVerify() {
         return new Promise((resolve, reject) => {
-            mlApi.createBlankPlot(1, 10, 'Verification Plot')
+            if(self.controller.project.content.state < 1) {
+                return reject(new Error('Please training before verify or predict'));
+            }
+            if(self.controller.tabs['verify'].listDataset.length == 0) {
+                return reject(new Error('Please drop datasets for verify'));
+            }
+            let idProject = self.controller.tabs['verify'].listDataset[0].idProject;
+            mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, 'Verification Plot')
             .then((plot) => {
                 self.controller.tabs['verify'].plot = plot;
                 self.controller.tabs['verify'].plot.username = localStorage.getItem('username') || ''
                 async.each(self.controller.tabs['verify'].listDataset, (dataset, _next) => {
+                    if(!isRun(dataset)) {
+                        return reject(new Error('Curve in dataset must be select'))
+                    }
+                    if(!dataset.active) {
+                        return _next();
+                    }
                     mlApi.evaluateExpr(dataset, dataset.discrmnt)
                     .then(curves => {
                         return mlApi.getDataCurveAndFilter(dataset, curves);
@@ -175,7 +259,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                         dataCurves.shift();
                         let payload = {
                             features: dataCurves,
-                            model_id: self.modelId
+                            model_id: self.controller.project.content.modelId
                         }
                         return mlApi.postPredict(payload);
                     })
@@ -264,16 +348,27 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             })
         })
     }
-    // function verifyData() {}
-    // function afterVerify() {}
 
     function beforePredict() {
         return new Promise((resolve, reject) => {
-            mlApi.createBlankPlot(1, 10, 'Prediction Plot')
+            if(self.controller.project.content.state < 1) {
+                return reject(new Error('Please training before verify or predict'));
+            }
+            if(self.controller.tabs['prediction'].listDataset.length == 0) {
+                return reject(new Error('Please drop datasets for predict'));
+            }
+            let idProject = self.controller.tabs['prediction'].listDataset[0].idProject;
+            mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, 'Prediction Plot')
             .then(plot => {
                 self.controller.tabs['prediction'].plot = plot
                 self.controller.tabs['prediction'].plot.username = localStorage.getItem('username') || ''
                 async.each(self.controller.tabs['prediction'].listDataset, (dataset, _next) => {
+                    if(!isRun(dataset)) {
+                        return reject(new Error('Curve in dataset must be select'))
+                    }
+                    if(!dataset.active) {
+                        return _next();
+                    }
                     mlApi.evaluateExpr(dataset, dataset.discrmnt)
                     .then(curves => {
                         return mlApi.getDataCurveAndFilter(dataset, curves);
@@ -284,7 +379,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     .then(dataCurves => {
                         let payload = {
                             features: dataCurves,
-                            model_id: self.modelId
+                            model_id: self.controller.project.content.modelId
                         }
                         return mlApi.postPredict(payload);
                     })
@@ -350,6 +445,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     data: curveTarget,
                     // unit: unit || null
                 }
+                if(!self.controller.tabs['training'].listDataset.length || !self.controller.tabs['training'].listDataset[0].curves.length) {
+                    return reject("Must be have dataset in training for predict");
+                }
                 wiApi.getCurveInfoPromise(self.controller.tabs['training'].listDataset[0].curveSpecs[0].value.idCurve)
                 .then(info => {
                     curveInfo.idFamily = info.idFamily;
@@ -373,6 +471,11 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             }
         }
         return true;
+    }
+    this.onToggleActive = function(dataset) {
+        $timeout(() => {
+            dataset.active = !dataset.active;
+        })
     }
     // function predictData() {}
     // function afterPredict() {}
