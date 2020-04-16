@@ -1,9 +1,9 @@
 import { parse } from "query-string";
 
 const serviceName = 'mlApi';
-angular.module(serviceName, ['wiApi']).factory(serviceName, function($http, $timeout, wiApi) {
+angular.module(serviceName, ['wiApi']).factory(serviceName, ['$http', '$timeout', 'wiApi', function($http, $timeout, wiApi) {
     return new mlApi($http, $timeout, wiApi);
-});
+}]);
 function mlApi($http, $timeout, wiApi) {
     function httpPromise(url, data, method, options = {}) {
         return new Promise(function(resolve, reject) {

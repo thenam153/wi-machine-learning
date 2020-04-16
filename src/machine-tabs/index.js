@@ -12,7 +12,6 @@ var config = require('../config/config').production;
 var app = angular.module(moduleName, ['modelSelection',
     'datasetSelection',
     'trainingPrediction',
-    'mlService',
     'mlApi',
     'wiApi',
     'wiNeuralNetwork',
@@ -34,7 +33,7 @@ app.component(componentName, {
         token: '<'
     }
 });
-MachineTabsController.$inject = ['$scope', '$timeout', 'wiToken', 'wiApi', '$http', 'wiDialog', 'ngDialog','mlService', 'mlApi']
+MachineTabsController.$inject = ['$scope', '$timeout', 'wiToken', 'wiApi', '$http', 'wiDialog', 'ngDialog', 'mlApi']
 
 const LINEAR = 'linear';
 const LOGA = 'logarithmic';
@@ -52,7 +51,7 @@ const FAMILY_GROUP = 'main_family';
 const REMOVE = 0;
 const ADD = 1;  
 
-function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog, ngDialog, mlService, mlApi) {
+function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog, ngDialog, mlApi) {
     $scope.isActive = function(index) {
         return self.current_tab === index;
     }

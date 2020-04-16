@@ -2,7 +2,7 @@ const moduleName = "datasetSelection";
 const componentName = "datasetSelection";
 module.exports.name = moduleName;
 
-var app = angular.module(moduleName, ['wiTreeView','wiDroppable','angularResizable','wiTreeViewVirtual','sideBar', 'mlService']);
+var app = angular.module(moduleName, ['wiTreeView','wiDroppable','angularResizable','wiTreeViewVirtual','sideBar']);
 
 app.component(componentName,{
 	template: require('./newtemplate.html'),
@@ -27,11 +27,10 @@ app.component(componentName,{
         controller: '<'
     }
 });
-DatasetSelectionController.$inject = ['$scope', 'wiApi', '$timeout', 'mlService']
+DatasetSelectionController.$inject = ['$scope', 'wiApi', '$timeout']
 
-function DatasetSelectionController($scope, wiApi, $timeout, mlService){
+function DatasetSelectionController($scope, wiApi, $timeout){
     let self = 	this;
-    self.mlService = mlService;
 	this.listMlProject;
     this.buttons = [{
             label: 'Curve',
