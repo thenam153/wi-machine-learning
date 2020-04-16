@@ -17,7 +17,7 @@
   "dependencies": {
     "angular": "^1.7.8",
     "jquery": "^3.4.1",
-    "misc-component": "https://github.com/tunghoang/misc-component.git",
+    "misc-component": "https://github.com/revotechUET/misc-component.git",
     "async": "^3.1.0",
     "themify-icons": "^0.1.2",
     "angular-resizable": "^1.2.0",
@@ -26,7 +26,7 @@
     "toastr": "^2.1.3"
   },
   "resolutions": {
-    "angular": "1.7.8",
+    "angular": ">=1.5",
     "jquery": "3.4.1"
   }
 }
