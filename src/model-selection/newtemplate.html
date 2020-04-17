@@ -20,7 +20,7 @@
 
             <div >
                 <div class="editable-custom" ng-repeat="(key, props) in self.controller.currentModel.value.payload.params" ng-init="self.controller.initPropertiesPayload(props)"> 
-                    <div ng-if="props.type == 'integer' || props.type == 'float' || props.type == 'string' || props.type == 'number'">
+                    <div ng-if="props.type == 'integer' || props.type == 'float' || props.type == 'string' || props.type == 'number'" style="display: flex;">
                         <span class="title" style="min-width: 130px;padding: 10px 0;flex: 1;float: left;margin-right: 0;margin-bottom: 0;font-weight: bold;">{{props.label}}</span>
                         <input class="sub" ng-model="props.value" ng-change="self.controller.changeValue(props);">
                     </div>

@@ -78,31 +78,28 @@
 							on-item-changed="self.controller.onInputItemChange" current-select="item.currentSelect" params="item">
 						</wi-dropdown-list-new>
 						<div style='display:flex;margin-right:0.5em;align-items:center;'>
-							<span ng-click='item.transform="linear";'>
+							<span ng-click='item.transform="linear";' style="display: flex; align-items: center; margin-right: 15px;">
 								<input type='radio' ng-model="item.transform"
-									value="linear">
-								<span class="curve-transform"><span
-										style="line-height: 1.5em">X</span></span>
+									value="linear" style="margin: 0 5px 0 2px;">
+								<span class="curve-transform">
+									<span>X</span>
+								</span>
 							</span>
-							<span ng-click='item.transform="logarithmic";'>
-								<input type='radio' ng-model="item.transform"
+							<span ng-click='item.transform="logarithmic";' style="display: flex; align-items: center; margin-right: 15px;">
+								<input type='radio' ng-model="item.transform" style="margin: 0 5px 0 2px;"
 									value="logarithmic">
 								<span class="curve-transform">
-									<span
-										style="line-height: 1.5em">
+									<span>
 										log(X)
 									</span>
 								</span>
 							</span>
-							<span ng-click='item.transform="exponential";' >
-								<input type='radio' ng-model="item.transform"
+							<span ng-click='item.transform="exponential";' style="display: flex; align-items: center; margin-right: 15px;">
+								<input type='radio' ng-model="item.transform" style="margin: 0 5px 0 2px ;"
 									value="exponential">
 								<span class="curve-transform">
-									<span
-										style="line-height: 1.5em">
-										10
+									<span>10<sup>X</sup>
 									</span>
-									<i style="vertical-align:super">X</i>
 								</span>
 							</span>
 						</div>
