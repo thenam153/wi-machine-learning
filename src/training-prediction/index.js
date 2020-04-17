@@ -307,7 +307,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             let tCurve;
             mlApi.getDataCurves(dataset, dataset.curveSpecs)
             .then(curves => {
-                tCurve = curves.shift();
+                // tCurve = curves.shift();
                 tCurve = mlApi.filterNull(curves);
                 return mlApi.fillNullInCurve(tCurve.fillNull, curveArr)
             })
