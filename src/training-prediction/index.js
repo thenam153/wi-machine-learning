@@ -168,7 +168,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 
     function train() {
         return new Promise(resolve => {
-            self.running = true;
+            $timeout(() => {
+                self.running = true;
+            })
             beforeTrain()
             .then(() => trainData())
             .then(() => afterTrain())
@@ -192,7 +194,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     }
     function verify() {
         return new Promise(resolve => {
-            self.running = true;
+            $timeout(() => {
+                self.running = true;
+            })
             beforeVerify()
             .then(() => {
                 toastr.success('Verify success');
@@ -213,7 +217,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     }
     function predict() {
         return new Promise(resolve => {
-            self.running = true;
+            $timeout(() => {
+                self.running = true;
+            })
             beforePredict()
             .then(() => {
                 toastr.success('Prediction success');
@@ -242,7 +248,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 return reject(new Error('Please drop datasets for verify'));
             }
             let idProject = self.controller.tabs['verify'].listDataset[0].idProject;
-            mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, 'Verification Plot')
+            mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, self.controller.tabs['verify'].plotName)
             .then((plot) => {
                 self.controller.tabs['verify'].plot = plot;
                 self.controller.tabs['verify'].plot.username = localStorage.getItem('username') || ''
@@ -364,7 +370,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 return reject(new Error('Please drop datasets for predict'));
             }
             let idProject = self.controller.tabs['prediction'].listDataset[0].idProject;
-            mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, 'Prediction Plot')
+            mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, self.controller.tabs['prediction'].plotName)
             .then(plot => {
                 self.controller.tabs['prediction'].plot = plot
                 self.controller.tabs['prediction'].plot.username = localStorage.getItem('username') || ''

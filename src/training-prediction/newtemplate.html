@@ -78,8 +78,13 @@
                 <div class="toolbar-button active" ng-click="self.runTask(1);">Run Now</div>
                 <div class="toolbar-button active" ng-click="self.runAll()">Run All</div>
             </div>
+            <div class="">
+                <label for="">
+                    Plot Name
+                    <input placeholder="Plot name" ng-model="self.controller.tabs['verify'].plotName">
+                </label>
+            </div>
             <div style="overflow: hidden; display: flex; flex-direction: column;  height: 100%;">
-
                 <div class="table-main">
                     <div class='table-row' style="color: #4e555f; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #fff; border: none;box-shadow: 0 5px 6px #00000012;">
                         <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0;">Active
@@ -126,6 +131,12 @@
                 <div class="toolbar-button">Select All</div>
                 <div class="toolbar-button active" ng-click="self.runTask(2);">Run Now</div>
                 <div class="toolbar-button active" ng-click="self.runAll()">Run All</div>
+            </div>
+            <div class="">
+                <label for="">
+                    Plot Name
+                    <input placeholder="Plot name" ng-model="self.controller.tabs['prediction'].plotName">
+                </label>
             </div>
             <div style="overflow: hidden; display: flex; flex-direction: column;  height: 100%;">
 

@@ -119,11 +119,13 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             },
             verify: {
                 listDataset: [],
-                selectionList: []
+                selectionList: [],
+                plotName: 'Verification Plot'
             },
             prediction: {
                 listDataset: [],
-                selectionList: []
+                selectionList: [],
+                plotName: 'Prediction Plot'
             }
         }
         self.typeInput = {
@@ -668,6 +670,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     console.log($scope.projectSelected);
                     if($scope.projectSelected) {
                         wiToken.setCurrentProjectName($scope.projectSelected.name);
+                        if(self.project.content.plot) {
+                            self.tabs[STEP_VERIFY].plotName = self.project.content.plot[STEP_VERIFY].plotName
+                            self.tabs[STEP_PREDICT].plotName = self.project.content.plot[STEP_PREDICT].plotName
+                        }
                         self.project = $scope.projectSelected
                         self.tabs[STEP_TRAIN].listDataset = self.project.content.tabs[STEP_TRAIN] || []
                         self.tabs[STEP_VERIFY].listDataset = self.project.content.tabs[STEP_VERIFY] || []
@@ -749,6 +755,14 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     verify: self.tabs[STEP_VERIFY].listDataset,
                     prediction: self.tabs[STEP_PREDICT].listDataset,
                 },
+                plot:{
+                    verify: {
+                        plotName: self.tabs[STEP_VERIFY].plotName
+                    },
+                    prediction: {
+                        plotName: self.tabs[STEP_PREDICT].plotName
+                    }
+                },
                 curveSpecs: self.curveSpecs,
                 typeInput: self.typeInput,
                 model: self.modelSelection.currentModel,
@@ -777,6 +791,14 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                             training: self.tabs[STEP_TRAIN].listDataset,
                             verify: self.tabs[STEP_VERIFY].listDataset,
                             prediction: self.tabs[STEP_PREDICT].listDataset,
+                        },
+                        plot:{
+                            verify: {
+                                plotName: self.tabs[STEP_VERIFY].plotName
+                            },
+                            prediction: {
+                                plotName: self.tabs[STEP_PREDICT].plotName
+                            }
                         },
                         curveSpecs: self.curveSpecs,
                         typeInput: self.typeInput,
@@ -860,6 +882,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             $scope.acceptRestore = function() {
                 wiToken.setCurrentProjectName(currentProject.name);
                 self.project = currentProject
+                if(self.project.content.plot) {
+                    self.tabs[STEP_VERIFY].plotName = self.project.content.plot[STEP_VERIFY].plotName
+                    self.tabs[STEP_PREDICT].plotName = self.project.content.plot[STEP_PREDICT].plotName
+                }
                 self.tabs[STEP_TRAIN].listDataset = self.project.content.tabs[STEP_TRAIN] || []
                 self.tabs[STEP_VERIFY].listDataset = self.project.content.tabs[STEP_VERIFY] || []
                 self.tabs[STEP_PREDICT].listDataset = self.project.content.tabs[STEP_PREDICT] || []

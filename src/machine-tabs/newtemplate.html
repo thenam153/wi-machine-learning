@@ -180,7 +180,7 @@
 
             <div class="newDialogContent" style="overflow-y: auto; max-height: 203px;" >
                 <ul class="list-project">
-                    <li ng-repeat="project in allProjects | filter:searchProject track by $index"
+                    <li ng-repeat="project in allProjects | filter:{'name': searchProject} track by $index"
                         ng-click="clickProject(project);"
                         ng-class="{selectedProject: projectSelected.name == project.name}">
                         <span ng-bind="project.name"></span>
