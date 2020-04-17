@@ -238,6 +238,26 @@ dataset-selection {
 						display: flex;
 						border-bottom: 1px solid #efefef;
 						
+						.curve-transform {
+							display: inline-block;
+							align-items: center; 
+							margin-right: 5px;
+							cursor: pointer;
+							padding: 0 3px;
+							text-align: center;
+							font-family: 'serif';
+							font-style: italic;
+							line-height: 1.2;
+							min-width: 16px;
+							font-weight: bold;
+							border: 1px solid #ff00ff00;
+							border-radius: 6px;
+							&.active {
+								border-color: #0674da;
+								border-radius: 6px;
+								color: #0674da;
+							}
+						}
 					}
 				}
 
