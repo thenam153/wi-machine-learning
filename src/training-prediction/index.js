@@ -183,7 +183,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 toastr.error(err ? err.message : err || 'Something went error' );
             })
             .finally(() => {
-                self.running = false;
+                $timeout(() => {
+                    self.running = false;
+                })
                 resolve();
             })
         })
@@ -202,7 +204,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 console.log('Error')
             })
             .finally(() => {
-                self.running = false;
+                $timeout(() => {
+                    self.running = false;
+                })
                 resolve();
             })
         })
@@ -217,11 +221,13 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 self.controller.saveProject();
             })
             .catch(err => {
-                toastr.error(err ? err.statusText : err || 'Something went error' );
+                toastr.error(err ? err.message : err || 'Something went error' );
                 console.log('Error')
             })
             .finally(() => {
-                self.running = false;
+                $timeout(() => {
+                    self.running = false;
+                })
                 resolve();
             })
         })
