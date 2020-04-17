@@ -115,7 +115,11 @@ function DatasetSelectionController($scope, wiApi, $timeout){
         }
     }
     this.runMatch = function(node, filter) {
-        return node.displayName.toLowerCase().includes(filter.toLowerCase());
+        if(node.displayName) {
+            return node.displayName.toLowerCase().includes(filter.toLowerCase());
+        }else if(node.name) {
+            return node.name.toLowerCase().includes(filter.toLowerCase());
+        }
         // return node.name.includes(filter);
     }
     this.$onInit = function() {
