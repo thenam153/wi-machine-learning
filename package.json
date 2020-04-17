@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "preprocess":"gulp build",
     "start": "http-server -a localhost -p 9001 -o"
   },
   "author": "",

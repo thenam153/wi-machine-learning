@@ -8,9 +8,9 @@
 //     };
 // });
 const serviceName = 'mlService';
-angular.module(serviceName, []).factory(serviceName, function($http, $timeout) {
+angular.module(serviceName, []).factory(serviceName, ['$http', '$timeout', function($http, $timeout) {
     return new mlService($http, $timeout);
-});
-function mlService($http, wiToken, Upload, $timeout) {
+}]);
+function mlService($http, $timeout) {
     this.value = "Nam The"
 }
