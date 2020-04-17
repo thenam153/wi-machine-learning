@@ -485,7 +485,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                                         let nameB = b.label.toUpperCase();
                                         return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
                                     });
-                    self.selectionList.unshift({
+                    self.selectionListTarget.unshift({
                         label: LABEL_DEFAULT,
                         value: null
                     });
