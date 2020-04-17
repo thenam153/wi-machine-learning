@@ -2,13 +2,12 @@ const moduleName = "machineTabs";
 const componentName = "machineTabs";
 module.exports.name = moduleName;
 const queryString = require('query-string')
-// var config = require('../config/config').default;
-// if (process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development') {
-//     config = require('../config/config').development
-// } else if (process.env.NODE_ENV === 'prod' || process.env.NODE_ENV === 'production') {
-//     config = require('../config/config').production
-// }
 var config = require('../config/config').production;
+if (process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development') {
+    config = require('../config/config').development
+} else if (process.env.NODE_ENV === 'prod' || process.env.NODE_ENV === 'production') {
+    config = require('../config/config').production
+}
 var app = angular.module(moduleName, ['modelSelection',
     'datasetSelection',
     'trainingPrediction',
