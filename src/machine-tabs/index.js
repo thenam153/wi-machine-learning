@@ -847,6 +847,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         initMlProject();
         self.modelSelection.initModelSelection();
         wiToken.setCurrentProjectName('');
+        ngDialog.close();
     }
     this.deleteProject = function(project) {
         $scope.projectDelete = project;
