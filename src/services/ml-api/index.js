@@ -388,12 +388,13 @@ function mlApi($http, $timeout, wiApi) {
         });
     }
     this.createModelAndBucketId = createModelAndBucketId;
-    function createModelAndBucketId(mlProject, dims) {
+    function createModelAndBucketId(mlProject, dims, idMlProject) {
         return new Promise((resolve, reject) => {
             let payload = {};
             self.currentModel.payload.params.forEach(i => {
                 payload[i.name] = i.value.properties || i.value;
             })
+            payload['model_id'] = payload['model_id'] + '_' + idMlProject
             var modelId, bucketId
             postCreateModel(payload)
                 .then((resModel) => {

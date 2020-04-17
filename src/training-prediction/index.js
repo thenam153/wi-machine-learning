@@ -73,7 +73,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
          return   
         }
         if(i == -1) {
-            mlApi.createModelAndBucketId({name: 1, idMlProject: 10}, self.controller.curveSpecs.length)
+            mlApi.createModelAndBucketId({name: 1, idMlProject: 10}, self.controller.curveSpecs.length, self.controller.project.idMlProject)
             .then((res) => {
                 console.log(res);
                 self.modelId = res.modelId;
@@ -89,7 +89,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
         }
     }
     this.runAll = function() {
-        mlApi.createModelAndBucketId({name: 1, idMlProject: 10}, self.controller.curveSpecs.length)
+        mlApi.createModelAndBucketId({name: 1, idMlProject: 10}, self.controller.curveSpecs.length, self.controller.project.idMlProject)
         .then((res) => {
             console.log(res);
             self.modelId = res.modelId;
