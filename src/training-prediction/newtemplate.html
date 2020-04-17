@@ -29,8 +29,8 @@
                 <input placeholder="Search" ng-model="searchTraining">
             </div>
             <div class="button">
-                <div class="toolbar-button">Sort by</div>
-                <div class="toolbar-button">Select All</div>
+                <!-- <div class="toolbar-button">Sort by</div>
+                <div class="toolbar-button">Select All</div> -->
                 <div class="toolbar-button active" ng-click="self.runTask(-1);">Run Now</div>
                 <div class="toolbar-button active" ng-click="self.runAll()">Run All</div>
             </div>
@@ -68,21 +68,19 @@
             </div>
         </div>
         <div ng-show="isSet(2)" class="workspace-main">
-            <div class="search">
+            <div class="search" style="width: 200px">
                 <div class="ti ti-search" style="margin-right: 15px; font-size: 15px;"></div>
                 <input placeholder="Search" ng-model="searchVerify">
             </div>
+            <div class="search" style="margin-left: 20px; left: 240px;">
+                <div>Plot: &nbsp;&nbsp;</div>
+                <input style="direction: rtl;" placeholder="Plot name" ng-model="self.controller.tabs['verify'].plotName">
+            </div>
             <div class="button">
-                <div class="toolbar-button">Sort by</div>
-                <div class="toolbar-button">Select All</div>
+                <!-- <div class="toolbar-button">Sort by</div>
+                <div class="toolbar-button">Select All</div> -->
                 <div class="toolbar-button active" ng-click="self.runTask(1);">Run Now</div>
                 <div class="toolbar-button active" ng-click="self.runAll()">Run All</div>
-            </div>
-            <div class="">
-                <label for="">
-                    Plot Name
-                    <input placeholder="Plot name" ng-model="self.controller.tabs['verify'].plotName">
-                </label>
             </div>
             <div style="overflow: hidden; display: flex; flex-direction: column;  height: 100%;">
                 <div class="table-main">
@@ -122,21 +120,19 @@
             </div>
         </div>
         <div ng-show="isSet(3)" class="workspace-main">
-            <div class="search">
+            <div class="search" style="width: 200px">
                 <div class="ti ti-search" style="margin-right: 15px; font-size: 15px;"></div>
                 <input placeholder="Search" ng-model="searchPrediction">
             </div>
+            <div class="search" style="margin-left: 20px; left: 240px;">
+                <div>Plot: &nbsp;&nbsp;</div>
+                <input style="direction: rtl;" placeholder="Plot name" ng-model="self.controller.tabs['prediction'].plotName">
+            </div>
             <div class="button">
-                <div class="toolbar-button">Sort by</div>
-                <div class="toolbar-button">Select All</div>
+                <!-- <div class="toolbar-button">Sort by</div>
+                <div class="toolbar-button">Select All</div> -->
                 <div class="toolbar-button active" ng-click="self.runTask(2);">Run Now</div>
                 <div class="toolbar-button active" ng-click="self.runAll()">Run All</div>
-            </div>
-            <div class="">
-                <label for="">
-                    Plot Name
-                    <input placeholder="Plot name" ng-model="self.controller.tabs['prediction'].plotName">
-                </label>
             </div>
             <div style="overflow: hidden; display: flex; flex-direction: column;  height: 100%;">
 
