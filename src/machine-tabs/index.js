@@ -680,6 +680,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                         let currentModel = self.modelSelection.listModel[self.modelSelection.currentTypeModel.type].find(m => m.name === self.project.content.model.name);
                         if(currentModel) {
                             Object.assign(self.modelSelection.currentModel, self.project.content.model);
+                            Object.assign(currentModel, self.project.content.model);
                         }
                     }
                     ngDialog.close()
@@ -870,6 +871,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 let currentModel = self.modelSelection.listModel[self.modelSelection.currentTypeModel.type].find(m => m.name === self.project.content.model.name);
                 if(currentModel) {
                     Object.assign(self.modelSelection.currentModel, self.project.content.model);
+                    Object.assign(currentModel, self.project.content.model);
                 }
                 ngDialog.close()
             }
