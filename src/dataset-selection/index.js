@@ -92,7 +92,7 @@ function DatasetSelectionController($scope, wiApi, $timeout){
     this.getChildrenDataset = function(node) {
         return [];
     }
-    this.clickFn = function(event, node, selectIds,rootnode) {
+    this.clickFn = function(event, node, selectIds, rootnode) {
         if(node.idProject && node.wells) return;
         if(node.idWell && node.datasets) return;
         if(node.idProject && !node.idDataset) {
@@ -111,6 +111,12 @@ function DatasetSelectionController($scope, wiApi, $timeout){
                     }
                     sortProjectData(node);   
                 })
+                // fix bug project share 
+                let project = rootnode.find(i => !i.shared)
+                if(project) {
+                    wiApi.getFullInfoPromise(project.idProject)
+                    .then(() => {});
+                }
             });
         }
     }
