@@ -89,6 +89,22 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
         }
     }
     this.runAll = function() {
+        // mlApi.createModelAndBucketId({name: 1, idMlProject: 10}, self.controller.curveSpecs.length, self.controller.project.idMlProject)
+        // .then((res) => {
+        //     console.log(res);
+        //     self.modelId = res.modelId;
+        //     self.bucketId = res.bucketId;
+        //     self.controller.project.content.modelId = res.modelId;
+        //     self.controller.project.content.bucketId = res.bucketId;
+        //     return train();
+        // })
+        // .then(() => verify())
+        // .then(() => predict())
+        // .then(() => console.log('run all success'))
+        // .catch(() => console.log('run all fail'))
+        $timeout(() => {
+                    self.running = true;
+                })
         mlApi.createModelAndBucketId({name: 1, idMlProject: 10}, self.controller.curveSpecs.length, self.controller.project.idMlProject)
         .then((res) => {
             console.log(res);
@@ -96,17 +112,33 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             self.bucketId = res.bucketId;
             self.controller.project.content.modelId = res.modelId;
             self.controller.project.content.bucketId = res.bucketId;
-            return train();
+            beforeTrain()
+            .then(() => trainData())
+            .then(() => afterTrain())
+            .then(() => beforeVerify())
+            .then(() => beforePredict())
+            .then(() => {
+                toastr.success('Run all success');
+                self.controller.saveProject();
+            })
+            .catch(err => {
+                toastr.error(err ? err.message : err || 'Something went error' );
+                console.log('Error')
+            })
+            .finally(() => {
+                $timeout(() => {
+                    self.running = false;
+                })
+            })
         })
-        .then(() => verify())
-        .then(() => predict())
-        .then(() => console.log('run all success'))
-        .catch(() => console.log('run all fail'))
     }
     function beforeTrain() {
         return new Promise((resolve, reject) => {
             if(self.controller.tabs['training'].listDataset.length == 0) {
                 return reject(new Error('Please drop datasets for training'));
+            }
+            if(!isActive(self.controller.tabs['training'].listDataset)) {
+                return reject(new Error('Please active one or more dataset'));
             }
             async.each(self.controller.tabs['training'].listDataset, (dataset, _next) => {
                 if(!isRun(dataset)) {
@@ -247,6 +279,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             if(self.controller.tabs['verify'].listDataset.length == 0) {
                 return resolve(false)
             }
+            if(!isActive(self.controller.tabs['verify'].listDataset)) {
+                return resolve()
+            }
             let idProject = self.controller.tabs['verify'].listDataset[0].idProject;
             mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, self.controller.tabs['verify'].plotName)
             .then((plot) => {
@@ -369,6 +404,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             if(self.controller.tabs['prediction'].listDataset.length == 0) {
                 return reject(new Error('Please drop datasets for predict'));
             }
+            if(!isActive(self.controller.tabs['prediction'].listDataset)) {
+                return reject(new Error('Please active one or more dataset'));
+            }
             let idProject = self.controller.tabs['prediction'].listDataset[0].idProject;
             mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, self.controller.tabs['prediction'].plotName)
             .then(plot => {
@@ -488,6 +526,14 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
         $timeout(() => {
             dataset.active = !dataset.active;
         })
+    }
+    function isActive(datasets) {
+        let d = datasets.find(i => i.active);
+        if(d) {
+            return true;
+        }else {
+            return false;
+        }
     }
     // function predictData() {}
     // function afterPredict() {}
