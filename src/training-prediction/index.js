@@ -198,8 +198,8 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 self.running = true;
             })
             beforeVerify()
-            .then(() => {
-                toastr.success('Verify success');
+            .then((res) => {
+                if(res) toastr.success('Verify success');
                 console.log('Success')
                 self.controller.saveProject();
             })
@@ -245,7 +245,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 return reject(new Error('Please training before verify or predict'));
             }
             if(self.controller.tabs['verify'].listDataset.length == 0) {
-                return reject(new Error('Please drop datasets for verify'));
+                return resolve(false)
             }
             let idProject = self.controller.tabs['verify'].listDataset[0].idProject;
             mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, self.controller.tabs['verify'].plotName)
@@ -285,7 +285,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                         _next(err);
                     })
                 }, err => {
-                    err ? reject() : resolve()
+                    err ? reject() : resolve(true)
                 })
             })
         })
