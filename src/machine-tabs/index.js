@@ -463,18 +463,21 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
 		}
 	}
 	this.modelSelection.changeValue = function(obj) {
-		console.log(obj);
 		switch (obj.type) {
             case 'string':
                 break;
             case 'integer':
                 if (!Number.isInteger(Number(obj.value))) {
                     obj.value = obj.example;
+                }else {
+                    obj.value = Number(obj.value)
                 }
                 break;
             case 'number':
                 if (isNaN(Number(obj.value))) {
                     obj.value = obj.example;
+                }else {
+                    obj.value = Number(obj.value)
                 }
                 break;
             // case 'boolean':
@@ -488,6 +491,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             case 'float':
                 if (isNaN(parseFloat(obj.value))) {
                     obj.value = obj.example;
+                }else {
+                    obj.value = parseFloat(obj.value)
                 }
                 break;
             // case 'array':
@@ -495,6 +500,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             //     console.log(value);
 			// 	return ([...new Set(value)]);
         }
+        console.log(obj);
 	}
 	this.modelSelection.onItemChange = function(value, properties) {
 		// console.log(value, properties);
