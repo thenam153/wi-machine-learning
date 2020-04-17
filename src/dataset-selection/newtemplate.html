@@ -66,6 +66,25 @@
 						<div style="display: flex; margin-bottom: 10px; justify-content: space-between;">
 							<div style="font-weight: bold; font-size: 12px; ">
 								{{item.label}} {{item.isTarget ? '' : $index}}
+								<span style='margin-left:1em;text-align:right;'>
+									<span ng-click='item.transform="linear";' 
+										class="curve-transform" ng-class="{'active': item.transform === 'linear'}" >
+										<span >
+											<span>x</span>
+										</span>
+									</span>
+									<span ng-click='item.transform="logarithmic";'
+										class="curve-transform" ng-class="{'active': item.transform === 'logarithmic'}">
+										<span>
+											lg(x)
+										</span>
+									</span>
+									<span ng-click='item.transform="exponential";'
+										class="curve-transform" ng-class="{'active': item.transform === 'exponential'}" >
+										<span>10<sup>x</sup>
+										</span>
+									</span>
+								</span>
 							</div>
 							<div ng-if="!item.isTarget" style="margin:0 10px; cursor: pointer; display: flex; align-items: center;" ng-click="self.onRemoveInputItem($index)">
 								<i class="ti ti-close"></i>
@@ -80,32 +99,6 @@
 						<wi-dropdown-list-new ng-if="item.isTarget" style="width: 100%;" place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionListTarget" hide-delete-button='true'
 							on-item-changed="self.controller.onInputItemChange" current-select="item.currentSelect" params="item">
 						</wi-dropdown-list-new>
-						<div style='display:flex;margin-right:0.5em;align-items:center;'>
-							<span ng-click='item.transform="linear";' style="display: flex; align-items: center; margin-right: 15px;">
-								<input type='radio' ng-model="item.transform"
-									value="linear" style="margin: 0 5px 0 2px;">
-								<span class="curve-transform">
-									<span>X</span>
-								</span>
-							</span>
-							<span ng-click='item.transform="logarithmic";' style="display: flex; align-items: center; margin-right: 15px;">
-								<input type='radio' ng-model="item.transform" style="margin: 0 5px 0 2px;"
-									value="logarithmic">
-								<span class="curve-transform">
-									<span>
-										log(X)
-									</span>
-								</span>
-							</span>
-							<span ng-click='item.transform="exponential";' style="display: flex; align-items: center; margin-right: 15px;">
-								<input type='radio' ng-model="item.transform" style="margin: 0 5px 0 2px ;"
-									value="exponential">
-								<span class="curve-transform">
-									<span>10<sup>X</sup>
-									</span>
-								</span>
-							</span>
-						</div>
 					</div>
 				</div>
 			</div>
