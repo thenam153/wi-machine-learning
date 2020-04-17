@@ -3,11 +3,11 @@ const componentName = "machineTabs";
 module.exports.name = moduleName;
 const queryString = require('query-string')
 var config = require('../config/config').production;
-if (process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development') {
-    config = require('../config/config').development
-} else if (process.env.NODE_ENV === 'prod' || process.env.NODE_ENV === 'production') {
-    config = require('../config/config').production
-}
+// if (process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development') {
+//     config = require('../config/config').development
+// } else if (process.env.NODE_ENV === 'prod' || process.env.NODE_ENV === 'production') {
+//     config = require('../config/config').production
+// }
 var app = angular.module(moduleName, ['modelSelection',
     'datasetSelection',
     'trainingPrediction',
@@ -106,6 +106,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     function initMlProject() {
         self.project = null;
         self.selectionList = [
+            {
+                label: LABEL_DEFAULT,
+                properties: null
+            }
+        ];
+        self.selectionListTarget = [
             {
                 label: LABEL_DEFAULT,
                 properties: null
@@ -247,6 +253,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         });
     }
     this.makeListOfDatasetSelection = function() {
+        self.makeListOfDatasetSelectionTarget();
         let preProcessCurves = [];
         self.tabs[STEP_TRAIN].listDataset.forEach(i => {
             preProcessCurves.push(i.curves);
@@ -380,6 +387,144 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                                         return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
                                     });
                     self.selectionList.unshift({
+                        label: LABEL_DEFAULT,
+                        value: null
+                    });
+                });
+                break;
+        }
+    }
+    this.makeListOfDatasetSelectionTarget = function() {
+        let preProcessCurves = [];
+        self.tabs[STEP_TRAIN].listDataset.forEach(i => {
+            preProcessCurves.push(i.curves);
+        })
+        self.tabs[STEP_VERIFY].listDataset.forEach(i => {
+            preProcessCurves.push(i.curves);
+        })
+        var curves = _.intersectionBy(...preProcessCurves, 'name');
+        self.selectionListTarget = [];
+        switch(self.typeInput.type) {
+            case FAMILY_CURVE:
+                falCurve = _.intersectionBy(curves, 'idFamily');
+                async.eachSeries(falCurve, async (c) => {
+                    if (c.idFamily !== undefined && c.idFamily) {
+                        let fl = await wiApi.getFamily(c.idFamily);
+                        if(fl) {
+                            // self.selectionList.push({
+                            //     data: {
+                            //         label: fl.name
+                            //     },
+                            //     properties: {
+                            //         familyCurveSpec: fl.family_spec,
+                            //         familyGroup: fl.familyGroup,
+                            //         familyCurve: fl.name,
+                            //         name: fl.name,
+                            //         // idFamily: fl.idFamily
+                            //     },
+                            //     icon: 'family-16x16'
+                            // })
+                            self.selectionListTarget.push({
+                                label: fl.name,
+                                familyCurveSpec: fl.family_spec,
+                                familyGroup: fl.familyGroup,
+                                familyCurve: fl.name,
+                                name: fl.name,
+                                // idFamily: fl.idFamily
+                                icon: 'family-16x16'
+                            })
+                        }
+                    }
+                }, (err) => {
+                    if(err) console.log("Have a error!");
+                    self.selectionListTarget = _.uniqBy(self.selectionListTarget, 'label');
+                    self.selectionListTarget.sort((a, b) => {
+                                        let nameA = a.label.toUpperCase();
+                                        let nameB = b.label.toUpperCase();
+                                        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+                                    });
+                    self.selectionListTarget.unshift({
+                        label: LABEL_DEFAULT,
+                        value: null
+                    });
+                });
+                break;
+            case FAMILY_GROUP:
+                falCurve = _.intersectionBy(curves, 'idFamily');
+                async.eachSeries(falCurve, async (c) => {
+                    if (c.idFamily !== undefined && c.idFamily) {
+                        let fl = await wiApi.getFamily(c.idFamily);
+                        if(fl) {
+                            // self.selectionList.push({
+                            //     data: {
+                            //         label: fl.familyGroup
+                            //     },
+                            //     properties: {
+                            //         name: fl.familyGroup,
+                            //         familyGroup: fl.familyGroup,
+                            //         familyCurveSpec: fl.family_spec,
+                            //         // idFamily: fl.idFamily
+                            //     },
+                            //     icon: 'family-group-16x16'
+                            // })
+                            self.selectionListTarget.push({
+                                label: fl.familyGroup,
+                                name: fl.familyGroup,
+                                familyGroup: fl.familyGroup,
+                                familyCurveSpec: fl.family_spec,
+                                // idFamily: fl.idFamily
+                                icon: 'family-group-16x16'
+                            })
+                        }
+                    }
+                }, (err) => {
+                    if(err) console.log("Have a error!");
+                    self.selectionListTarget = _.uniqBy(self.selectionListTarget, 'label');
+                    self.selectionListTarget.sort((a, b) => {
+                                        let nameA = a.label.toUpperCase();
+                                        let nameB = b.label.toUpperCase();
+                                        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+                                    });
+                    self.selectionList.unshift({
+                        label: LABEL_DEFAULT,
+                        value: null
+                    });
+                });
+                break;
+            case CURVE:
+                async.eachSeries(curves, (c, next) => {
+                    // self.selectionList.push({
+                    //     data: {
+                    //         label: c.name
+                    //     },
+                    //     properties: {
+                    //         name: c.name,
+                    //         curveType: c.type,
+                    //         // familyGroup: c.familyGroup,
+                    //         // familyCurveSpec: c.family_spec,
+                    //         idFamily: c.idFamily
+                    //     },
+                    //     icon: 'curve-16x16'
+                    // });
+                    self.selectionListTarget.push({
+                        label: c.name,
+                        name: c.name,
+                        curveType: c.type,
+                        // familyGroup: c.familyGroup,
+                        // familyCurveSpec: c.family_spec,
+                        idFamily: c.idFamily,
+                        icon: 'curve-16x16'
+                    });
+                    next();
+                }, (err) => {
+                    if(err) console.log("Have a error!");
+                    self.selectionListTarget = _.uniqBy(self.selectionListTarget, 'label');
+                    self.selectionListTarget.sort((a, b) => {
+                                        let nameA = a.label.toUpperCase();
+                                        let nameB = b.label.toUpperCase();
+                                        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+                                    });
+                    self.selectionListTarget.unshift({
                         label: LABEL_DEFAULT,
                         value: null
                     });

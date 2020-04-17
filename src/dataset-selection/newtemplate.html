@@ -74,7 +74,10 @@
 						<!-- <wi-dropdown-list-new style="width: 100%;" place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionList" hide-delete-button='true'
 							on-item-changed="self.getFnOnInputChanged($index)" current-select="item.currentSelect">
 						</wi-dropdown-list-new> -->
-						<wi-dropdown-list-new style="width: 100%;" place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionList" hide-delete-button='true'
+						<wi-dropdown-list-new ng-if="!item.isTarget" style="width: 100%;" place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionList" hide-delete-button='true'
+							on-item-changed="self.controller.onInputItemChange" current-select="item.currentSelect" params="item">
+						</wi-dropdown-list-new>
+						<wi-dropdown-list-new ng-if="item.isTarget" style="width: 100%;" place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionListTarget" hide-delete-button='true'
 							on-item-changed="self.controller.onInputItemChange" current-select="item.currentSelect" params="item">
 						</wi-dropdown-list-new>
 						<div style='display:flex;margin-right:0.5em;align-items:center;'>
