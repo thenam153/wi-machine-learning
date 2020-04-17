@@ -676,11 +676,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     console.log($scope.projectSelected);
                     if($scope.projectSelected) {
                         wiToken.setCurrentProjectName($scope.projectSelected.name);
+                        self.project = $scope.projectSelected
                         if(self.project.content.plot) {
                             self.tabs[STEP_VERIFY].plotName = self.project.content.plot[STEP_VERIFY].plotName
                             self.tabs[STEP_PREDICT].plotName = self.project.content.plot[STEP_PREDICT].plotName
                         }
-                        self.project = $scope.projectSelected
                         self.tabs[STEP_TRAIN].listDataset = self.project.content.tabs[STEP_TRAIN] || []
                         self.tabs[STEP_VERIFY].listDataset = self.project.content.tabs[STEP_VERIFY] || []
                         self.tabs[STEP_PREDICT].listDataset = self.project.content.tabs[STEP_PREDICT] || []
