@@ -271,31 +271,27 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 falCurve = _.intersectionBy(curves, 'idFamily');
                 async.eachSeries(falCurve, async (c) => {
                     if (c.idFamily !== undefined && c.idFamily) {
-                        let fl = await wiApi.getFamily(c.idFamily);
-                        if(fl) {
-                            // self.selectionList.push({
-                            //     data: {
-                            //         label: fl.name
-                            //     },
-                            //     properties: {
-                            //         familyCurveSpec: fl.family_spec,
-                            //         familyGroup: fl.familyGroup,
-                            //         familyCurve: fl.name,
-                            //         name: fl.name,
-                            //         // idFamily: fl.idFamily
-                            //     },
-                            //     icon: 'family-16x16'
-                            // })
-                            self.selectionList.push({
-                                label: fl.name,
-                                familyCurveSpec: fl.family_spec,
-                                familyGroup: fl.familyGroup,
-                                familyCurve: fl.name,
-                                name: fl.name,
-                                // idFamily: fl.idFamily
-                                icon: 'family-16x16'
-                            })
-                        }
+                        // let fl = await wiApi.getFamily(c.idFamily);
+                        // if(fl) {
+                        //     self.selectionList.push({
+                        //         label: fl.name,
+                        //         familyCurveSpec: fl.family_spec,
+                        //         familyGroup: fl.familyGroup,
+                        //         familyCurve: fl.name,
+                        //         name: fl.name,
+                        //         // idFamily: fl.idFamily
+                        //         icon: 'family-16x16'
+                        //     })
+                        // }
+
+                        self.selectionList.push({
+                            label: c.LineProperty.name,
+                            familyGroup: c.LineProperty.familyGroup,
+                            familyCurve: c.LineProperty.name,
+                            name: c.LineProperty.name,
+                            // idFamily: fl.idFamily
+                            icon: 'family-16x16'
+                        })
                     }
                 }, (err) => {
                     if(err) console.log("Have a error!");
@@ -315,29 +311,24 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 falCurve = _.intersectionBy(curves, 'idFamily');
                 async.eachSeries(falCurve, async (c) => {
                     if (c.idFamily !== undefined && c.idFamily) {
-                        let fl = await wiApi.getFamily(c.idFamily);
-                        if(fl) {
-                            // self.selectionList.push({
-                            //     data: {
-                            //         label: fl.familyGroup
-                            //     },
-                            //     properties: {
-                            //         name: fl.familyGroup,
-                            //         familyGroup: fl.familyGroup,
-                            //         familyCurveSpec: fl.family_spec,
-                            //         // idFamily: fl.idFamily
-                            //     },
-                            //     icon: 'family-group-16x16'
-                            // })
-                            self.selectionList.push({
-                                label: fl.familyGroup,
-                                name: fl.familyGroup,
-                                familyGroup: fl.familyGroup,
-                                familyCurveSpec: fl.family_spec,
-                                // idFamily: fl.idFamily
-                                icon: 'family-group-16x16'
-                            })
-                        }
+                        // let fl = await wiApi.getFamily(c.idFamily);
+                        // if(fl) {
+                        //     self.selectionList.push({
+                        //         label: fl.familyGroup,
+                        //         name: fl.familyGroup,
+                        //         familyGroup: fl.familyGroup,
+                        //         familyCurveSpec: fl.family_spec,
+                        //         // idFamily: fl.idFamily
+                        //         icon: 'family-group-16x16'
+                        //     })
+                        // }
+                        self.selectionList.push({
+                            label: c.LineProperty.familyGroup,
+                            familyGroup: c.LineProperty.familyGroup,
+                            name: c.LineProperty.familyGroup,
+                            // idFamily: fl.idFamily
+                            icon: 'family-group-16x16'
+                        })
                     }
                 }, (err) => {
                     if(err) console.log("Have a error!");
@@ -409,31 +400,28 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 falCurve = _.intersectionBy(curves, 'idFamily');
                 async.eachSeries(falCurve, async (c) => {
                     if (c.idFamily !== undefined && c.idFamily) {
-                        let fl = await wiApi.getFamily(c.idFamily);
-                        if(fl) {
-                            // self.selectionList.push({
-                            //     data: {
-                            //         label: fl.name
-                            //     },
-                            //     properties: {
-                            //         familyCurveSpec: fl.family_spec,
-                            //         familyGroup: fl.familyGroup,
-                            //         familyCurve: fl.name,
-                            //         name: fl.name,
-                            //         // idFamily: fl.idFamily
-                            //     },
-                            //     icon: 'family-16x16'
-                            // })
-                            self.selectionListTarget.push({
-                                label: fl.name,
-                                familyCurveSpec: fl.family_spec,
-                                familyGroup: fl.familyGroup,
-                                familyCurve: fl.name,
-                                name: fl.name,
-                                // idFamily: fl.idFamily
-                                icon: 'family-16x16'
-                            })
-                        }
+                        // let fl = await wiApi.getFamily(c.idFamily);
+                        // if(fl) {
+                        //     self.selectionListTarget.push({
+                        //         label: fl.name,
+                        //         familyCurveSpec: fl.family_spec,
+                        //         familyGroup: fl.familyGroup,
+                        //         familyCurve: fl.name,
+                        //         name: fl.name,
+                        //         // idFamily: fl.idFamily
+                        //         icon: 'family-16x16'
+                        //     })
+                        // }
+
+                        self.selectionListTarget.push({
+                            label: c.LineProperty.name,
+                            familyGroup: c.LineProperty.familyGroup,
+                            familyCurve: c.LineProperty.name,
+                            name: c.LineProperty.name,
+                            // idFamily: fl.idFamily
+                            icon: 'family-16x16'
+                        })
+
                     }
                 }, (err) => {
                     if(err) console.log("Have a error!");
@@ -453,29 +441,26 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 falCurve = _.intersectionBy(curves, 'idFamily');
                 async.eachSeries(falCurve, async (c) => {
                     if (c.idFamily !== undefined && c.idFamily) {
-                        let fl = await wiApi.getFamily(c.idFamily);
-                        if(fl) {
-                            // self.selectionList.push({
-                            //     data: {
-                            //         label: fl.familyGroup
-                            //     },
-                            //     properties: {
-                            //         name: fl.familyGroup,
-                            //         familyGroup: fl.familyGroup,
-                            //         familyCurveSpec: fl.family_spec,
-                            //         // idFamily: fl.idFamily
-                            //     },
-                            //     icon: 'family-group-16x16'
-                            // })
-                            self.selectionListTarget.push({
-                                label: fl.familyGroup,
-                                name: fl.familyGroup,
-                                familyGroup: fl.familyGroup,
-                                familyCurveSpec: fl.family_spec,
-                                // idFamily: fl.idFamily
-                                icon: 'family-group-16x16'
-                            })
-                        }
+                        // let fl = await wiApi.getFamily(c.idFamily);
+                        // if(fl) {
+                        //     self.selectionListTarget.push({
+                        //         label: fl.familyGroup,
+                        //         name: fl.familyGroup,
+                        //         familyGroup: fl.familyGroup,
+                        //         familyCurveSpec: fl.family_spec,
+                        //         // idFamily: fl.idFamily
+                        //         icon: 'family-group-16x16'
+                        //     })
+                        // }
+
+                        self.selectionListTarget.push({
+                            label: c.LineProperty.familyGroup,
+                            familyGroup: c.LineProperty.familyGroup,
+                            name: c.LineProperty.familyGroup,
+                            // idFamily: fl.idFamily
+                            icon: 'family-group-16x16'
+                        })
+
                     }
                 }, (err) => {
                     if(err) console.log("Have a error!");
