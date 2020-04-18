@@ -102,6 +102,10 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
         // .then(() => predict())
         // .then(() => console.log('run all success'))
         // .catch(() => console.log('run all fail'))
+        if(!self.controller.project) {
+            self.controller.createProject();
+         return   
+        }
         $timeout(() => {
                     self.running = true;
                 })
@@ -115,6 +119,11 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             beforeTrain()
             .then(() => trainData())
             .then(() => afterTrain())
+            .then(() => {
+                self.controller.project.content.state = 1;
+                self.controller.saveProject();
+
+            })
             .then(() => beforeVerify())
             .then(() => beforePredict())
             .then(() => {
