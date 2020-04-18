@@ -147,7 +147,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 return reject(new Error('Please drop datasets for training'));
             }
             if(!isActive(self.controller.tabs['training'].listDataset)) {
-                return reject(new Error('Please active one or more dataset'));
+                return reject(new Error('Please select a dataset to train before verifying/predicting'));
             }
             async.each(self.controller.tabs['training'].listDataset, (dataset, _next) => {
                 if(!isRun(dataset)) {
