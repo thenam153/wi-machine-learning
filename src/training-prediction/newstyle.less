@@ -35,6 +35,7 @@ training-prediction {
 	.table-block {
 		padding-left: 20px;
 		min-width   : 170px;
+		max-width: 170px;
 		.active {
 			color: #0574da; 
 			cursor: pointer;
@@ -186,6 +187,14 @@ training-prediction {
 			}
 		}
 	}
+}
+//fix widropdown
+.ui-select-bootstrap .ui-select-match-text {
+    width: 90% !important;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    padding-right: 1em;
 }
 wi-discriminator {
 	textarea {
