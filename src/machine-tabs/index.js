@@ -10,6 +10,7 @@ var config = require('../config/config').production;
 // }
 var app = angular.module(moduleName, ['modelSelection',
     'datasetSelection',
+    'zonesetConfig',
     'trainingPrediction',
     'mlApi',
     'wiApi',
@@ -40,6 +41,7 @@ const EXPO = 'exponential';
 const LABEL_DEFAULT = '[Not Selected]';
 const TAB_DATASET =  'Dataset Selection';
 const TAB_MODEL =  'Model Selection';
+const TAB_ZONESET = 'Zoneset Config';
 const TAB_TRAIN =  'Training and Prediction';
 const STEP_TRAIN = 'training';
 const STEP_VERIFY = 'verify';
@@ -88,14 +90,14 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             drop: null,
         },
     }
-    this.titleTabs = [TAB_DATASET, TAB_MODEL, TAB_TRAIN];
+    this.titleTabs = [TAB_DATASET, TAB_MODEL, TAB_TRAIN, TAB_ZONESET];
     this.steps = [STEP_TRAIN, STEP_VERIFY, STEP_PREDICT];
     this.$onInit = async function() {
         wiApi.setBaseUrl(config.base_url);
         self.loginUrl = config.login;
         self.queryString = queryString.parse(location.search);
         self.token = wiToken.getToken();
-        self.titleTabs = [TAB_DATASET, TAB_MODEL, TAB_TRAIN];
+        self.titleTabs = [TAB_DATASET, TAB_MODEL, TAB_TRAIN, TAB_ZONESET];
         self.steps = [STEP_TRAIN, STEP_VERIFY, STEP_PREDICT];
         self.current_tab = 0;
         initMlProject();
@@ -120,19 +122,27 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         self.tabs = {
             training: {
                 listDataset: [],
+                listZoneset: [],
                 selectionList: []
             },
             verify: {
                 listDataset: [],
+                listZoneset: [],
                 selectionList: [],
                 plotName: 'Verification Plot'
             },
             prediction: {
                 listDataset: [],
+                listZoneset: [],
                 selectionList: [],
                 plotName: 'Prediction Plot'
             }
         }
+        self.zonesetConfig = {
+            training: {},
+            verify: {},
+            prediction: {}
+        };
         self.typeInput = {
             label: 'Curve',
             type: CURVE,
@@ -221,7 +231,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                                 case STEP_TRAIN: 
                                 case STEP_VERIFY:
                                     vlDs.curveSpecs = self.curveSpecs.map(i => {return {isTarget: i.isTarget, value: null};});
-                                break;
+                                    break;
                                 case STEP_PREDICT:
                                     vlDs.curveSpecs = self.curveSpecs.filter(i => !i.isTarget).map(i => {return {isTarget: i.isTarget, value: null};});
                                     break;
@@ -243,11 +253,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 case STEP_TRAIN:
                     self.tabs[STEP_TRAIN].listDataset.splice($index, 1); 
                     // self.makeListOfDatasetSelection();
-                break;
+                    break;
                 case STEP_VERIFY:
+                    break;
                 case STEP_PREDICT:
                     self.tabs[step].listDataset.splice($index, 1);
-                break;
+                    break;
             }
             self.makeListOfDatasetSelection();
         });
@@ -801,28 +812,42 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 $scope.allProjects = self.project ? listMlProject.filter(l => l.name != self.project.name).sort((a, b) => a.name.localeCompare(b.name)) :
                 listMlProject.sort((a, b) => a.name.localeCompare(b.name)) 
                 $scope.projectSelected = null;
-                $scope.openProject = function() {
+                $scope.openProject = async function() {
                     console.log($scope.projectSelected);
                     if($scope.projectSelected) {
-                        wiToken.setCurrentProjectName($scope.projectSelected.name);
-                        self.project = $scope.projectSelected
-                        if(self.project.content.plot) {
-                            self.tabs[STEP_VERIFY].plotName = self.project.content.plot[STEP_VERIFY].plotName
-                            self.tabs[STEP_PREDICT].plotName = self.project.content.plot[STEP_PREDICT].plotName
+                        let content = $scope.projectSelected.content;
+                        self.projectInfo = content.projectInfo || {};
+                        let owner = self.projectInfo.owner;
+                        let name = self.projectInfo.name;
+                        if (owner && name) {
+                            self.dataProject = await wiApi.getFullInfoPromise((content.tabs[STEP_TRAIN] || [])[0].idProject, owner, name);
                         }
-                        self.tabs[STEP_TRAIN].listDataset = self.project.content.tabs[STEP_TRAIN] || []
-                        self.tabs[STEP_VERIFY].listDataset = self.project.content.tabs[STEP_VERIFY] || []
-                        self.tabs[STEP_PREDICT].listDataset = self.project.content.tabs[STEP_PREDICT] || []
-                        self.typeInput = self.project.content.typeInput
-                        self.makeListOfDatasetSelection();
-                        self.curveSpecs = self.project.content.curveSpecs
-                        let currentTypeModel = self.modelSelection.listTypeModel.find(t => t.type === self.project.content.model.type);
-                        if(currentTypeModel) self.modelSelection.currentTypeModel = currentTypeModel;
-                        let currentModel = self.modelSelection.listModel[self.modelSelection.currentTypeModel.type].find(m => m.name === self.project.content.model.name);
-                        if(currentModel) {
-                            Object.assign(self.modelSelection.currentModel, self.project.content.model);
-                            Object.assign(currentModel, self.project.content.model);
-                        }
+                        $timeout(() => {
+                            wiToken.setCurrentProjectName($scope.projectSelected.name);
+                            self.project = $scope.projectSelected
+                            if(self.project.content.plot) {
+                                self.tabs[STEP_VERIFY].plotName = self.project.content.plot[STEP_VERIFY].plotName
+                                self.tabs[STEP_PREDICT].plotName = self.project.content.plot[STEP_PREDICT].plotName
+                            }
+                            self.tabs[STEP_TRAIN].listDataset = self.project.content.tabs[STEP_TRAIN] || []
+                            self.tabs[STEP_VERIFY].listDataset = self.project.content.tabs[STEP_VERIFY] || []
+                            self.tabs[STEP_PREDICT].listDataset = self.project.content.tabs[STEP_PREDICT] || []
+                            self.zonesetConfig = content.zonesetConfig || {
+                                training: {},
+                                verify: {},
+                                prediction: {}
+                            };
+                            self.typeInput = self.project.content.typeInput
+                            self.makeListOfDatasetSelection();
+                            self.curveSpecs = self.project.content.curveSpecs
+                            let currentTypeModel = self.modelSelection.listTypeModel.find(t => t.type === self.project.content.model.type);
+                            if(currentTypeModel) self.modelSelection.currentTypeModel = currentTypeModel;
+                            let currentModel = self.modelSelection.listModel[self.modelSelection.currentTypeModel.type].find(m => m.name === self.project.content.model.name);
+                            if(currentModel) {
+                                Object.assign(self.modelSelection.currentModel, self.project.content.model);
+                                Object.assign(currentModel, self.project.content.model);
+                            }
+                        })
                     }
                     ngDialog.close()
                 }
@@ -898,6 +923,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                         plotName: self.tabs[STEP_PREDICT].plotName
                     }
                 },
+                projectInfo: self.projectInfo,
                 curveSpecs: self.curveSpecs,
                 typeInput: self.typeInput,
                 model: self.modelSelection.currentModel,
@@ -1015,26 +1041,40 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 wiToken.setCurrentProjectName('');
                 return self.openProject();
             }
-            $scope.acceptRestore = function() {
-                wiToken.setCurrentProjectName(currentProject.name);
-                self.project = currentProject
-                if(self.project.content.plot) {
-                    self.tabs[STEP_VERIFY].plotName = self.project.content.plot[STEP_VERIFY].plotName
-                    self.tabs[STEP_PREDICT].plotName = self.project.content.plot[STEP_PREDICT].plotName
+            $scope.acceptRestore = async function() {
+                let content = currentProject.content;
+                self.projectInfo = content.projectInfo || {};
+                let owner = self.projectInfo.owner;
+                let name = self.projectInfo.name;
+                if (owner && name) {
+                    self.dataProject = await wiApi.getFullInfoPromise((content.tabs[STEP_TRAIN] || [])[0].idProject, owner, name);
                 }
-                self.tabs[STEP_TRAIN].listDataset = self.project.content.tabs[STEP_TRAIN] || []
-                self.tabs[STEP_VERIFY].listDataset = self.project.content.tabs[STEP_VERIFY] || []
-                self.tabs[STEP_PREDICT].listDataset = self.project.content.tabs[STEP_PREDICT] || []
-                self.typeInput = self.project.content.typeInput
-                self.makeListOfDatasetSelection();
-                self.curveSpecs = self.project.content.curveSpecs
-                let currentTypeModel = self.modelSelection.listTypeModel.find(t => t.type === self.project.content.model.type);
-                if(currentTypeModel) self.modelSelection.currentTypeModel = currentTypeModel;
-                let currentModel = self.modelSelection.listModel[self.modelSelection.currentTypeModel.type].find(m => m.name === self.project.content.model.name);
-                if(currentModel) {
-                    Object.assign(self.modelSelection.currentModel, self.project.content.model);
-                    Object.assign(currentModel, self.project.content.model);
-                }
+                $timeout(() => {
+                    wiToken.setCurrentProjectName(currentProject.name);
+                    self.project = currentProject
+                    if(self.project.content.plot) {
+                        self.tabs[STEP_VERIFY].plotName = self.project.content.plot[STEP_VERIFY].plotName
+                        self.tabs[STEP_PREDICT].plotName = self.project.content.plot[STEP_PREDICT].plotName
+                    }
+                    self.tabs[STEP_TRAIN].listDataset = self.project.content.tabs[STEP_TRAIN] || []
+                    self.tabs[STEP_VERIFY].listDataset = self.project.content.tabs[STEP_VERIFY] || []
+                    self.tabs[STEP_PREDICT].listDataset = self.project.content.tabs[STEP_PREDICT] || []
+                    self.zonesetConfig = content.zonesetConfig || {
+                        training: {},
+                        verify: {},
+                        prediction: {}
+                    };
+                    self.typeInput = self.project.content.typeInput
+                    self.makeListOfDatasetSelection();
+                    self.curveSpecs = self.project.content.curveSpecs
+                    let currentTypeModel = self.modelSelection.listTypeModel.find(t => t.type === self.project.content.model.type);
+                    if(currentTypeModel) self.modelSelection.currentTypeModel = currentTypeModel;
+                    let currentModel = self.modelSelection.listModel[self.modelSelection.currentTypeModel.type].find(m => m.name === self.project.content.model.name);
+                    if(currentModel) {
+                        Object.assign(self.modelSelection.currentModel, self.project.content.model);
+                        Object.assign(currentModel, self.project.content.model);
+                    }
+                })
                 ngDialog.close()
             }
             ngDialog.open({

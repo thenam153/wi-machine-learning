@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "preprocess":"gulp build",
-    "start": "http-server -a localhost -p 9001 -o"
+    "preprocess": "gulp build",
+    "start": "webpack -w"
   },
   "author": "",
   "license": "ISC",
@@ -15,7 +15,8 @@
     "less": "^3.9.0",
     "less-loader": "^4.1.0",
     "style-loader": "^0.23.1",
-    "webpack": "^4.30.0"
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.11"
   },
   "dependencies": {
     "gulp": "^4.0.2",
