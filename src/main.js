@@ -5,5 +5,5 @@ module.exports = {
 	datasetSelection : require('./dataset-selection/index'),
 	trainingPrediction : require('./training-prediction/index'),
 	mlService: require('./services/ml-service/index.js'),
-	mlApi: require('./services/ml-api/index.js'),
+	mlApi: require('./services/ml-api/index.js')
 }

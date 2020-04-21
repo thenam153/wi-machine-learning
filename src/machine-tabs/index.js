@@ -919,7 +919,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }
     }
     this.openProject = function() {
-        wiApi.getMlProjectListPromise()
+        wiApi.client('WI_AI_CLIENT').getMlProjectListPromise()
         .then((listMlProject) => {
             // $timeout(() => {
                 $scope.allProjects = self.project ? listMlProject.filter(l => l.name != self.project.name).sort((a, b) => a.name.localeCompare(b.name)) :
@@ -947,7 +947,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         self.projectName = self.project.name;
         $scope.rename = function() {
             if(self.projectName) {
-                wiApi.editMlProjectPromise({
+                wiApi.client(WI_AI_CLIENT).editMlProjectPromise({
                     name: self.projectName,
                     idMlProject: self.project.idMlProject,
                     content: {
@@ -987,7 +987,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         });
     }
     this.saveProject = function() {
-        wiApi.editMlProjectPromise({
+        wiApi.client("WI_AI_CLIENT").editMlProjectPromise({
             name: self.project.name,
             idMlProject: self.project.idMlProject,
             content: {
@@ -1026,7 +1026,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         self.nameProject = "default";
         $scope.createNewProject = function(name) {
             if(self.nameProject) {
-                wiApi.createMlProjectPromise({
+                wiApi.client("WI_AI_CLIENT").createMlProjectPromise({
                     name: self.nameProject,
                     content: {
                         tabs: {
@@ -1089,7 +1089,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         $scope.projectDelete = project;
         $scope.cancelDelete = () => dialog.close();
         $scope.okDelete = function() {
-            wiApi.deleteMlProjectPromise(project.idMlProject)
+            wiApi.client("WI_AI_CLIENT").deleteMlProjectPromise(project.idMlProject)
                 .then((res) => {
                     toastr.success('Delete "' + project.name + '" Project Success', 'Success');
                     if(self.project && project.idMlProject === self.project.idMlProject) {
@@ -1115,7 +1115,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     this.restoreProject = function() {
         if(wiToken.getCurrentProjectName()) {
             self.restoreProjectName = wiToken.getCurrentProjectName();
-            wiApi.getMlProjectListPromise()
+            wiApi.client("WI_AI_CLIENT").getMlProjectListPromise()
         .then((listMlProject) => {
             let currentProject = listMlProject.find(p => p.name === wiToken.getCurrentProjectName());
             if(!currentProject) {
@@ -1146,9 +1146,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         if (!well) return null;
         return well.datasets.find(ds => ds.idDataset === idDataset);
     }
-    this.__FN_CACHE_TRAINING = {};
-    this.__FN_CACHE_VERIFY = {};
-    this.__FN_CACHE_PREDICT = {};
     this.__CURVES_CACHE = {};
     this.getCurves = function(curveSpecItem, compactDataset) {
         let well = self.__WELLCACHE["" + compactDataset.idWell];
