@@ -72,6 +72,7 @@
 		</div>
         <dataset-selection 
             ng-show="self.titleTabs[self.current_tab] === 'Dataset Selection'"
+
             id-project="self.idProject" 
             input-curve-specs="self.inputCurveSpecs"
             target-curve-spec="self.targetCurveSpec" 
@@ -79,13 +80,13 @@
             on-add-input-item="self.onAddInputItem" 
             get-fn-on-input-changed="self.getFnOnInputChanged"
             on-target-item-changed="self.onTargetItemChanged" 
-            on-remove-input-item="self.onRemoveInputItem"
             on-change-type="self.onChangeType" 
-            drop="self.getFnDrop" 
             selection-list="self.selectionList" 
             make-selection-list="self.makeSelectionList" 
-            on-remove-dataset="self.onRemoveDataset"
             
+            on-remove-input-item="self.onRemoveInputItem"
+            on-remove-dataset="self.onRemoveDataset"
+            drop="self.getFnDrop" 
             list-dataset="self.listDataset"
             controller="self"
             >

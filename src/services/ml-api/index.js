@@ -129,22 +129,33 @@ function mlApi($http, $timeout, wiApi) {
         });
     }
    
-    function getDataCurveAndFilter(dataset, curves) {
+    function getDataCurveAndFilter(dataset, curves, curveSpecs) {
         return new Promise((resolve, reject) => {
             // let arrNaN = [];
             let inputCurveData = [];
-            async.eachSeries(dataset.curveSpecs, async function(input) {
-                    let curve = input.value;
-                    let dataCurve = await wiApi.getCurveDataPromise(curve.idCurve);
-                    for (let i in dataCurve) {
-                        dataCurve[i] = parseFloat(dataCurve[i].x, 4);
-                        if (isNaN(dataCurve[i])) curves[i] = false;
-                    }
-                    inputCurveData.push(dataCurve);
+            // async.eachSeries(dataset.curveSpecs, async function(input) { // TUNG
+            async.eachOfSeries(curveSpecs, function(input, idx, cb) {
+                let curveName = dataset.selectedValues[idx];
+                wiApi.getCachedWellPromise(dataset.idWell).then((well) => {
+                    let dtset = well.datasets.find(ds => ds.idDataset === dataset.idDataset);
+                    if (!dtset) 
+                        return cb(new Error("Dataset not found idDataset="+dataset.idDataset));
+                    let curveInfo = dtset.curves.find(c => c.name === curveName);
+                    if (!curveInfo) 
+                        return cb(new Error(`Curve ${curveName} not found in dataset idDataset=${dataset.idDataset}`));
+                    wiApi.getCurveDataPromise(curveInfo.idCurve).then((dataCurve) => {
+                        for (let i in dataCurve) {
+                            dataCurve[i] = parseFloat(dataCurve[i].x, 4);
+                            if (isNaN(dataCurve[i])) curves[i] = false;
+                        }
+                        inputCurveData.push(dataCurve);
+                        cb();
+                    }).catch(e => cb(e));
+                });
             }, err => {
                 if (err || !inputCurveData || !inputCurveData.length) {
-                    console.log(err);
-                    reject(err || 'Something was wrong');
+                    console.error(err);
+                    reject(err || 'No curves found');
                 }
                 let cacheInputCurveData = [];
                 cacheInputCurveData.length = inputCurveData.length;
@@ -169,7 +180,114 @@ function mlApi($http, $timeout, wiApi) {
         })
     }
     this.getDataCurveAndFilter = getDataCurveAndFilter;
-    function evaluateExpr(dataset, discriminator) {
+    function evaluateExpr(curvesInDataset, discriminator) {
+        return new Promise(resolve => {
+            let result = new Array();
+            let length = 0;
+            // let length = (dataset.bottom - dataset.top) / dataset.step;
+            let curveSet = new Set();
+            let curvesData = new Array();
+            //let curvesInDataset = curves;
+            if (!curvesInDataset) return callback(result);
+
+            function findCurve(condition) {
+                if (condition && condition.children && condition.children.length) {
+                    condition.children.forEach(function(child) {
+                        findCurve(child);
+                    })
+                } else if (condition && condition.left && condition.right) {
+                    curveSet.add(condition.left.value);
+                    if (condition.right.type == 'curve') {
+                        curveSet.add(condition.right.value);
+                    }
+                } else {
+                    return;
+                }
+            }
+
+            findCurve(discriminator);
+            function evaluate(condition, index) {
+                if (typeof discriminator !== 'undefined' && !discriminator.active) { return true; }
+                if (condition && condition.children && condition.children.length) {
+                    let left = evaluate(condition.children[0], index);
+                    let right = evaluate(condition.children[1], index);
+                    switch (condition.operator) {
+                        case 'and':
+                            return left && right;
+                        case 'or':
+                            return left || right;
+                    }
+                } else if (condition && condition.left && condition.right) {
+                    let leftCurve = curvesData.find(function(curve) {
+                        return curve.name == condition.left.value;
+                    });
+                    let left = leftCurve ? parseFloat(leftCurve.data[index]) : null;
+
+                    let right = condition.right.value;
+                    if (condition.right.type == 'curve') {
+                        let rightCurve = curvesData.find(function(curve) {
+                            return curve.name == condition.right.value;
+                        })
+                        right = rightCurve ? parseFloat(rightCurve.data[index]) : null;
+                    }
+
+                    if (left != null && right != null) {
+                        switch (condition.comparison) {
+                            case '<':
+                                return left < right;
+                            case '>':
+                                return left > right;
+                            case '=':
+                                return left == right;
+                            case '<=':
+                                return left <= right;
+                            case '>=':
+                                return left >= right;
+                        }
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return true;
+                }
+            }
+            let curveArr = curvesInDataset.filter(c => {
+                // console.log('c',c,Array.from(curveSet).includes(c.name),Array.from(curveSet));
+                return Array.from(curveSet).includes(c.name);
+            });
+            console.log(curveArr);
+            async.eachOfSeries(
+                curveArr,
+                function(curve, i, done) {
+                    // console.log('curve of curve arr',curve);
+                    if (curve) {
+                        (async() => {
+                            let data = await wiApi.getCurveDataPromise(curve.idCurve);
+                            if (Array.isArray(data)) {
+                                curvesData.push({
+                                    idCurve: curve.idCurve,
+                                    name: curve.name,
+                                    data: data.map(d => parseFloat(d.x))
+                                })
+                            }
+                            done();
+                        })();
+                    }
+                },
+                async function(err) {
+                    console.log('done!', curvesData);
+                    let data = await wiApi.getCurveDataPromise(curvesInDataset[0].idCurve);
+                    // console.log(data);
+                    length = data.length;
+                    for (let i = 0; i <= length; i++) {
+                        result.push(evaluate(discriminator, i));
+                    }
+                    resolve(result);
+                }
+            );
+        })
+    }
+    function evaluateExpr1(dataset, discriminator) {
         return new Promise(resolve => {
             let result = new Array();
             let length = 0;
@@ -388,7 +506,8 @@ function mlApi($http, $timeout, wiApi) {
         });
     }
     this.createModelAndBucketId = createModelAndBucketId;
-    function createModelAndBucketId(mlProject, dims, idMlProject) {
+    //function createModelAndBucketId(mlProject, dims, idMlProject) { // TUNG
+    function createModelAndBucketId(dims, idMlProject) {
         return new Promise((resolve, reject) => {
             let payload = {};
             self.currentModel.payload.params.forEach(i => {
@@ -396,37 +515,35 @@ function mlApi($http, $timeout, wiApi) {
             })
             payload['model_id'] = payload['model_id'] + '_' + idMlProject
             var modelId, bucketId
-            postCreateModel(payload)
-                .then((resModel) => {
-                    modelId = resModel.model_id;
-                    bucketId = `${modelId}_${localStorage.getItem('username')}_${mlProject.idMlProject}`;
-                    let payload1 = {
-                        bucket_id: bucketId,
-                        dims: dims,
-                    }
-                    postCreateBucketId(payload1)
-                        .then((resBucket) => {
-                            if (resBucket.existed) {
-                                payload1.override_flag = true;
-                                postCreateBucketId(payload1)
-                                    .then((resBucketId) => {
-                                        resolve({
-                                            modelId: modelId,
-                                            bucketId: bucketId
-                                        })
+            postCreateModel(payload).then((resModel) => {
+                modelId = resModel.model_id;
+                bucketId = `${modelId}_${localStorage.getItem('username')}_${idMlProject}`;
+                let payload1 = {
+                    bucket_id: bucketId,
+                    dims: dims,
+                }
+                postCreateBucketId(payload1)
+                    .then((resBucket) => {
+                        if (resBucket.existed) {
+                            payload1.override_flag = true;
+                            postCreateBucketId(payload1)
+                                .then((resBucketId) => {
+                                    resolve({
+                                        modelId: modelId,
+                                        bucketId: bucketId
                                     })
-                            } else {
-                                resolve({
-                                    modelId: modelId,
-                                    bucketId: bucketId
                                 })
-                            }
-                        })
-                })
-                .catch((err) => {
-                    reject(err);
-                })
-        })
+                        } else {
+                            resolve({
+                                modelId: modelId,
+                                bucketId: bucketId
+                            })
+                        }
+                    })
+            }).catch((err) => {
+                reject(err);
+            })
+        });
     }
     this.createPayloadForTrain = createPayloadForTrain;
     function createPayloadForTrain(modelId, bucketId) {

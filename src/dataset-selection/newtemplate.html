@@ -20,45 +20,6 @@
 				<div class="ml-new-16x16"></div>
 			</div>
 		</div>
-		<!-- <div style="margin-top: 20px;">
-			<div class="title">
-				{{self.targetCurveSpec.label}}
-			</div>
-			<div>
-				<wi-dropdown-list-new place-holder="Curve" items="self.selectionList" hide-delete-button='true'
-					current-select='self.targetCurveSpec.currentSelect' on-item-changed="self.onTargetItemChanged">
-				</wi-dropdown-list-new>
-			</div>
-			<div style='display:flex;margin-right:0.5em;align-items:center;'>
-				<span ng-click='self.targetCurveSpec.transform="linear";'>
-					<input type='radio' ng-model="self.targetCurveSpec.transform"
-						value="linear">
-					<span class="curve-transform"><span
-							style="line-height: 1.5em">X</span></span>
-				</span>
-				<span ng-click='self.targetCurveSpec.transform="logarithmic";'>
-					<input type='radio' ng-model="self.targetCurveSpec.transform"
-						value="logarithmic">
-					<span class="curve-transform">
-						<span
-							style="line-height: 1.5em">
-							log(X)
-						</span>
-					</span>
-				</span>
-				<span ng-click='self.targetCurveSpec.transform="exponential";' >
-					<input type='radio' ng-model="self.targetCurveSpec.transform"
-						value="exponential">
-					<span class="curve-transform">
-						<span
-							style="line-height: 1.5em">
-							10
-						</span>
-						<i style="vertical-align:super">X</i>
-					</span>
-				</span>
-			</div>
-		</div> -->
 		<div class="list-input">
 			<div class="list-scroll" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
 				<div class="input-curve" ng-repeat="item in self.controller.curveSpecs track by $index">
@@ -124,10 +85,13 @@
 							<div class="datasets-info">
 								<div class="button ti ti-close" ng-click="self.onRemoveDataset('training', $index)"></div>
 								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
-									{{item.name}}</div>
+									{{self.controller.getDataset(item.idWell, item.idDataset).name}}</div>
 								<div class="detail">
-									<div>Well name: {{item.wellName}}</div>
+									<!--<div>Well name: {{item.wellName}}</div>
 									<div>Curves: {{item.curves.length}}</div>
+									<div>ID dataset: {{item.idDataset}}</div>-->
+									<div>Well name: {{self.controller.getWell(item.idWell).name}}</div>
+									<div>Curves: {{self.controller.getDataset(item.idWell, item.idDataset).curves.length}}</div>
 									<div>ID dataset: {{item.idDataset}}</div>
 								</div>
 							</div>
@@ -153,10 +117,13 @@
 							<div class="datasets-info">
 								<div class="button ti ti-close" ng-click="self.onRemoveDataset('verify', $index)"></div>
 								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
-									{{item.name}}</div>
+									{{self.controller.getDataset(item.idWell, item.idDataset).name}}</div>
 								<div class="detail">
-									<div>Well name: {{item.wellName}}</div>
+									<!--<div>Well name: {{item.wellName}}</div>
 									<div>Curves: {{item.curves.length}}</div>
+									<div>ID dataset: {{item.idDataset}}</div>-->
+									<div>Well name: {{self.controller.getWell(item.idWell).name}}</div>
+									<div>Curves: {{self.controller.getDataset(item.idWell, item.idDataset).curves.length}}</div>
 									<div>ID dataset: {{item.idDataset}}</div>
 								</div>
 							</div>
@@ -186,10 +153,13 @@
 								<div class="button ti ti-close" ng-click="self.onRemoveDataset('prediction', $index)">
 								</div>
 								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
-									{{item.name}}</div>
+									{{self.controller.getDataset(item.idWell, item.idDataset).name}}</div>
 								<div class="detail">
-									<div>Well name: {{item.wellName}}</div>
+									<!--<div>Well name: {{item.wellName}}</div>
 									<div>Curves: {{item.curves.length}}</div>
+									<div>ID dataset: {{item.idDataset}}</div>-->
+									<div>Well name: {{self.controller.getWell(item.idWell).name}}</div>
+									<div>Curves: {{self.controller.getDataset(item.idWell, item.idDataset).curves.length}}</div>
 									<div>ID dataset: {{item.idDataset}}</div>
 								</div>
 							</div>
