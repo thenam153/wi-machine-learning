@@ -93,12 +93,14 @@ function DatasetSelectionController($scope, wiApi, $timeout){
         return [];
     }
     this.clickFn = function(event, node, selectIds, rootnode) {
+        //console.log(node);
         if(node.idProject && node.wells) return;
         if(node.idWell && node.datasets) return;
         if(node.idProject && !node.idDataset) {
             wiApi.getFullInfoPromise(node.idProject, node.owner, node.name).then(dataProject => {
-                console.log(dataProject);
                 $timeout(()=>{
+                    self.controller.projectInfo = {owner: node.owner, name: node.name};
+                    self.controller.dataProject = dataProject;
                     node.wells = dataProject.wells.sort((a,b) => a.name.localeCompare(b.name));
                     node.wells = dataProject.wells;
                     for(let i of node.wells) {

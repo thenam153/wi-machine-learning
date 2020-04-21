@@ -3,6 +3,7 @@
         <div style="display: flex;">
             <span class="menu-item" ng-class="{active: self.current_tab == 0}" ng-click="self.current_tab = 0;">Dataset Selection</span>
             <span class="menu-item" ng-class="{active: self.current_tab == 1}" ng-click="self.current_tab = 1;">Model Selection</span>
+            <span class="menu-item" ng-class="{active: self.current_tab == 3}" ng-click="self.current_tab = 3;">Zoneset Config</span>
             <span class="menu-item" ng-class="{active: self.current_tab == 2}" ng-click="self.current_tab = 2;self.updateTabTrainingPredictiong();">Training and Prediction</span>
         </div>
 		<div class="active menu-item">
@@ -97,6 +98,12 @@
             id="model-selection" 
             ng-if="self.titleTabs[self.current_tab] === 'Model Selection'">
         </model-selection>
+
+        <zoneset-config 
+            controller="self"
+            id="zoneset-config" 
+            ng-show="self.titleTabs[self.current_tab] === 'Zoneset Config'">
+        </zoneset-config>
 
         <training-prediction 
             ng-show="self.titleTabs[self.current_tab] === 'Training and Prediction'"

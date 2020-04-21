@@ -134,8 +134,22 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             });
         });
     }
+    function zonesetFilter(dataset, curve, zones) {
+        if (!zones || !zones.length) return curve;
+        let curveRes = curve.map((p, pIdx) => {
+            let depth = +dataset.top + pIdx * dataset.step;
+            let zone = _.find(zones, z => {
+                return (z.startDepth - depth) * (z.endDepth - depth) <= 0;
+            })
+            if (zone)
+                console.log(zone);
+            return zone ? !zone._notUsed && p : p;
+        })
+        return curveRes;
+    }
     function beforeTrain() {
         return new Promise((resolve, reject) => {
+            let listDataset = self.controller.tabs['training'].listDataset;
             if(self.controller.tabs['training'].listDataset.length == 0) {
                 return reject(new Error('Please drop datasets for training'));
             }
@@ -157,9 +171,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     }
                     return mlApi.evaluateExpr(dtset.curves, dataset.discrimnt);
                 })
-                //mlApi.evaluateExpr(dataset, dataset.discrmnt) // TUNG
                 .then(curves => {
-                    //return mlApi.getDataCurveAndFilter(dataset, curves); // TUNG
+                    let zonesList = self.controller.zonesetConfig['training'].zonesList || []; // PHUC
+                    curves = zonesetFilter(dataset, curves, zonesList[listDataset.indexOf(dataset)]); // PHUC
                     return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
                 }) 
                 .then(dataCurves => {
@@ -281,6 +295,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 
     function beforeVerify() {
         return new Promise((resolve, reject) => {
+            let listDataset = self.controller.tabs['training'].listDataset;
             if(self.controller.project.content.state < 1) {
                 return reject(new Error('Please training before verify or predict'));
             }
@@ -312,6 +327,8 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     //mlApi.evaluateExpr(dataset, dataset.discrimnt) // TUNG
                     .then(curves => {
                         //return mlApi.getDataCurveAndFilter(dataset, curves); // TUNG
+                        let zonesList = self.controller.zonesetConfig['verify'].zonesList || [];
+                        curves = zonesetFilter(dataset, curves, zonesList[listDataset.indexOf(dataset)]);
                         return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
                     })
                     .then(dataCurves => {
@@ -414,6 +431,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 
     function beforePredict() {
         return new Promise((resolve, reject) => {
+            let listDataset = self.controller.tabs['training'].listDataset;
             if(self.controller.project.content.state < 1) {
                 return reject(new Error('Please training before verify or predict'));
             }
@@ -446,6 +464,8 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     //mlApi.evaluateExpr(dataset, dataset.discrmnt) // TUNG
                     .then(curves => {
                         //return mlApi.getDataCurveAndFilter(dataset, curves);
+                        let zonesList = self.controller.zonesetConfig['prediction'].zonesList || [];
+                        curves = zonesetFilter(dataset, curves, zonesList[listDataset.indexOf(dataset)]);
                         return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
                     })
                     .then(dataCurves => {
