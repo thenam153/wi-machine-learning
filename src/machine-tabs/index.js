@@ -183,6 +183,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             verify: {},
             prediction: {}
         };
+        self.zonesList = {};
         self.typeInput = {
             label: 'Curve',
             type: CURVE,
@@ -266,6 +267,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                                 idDataset: vlDs.idDataset,
                                 idWell: vlDs.idWell,
                                 idProject: vlDs.idProject,
+                                top: vlDs.top,
+                                step: vlDs.step,
                                 discrimnt: {active: true},
                                 resultCurveName: "RESULT_CURVE"
                                 //curveSpecs
@@ -897,6 +900,14 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     self.tabs[STEP_VERIFY].plotName = self.project.content.plot[STEP_VERIFY].plotName;
                     self.tabs[STEP_PREDICT].plotName = self.project.content.plot[STEP_PREDICT].plotName;
                 }
+
+                // PHUC !!! Dont move after load listDataset !!!
+                self.zonesetConfig = content.zonesetConfig || {
+                    training: {},
+                    verify: {},
+                    prediction: {}
+                };
+
                 self.tabs[STEP_TRAIN].listDataset = self.project.content.tabs[STEP_TRAIN] || [];
                 self.tabs[STEP_VERIFY].listDataset = self.project.content.tabs[STEP_VERIFY] || [];
                 self.tabs[STEP_PREDICT].listDataset = self.project.content.tabs[STEP_PREDICT] || [];
@@ -911,13 +922,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     Object.assign(self.modelSelection.currentModel, self.project.content.model);
                     Object.assign(currentModel, self.project.content.model);
                 }
-
-                // PHUC
-                self.zonesetConfig = content.zonesetConfig || {
-                    training: {},
-                    verify: {},
-                    prediction: {}
-                };
             });
         }
     }
@@ -1007,6 +1011,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                         plotName: self.tabs[STEP_PREDICT].plotName
                     }
                 },
+                zonesetConfig: self.zonesetConfig,
                 projectInfo: self.projectInfo,
                 curveSpecs: self.curveSpecs,
                 typeInput: self.typeInput,

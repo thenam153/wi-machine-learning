@@ -134,16 +134,18 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             });
         });
     }
-    function zonesetFilter(dataset, curve, zones) {
-        if (!zones || !zones.length) return curve;
+    function zonesetFilter(dataset, curve, zonesConfig, zonesList) {
+        if (!zonesList || !zonesList.length) return curve;
+        let notUsedZones = _.filter(zonesConfig, '_notUsed');
+        notUsedZones = notUsedZones.map(z => z.template_name);
+        if (!notUsedZones || !notUsedZones.length) return curve;
         let curveRes = curve.map((p, pIdx) => {
             let depth = +dataset.top + pIdx * dataset.step;
-            let zone = _.find(zones, z => {
-                return (z.startDepth - depth) * (z.endDepth - depth) <= 0;
+            let zone = _.find(zonesList, z => {
+                return (z.startDepth - depth) * (z.endDepth - depth) <= 0
+                    && notUsedZones.includes(z.zone_template.name);
             })
-            if (zone)
-                console.log(zone);
-            return zone ? !zone._notUsed && p : p;
+            return zone ? false : p;
         })
         return curveRes;
     }
@@ -172,8 +174,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     return mlApi.evaluateExpr(dtset.curves, dataset.discrimnt);
                 })
                 .then(curves => {
-                    let zonesList = self.controller.zonesetConfig['training'].zonesList || []; // PHUC
-                    curves = zonesetFilter(dataset, curves, zonesList[listDataset.indexOf(dataset)]); // PHUC
+                    let zonesConfig = self.controller.zonesetConfig['training'].zoneList || []; // PHUC
+                    let zones = (self.controller.zonesList['training'] || [])[listDataset.indexOf(dataset)] || []; // PHUC
+                    curves = zonesetFilter(dataset, curves, zonesConfig, zones); // PHUC
                     return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
                 }) 
                 .then(dataCurves => {
@@ -327,8 +330,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     //mlApi.evaluateExpr(dataset, dataset.discrimnt) // TUNG
                     .then(curves => {
                         //return mlApi.getDataCurveAndFilter(dataset, curves); // TUNG
-                        let zonesList = self.controller.zonesetConfig['verify'].zonesList || [];
-                        curves = zonesetFilter(dataset, curves, zonesList[listDataset.indexOf(dataset)]);
+                        let zonesConfig = self.controller.zonesetConfig['verify'].zoneList || [];
+                        let zones = (self.controller.zonesList['verify'] || [])[listDataset.indexOf(dataset)] || []; // PHUC
+                        curves = zonesetFilter(dataset, curves, zonesConfig, zones);
                         return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
                     })
                     .then(dataCurves => {
@@ -464,8 +468,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     //mlApi.evaluateExpr(dataset, dataset.discrmnt) // TUNG
                     .then(curves => {
                         //return mlApi.getDataCurveAndFilter(dataset, curves);
-                        let zonesList = self.controller.zonesetConfig['prediction'].zonesList || [];
-                        curves = zonesetFilter(dataset, curves, zonesList[listDataset.indexOf(dataset)]);
+                        let zonesConfig = self.controller.zonesetConfig['prediction'].zoneList || [];
+                        let zones = (self.controller.zonesList['prediction'] || [])[listDataset.indexOf(dataset)] || []; // PHUC
+                        curves = zonesetFilter(dataset, curves, zonesConfig, zones);
                         return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
                     })
                     .then(dataCurves => {
