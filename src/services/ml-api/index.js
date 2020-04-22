@@ -105,13 +105,16 @@ function mlApi($http, $timeout, wiApi) {
         };
     }
     this.getDataCurves = getDataCurves;
-    function getDataCurves(dsItem, curveSpecs) {
+    function getDataCurves(dsItem, curveSpecs, isPrediction) {
         return new Promise((resolve, reject) => {
             let listInputCurves = [];
             wiApi.client(getClientId(dsItem.owner, dsItem.prjName)).getCachedWellPromise(dsItem.idWell).then((well) => {
                 let dataset = well.datasets.find(ds => ds.idDataset === dsItem.idDataset);
                 if (curveSpecs.length) {
                     async.eachOfSeries(curveSpecs, (curveSpecItem, idx, next) => {
+                        if (isPrediction && idx === 0) {
+                            return next();
+                        }
                         let c = dataset.curves.find(v => v.name === dsItem.selectedValues[idx]);
                         if(!c) {
                             //return resolve([]);
@@ -119,7 +122,8 @@ function mlApi($http, $timeout, wiApi) {
                         }
                         wiApi.client(getClientId(dsItem.owner, dsItem.prjName)).getCurveDataPromise(c.idCurve)
                         .then((data) => {
-                            listInputCurves[idx] = data.map(d => parseFloat(d.x));
+                            //listInputCurves[idx] = data.map(d => parseFloat(d.x));
+                            listInputCurves.push(data.map(d => parseFloat(d.x)));
                             next();
                         })
                     }, (err) => {
@@ -160,13 +164,16 @@ function mlApi($http, $timeout, wiApi) {
         });
     }
    
-    function getDataCurveAndFilter(dataset, curves, curveSpecs) {
+    function getDataCurveAndFilter(dataset, curves, curveSpecs, isPrediction) {
         return new Promise((resolve, reject) => {
             // let arrNaN = [];
             let inputCurveData = [];
             // async.eachSeries(dataset.curveSpecs, async function(input) { // TUNG
             async.eachOfSeries(curveSpecs, function(input, idx, cb) {
                 let curveName = dataset.selectedValues[idx];
+                if (isPrediction && idx == 0) {
+                    return cb();
+                }
                 wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell).then((well) => {
                     let dtset = well.datasets.find(ds => ds.idDataset === dataset.idDataset);
                     if (!dtset) 
@@ -191,7 +198,7 @@ function mlApi($http, $timeout, wiApi) {
                 let cacheInputCurveData = [];
                 cacheInputCurveData.length = inputCurveData.length;
                 let length = inputCurveData[0].length;
-                for (let i in inputCurveData) {
+                for (let i = 0; i < inputCurveData.length; i++) {
                     if (length > inputCurveData[i].length) length = inputCurveData[i].length;
                 }
                 for (let i = 0; i < inputCurveData.length; i++) {
@@ -428,7 +435,7 @@ function mlApi($http, $timeout, wiApi) {
     }
     */
     this.evaluateExpr = evaluateExpr;
-    async function saveCurveAndCreatePlot(tab, curveInfo, dataset, callback, errorCurveInfo, targetGroupsInfo, curveSpecs) {
+    async function saveCurveAndCreatePlot(tab, curveInfo, dataset, callback, errorCurveInfo, targetGroupsInfo, curveSpecs, isPrediction) {
         saveCurve(curveInfo, dataset, function(curveProps) {
             function handle(errorCurveInfo) {
                 let orderNum = dataset.idDataset.toString() + '1';
@@ -437,9 +444,14 @@ function mlApi($http, $timeout, wiApi) {
                     if (!realDataset) {
                         throw new Error(`Dataset ${dataset.idDataset} not found in well ${well.name}`);
                     }
-                    let inCurves = curveSpecs.map((ipt, idx) => {
-                        return realDataset.curves.find((c) => (c.name === dataset.selectedValues[idx]));
-                    });
+                    let inCurves = [];
+                    curveSpecs.forEach((csItem, idx) => {
+                        if (isPrediction && idx === 0) return;
+                        inCurves.push(realDataset.curves.find((c) => (c.name === dataset.selectedValues[idx])));
+                    })
+                    //let inCurves = curveSpecs.map((ipt, idx) => {
+                        //return realDataset.curves.find((c) => (c.name === dataset.selectedValues[idx]));
+                    //});
                     inCurves.push({
                         idCurve: curveProps.idCurve,
                         name: curveProps.name,
