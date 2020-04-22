@@ -164,12 +164,12 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 if(!dataset.active) {
                     return _next();
                 }
-                wiApi.getCachedWellPromise(dataset.idWell).then((well) => {
+                wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell).then((well) => {
                     let dtset = well.datasets.find(ds => ds.idDataset === dataset.idDataset);
                     if (!dtset) {
                         throw new Error("Cannot find dataset idDataset=" + dataset.idDataset);
                     }
-                    return mlApi.evaluateExpr(dtset.curves, dataset.discrimnt);
+                    return mlApi.evaluateExpr(dtset.curves, dataset.discrimnt, dataset.owner, dataset.prjName);
                 })
                 .then(curves => {
                     let zonesList = self.controller.zonesetConfig['training'].zonesList || []; // PHUC
@@ -317,12 +317,12 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     if(!dataset.active) {
                         return _next();
                     }
-                    wiApi.getCachedWellPromise(dataset.idWell).then((well) => {
+                    wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell).then((well) => {
                         let dtset = well.datasets.find(ds => ds.idDataset === dataset.idDataset);
                         if (!dtset) {
                             throw new Error("Cannot find dataset idDataset=" + dataset.idDataset);
                         }
-                        return mlApi.evaluateExpr(dtset.curves, dataset.discrimnt);
+                        return mlApi.evaluateExpr(dtset.curves, dataset.discrimnt, dataset.owner, dataset.prjName);
                     })
                     //mlApi.evaluateExpr(dataset, dataset.discrimnt) // TUNG
                     .then(curves => {
@@ -373,7 +373,8 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 })
             };
             let tCurve;
-            mlApi.getDataCurves(dataset, dataset.curveSpecs)
+            //mlApi.getDataCurves(dataset, dataset.curveSpecs)
+            mlApi.getDataCurves(dataset, self.controller.curveSpecs)
             .then(curves => {
                 // tCurve = curves.shift();
                 tCurve = mlApi.filterNull(curves);
@@ -381,50 +382,54 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             })
             .then(curves => {
                 let idDataset = dataset.idDataset;
-                let idFamily = dataset.curveSpecs[0].value.idFamily;
-                let idWell = dataset.idWell;
-                let unit = dataset.curveSpecs[0].value.unit;
+                wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell).then((well) => {
+                    let realDataset = well.dataset.find(ds => ds.idDataset === dataset.idDataset);
+                    let targetCurve = realDataset.curves.find(c => c.name === dataset.selectedValues[0]);
+                    let idFamily = targetCurve.idFamily;
+                    let idWell = dataset.idWell;
+                    let unit = targetCurve.unit;
 
-                let target_groups = [], targetGroupsInfo = null;
-                let curveTarget = curves[0].value;
-                if (curves.length == 2) {
-                    target_groups = curves[1].value;
-                    targetGroupsInfo = {
+                    let target_groups = [], targetGroupsInfo = null;
+                    let outCurve = curves[0].value;
+                    if (curves.length == 2) {
+                        target_groups = curves[1].value;
+                        targetGroupsInfo = {
+                            idDataset: idDataset,
+                            idFamily: idFamily,
+                            idWell: idWell,
+                            name: 'target_groups curve',
+                            data: target_groups,
+                            unit: ''
+                        }
+                    }
+                    let curveInfo = {
                         idDataset: idDataset,
                         idFamily: idFamily,
                         idWell: idWell,
-                        name: 'target_groups curve',
-                        data: target_groups,
-                        unit: ''
+                        name: dataset.resultCurveName,
+                        data: outCurve,
+                        unit: unit || null
                     }
-                }
-                let curveInfo = {
-                    idDataset: idDataset,
-                    idFamily: idFamily,
-                    idWell: idWell,
-                    name: dataset.resultCurveName,
-                    data: curveTarget,
-                    unit: unit || null
-                }
-                let errorCurveInfo = null, dataError = null;
-                if (mlApi.getBaseCurrentModel().type == 'regression') {
-                    dataError = curveTarget.map((a, i) => {
-                        return Math.abs((tCurve[i] - a) / a);
-                    })
-                    errorCurveInfo = {
-                        idDataset: idDataset,
-                        idFamily: idFamily,
-                        idWell: idWell,
-                        name: "error verify curve",
-                        data: dataError,
-                        unit: unit || null ,
-                        minValue: 0,
-                        maxValue: 1
+                    let errorCurveInfo = null, dataError = null;
+                    if (mlApi.getBaseCurrentModel().type == 'regression') {
+                        dataError = outCurve.map((a, i) => {
+                            return Math.abs((tCurve[i] - a) / a);
+                        })
+                        errorCurveInfo = {
+                            idDataset: idDataset,
+                            idFamily: idFamily,
+                            idWell: idWell,
+                            name: "VERIFICATION_ERROR",
+                            data: dataError,
+                            unit: unit || null ,
+                            minValue: 0,
+                            maxValue: 1
+                        }
                     }
-                }
-                mlApi.saveCurveAndCreatePlot(self.controller.tabs['verify'], curveInfo, dataset, function() {
-                    resolve();
-                }, errorCurveInfo, targetGroupsInfo)
+                    mlApi.saveCurveAndCreatePlot(self.controller.tabs['verify'], curveInfo, dataset, function() {
+                        resolve();
+                    }, errorCurveInfo, targetGroupsInfo)
+                });
             })
         })
     }
@@ -454,12 +459,12 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     if(!dataset.active) {
                         return _next();
                     }
-                    wiApi.getCachedWellPromise(dataset.idWell).then((well) => {
+                    wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell).then((well) => {
                         let dtset = well.datasets.find(ds => ds.idDataset === dataset.idDataset);
                         if (!dtset) {
                             throw new Error("Cannot find dataset idDataset=" + dataset.idDataset);
                         }
-                        return mlApi.evaluateExpr(dtset.curves, dataset.discrimnt);
+                        return mlApi.evaluateExpr(dtset.curves, dataset.discrimnt, dataset.owner, dataset.prjName);
                     })
                     //mlApi.evaluateExpr(dataset, dataset.discrmnt) // TUNG
                     .then(curves => {
@@ -494,6 +499,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
         })
     }
     function resultPredict(res, dataset) {
+        // TODO: SHOULD BE REVIEWED **** TUNG
         return new Promise((resolve, reject) => {
             let value = mlApi.invTransformData(res.target, self.controller.curveSpecs);
             let target = {
@@ -508,6 +514,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     })
             };
             let tCurve;
+            //mlApi.getDataCurves(dataset, dataset.curveSpecs)
             mlApi.getDataCurves(dataset, dataset.curveSpecs)
             .then(curves => {
                 tCurve = mlApi.filterNull(curves);
@@ -543,6 +550,8 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 if(!self.controller.tabs['training'].listDataset.length || !self.controller.tabs['training'].listDataset[0].curves.length) {
                     return reject("Must be have dataset in training for predict");
                 }
+                // let dsItem = self.controller.tabs['training'].listDataset[0]
+                // TO BE REVIEWED : TUNG
                 wiApi.getCurveInfoPromise(self.controller.tabs['training'].listDataset[0].curveSpecs[0].value.idCurve)
                 .then(info => {
                     curveInfo.idFamily = info.idFamily;
@@ -592,4 +601,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     }
     // function predictData() {}
     // function afterPredict() {}
+    function getClientId(owner, prjName) {
+        return mlApi.getClientId(owner, prjName);
+    }
 }

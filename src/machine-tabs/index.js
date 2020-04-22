@@ -266,6 +266,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                                 idDataset: vlDs.idDataset,
                                 idWell: vlDs.idWell,
                                 idProject: vlDs.idProject,
+                                owner: vlDs.owner,
+                                prjName: vlDs.prjName,
                                 discrimnt: {active: true},
                                 resultCurveName: "RESULT_CURVE"
                                 //curveSpecs
@@ -297,19 +299,23 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         });
     }
     this.makeListOfDatasetSelectionForTabs = function(stepLabels) {
-        let wellIds = [];
+        let dsItemHash = {};
         let datasetIds = [];
         let curves = [];
         for (let tabLabel of stepLabels) {
             let tab = self.tabs[tabLabel];
             tab.listDataset.forEach(dsItem => {
+                dsItemHash[`${dsItem.idProject}-${dsItem.owner}-${dsItem.prjName}-${dsItem.idWell}`] = dsItem;
                 wellIds.push(dsItem.idWell);
                 datasetIds.push(dsItem.idDataset);
             });
         }
-        wellIds = _.intersection(wellIds);
+        wellIds = Object.keys(dsItemHash);
         datasetIds = _.intersection(datasetIds);
-        let jobs = wellIds.map(idWell => wiApi.getCachedWellPromise(idWell));
+        let jobs = wellIds.map(wellKey => {
+            let dsItem = dsItemHash[wellKey];
+            return wiApi.client(getClientId(dsItem.owner, dsItem.prjName)).getCachedWellPromise(dsItem.idWell);
+        });
         return Promise.all(jobs).then((wells) => {
             for (let w of wells) {
                 $timeout(() => {
@@ -830,14 +836,17 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     }
     */
     this.onClickDiscriminator = function(dataset) {
-        let well = wiApi.getCachedWellPromise(dataset.idWell).then(well => {
+        wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCagetCachedWellPromise(dataset.idWell).then(well => {
             let fullDataset = well.datasets.find(ds => ds.idDataset === dataset.idDataset);
             if (!fullDataset) return;
             wiDialog.discriminator(dataset.discrimnt, fullDataset.curves, function(res) {
                 dataset.discrimnt = res;
                 console.log(res);
             });
-        }).catch(e => console.error(e));
+        }).catch(e => {
+            console.error(e)
+        });
+
         /* TUNG
         wiDialog.discriminator(dataset.discrmnt, dataset.curves, function(res) {
             dataset.discrmnt = res;
@@ -875,12 +884,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     }
     */
     // ===========================================================================================
-    function loadProject(project) {
-        let content = project.content;
-        self.projectInfo = content.projectInfo || {};
-        let owner = self.projectInfo.owner;
-        let name = self.projectInfo.name;
-        if (owner && name) {
+    function loadProject(mlProject) {
+        let content = mlProject.content;
+        //self.projectInfo = content.projectInfo || {}; // TUNG
+        //let owner = self.projectInfo.owner; // TUNG
+        //let name = self.projectInfo.name; // TUNG
+        /*if (owner && name) {
             //self.dataProject = await wiApi.getFullInfoPromise((content.tabs[STEP_TRAIN] || [])[0].idProject, owner, name);
             wiApi.getFullInfoPromise((content.tabs[STEP_TRAIN] || [])[0].idProject, owner, name).then(prj => {
                 self.dataProject = prj;
@@ -888,11 +897,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             }).catch(e => {
                 console.error(e)
             }).finally(() => {
-                wiToken.setCurrentProjectName(project.name);
+        */
+                wiToken.setCurrentProjectName(mlProject.name);
                 $timeout(() => {
                     self.current_tab = 0;
                 });
-                self.project = project
+                self.project = mlProject
                 if(self.project.content.plot) {
                     self.tabs[STEP_VERIFY].plotName = self.project.content.plot[STEP_VERIFY].plotName;
                     self.tabs[STEP_PREDICT].plotName = self.project.content.plot[STEP_PREDICT].plotName;
@@ -918,39 +928,37 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     verify: {},
                     prediction: {}
                 };
-            });
-        }
+        /*    });
+        }*/
     }
     this.openProject = function() {
-        wiApi.client('WI_AI_CLIENT').getMlProjectListPromise()
+        wiApi.client(getClientId()).getMlProjectListPromise()
         .then((listMlProject) => {
-            // $timeout(() => {
-                $scope.allProjects = self.project ? listMlProject.filter(l => l.name != self.project.name).sort((a, b) => a.name.localeCompare(b.name)) :
-                listMlProject.sort((a, b) => a.name.localeCompare(b.name)) 
-                $scope.projectSelected = null;
-                $scope.openProject = function() {
-                    console.log($scope.projectSelected);
-                    if($scope.projectSelected) {
-                        loadProject($scope.projectSelected);
-                    }
-                    ngDialog.close()
+            $scope.allProjects = self.project ? listMlProject.filter(l => l.name != self.project.name).sort((a, b) => a.name.localeCompare(b.name)) :
+            listMlProject.sort((a, b) => a.name.localeCompare(b.name)) 
+            $scope.projectSelected = null;
+            $scope.openProject = function() {
+                console.log($scope.projectSelected);
+                if($scope.projectSelected) {
+                    loadProject($scope.projectSelected);
                 }
-                $scope.clickProject = function(project) {
-                    $scope.projectSelected = project;
-                }
-                ngDialog.open({
-                    template: 'templateOpenProject',
-                    className: 'ngdialog-theme-default',
-                    scope: $scope,
-                });
-            // })
+                ngDialog.close()
+            }
+            $scope.clickProject = function(project) {
+                $scope.projectSelected = project;
+            }
+            ngDialog.open({
+                template: 'templateOpenProject',
+                className: 'ngdialog-theme-default',
+                scope: $scope,
+            });
         });
     }
     this.renameProject = function() {
         self.projectName = self.project.name;
         $scope.rename = function() {
             if(self.projectName) {
-                wiApi.client(WI_AI_CLIENT).editMlProjectPromise({
+                wiApi.client(getClientId()).editMlProjectPromise({
                     name: self.projectName,
                     idMlProject: self.project.idMlProject,
                     content: {
@@ -975,7 +983,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     toastr.success('Rename project success', 'Success');
                 })
                 .catch(err => {
-                    toastr.error('Rename project fail', 'Error');
+                    console.error(err);
+                    toastr.error('Rename project fail', 'Error: ' + err.message);
                 })
                 .finally(() => {
                     ngDialog.close();
@@ -990,7 +999,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         });
     }
     this.saveProject = function() {
-        wiApi.client("WI_AI_CLIENT").editMlProjectPromise({
+        wiApi.client(getClientId()).editMlProjectPromise({
             name: self.project.name,
             idMlProject: self.project.idMlProject,
             content: {
@@ -1029,7 +1038,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         self.nameProject = "default";
         $scope.createNewProject = function(name) {
             if(self.nameProject) {
-                wiApi.client("WI_AI_CLIENT").createMlProjectPromise({
+                wiApi.client(getClientId()).createMlProjectPromise({
                     name: self.nameProject,
                     content: {
                         tabs: {
@@ -1092,7 +1101,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         $scope.projectDelete = project;
         $scope.cancelDelete = () => dialog.close();
         $scope.okDelete = function() {
-            wiApi.client("WI_AI_CLIENT").deleteMlProjectPromise(project.idMlProject)
+            wiApi.client(getClientId()).deleteMlProjectPromise(project.idMlProject)
                 .then((res) => {
                     toastr.success('Delete "' + project.name + '" Project Success', 'Success');
                     if(self.project && project.idMlProject === self.project.idMlProject) {
@@ -1118,7 +1127,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     this.restoreProject = function() {
         if(wiToken.getCurrentProjectName()) {
             self.restoreProjectName = wiToken.getCurrentProjectName();
-            wiApi.client("WI_AI_CLIENT").getMlProjectListPromise()
+            wiApi.client(getClientId()).getMlProjectListPromise()
         .then((listMlProject) => {
             let currentProject = listMlProject.find(p => p.name === wiToken.getCurrentProjectName());
             if(!currentProject) {
@@ -1217,4 +1226,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         let dataset = well.datasets.find(ds => ds.idDataset === compactDatasetItem.idDataset);
         return dataset.name.toUpperCase().includes((self.searchPredictionText || "").toUpperCase());
     }
+    function getClientId(owner, prjName) {
+        return mlApi.getClientId(owner, prjName);
+    }
+    this.getClientId = getClientId;
 }

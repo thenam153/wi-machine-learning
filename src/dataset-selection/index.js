@@ -93,13 +93,21 @@ function DatasetSelectionController($scope, wiApi, $timeout){
         return [];
     }
     this.clickFn = function(event, node, selectIds, rootnode) {
-        //console.log(node);
+        console.log(node);
         if(node.idProject && node.wells) return;
         if(node.idWell && node.datasets) return;
         if(node.idProject && !node.idDataset) {
-            wiApi.getFullInfoPromise(node.idProject, node.owner, node.name).then(dataProject => {
-                $timeout(()=>{
-                    self.controller.projectInfo = {owner: node.owner, name: node.name};
+            wiApi.client(getClientId(node.owner, node.name)).getFullInfoPromise(node.idProject, node.owner, node.name).then(dataProject => {
+                if (node.owner) {
+                    for (let well of dataProject.wells) {
+                        for (let dataset of well.datasets) {
+                            dataset.owner = dataProject.owner;
+                            dataset.prjName = dataProject.name;
+                        }
+                    }
+                }
+                $timeout(() => {
+                    //self.controller.projectInfo = {owner: node.owner, name: node.name}; // TUNG
                     self.controller.dataProject = dataProject;
                     node.wells = dataProject.wells.sort((a,b) => a.name.localeCompare(b.name));
                     node.wells = dataProject.wells;
@@ -112,13 +120,15 @@ function DatasetSelectionController($scope, wiApi, $timeout){
                         }
                     }
                     sortProjectData(node);   
-                })
+                });
+                /* TUNG : Donot need this anymore
                 // fix bug project share 
                 let project = rootnode.find(i => !i.shared)
                 if(project) {
                     wiApi.getFullInfoPromise(project.idProject)
                     .then(() => {});
                 }
+                */
             });
         }
     }
@@ -135,7 +145,7 @@ function DatasetSelectionController($scope, wiApi, $timeout){
 			return localStorage.getItem('token');
 		}, function (newValue, oldValue) {
 			if ((localStorage.getItem("token")) !== null) {
-                wiApi.getProjectsPromise()
+                wiApi.client(getClientId()).getProjectsPromise()
                 .then((data) => {
                     $timeout(() => {
                         self.listMlProject = data.sort((a,b) => a.name.localeCompare(b.name));
@@ -151,7 +161,7 @@ function DatasetSelectionController($scope, wiApi, $timeout){
     }
     this.refeshProject = function() {
         self.reloadPrj = true;
-        wiApi.getProjectsPromise()
+        wiApi.client(getClientId()).getProjectsPromise()
         .then((data) => {
             $timeout(() => {
                 self.listMlProject = data.sort((a,b) => a.name.localeCompare(b.name));
@@ -192,5 +202,8 @@ function DatasetSelectionController($scope, wiApi, $timeout){
                 })
             })
         });
+    }
+    function getClientId(owner, prjName) {
+        return self.controller.getClientId(owner, prjName);
     }
 }

@@ -105,7 +105,38 @@ function mlApi($http, $timeout, wiApi) {
         };
     }
     this.getDataCurves = getDataCurves;
-    function getDataCurves(dataset, curves) {
+    function getDataCurves(dsItem, curveSpecs) {
+        return new Promise((resolve, reject) => {
+            let listInputCurves = [];
+            wiApi.client(getClientId(dsItem.owner, dsItem.prjName)).getCachedWellPromise(dsItem.idWell).then((well) => {
+                let dataset = well.datasets.find(ds => ds.idDataset === dsItem.idDataset);
+                if (curveSpecs.length) {
+                    async.eachOfSeries(curveSpecs, (curveSpecItem, idx, next) => {
+                        let c = dataset.curves.find(v => v.name === dsItem.selectedValues[idx]);
+                        if(!c) {
+                            //return resolve([]);
+                            return next(new Error("curve " + dsItem.selectedValues[idx] + " is missing"));
+                        }
+                        wiApi.client(getClientId(dsItem.owner, dsItem.prjName)).getCurveDataPromise(c.idCurve)
+                        .then((data) => {
+                            listInputCurves[idx] = data.map(d => parseFloat(d.x));
+                            next();
+                        })
+                    }, (err) => {
+                        if(err) {
+                            console.log(err);
+                            return reject(err);
+                        }
+                        resolve(listInputCurves);
+                    });
+                } else {
+                    //resolve([]);
+                    reject(new Error("No input curves"));
+                }
+            }).catch(e => reject(e));
+        });
+    }
+    function getDataCurves1(dataset, curves) {
         return new Promise((resolve) => {
             let listInputCurves = [];
             if (curves.length) {
@@ -114,7 +145,7 @@ function mlApi($http, $timeout, wiApi) {
                     if(!c) {
                         return resolve([]);
                     }
-                    wiApi.getCurveDataPromise(c.idCurve)
+                    wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCurveDataPromise(c.idCurve)
                     .then((data) => {
                         listInputCurves[idx] = data.map(d => parseFloat(d.x));
                         next();
@@ -136,14 +167,14 @@ function mlApi($http, $timeout, wiApi) {
             // async.eachSeries(dataset.curveSpecs, async function(input) { // TUNG
             async.eachOfSeries(curveSpecs, function(input, idx, cb) {
                 let curveName = dataset.selectedValues[idx];
-                wiApi.getCachedWellPromise(dataset.idWell).then((well) => {
+                wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell).then((well) => {
                     let dtset = well.datasets.find(ds => ds.idDataset === dataset.idDataset);
                     if (!dtset) 
                         return cb(new Error("Dataset not found idDataset="+dataset.idDataset));
                     let curveInfo = dtset.curves.find(c => c.name === curveName);
                     if (!curveInfo) 
                         return cb(new Error(`Curve ${curveName} not found in dataset idDataset=${dataset.idDataset}`));
-                    wiApi.getCurveDataPromise(curveInfo.idCurve).then((dataCurve) => {
+                    wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCurveDataPromise(curveInfo.idCurve).then((dataCurve) => {
                         for (let i in dataCurve) {
                             dataCurve[i] = parseFloat(dataCurve[i].x, 4);
                             if (isNaN(dataCurve[i])) curves[i] = false;
@@ -180,7 +211,7 @@ function mlApi($http, $timeout, wiApi) {
         })
     }
     this.getDataCurveAndFilter = getDataCurveAndFilter;
-    function evaluateExpr(curvesInDataset, discriminator) {
+    function evaluateExpr(curvesInDataset, discriminator, owner, prjName) {
         return new Promise(resolve => {
             let result = new Array();
             let length = 0;
@@ -262,7 +293,7 @@ function mlApi($http, $timeout, wiApi) {
                     // console.log('curve of curve arr',curve);
                     if (curve) {
                         (async() => {
-                            let data = await wiApi.getCurveDataPromise(curve.idCurve);
+                            let data = await wiApi.client(getClientId(owner, prjName)).getCurveDataPromise(curve.idCurve);
                             if (Array.isArray(data)) {
                                 curvesData.push({
                                     idCurve: curve.idCurve,
@@ -276,7 +307,7 @@ function mlApi($http, $timeout, wiApi) {
                 },
                 async function(err) {
                     console.log('done!', curvesData);
-                    let data = await wiApi.getCurveDataPromise(curvesInDataset[0].idCurve);
+                    let data = await wiApi.client(getClientId(owner, prjName)).getCurveDataPromise(curvesInDataset[0].idCurve);
                     // console.log(data);
                     length = data.length;
                     for (let i = 0; i <= length; i++) {
@@ -287,6 +318,7 @@ function mlApi($http, $timeout, wiApi) {
             );
         })
     }
+    /* TUNG
     function evaluateExpr1(dataset, discriminator) {
         return new Promise(resolve => {
             let result = new Array();
@@ -394,6 +426,7 @@ function mlApi($http, $timeout, wiApi) {
             );
         })
     }
+    */
     this.evaluateExpr = evaluateExpr;
     async function saveCurveAndCreatePlot(tab, curveInfo, dataset, callback, errorCurveInfo, targetGroupsInfo) {
         saveCurve(curveInfo, dataset, function(curveProps) {
@@ -438,6 +471,7 @@ function mlApi($http, $timeout, wiApi) {
     }
     this.saveCurveAndCreatePlot = saveCurveAndCreatePlot;
     async function saveCurve(curveInfo, dataset, callback) {
+        // TUNG : TO BE REVIEWED
         let payload = {
             idDataset: curveInfo.idDataset,
             data: curveInfo.data,
@@ -634,4 +668,9 @@ function mlApi($http, $timeout, wiApi) {
         }
         return curve;
     }
+    function getClientId(owner, prjName) {
+        if (!owner || !owner.length) return "WI_AI_CLIENT";
+        return `WI_AI_CLIENT-${owner}-${prjName}`; 
+    }
+    this.getClientId = getClientId;
 }
