@@ -428,32 +428,35 @@ function mlApi($http, $timeout, wiApi) {
     }
     */
     this.evaluateExpr = evaluateExpr;
-    async function saveCurveAndCreatePlot(tab, curveInfo, dataset, callback, errorCurveInfo, targetGroupsInfo) {
+    async function saveCurveAndCreatePlot(tab, curveInfo, dataset, callback, errorCurveInfo, targetGroupsInfo, curveSpecs) {
         saveCurve(curveInfo, dataset, function(curveProps) {
             function handle(errorCurveInfo) {
                 let orderNum = dataset.idDataset.toString() + '1';
-                let inCurves = dataset.curveSpecs.map((ipt) => {
-                    let i = dataset.curves.find((ip) => {
-                        return ip.name === ipt.value.name
+                wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell).then((well) => {
+                    let realDataset = well.datasets.find(ds => ds.idDataset === dataset.idDataset);
+                    if (!realDataset) {
+                        throw new Error(`Dataset ${dataset.idDataset} not found in well ${well.name}`);
+                    }
+                    let inCurves = curveSpecs.map((ipt, idx) => {
+                        return realDataset.curves.find((c) => (c.name === dataset.selectedValues[idx]));
                     });
-                    return i;
-                });
-                inCurves.push({
-                    idCurve: curveProps.idCurve,
-                    name: curveProps.name,
-                    idFamily: curveProps.idFamily
-                });
-                if (errorCurveInfo) {
                     inCurves.push({
-                        idCurve: errorCurveProps.idCurve,
-                        name: errorCurveProps.name,
-                        idFamily: idFamily,
-                        minValue: (errorCurveInfo | {}).minValue,
-                        maxValue: (errorCurveInfo | {}).maxValue
-                    })
-                }
-                createLogPlot(tab, dataset, inCurves, orderNum, function() {
-                    callback();
+                        idCurve: curveProps.idCurve,
+                        name: curveProps.name,
+                        idFamily: curveProps.idFamily
+                    });
+                    if (errorCurveInfo) {
+                        inCurves.push({
+                            idCurve: errorCurveProps.idCurve,
+                            name: errorCurveProps.name,
+                            idFamily: idFamily,
+                            minValue: (errorCurveInfo | {}).minValue,
+                            maxValue: (errorCurveInfo | {}).maxValue
+                        })
+                    }
+                    createLogPlot(tab, dataset, inCurves, orderNum, function() {
+                        callback();
+                    });
                 });
             }
             if(errorCurveInfo) {
@@ -479,19 +482,19 @@ function mlApi($http, $timeout, wiApi) {
             idFamily: curveInfo.idFamily || null,
         }
         if (dataset.step == 0) {
-            let curveData = await wiApi.getCurveDataPromise(dataset.curves[0].idCurve);
+            let curveData = await wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCurveDataPromise(dataset.curves[0].idCurve);
             payload.data = curveData.map((d, i) => {
                 return [parseFloat(d.y), curveInfo.data[i]];
             });
         }
-        let curve = await wiApi.checkCurveExistedPromise(curveInfo.name, curveInfo.idDataset);
+        let curve = await wiApi.client(getClientId(dataset.owner, dataset.prjName)).checkCurveExistedPromise(curveInfo.name, curveInfo.idDataset);
         if (curve && curve.idCurve) {
             payload.idDesCurve = curve.idCurve;
             curveInfo.idCurve = curve.idCurve;
         } else {
             payload.curveName = curveInfo.name
         }
-        let newCurve = await wiApi.createCurvePromise(payload);
+        let newCurve = await wiApi.client(getClientId(dataset.owner, dataset.prjName)).createCurvePromise(payload);
         callback(newCurve);
     }
     this.createLogPlot = createLogPlot;
@@ -499,7 +502,7 @@ function mlApi($http, $timeout, wiApi) {
         console.log('_step', tab);
         let idPlot = tab.plot.idPlot;
         let currentOrderNum = orderNum;
-        wiApi.createDepthTrackPromise({
+        wiApi.client(getClientId(dataset.owner, dataset.prjName)).createDepthTrackPromise({
                 idPlot: idPlot,
                 width: 0.75,
                 orderNum: currentOrderNum.slice(0, currentOrderNum.length - 1) + '0',
@@ -508,13 +511,13 @@ function mlApi($http, $timeout, wiApi) {
             })
             .then((res) => {
                 async.eachSeries(inCurves, async function(curve) {
-                    let trackData = await wiApi.createLogTrackPromise({
+                    let trackData = await wiApi.client(getClientId(dataset.owner, dataset.prjName)).createLogTrackPromise({
                         idPlot: idPlot,
                         orderNum: currentOrderNum,
                         title: curve.name,
                         width: 1
                     });
-                    let line = wiApi.createLinePromise({
+                    let line = wiApi.client(getClientId(dataset.owner, dataset.prjName)).createLinePromise({
                                     idTrack: trackData.idTrack,
                                     idCurve: curve.idCurve,
                                     orderNum: currentOrderNum
@@ -522,7 +525,7 @@ function mlApi($http, $timeout, wiApi) {
                     if (line && curve.minValue != undefined && curve.maxValue != undefined) {
                             line.minValue = curve.minValue;
                             line.maxValue = curve.maxValue;
-                            await wiApi.editLinePromise(line);
+                            await wiApi.client(getClientId(dataset.owner, dataset.prjName)).editLinePromise(line);
                         }
                 }, function(err) {
                     if (err) return err;
@@ -531,8 +534,8 @@ function mlApi($http, $timeout, wiApi) {
             })
     }
     this.createBlankPlot = createBlankPlot;
-    function createBlankPlot(idProject, idMlProject, namePlot) {
-        return wiApi.createLogplotPromise({
+    function createBlankPlot(idProject, idMlProject, namePlot, dataset) {
+        return wiApi.client(getClientId(dataset.owner, dataset.prjName)).createLogplotPromise({
             idProject: idProject,
             name: `${namePlot} - ${localStorage.getItem('username') || 'none'} - ${idMlProject}`,
             override: true,

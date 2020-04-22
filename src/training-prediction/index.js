@@ -298,7 +298,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 
     function beforeVerify() {
         return new Promise((resolve, reject) => {
-            let listDataset = self.controller.tabs['training'].listDataset;
+            let listDataset = self.controller.tabs['verify'].listDataset;
             if(self.controller.project.content.state < 1) {
                 return reject(new Error('Please training before verify or predict'));
             }
@@ -309,7 +309,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 return resolve()
             }
             let idProject = self.controller.tabs['verify'].listDataset[0].idProject;
-            mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, self.controller.tabs['verify'].plotName).then((plot) => {
+            mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, self.controller.tabs['verify'].plotName, listDataset[0]).then((plot) => {
                 self.controller.tabs['verify'].plot = plot;
                 self.controller.tabs['verify'].plot.username = localStorage.getItem('username') || '';
                 async.each(self.controller.tabs['verify'].listDataset, (dataset, _next) => {
@@ -387,7 +387,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             .then(curves => {
                 let idDataset = dataset.idDataset;
                 wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell).then((well) => {
-                    let realDataset = well.dataset.find(ds => ds.idDataset === dataset.idDataset);
+                    let realDataset = well.datasets.find(ds => ds.idDataset === dataset.idDataset);
                     let targetCurve = realDataset.curves.find(c => c.name === dataset.selectedValues[0]);
                     let idFamily = targetCurve.idFamily;
                     let idWell = dataset.idWell;
@@ -432,7 +432,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     }
                     mlApi.saveCurveAndCreatePlot(self.controller.tabs['verify'], curveInfo, dataset, function() {
                         resolve();
-                    }, errorCurveInfo, targetGroupsInfo)
+                    }, errorCurveInfo, targetGroupsInfo, self.controller.curveSpecs);
                 });
             })
         })
@@ -440,7 +440,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 
     function beforePredict() {
         return new Promise((resolve, reject) => {
-            let listDataset = self.controller.tabs['training'].listDataset;
+            let listDataset = self.controller.tabs['prediction'].listDataset;
             if(self.controller.project.content.state < 1) {
                 return reject(new Error('Please training before verify or predict'));
             }
@@ -451,7 +451,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 return reject(new Error('Please active one or more dataset'));
             }
             let idProject = self.controller.tabs['prediction'].listDataset[0].idProject;
-            mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, self.controller.tabs['prediction'].plotName)
+            mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, self.controller.tabs['prediction'].plotName, listDataset[0])
             .then(plot => {
                 self.controller.tabs['prediction'].plot = plot
                 self.controller.tabs['prediction'].plot.username = localStorage.getItem('username') || '';
@@ -567,7 +567,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     }
                     mlApi.saveCurveAndCreatePlot(self.controller.tabs['prediction'], curveInfo, dataset, function() {
                         resolve();
-                    }, null, targetGroupsInfo)
+                    }, null, targetGroupsInfo, self.controller.curveSpecs)
                 })
             })
         })

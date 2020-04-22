@@ -7,6 +7,8 @@ const app = angular.module(moduleName, [
     'wiDroppable',
     'angularResizable',
     'wiTreeViewVirtual',
+    'wiApi',
+    'mlApi',
     'sideBar'
 ]);
 
@@ -20,8 +22,8 @@ app.component(componentName,{
     }
 });
 
-ZonesetConfigController.$inject = ['$scope', 'wiApi', '$timeout']
-function ZonesetConfigController($scope, wiApi, $timeout){
+ZonesetConfigController.$inject = ['$scope', 'wiApi', '$timeout', 'mlApi']
+function ZonesetConfigController($scope, wiApi, $timeout, mlApi){
     let self = 	this;
     const tabsName = ['training', 'verify', 'prediction'];
     function getTab() {
@@ -76,32 +78,57 @@ function ZonesetConfigController($scope, wiApi, $timeout){
     function updateListZoneset(tabNum) {
         let step = tabsName[tabNum];
         let listDataset = self.controller.tabs[step].listDataset;
-        let uniqIdWells = _.uniq(listDataset.map(dataset => dataset.idWell));
-        let zonesetsList = getZonesetsList(uniqIdWells);
-        switch(step) {
-            case 'training': {
-                self.trainingZonesets = processZonesetsList(zonesetsList);
-                break;
-            }
-            case 'verify': {
-                self.verifyZonesets = processZonesetsList(zonesetsList);
-                break;
-            }
-            case 'prediction': {
-                self.predictionZonesets = processZonesetsList(zonesetsList);
-                break;
-            }
+        let dsItemHash = {};
+        for (let dsItem of listDataset) {
+            dsItemHash[`${dsItem.idProject}-${dsItem.owner}-${dsItem.prjName}-${dsItem.idWell}`] = dsItem;
         }
+
+        let dsItemKeys = Object.keys(dsItemHash);
+        dsItemKeys = _.uniq(dsItemKeys);
+
+        //let uniqIdWells = _.uniq(listDataset.map(dataset => dataset.idWell));
+        getZonesetsList(dsItemKeys, dsItemHash).then((zonesetsList) => {
+            switch(step) {
+                case 'training': {
+                    self.trainingZonesets = processZonesetsList(zonesetsList);
+                    break;
+                }
+                case 'verify': {
+                    self.verifyZonesets = processZonesetsList(zonesetsList);
+                    break;
+                }
+                case 'prediction': {
+                    self.predictionZonesets = processZonesetsList(zonesetsList);
+                    break;
+                }
+            }
+        });
     }
-    function getZonesetsList(idWells) {
-        let zonesetsListRes = [];
-        let wells = (self.controller.dataProject || {}).wells;
-        if (!wells || !wells.length) return [];
-        for (let wellId of idWells) {
-            let well = _.find(wells, w => w.idWell === wellId);
-            zonesetsListRes.push(angular.copy(well.zonesets));
-        }
-        return zonesetsListRes;
+    function getZoneset(dsItem, zonesetName) {
+        return wiApi.client(mlApi.getClientId(dsItem.owner, dsItem.prjName)).getCachedWellPromise(dsItem.idWell).then((well) => {
+            let toRet = well.zone_sets.find(zoneset => zoneset.name === zonesetName);
+            if (!toRet) {
+                throw new Error(`Zoneset ${zonesetName} not found in well ${well.name}`);
+            }
+            return toRet;
+        });
+    }
+    //function getZonesetsList(idWells) {
+    function getZonesetsList(dsItemKeys, dsItemHash) {
+
+        return new Promise((resolve, reject) => {
+            let jobs = dsItemKeys.map(dsItemKey => {
+                let dsItem = dsItemHash[dsItemKey];
+                return wiApi.client(mlApi.getClientId(dsItem.owner, dsItem.prjName)).getCachedWellPromise(dsItem.idWell);
+            });
+            Promise.all(jobs).then(wells => {
+                let zonesetsListRes = wells.map(well => well.zone_sets);
+                resolve(zonesetsListRes);
+            }).catch(err => {
+                console.error(err);
+                reject(err);
+            });
+        });
     }
     function processZonesetsList(zonesetsList) {
         if (!zonesetsList.length) return;
@@ -182,9 +209,24 @@ function ZonesetConfigController($scope, wiApi, $timeout){
         let step = tabsName[tabNum || getTab()];
         let listDataset = self.controller.tabs[step].listDataset;
         let zonesetName = self.controller.zonesetConfig[step].zonesetName;
-        self.controller.zonesetConfig[step].zoneList = getUniqZones(zonesetName, listDataset);
+        //self.controller.zonesetConfig[step].zoneList = getUniqZones(zonesetName, listDataset);
+        getUniqZones(zonesetName, listDataset).then(zones => {
+            self.controller.zonesetConfig[step].zoneList = zones;
+        }).catch(e => console.error(e));
     }
     function getUniqZones(zonesetName, listDataset) {
+        let jobs = listDataset.map(dsItem => getZoneset(dsItem, zonesetName));
+        return Promise.all(jobs).then((zonesets) => {
+            let zones = [];
+            for (let zoneset of zonesets) {
+                zones.push(...zoneset.zones);
+            }
+            zones = _.uniqBy(zones, "zone_template.name");
+            zones = zones.map(z => ({template_name: z.zone_template.name}));
+            return zones;
+        });
+    }
+    function getUniqZones1(zonesetName, listDataset) {
         let step = tabsName[getTab()];
         if (!listDataset || !listDataset.length) return null;
         let wells = (self.controller.dataProject || {}).wells;
