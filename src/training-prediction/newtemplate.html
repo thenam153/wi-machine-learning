@@ -42,8 +42,8 @@
                         <div class="table-block" style="width: 70px; min-width: 70px;">Filter</div>
                         <div class="table-block">Well</div>
                         <div class="table-block">Dataset </div>
-                        <div  ng-repeat="input in self.controller.curveSpecs track by $index" >
-                            <div class="table-block"style="width: 170px">{{input.label}}</div>
+                        <div ng-repeat="input in self.controller.curveSpecs track by $index" >
+                            <div class="table-block"style="width: 170px">{{input.label + ($index?(" " + $index):"")}}</div>
                         </div>
                     </div>
                     <div class='table-row' ng-repeat="(idxDs, dataset) in self.controller.tabs['training'].listDataset | filter:self.controller.searchTrainingFilter track by idxDs">
@@ -98,7 +98,7 @@
                         <div class="table-block">Well</div>
                         <div class="table-block">Dataset </div>
                         <div  ng-repeat="input in self.controller.curveSpecs track by $index" >
-                            <div class="table-block"style="width: 170px">{{input.label}}</div>
+                            <div class="table-block"style="width: 170px">{{input.label +  + ($index?(" " + $index):"")}}</div>
                         </div>
                         <div class="table-block">Verify Curve</div>
                     </div>
@@ -156,7 +156,7 @@
                         <div class="table-block">Well</div>
                         <div class="table-block">Dataset </div>
                         <div  ng-repeat="input in self.controller.curveSpecs track by $index" >
-                            <div ng-if="$index!=0" class="table-block"style="width: 170px">{{input.label}}</div>
+                            <div ng-if="$index != 0" class="table-block"style="width: 170px">{{input.label + " " + $index}}</div>
                         </div>
                         <div class="table-block">Predict Curve</div>
                     </div>
@@ -177,12 +177,14 @@
 							    on-item-changed="self.controller.onItemChangeTabTAP" current-select="input.currentSelect" params="[input]">
 						    </wi-dropdown-list>
                         </div>-->
-                        <div class="table-block" ng-repeat="(idxIt, curveSpecItem) in self.controller.curveSpecs | filter: self.controller.inputCurveSpecs track by idxIt" style="overflow: visible;">
-                            <wi-dropdown-list style="width: 100%;" place-holder="Curve" items="self.controller.__CURVES_CACHE['prediction'][dataset.idDataset + '-' + idxIt]" hide-delete-button='true'
-							    on-item-changed="self.controller.onItemChangeTabTAP" current-select="dataset.selectedValues[idxIt]" params="[curveSpecItem, dataset, 'Prediction', idxIt]">
-						    </wi-dropdown-list>
+                        <div ng-repeat="(idxIt, curveSpecItem) in self.controller.curveSpecs track by idxIt" style="overflow: visible;">
+                            <div ng-if="idxIt > 0" class="table-block">
+                                <wi-dropdown-list style="width: 100%;" place-holder="Curve" items="self.controller.__CURVES_CACHE['prediction'][dataset.idDataset + '-' + idxIt]" hide-delete-button='true'
+                                    on-item-changed="self.controller.onItemChangeTabTAP" current-select="dataset.selectedValues[idxIt]" params="[curveSpecItem, dataset, 'Prediction', idxIt]">
+                                </wi-dropdown-list>
+                            </div>
                         </div>
-                        <div class="table-block" >
+                        <div class="table-block">
                             <input type="text" style="height: 32px;" ng-model="dataset.resultCurveName">
                         </div>
                     </div>

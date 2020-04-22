@@ -267,6 +267,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                                 idWell: vlDs.idWell,
                                 idProject: vlDs.idProject,
                                 discrimnt: {active: true},
+                                resultCurveName: "RESULT_CURVE"
                                 //curveSpecs
                             }
                             self.tabs[step].listDataset.push(dsItem);
@@ -888,7 +889,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 console.error(e)
             }).finally(() => {
                 wiToken.setCurrentProjectName(project.name);
-                self.current_tab = 0;
+                $timeout(() => {
+                    self.current_tab = 0;
+                });
                 self.project = project
                 if(self.project.content.plot) {
                     self.tabs[STEP_VERIFY].plotName = self.project.content.plot[STEP_VERIFY].plotName;
@@ -925,7 +928,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 $scope.allProjects = self.project ? listMlProject.filter(l => l.name != self.project.name).sort((a, b) => a.name.localeCompare(b.name)) :
                 listMlProject.sort((a, b) => a.name.localeCompare(b.name)) 
                 $scope.projectSelected = null;
-                $scope.openProject = async function() {
+                $scope.openProject = function() {
                     console.log($scope.projectSelected);
                     if($scope.projectSelected) {
                         loadProject($scope.projectSelected);
@@ -1177,6 +1180,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }).map(c => ({ data: { label: c.name }, properties: c }));
         return curves;
     }
+    /*
     this.updateAndGetCurvesCacheEntry = function(key, curves) {
         let cs = curves.map(c => ({ data: { label: c.name }, properites: c }));
         if (!self.__CURVES_CACHE[key]) {
@@ -1188,6 +1192,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }
         return self.__CURVES_CACHE[key];
     }
+    */
     this.inputCurveSpecs = function(curveSpec, idx, curveSpecs) {
         return !curveSpec.isTarget;
     }

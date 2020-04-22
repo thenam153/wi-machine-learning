@@ -134,6 +134,11 @@ function ZonesetConfigController($scope, wiApi, $timeout){
     }
     this.refreshZonesetList = refreshZonesetList;
     function refreshZonesetList() {
+        let step = tabsName[getTab()];
+        $timeout(() => {
+            self.controller.zonesetConfig[step].zonesList = null;
+            self.controller.zonesetConfig[step].zonesetName = null;
+        });
         self.updateListZoneset(getTab());
     }
     this.clickZonesetFn = clickZonesetFn;
@@ -189,9 +194,9 @@ function ZonesetConfigController($scope, wiApi, $timeout){
             let idDataset = dataset.idDataset;
             let idWell = dataset.idWell;
             let well = _.find(wells, w => w.idWell === idWell);
-            let zones = _.find(well.zonesets, zoneset => {
+            let zones = (_.find(well.zonesets, zoneset => {
                 return zoneset.zone_set_template.name === zonesetName
-            }).zones;
+            })| {}).zones;
             zonesRes.push(angular.copy(zones));
         }
         return zonesRes;
@@ -205,6 +210,11 @@ function ZonesetConfigController($scope, wiApi, $timeout){
         node._notUsed = !node._notUsed;
     }
     this.refreshZoneList = function() {
+        /*
+        let step = tabsName[getTab()];
+        self.controller.zonesetConfig[step].zonesList = null;
+        self.controller.zonesetConfig[step].zonesetName = null;
+        */
         updateZoneList();
     }
     this.getZoneChild = function(node) {
