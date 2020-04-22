@@ -457,7 +457,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 self.controller.tabs['prediction'].plot.username = localStorage.getItem('username') || '';
                 async.each(self.controller.tabs['prediction'].listDataset, (dataset, _next) => {
                     //if(!isRun(dataset)) {
-                    if (!isReady(dataset, self.controller.curveSpecs)) {
+                    if (!isReady(dataset, self.controller.curveSpecs, true)) {
                         return reject(new Error('Curve in dataset must be select'))
                     }
                     if(!dataset.active) {
@@ -476,10 +476,10 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                         let zonesConfig = self.controller.zonesetConfig['prediction'].zoneList || [];
                         let zones = (self.controller.zonesList['prediction'] || [])[listDataset.indexOf(dataset)] || []; // PHUC
                         curves = zonesetFilter(dataset, curves, zonesConfig, zones);
-                        return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
+                        return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs, true);
                     })
                     .then(dataCurves => {
-                        return mlApi.transformData(dataCurves, self.controller.curveSpecs)
+                        return mlApi.transformData(dataCurves, self.controller.curveSpecs, true)
                     })
                     .then(dataCurves => {
                         let payload = {
@@ -500,8 +500,10 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 }, err => {
                     err ? reject(err) : resolve()
                 })
-            })
-        })
+            }).catch(e => {
+                reject(e);
+            });
+        });
     }
     function resultPredict(res, dataset) {
         // TODO: SHOULD BE REVIEWED **** TUNG
@@ -520,7 +522,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             };
             let tCurve;
             //mlApi.getDataCurves(dataset, dataset.curveSpecs)
-            mlApi.getDataCurves(dataset, dataset.curveSpecs)
+            mlApi.getDataCurves(dataset, self.controller.curveSpecs, true)
             .then(curves => {
                 tCurve = mlApi.filterNull(curves);
                 return mlApi.fillNullInCurve(tCurve.fillNull, [target])
@@ -552,13 +554,19 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     data: curveTarget,
                     // unit: unit || null
                 }
-                if(!self.controller.tabs['training'].listDataset.length || !self.controller.tabs['training'].listDataset[0].curves.length) {
-                    return reject("Must be have dataset in training for predict");
+                //if(!self.controller.tabs['training'].listDataset.length || !self.controller.tabs['training'].listDataset[0].curves.length) {
+                if(!self.controller.tabs['training'].listDataset.length) {
+                    return reject("No datasets exist");
                 }
                 // let dsItem = self.controller.tabs['training'].listDataset[0]
                 // TO BE REVIEWED : TUNG
-                wiApi.getCurveInfoPromise(self.controller.tabs['training'].listDataset[0].curveSpecs[0].value.idCurve)
-                .then(info => {
+                let dsItem = self.controller.tabs['training'].listDataset[0];
+                wiApi.client(getClientId(dsItem.owner, dsItem.prjName)).getCachedWellPromise(dsItem.idWell).then(well => {
+                    let realDataset = well.datasets.find(ds => ds.idDataset === dsItem.idDataset);
+                    if (!realDataset) {
+                        reject(new Error(`Dataset ${dsItem.idDataset} not found in well ${well.name}`));
+                    }
+                    let info = realDataset.curves.find(c => c.name === dsItem.selectedValues[0]);
                     curveInfo.idFamily = info.idFamily;
                     curveInfo.unit = info.unit;
                     if(targetGroupsInfo) {
@@ -567,14 +575,16 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     }
                     mlApi.saveCurveAndCreatePlot(self.controller.tabs['prediction'], curveInfo, dataset, function() {
                         resolve();
-                    }, null, targetGroupsInfo, self.controller.curveSpecs)
-                })
+                    }, null, targetGroupsInfo, self.controller.curveSpecs, true);
+                });
             })
         })
     }
 
-    function isReady(dataset, curveSpecs) {
-        for (let i = 0 ; i < curveSpecs.length; i++) {
+    function isReady(dataset, curveSpecs, forPredition) {
+        let startIdx = 0;
+        if (forPredition) startIdx = 1;
+        for (let i = startIdx ; i < curveSpecs.length; i++) {
             if (!dataset.selectedValues || !dataset.selectedValues[i] || !dataset.selectedValues[i].length) {
                 return false;
             }
