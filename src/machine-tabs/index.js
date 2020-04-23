@@ -299,6 +299,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     // self.makeListOfDatasetSelection();
                     break;
                 case STEP_VERIFY:
+                    self.tabs[step].listDataset.splice($index, 1); 
                     break;
                 case STEP_PREDICT:
                     self.tabs[step].listDataset.splice($index, 1);
