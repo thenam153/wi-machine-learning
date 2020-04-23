@@ -105,11 +105,17 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     }
     this.titleTabs = [TAB_DATASET, TAB_MODEL, TAB_TRAIN, TAB_ZONESET];
     this.steps = [STEP_TRAIN, STEP_VERIFY, STEP_PREDICT];
-    function excludeDiscrimntReplacer(key, value) {
-        if (key === 'discrimnt') return undefined;
+    function excludeReplacer(key, value) {
+        switch(key) {
+            case 'discrimnt':
+            case 'resultCurveName':
+            case 'plotName':
+            case 'active':
+                return undefined;
+        }
         return value;
     }
-    $scope.$watch(() => (JSON.stringify(self.tabs, excludeDiscrimntReplacer) + ((self.typeInput || {}).type || "")) , () => {
+    $scope.$watch(() => (JSON.stringify(self.tabs, excludeReplacer) + ((self.typeInput || {}).type || "")) , () => {
         this.makeListOfDatasetSelectionForTabs([
             STEP_TRAIN, 
             STEP_VERIFY
@@ -657,46 +663,49 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
 			// console.log(properties);
 		}
 	}
-	this.modelSelection.changeValue = function(obj) {
-		switch (obj.type) {
-            case 'string':
-                break;
-            case 'integer':
-                if (!Number.isInteger(Number(obj.value))) {
-                    obj.value = obj.example;
-                }else {
-                    obj.value = Number(obj.value)
-                }
-                break;
-            case 'number':
-                if (isNaN(Number(obj.value))) {
-                    obj.value = obj.example;
-                }else {
-                    obj.value = Number(obj.value)
-                }
-                break;
-            // case 'boolean':
-            //     if (value.toString().toLowerCase() == 'true') {
-            //         return true;
-            //     }
-            //     if (value.toString().toLowerCase() == 'false') {
-            //         return false;
-            //     }
-            //     return '';
-            case 'float':
-                if (isNaN(parseFloat(obj.value))) {
-                    obj.value = obj.example;
-                }else {
-                    obj.value = parseFloat(obj.value)
-                } 
-                break;
-            // case 'array':
-            //     value = value.toString().replace(/\s/g, '').split(',');
-            //     console.log(value);
-			// 	return ([...new Set(value)]);
-        }
-        console.log(obj);
-	}
+	this.modelSelection.changeValue = _.debounce(function(obj) {
+        $timeout(() => {
+            switch (obj.type) {
+                case 'string':
+                    break;
+                case 'integer':
+                    if (!Number.isInteger(Number(obj.value))) {
+                        obj.value = obj.example;
+                    }else {
+                        obj.value = Number(obj.value)
+                    }
+                    break;
+                case 'number':
+                    if (isNaN(Number(obj.value))) {
+                        obj.value = obj.example;
+                    }else {
+                        obj.value = Number(obj.value)
+                    }
+                    break;
+                // case 'boolean':
+                //     if (value.toString().toLowerCase() == 'true') {
+                //         return true;
+                //     }
+                //     if (value.toString().toLowerCase() == 'false') {
+                //         return false;
+                //     }
+                //     return '';
+                case 'float':
+                    if (isNaN(parseFloat(obj.value))) {
+                        obj.value = obj.example;
+                    } 
+                    else {
+                        obj.value = parseFloat(obj.value)
+                    } 
+                    break;
+                // case 'array':
+                //     value = value.toString().replace(/\s/g, '').split(',');
+                //     console.log(value);
+                // 	return ([...new Set(value)]);
+            }
+            console.log(obj);
+        });
+	}, 700);
 	this.modelSelection.onItemChange = function(value, properties) {
 		// console.log(value, properties);
 		properties.value = properties.enum.find(e => e.properties === value);
