@@ -556,17 +556,14 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 }
                 //if(!self.controller.tabs['training'].listDataset.length || !self.controller.tabs['training'].listDataset[0].curves.length) {
                 if(!self.controller.tabs['training'].listDataset.length) {
-                    return reject("No datasets exist");
+                    return reject("Must be have dataset in training for predict");
                 }
                 // let dsItem = self.controller.tabs['training'].listDataset[0]
                 // TO BE REVIEWED : TUNG
-                let dsItem = self.controller.tabs['training'].listDataset[0];
-                wiApi.client(getClientId(dsItem.owner, dsItem.prjName)).getCachedWellPromise(dsItem.idWell).then(well => {
-                    let realDataset = well.datasets.find(ds => ds.idDataset === dsItem.idDataset);
-                    if (!realDataset) {
-                        reject(new Error(`Dataset ${dsItem.idDataset} not found in well ${well.name}`));
-                    }
-                    let info = realDataset.curves.find(c => c.name === dsItem.selectedValues[0]);
+                wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell).then(well => {
+                    let realDs = well.datasets.find(ds => ds.idDataset === dataset.idDataset);
+                    let curveName = self.controller.tabs['training'].listDataset[0].selectedValues[0];
+                    let info = realDs.curves.find(c => c.name === curveName)
                     curveInfo.idFamily = info.idFamily;
                     curveInfo.unit = info.unit;
                     if(targetGroupsInfo) {
@@ -575,15 +572,26 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     }
                     mlApi.saveCurveAndCreatePlot(self.controller.tabs['prediction'], curveInfo, dataset, function() {
                         resolve();
-                    }, null, targetGroupsInfo, self.controller.curveSpecs, true);
-                });
+                    }, null, targetGroupsInfo, self.controller.curveSpecs, true)
+                })
+                //wiApi.getCurveInfoPromise(self.controller.tabs['training'].listDataset[0].curveSpecs[0].value.idCurve)
+                //.then(info => {
+                    //curveInfo.idFamily = info.idFamily;
+                    //curveInfo.unit = info.unit;
+                    //if(targetGroupsInfo) {
+                        //targetGroupsInfo.idFamily = info.idFamily;
+                        //targetGroupsInfo.unit = info.unit;
+                    //}
+                    //mlApi.saveCurveAndCreatePlot(self.controller.tabs['prediction'], curveInfo, dataset, function() {
+                        //resolve();
+                    //}, null, targetGroupsInfo, self.controller.curveSpecs)
+                //})
             })
         })
     }
 
-    function isReady(dataset, curveSpecs, forPredition) {
-        let startIdx = 0;
-        if (forPredition) startIdx = 1;
+    function isReady(dataset, curveSpecs, isPrediction) {
+        let startIdx = isPrediction ? 1 : 0;
         for (let i = startIdx ; i < curveSpecs.length; i++) {
             if (!dataset.selectedValues || !dataset.selectedValues[i] || !dataset.selectedValues[i].length) {
                 return false;
