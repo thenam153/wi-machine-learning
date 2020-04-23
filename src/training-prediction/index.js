@@ -314,6 +314,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, self.controller.tabs['verify'].plotName, listDataset[0]).then((plot) => {
                 self.controller.tabs['verify'].plot = plot;
                 self.controller.tabs['verify'].plot.username = localStorage.getItem('username') || '';
+                let filterCurveBoolean;
                 async.each(self.controller.tabs['verify'].listDataset, (dataset, _next) => {
                     //if(!isRun(dataset)) {
                     if(!isReady(dataset, self.controller.curveSpecs)) {
@@ -335,6 +336,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                         let zonesConfig = self.controller.zonesetConfig['verify'].zoneList || [];
                         let zones = (self.controller.zonesList['verify'] || [])[listDataset.indexOf(dataset)] || []; // PHUC
                         curves = zonesetFilter(dataset, curves, zonesConfig, zones);
+                        filterCurveBoolean = curves;
                         return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
                     })
                     .then(dataCurves => {
@@ -350,7 +352,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                         return mlApi.postPredict(payload);
                     })
                     .then(res => {
-                        return resultVerify(res, dataset);
+                        return resultVerify(res, dataset, filterCurveBoolean);
                     })
                     .then(() => {
                         _next();
@@ -364,7 +366,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             })
         })
     }
-    function resultVerify(res, dataset) {
+    function resultVerify(res, dataset, filterCurveBoolean) {
         return new Promise((resolve, reject) => {
             let value = mlApi.invTransformData(res.target, self.controller.curveSpecs);
             let target = {
@@ -383,7 +385,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             mlApi.getDataCurves(dataset, self.controller.curveSpecs)
             .then(curves => {
                 // tCurve = curves.shift();
-                tCurve = mlApi.filterNull(curves);
+                tCurve = mlApi.filterNull(curves, filterCurveBoolean);
                 return mlApi.fillNullInCurve(tCurve.fillNull, curveArr)
             })
             .then(curves => {
@@ -457,6 +459,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             .then(plot => {
                 self.controller.tabs['prediction'].plot = plot
                 self.controller.tabs['prediction'].plot.username = localStorage.getItem('username') || '';
+                let filterCurveBoolean;
                 async.each(self.controller.tabs['prediction'].listDataset, (dataset, _next) => {
                     //if(!isRun(dataset)) {
                     if (!isReady(dataset, self.controller.curveSpecs, true)) {
@@ -476,6 +479,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                         let zonesConfig = self.controller.zonesetConfig['prediction'].zoneList || [];
                         let zones = (self.controller.zonesList['prediction'] || [])[listDataset.indexOf(dataset)] || []; // PHUC
                         curves = zonesetFilter(dataset, curves, zonesConfig, zones);
+                        filterCurveBoolean = curves;
                         return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs, true);
                     })
                     .then(dataCurves => {
@@ -489,7 +493,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                         return mlApi.postPredict(payload);
                     })
                     .then(res => {
-                        return resultPredict(res, dataset)
+                        return resultPredict(res, dataset, filterCurveBoolean)
                     })
                     .then(() => {
                         _next();
@@ -505,7 +509,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             });
         });
     }
-    function resultPredict(res, dataset) {
+    function resultPredict(res, dataset, filterCurveBoolean) {
         // TODO: SHOULD BE REVIEWED **** TUNG
         return new Promise((resolve, reject) => {
             let value = mlApi.invTransformData(res.target, self.controller.curveSpecs);
@@ -524,7 +528,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             //mlApi.getDataCurves(dataset, dataset.curveSpecs)
             mlApi.getDataCurves(dataset, self.controller.curveSpecs, true)
             .then(curves => {
-                tCurve = mlApi.filterNull(curves);
+                tCurve = mlApi.filterNull(curves, filterCurveBoolean);
                 return mlApi.fillNullInCurve(tCurve.fillNull, [target])
             })
             .then(curves => {

@@ -76,7 +76,7 @@ function mlApi($http, $timeout, wiApi) {
         })
     }
     this.filterNull = filterNull;
-    function filterNull(curves) {
+    function filterNull(curves, filterCurveBoolean) {
         // let WELL = [];
         let l = curves.length;
         let filterCurves = [];
@@ -87,7 +87,7 @@ function mlApi($http, $timeout, wiApi) {
         for (let i = 0; i < curves[0].length; i++) {
             let notNull = true;
             for (let j = 0; j < l; j++)
-                if (isNaN(curves[j][i])) {
+                if (isNaN(curves[j][i]) || !filterCurveBoolean[i]) {
                     fillNull.push(i);
                     notNull = false;
                     break;
