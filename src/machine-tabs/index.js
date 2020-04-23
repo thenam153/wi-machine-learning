@@ -242,6 +242,15 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     }
     this.onRemoveInputItem = function($index) {
         if (self.curveSpecs.length > 2 && !self.curveSpecs[$index].isTarget) {
+            for (let dsItem of self.tabs[STEP_TRAIN].listDataset) {
+                dsItem.selectedValues.splice($index, 1);
+            }
+            for (let dsItem of self.tabs[STEP_VERIFY].listDataset) {
+                dsItem.selectedValues.splice($index, 1);
+            }
+            for (let dsItem of self.tabs[STEP_PREDICT].listDataset) {
+                dsItem.selectedValues.splice($index, 1);
+            }
             self.curveSpecs.splice($index, 1);
             // self.updateCurveSpecs($index); // TUNG : to be removed
         }
