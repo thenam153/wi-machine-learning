@@ -903,45 +903,52 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         //let owner = self.projectInfo.owner; // TUNG
         //let name = self.projectInfo.name; // TUNG
         /*if (owner && name) {
-            //self.dataProject = await wiApi.getFullInfoPromise((content.tabs[STEP_TRAIN] || [])[0].idProject, owner, name);
+        //self.dataProject = await wiApi.getFullInfoPromise((content.tabs[STEP_TRAIN] || [])[0].idProject, owner, name);
             wiApi.getFullInfoPromise((content.tabs[STEP_TRAIN] || [])[0].idProject, owner, name).then(prj => {
                 self.dataProject = prj;
 
             }).catch(e => {
                 console.error(e)
             }).finally(() => {
-        */
-                wiToken.setCurrentProjectName(mlProject.name);
-                $timeout(() => {
-                    self.current_tab = 0;
-                });
-                self.project = mlProject
-                if(self.project.content.plot) {
-                    self.tabs[STEP_VERIFY].plotName = self.project.content.plot[STEP_VERIFY].plotName;
-                    self.tabs[STEP_PREDICT].plotName = self.project.content.plot[STEP_PREDICT].plotName;
-                }
+            */
+        wiToken.setCurrentProjectName(mlProject.name);
+        $timeout(() => {
+            self.current_tab = 0;
+        });
+        self.project = mlProject
+        if(self.project.content.plot) {
+            self.tabs[STEP_VERIFY].plotName = self.project.content.plot[STEP_VERIFY].plotName;
+            self.tabs[STEP_PREDICT].plotName = self.project.content.plot[STEP_PREDICT].plotName;
+        }
 
-                // PHUC !!! Dont move after load listDataset !!!
-                self.zonesetConfig = content.zonesetConfig || {
-                    training: {},
-                    verify: {},
-                    prediction: {}
-                };
+        // PHUC !!! Dont move after load listDataset !!!
+        self.zonesetConfig = content.zonesetConfig || {
+            training: {},
+            verify: {},
+            prediction: {}
+        };
 
-                self.tabs[STEP_TRAIN].listDataset = self.project.content.tabs[STEP_TRAIN] || [];
-                self.tabs[STEP_VERIFY].listDataset = self.project.content.tabs[STEP_VERIFY] || [];
-                self.tabs[STEP_PREDICT].listDataset = self.project.content.tabs[STEP_PREDICT] || [];
-                self.typeInput = self.project.content.typeInput
-                // self.makeListOfDatasetSelection(); // TUNG
-                self.curveSpecs = self.project.content.curveSpecs
-                let currentTypeModel = self.modelSelection.listTypeModel.find(t => t.type === self.project.content.model.type);
-                if(currentTypeModel) 
-                    self.modelSelection.currentTypeModel = currentTypeModel;
-                let currentModel = self.modelSelection.listModel[self.modelSelection.currentTypeModel.type].find(m => m.name === self.project.content.model.name);
-                if(currentModel) {
-                    Object.assign(self.modelSelection.currentModel, self.project.content.model);
-                    Object.assign(currentModel, self.project.content.model);
-                }
+        self.tabs[STEP_TRAIN].listDataset = self.project.content.tabs[STEP_TRAIN] || [];
+        self.tabs[STEP_VERIFY].listDataset = self.project.content.tabs[STEP_VERIFY] || [];
+        self.tabs[STEP_PREDICT].listDataset = self.project.content.tabs[STEP_PREDICT] || [];
+        self.typeInput = self.project.content.typeInput
+        // self.makeListOfDatasetSelection(); // TUNG
+        self.curveSpecs = self.project.content.curveSpecs
+
+        let modelType = self.modelSelection.listTypeModel.find(item => item.type === content.model.type);
+        if (modelType)
+            self.modelSelection.currentTypeModel = modelType;
+        let model = self.modelSelection.listModel[modelType.type].find(item => item.name === content.model.name);
+        if (model)
+            self.modelSelection.currentModel = content.model;
+        //let currentTypeModel = self.modelSelection.listTypeModel.find(t => t.type === self.project.content.model.type);
+        //if(currentTypeModel) 
+            //self.modelSelection.currentTypeModel = currentTypeModel;
+        //let currentModel = self.modelSelection.listModel[self.modelSelection.currentTypeModel.type].find(m => m.name === self.project.content.model.name);
+        //if(currentModel) {
+            //Object.assign(self.modelSelection.currentModel, self.project.content.model);
+            //Object.assign(currentModel, self.project.content.model);
+        //}
         /*    });
         }*/
     }
