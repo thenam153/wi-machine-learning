@@ -170,10 +170,10 @@ function mlApi($http, $timeout, wiApi) {
             let inputCurveData = [];
             // async.eachSeries(dataset.curveSpecs, async function(input) { // TUNG
             async.eachOfSeries(curveSpecs, function(input, idx, cb) {
-                if (forPrediction && idx === 0) {
+                /*if (isPrediction && idx === 0) {
                     inputCurveData.push([]);
                     return cb();
-                }
+                }*/
                 let curveName = dataset.selectedValues[idx];
                 if (isPrediction && idx == 0) {
                     return cb();
@@ -192,7 +192,9 @@ function mlApi($http, $timeout, wiApi) {
                         }
                         inputCurveData.push(dataCurve);
                         cb();
-                    }).catch(e => cb(e));
+                    }).catch(e => {
+                        cb(e)
+                    });
                 });
             }, err => {
                 if (err || !inputCurveData || !inputCurveData.length) {
@@ -205,7 +207,7 @@ function mlApi($http, $timeout, wiApi) {
                 for (let i = 0; i < inputCurveData.length; i++) {
                     if (length > inputCurveData[i].length) length = inputCurveData[i].length;
                 }
-                for (let i = startIdx; i < inputCurveData.length; i++) {
+                for (let i = 0; i < inputCurveData.length; i++) {
                     if (inputCurveData[i].length > length) {
                         inputCurveData[i].splice(length, inputCurveData[i].length - length);
                     }
