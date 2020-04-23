@@ -285,7 +285,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             })
             .catch(err => {
                 toastr.error(err ? err.message
-                    || (err.status ? `${err.status} - ${err.statusText}` : 'Something went error')
+                    || (err.status ? `${err.status} - ${err.statusText}${err.data?("-" + JSON.stringify(err.data)):""}` : 'Something went error')
                     : err || 'Something went error');
                 console.log('Error')
             })
@@ -472,9 +472,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                         }
                         return mlApi.evaluateExpr(dtset.curves, dataset.discrimnt, dataset.owner, dataset.prjName);
                     })
-                    //mlApi.evaluateExpr(dataset, dataset.discrmnt) // TUNG
                     .then(curves => {
-                        //return mlApi.getDataCurveAndFilter(dataset, curves);
                         let zonesConfig = self.controller.zonesetConfig['prediction'].zoneList || [];
                         let zones = (self.controller.zonesList['prediction'] || [])[listDataset.indexOf(dataset)] || []; // PHUC
                         curves = zonesetFilter(dataset, curves, zonesConfig, zones);

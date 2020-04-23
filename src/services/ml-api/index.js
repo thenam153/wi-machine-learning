@@ -619,15 +619,17 @@ function mlApi($http, $timeout, wiApi) {
         }
     }
     this.transformData = transformData;
-    function transformData(_dataCurves, curveSpecs, forPrediction) {
+    function transformData(dataCurves, curveSpecs, isPrediction) {
         return new Promise(resolve => {
-            // let input = dataCurves.length === curveSpecs.length ? curveSpecs.filter(i => i) : curveSpecs.filter((i, idx) => idx > 0);
+            let input = dataCurves.length === curveSpecs.length ? curveSpecs.filter(i => i) : curveSpecs.filter((i, idx) => idx > 0);
+            /*
             let input = curveSpecs;
             let dataCurves = _dataCurves;
-            if (forPrediction) {
+            if (isPrediction) {
                 input = curveSpecs.filter((i, idx) => idx > 0);
                 dataCurves = _dataCurves.filter((i, idx) => idx > 0);
             }
+            */
             dataCurves.forEach((curve, idx) => {
                 let transform = input[idx].transform;
                 switch(transform) {
