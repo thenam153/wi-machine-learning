@@ -284,7 +284,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 self.controller.saveProject();
             })
             .catch(err => {
-                toastr.error(err ? err.message : err || 'Something went error' );
+                toastr.error(err ? err.message
+                    || (err.status ? `${err.status} - ${err.statusText}` : 'Something went error')
+                    : err || 'Something went error');
                 console.log('Error')
             })
             .finally(() => {
