@@ -7,15 +7,15 @@
         <div ng-show="tab == 1" style="padding: 20px; height: 100%;" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
             <div class="header" style="text-transform: capitalize;">
                 <span class="title">Type Selection</span>
-                <wi-dropdown-list-new place-holder="Type model" items="self.controller.listTypeModel" hide-delete-button='self.controller.hideDeleteButton'
+                <wi-dropdown-list place-holder="Type model" items="self.controller.listTypeModel" hide-delete-button='self.controller.hideDeleteButton' bare-list="true"
                     current-select='self.controller.currentTypeModel.label' on-item-changed="self.controller.onChangeTypeModel">
-                </wi-dropdown-list-new>
+                </wi-dropdown-list>
             </div>
             <div class="header">
                 <span class="title">Model Selection</span>
-                <wi-dropdown-list-new place-holder="Model" items="self.controller.listModel[self.controller.currentTypeModel.type]" hide-delete-button='self.controller.hideDeleteButton'
+                <wi-dropdown-list place-holder="Model" items="self.controller.listModel[self.controller.currentTypeModel.type]" hide-delete-button='self.controller.hideDeleteButton' bare-list="true"
                     current-select='self.controller.currentModel.label' on-item-changed="self.controller.onChangeModel">
-                </wi-dropdown-list-new>
+                </wi-dropdown-list>
             </div>
 
             <div >
