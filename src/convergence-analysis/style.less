@@ -21,4 +21,27 @@ convergence-analysis {
     border-top-right-radius: 3px;
     border-top-left-radius : 3px;
   }
+
+  .note-area {
+    display       : flex;
+    padding       : 15px;
+    flex-direction: column;
+
+    .note-content {
+      flex         : 1;
+      display      : flex;
+      margin-bottom: 15px;
+
+      .note-square {
+        height: 13px;
+        width : 13px;
+        margin: 3px 5px 3px 3px;
+      }
+
+      .note-text {
+        white-space : nowrap;
+        margin-right: 10px;
+      }
+    }
+  }
 }
