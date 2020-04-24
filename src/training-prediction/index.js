@@ -644,4 +644,21 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     function getClientId(owner, prjName) {
         return mlApi.getClientId(owner, prjName);
     }
+    self.getResultCurveName = function([dsItem, suffix]) {
+        if (!self.controller ) return "N/A";
+        if (dsItem.resultCurveName.length && dsItem.resultCurveName !== "RESULT_CURVE") {
+            return dsItem.resultCurveName;
+        }
+
+        let targetName = _.get(self.controller, "curveSpecs[0].value.name", null);
+        if (!targetName) return dsItem.resultCurveName;
+        let defaultName = targetName + suffix;
+        
+        dsItem.resultCurveName = defaultName;
+        return dsItem.resultCurveName;
+    }
+    self.setResultCurveName = function([dsItem, suffix], newName) {
+        if (!self.controller) return;
+        dsItem.resultCurveName = newName;
+    }
 }

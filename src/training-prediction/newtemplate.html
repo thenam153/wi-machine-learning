@@ -125,7 +125,9 @@
 						    </wi-dropdown-list>
                         </div>
                         <div class="table-block">
-                            <input type="text" style="height: 32px;" ng-model="dataset.resultCurveName">
+                            <!-- <input type="text" style="height: 32px;" ng-model="dataset.resultCurveName"> -->
+                            <editable item-value="self.getResultCurveName" set-value="self.setResultCurveName" enabled="!!self.controller" 
+                                params="[dataset, '_VR']" />
                         </div>
                     </div>
                 </div>
@@ -185,7 +187,9 @@
                             </div>
                         </div>
                         <div class="table-block">
-                            <input type="text" style="height: 32px;" ng-model="dataset.resultCurveName">
+                            <!-- <input type="text" style="height: 32px;" ng-model="dataset.resultCurveName"> -->
+                            <editable item-value="self.getResultCurveName" set-value="self.setResultCurveName" enabled="!!self.controller" 
+                                params="[dataset, '_P']" />
                         </div>
                     </div>
                 </div>
