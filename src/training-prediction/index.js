@@ -565,7 +565,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 // let dsItem = self.controller.tabs['training'].listDataset[0]
                 // TO BE REVIEWED : TUNG
                 let targetDs = self.controller.tabs['training'].listDataset[0];
-                wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(targetDs.idWell).then(well => {
+                wiApi.client(getClientId(targetDs.owner, targetDs.prjName)).getCachedWellPromise(targetDs.idWell).then(well => {
                     let realDs = well.datasets.find(ds => ds.idDataset === targetDs.idDataset);
                     let curveName = targetDs.selectedValues[0];
                     let info = realDs.curves.find(c => c.name === curveName)
