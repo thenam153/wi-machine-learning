@@ -46,7 +46,10 @@ TrainingPredictionController.$inject = ['$scope', '$timeout', 'wiDialog', 'wiApi
 
 function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, somModelService, mlApi) {
     let self = this;
-
+    toastr.options = {
+        "positionClass": "toast-bottom-right",
+      }
+      
     $scope.tab = 1;
     $scope.setTab = function(newTab) {
         $scope.tab = newTab;
