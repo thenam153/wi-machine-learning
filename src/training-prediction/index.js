@@ -166,7 +166,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 if(!dataset.active) {
                     return _next();
                 }
+                let realWell;
                 wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell).then((well) => {
+                    realWell = well;
                     let dtset = well.datasets.find(ds => ds.idDataset === dataset.idDataset);
                     if (!dtset) {
                         throw new Error("Cannot find dataset idDataset=" + dataset.idDataset);
@@ -175,7 +177,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 })
                 .then(curves => {
                     let zonesConfig = self.controller.zonesetConfig['training'].zoneList || []; // PHUC
-                    let zones = (self.controller.zonesList['training'] || [])[listDataset.indexOf(dataset)] || []; // PHUC
+                    let zones = realWell.zone_sets.find(zs => zs.name === self.controller.zonesetConfig['training'].zonesetName).zones || [];
                     curves = zonesetFilter(dataset, curves, zonesConfig, zones); // PHUC
                     return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
                 }) 
@@ -323,7 +325,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     if(!dataset.active) {
                         return _next();
                     }
+                    let realWell;
                     wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell).then((well) => {
+                        realWell = well;
                         let dtset = well.datasets.find(ds => ds.idDataset === dataset.idDataset);
                         if (!dtset) {
                             throw new Error("Cannot find dataset idDataset=" + dataset.idDataset);
@@ -334,7 +338,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     .then(curves => {
                         //return mlApi.getDataCurveAndFilter(dataset, curves); // TUNG
                         let zonesConfig = self.controller.zonesetConfig['verify'].zoneList || [];
-                        let zones = (self.controller.zonesList['verify'] || [])[listDataset.indexOf(dataset)] || []; // PHUC
+                        let zones = realWell.zone_sets.find(zs => zs.name === self.controller.zonesetConfig['verify'].zonesetName).zones || [];
                         curves = zonesetFilter(dataset, curves, zonesConfig, zones);
                         filterCurveBoolean = curves;
                         return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
@@ -468,7 +472,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     if(!dataset.active) {
                         return _next();
                     }
+                    let realWell;
                     wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell).then((well) => {
+                        realWell = well;
                         let dtset = well.datasets.find(ds => ds.idDataset === dataset.idDataset);
                         if (!dtset) {
                             throw new Error("Cannot find dataset idDataset=" + dataset.idDataset);
@@ -477,7 +483,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     })
                     .then(curves => {
                         let zonesConfig = self.controller.zonesetConfig['prediction'].zoneList || [];
-                        let zones = (self.controller.zonesList['prediction'] || [])[listDataset.indexOf(dataset)] || []; // PHUC
+                        let zones = realWell.zone_sets.find(zs => zs.name === self.controller.zonesetConfig['prediction'].zonesetName).zones || [];
                         curves = zonesetFilter(dataset, curves, zonesConfig, zones);
                         filterCurveBoolean = curves;
                         return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs, true);
