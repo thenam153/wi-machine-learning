@@ -177,7 +177,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 })
                 .then(curves => {
                     let zonesConfig = self.controller.zonesetConfig['training'].zoneList || []; // PHUC
-                    let zones = realWell.zone_sets.find(zs => zs.name === self.controller.zonesetConfig['training'].zonesetName).zones || [];
+                    let zones = (realWell.zone_sets.find(zs => zs.name === self.controller.zonesetConfig['training'].zonesetName)  || {}).zones || [];
                     curves = zonesetFilter(dataset, curves, zonesConfig, zones); // PHUC
                     return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
                 }) 
@@ -338,7 +338,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     .then(curves => {
                         //return mlApi.getDataCurveAndFilter(dataset, curves); // TUNG
                         let zonesConfig = self.controller.zonesetConfig['verify'].zoneList || [];
-                        let zones = realWell.zone_sets.find(zs => zs.name === self.controller.zonesetConfig['verify'].zonesetName).zones || [];
+                        let zones = (realWell.zone_sets.find(zs => zs.name === self.controller.zonesetConfig['verify'].zonesetName) || {}).zones || [];
                         curves = zonesetFilter(dataset, curves, zonesConfig, zones);
                         filterCurveBoolean = curves;
                         return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
@@ -483,7 +483,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     })
                     .then(curves => {
                         let zonesConfig = self.controller.zonesetConfig['prediction'].zoneList || [];
-                        let zones = realWell.zone_sets.find(zs => zs.name === self.controller.zonesetConfig['prediction'].zonesetName).zones || [];
+                        let zones = (realWell.zone_sets.find(zs => zs.name === self.controller.zonesetConfig['prediction'].zonesetName) || {}).zones || [];
                         curves = zonesetFilter(dataset, curves, zonesConfig, zones);
                         filterCurveBoolean = curves;
                         return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs, true);
