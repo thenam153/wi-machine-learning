@@ -286,7 +286,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                                 prjName: vlDs.prjName,
                                 top: vlDs.top,
                                 step: vlDs.step,
-                                discrimnt: {active: true},
+                                discrimnt: {active: false},
                                 resultCurveName: "RESULT_CURVE"
                                 //curveSpecs
                             }
@@ -861,7 +861,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell).then(well => {
             let fullDataset = well.datasets.find(ds => ds.idDataset === dataset.idDataset);
             if (!fullDataset) return;
-            wiDialog.discriminator(dataset.discrimnt, fullDataset.curves, function(res) {
+            let discrimnt = Object.assign({}, dataset.discrimnt)
+            wiDialog.discriminator(discrimnt, fullDataset.curves, function(res) {
                 dataset.discrimnt = res;
                 console.log(res);
             });
