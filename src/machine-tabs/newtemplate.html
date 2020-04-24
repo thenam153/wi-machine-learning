@@ -5,7 +5,7 @@
             <span class="menu-item" ng-class="{active: self.current_tab == 1}" ng-click="self.current_tab = 1;">Model Selection</span>
             <span class="menu-item" ng-class="{active: self.current_tab == 3}" ng-click="self.current_tab = 3;">Zoneset Config</span>
             <span class="menu-item" ng-class="{active: self.current_tab == 2}" ng-click="self.current_tab = 2;self.updateTabTrainingPredictiong();">Training and Prediction</span>
-            <span class="menu-item" ng-class="{active: self.current_tab == 4}" ng-click="self.current_tab = 4;">Conversion Analysis</span>
+            <span class="menu-item" ng-class="{active: self.current_tab == 4}" ng-click="self.current_tab = 4;">Convergence Analysis</span>
         </div>
 		<div class="active menu-item">
             <span ng-click="self.openProject();" class="ml-project-name">{{self.project ? self.project.name: ''}}</span>
@@ -111,10 +111,10 @@
             controller="self" >
         </training-prediction>
 
-        <conversion-analysis
-            ng-show="self.titleTabs[self.current_tab] === 'Conversion Analysis'"
+        <convergence-analysis
+            ng-show="self.titleTabs[self.current_tab] === 'Convergence Analysis'"
             controller="self">
-        </conversion-analysis>
+        </convergence-analysis>
 	</div>
 </div>
 <div ng-show="self.sprinnerMl || self.showNotiSave" style="z-index: 10; background: #ffffffc9; height: 100vh; width: 100vw; z-index: 5; position: absolute; display: flex; align-items: center; justify-content: center;">

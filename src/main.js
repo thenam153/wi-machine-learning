@@ -4,7 +4,7 @@ module.exports = {
     zonesetConfig: require('./zoneset-config/index'),
 	datasetSelection : require('./dataset-selection/index'),
 	trainingPrediction : require('./training-prediction/index'),
-    conversionAnalysis: require('./conversion-analysis'),
+    convergenceAnalysis: require('./convergence-analysis'),
 	mlService: require('./services/ml-service/index.js'),
 	mlApi: require('./services/ml-api/index.js')
 }

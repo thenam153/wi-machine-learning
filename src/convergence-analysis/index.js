@@ -1,5 +1,5 @@
-const moduleName = "conversionAnalysis";
-const componentName = "conversionAnalysis";
+const moduleName = "convergenceAnalysis";
+const componentName = "convergenceAnalysis";
 module.exports.name = moduleName;
 
 const app = angular.module(moduleName, [
@@ -15,7 +15,7 @@ const app = angular.module(moduleName, [
 
 app.component(componentName,{
     template: require('./template.html'),
-    controller: ConversionAnalysisController,
+    controller: ConvergenceAnalysisController,
     style: require('./style.less'),
     controllerAs: 'self',
     bindings: {
@@ -23,8 +23,8 @@ app.component(componentName,{
     }
 });
 
-ConversionAnalysisController.$inject = ['$scope', 'wiApi', '$timeout', 'mlApi']
-function ConversionAnalysisController($scope, wiApi, $timeout, mlApi){
+ConvergenceAnalysisController.$inject = ['$scope', 'wiApi', '$timeout', 'mlApi']
+function ConvergenceAnalysisController($scope, wiApi, $timeout, mlApi){
     let self = 	this;
     this.$onInit = function() {
         self.setTab(0);
@@ -34,12 +34,12 @@ function ConversionAnalysisController($scope, wiApi, $timeout, mlApi){
         self.yMajorTick = 10;
 
         $scope.$watchCollection(() => {
-            return (self.controller.conversionAnalysis || {}).train_loss;
+            return (self.controller.convergenceAnalysis || {}).train_loss;
         }, (newVal, oldVal) => {
             self.train_loss = newVal;
         })
         $scope.$watchCollection(() => {
-            return (self.controller.conversionAnalysis || {}).val_loss;
+            return (self.controller.convergenceAnalysis || {}).val_loss;
         }, (newVal, oldVal) => {
             self.val_loss = newVal;
         })

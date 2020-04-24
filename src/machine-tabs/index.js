@@ -19,7 +19,7 @@ var app = angular.module(moduleName, ['modelSelection',
     'datasetSelection',
     'zonesetConfig',
     'trainingPrediction',
-    'conversionAnalysis',
+    'convergenceAnalysis',
     'mlApi',
     'wiApi',
     'wiNeuralNetwork',
@@ -51,7 +51,7 @@ const TAB_DATASET =  'Dataset Selection';
 const TAB_MODEL =  'Model Selection';
 const TAB_ZONESET = 'Zoneset Config';
 const TAB_TRAIN =  'Training and Prediction';
-const TAB_CONVERSION =  'Conversion Analysis';
+const TAB_CONVERGENCE =  'Convergence Analysis';
 const STEP_TRAIN = 'training';
 const STEP_VERIFY = 'verify';
 const STEP_PREDICT = 'prediction';
@@ -149,7 +149,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         self.loginUrl = config.login;
         self.queryString = queryString.parse(location.search);
         self.token = wiToken.getToken();
-        self.titleTabs = [TAB_DATASET, TAB_MODEL, TAB_TRAIN, TAB_ZONESET, TAB_CONVERSION];
+        self.titleTabs = [TAB_DATASET, TAB_MODEL, TAB_TRAIN, TAB_ZONESET, TAB_CONVERGENCE];
         self.steps = [STEP_TRAIN, STEP_VERIFY, STEP_PREDICT];
         self.current_tab = 4;
         initMlProject();
@@ -951,7 +951,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         let model = self.modelSelection.listModel[modelType.type].find(item => item.name === content.model.name);
         if (model)
             self.modelSelection.currentModel = content.model;
-        self.conversionAnalysis = content.conversionAnalysis;
+        self.convergenceAnalysis = content.convergenceAnalysis;
     }
     this.openProject = function() {
         wiApi.client(getClientId()).getMlProjectListPromise()
@@ -1039,7 +1039,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     }
                 },
                 zonesetConfig: self.zonesetConfig,
-                conversionAnalysis: self.conversionAnalysis,
+                convergenceAnalysis: self.convergenceAnalysis,
                 projectInfo: self.projectInfo,
                 curveSpecs: self.curveSpecs,
                 typeInput: self.typeInput,

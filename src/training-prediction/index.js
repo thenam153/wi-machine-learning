@@ -237,7 +237,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 self.running = true;
             })
             beforeTrain().then(() => trainData()).then((res) => {
-                self.controller.conversionAnalysis = angular.copy(res);
+                self.controller.convergenceAnalysis = angular.copy(res);
                 afterTrain()
             }).then(() => {
                 console.log('Success')
