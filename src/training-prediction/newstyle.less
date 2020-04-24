@@ -196,6 +196,17 @@ training-prediction {
   overflow: hidden;
   padding-right: 1em;
 }
+.ui-select-choices-row-inner>div {
+  display: flex;
+}
+.ui-select-choices-row-inner>div>span:nth-child(2) {
+  display: block !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: unset !important;
+}
+
 wi-discriminator {
   textarea {
     width: -webkit-fill-available !important;
