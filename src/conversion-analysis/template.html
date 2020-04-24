@@ -1,0 +1,40 @@
+<div class="slim-scroller" ng-if="self.plotCondition()">
+  <div style="flex: 1; display: flex; flex-direction: column;">
+    <div class="main-body-center border-style" style="position: relative;" id='layer-collection'>
+      <layer-collection v-padding="50" h-padding="60">
+        <axis-layer min-val="self.getLeft()" max-val="self.getRight()"
+            loga="false" precision="4" placement="1" grid="true"
+            n-ticks="self.xMajorTick" minor-ticks="self.xMinorTick">
+        </axis-layer>
+        <axis-layer min-val="self.getBottom()" max-val="self.getTop()"
+            loga="false" precision="4" placement="0" grid="true"
+            n-ticks="self.yMajorTick" minor-ticks="self.xMinorTick"
+            axis-direction="'up'">
+        </axis-layer>
+        <line-point-layer min-val="self.getLeft()" max-val="self.getRight()"
+            min-y="self.getBottom()" max-y="self.getTop()" loga="false"
+            min-draw="self.getLeft()" max-draw="self.getRight()"
+            min-draw-y="self.getBottom()" max-draw-y="self.getTop()"
+            autofit='false' get-x='self.getX' get-y='self.getY'
+            line-data="self.train_loss" line-color="'green'"
+            line-width="2" line-dash="'2 0'"></line-point-layer>
+        <line-point-layer min-val="self.getLeft()" max-val="self.getRight()"
+            min-y="self.getBottom()" max-y="self.getTop()" loga="false"
+            min-draw="self.getLeft()" max-draw="self.getRight()"
+            min-draw-y="self.getBottom()" max-draw-y="self.getTop()"
+            autofit='false' get-x='self.getX' get-y='self.getY'
+            line-data="self.val_loss" line-color="'red'"
+            line-width="2" line-dash="'2 0'"></line-point-layer>
+      </layer-collection>
+      <p style="position: absolute; font-weight: bold; left: 50%; transform: translateX(-50%); bottom: 0">
+          {{'X-Axis'}}
+      </p>
+      <p style="position: absolute;left: 18px; top: 50%;font-weight: bold;transform: translate(-50%, -50%) rotate(-90deg);">
+          {{'Y-Axis'}}
+      </p>
+      <p style="position: absolute; top: 23px; right: 45%;text-transform: uppercase; font-weight: bold; transform: translateY(-50%);">
+          {{'Plot-Name'}}
+      </p>
+    </div>
+  </div>
+</div>

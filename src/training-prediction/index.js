@@ -236,7 +236,10 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             $timeout(() => {
                 self.running = true;
             })
-            beforeTrain().then(() => trainData()).then(() => afterTrain()).then(() => {
+            beforeTrain().then(() => trainData()).then((res) => {
+                self.controller.conversionAnalysis = angular.copy(res);
+                afterTrain()
+            }).then(() => {
                 console.log('Success')
                 toastr.success('Training success');
                 self.controller.project.content.state = 1;

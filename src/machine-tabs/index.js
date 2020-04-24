@@ -19,6 +19,7 @@ var app = angular.module(moduleName, ['modelSelection',
     'datasetSelection',
     'zonesetConfig',
     'trainingPrediction',
+    'conversionAnalysis',
     'mlApi',
     'wiApi',
     'wiNeuralNetwork',
@@ -29,7 +30,7 @@ var app = angular.module(moduleName, ['modelSelection',
     'ngDialog',
     'somModelService',
     'heatMap',
-    'wiDropdownListNew'
+    'wiDropdownListNew',
 ]);
 app.component(componentName, {
     template: require('./newtemplate.html'),
@@ -50,6 +51,7 @@ const TAB_DATASET =  'Dataset Selection';
 const TAB_MODEL =  'Model Selection';
 const TAB_ZONESET = 'Zoneset Config';
 const TAB_TRAIN =  'Training and Prediction';
+const TAB_CONVERSION =  'Conversion Analysis';
 const STEP_TRAIN = 'training';
 const STEP_VERIFY = 'verify';
 const STEP_PREDICT = 'prediction';
@@ -103,8 +105,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             drop: null,
         },
     }
-    this.titleTabs = [TAB_DATASET, TAB_MODEL, TAB_TRAIN, TAB_ZONESET];
-    this.steps = [STEP_TRAIN, STEP_VERIFY, STEP_PREDICT];
     function excludeReplacer(key, value) {
         switch(key) {
             case 'discrimnt':
@@ -149,9 +149,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         self.loginUrl = config.login;
         self.queryString = queryString.parse(location.search);
         self.token = wiToken.getToken();
-        self.titleTabs = [TAB_DATASET, TAB_MODEL, TAB_TRAIN, TAB_ZONESET];
+        self.titleTabs = [TAB_DATASET, TAB_MODEL, TAB_TRAIN, TAB_ZONESET, TAB_CONVERSION];
         self.steps = [STEP_TRAIN, STEP_VERIFY, STEP_PREDICT];
-        self.current_tab = 0;
+        self.current_tab = 4;
         initMlProject();
         if (self.token && self.token.length) window.localStorage.setItem('token', self.token);
         self.restoreProject();
@@ -951,16 +951,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         let model = self.modelSelection.listModel[modelType.type].find(item => item.name === content.model.name);
         if (model)
             self.modelSelection.currentModel = content.model;
-        //let currentTypeModel = self.modelSelection.listTypeModel.find(t => t.type === self.project.content.model.type);
-        //if(currentTypeModel) 
-            //self.modelSelection.currentTypeModel = currentTypeModel;
-        //let currentModel = self.modelSelection.listModel[self.modelSelection.currentTypeModel.type].find(m => m.name === self.project.content.model.name);
-        //if(currentModel) {
-            //Object.assign(self.modelSelection.currentModel, self.project.content.model);
-            //Object.assign(currentModel, self.project.content.model);
-        //}
-        /*    });
-        }*/
+        self.conversionAnalysis = content.conversionAnalysis;
     }
     this.openProject = function() {
         wiApi.client(getClientId()).getMlProjectListPromise()
@@ -1048,6 +1039,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     }
                 },
                 zonesetConfig: self.zonesetConfig,
+                conversionAnalysis: self.conversionAnalysis,
                 projectInfo: self.projectInfo,
                 curveSpecs: self.curveSpecs,
                 typeInput: self.typeInput,
