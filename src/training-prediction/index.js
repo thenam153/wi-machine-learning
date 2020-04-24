@@ -662,6 +662,6 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
         dsItem.resultCurveName = newName;
     }
     function normalizeCurveName(name) {
-        return name.replace(/(\s|%)+/, "_");
+        return name.replace(/(\s|%)+/g, "_");
     }
 }
