@@ -15,6 +15,7 @@ else if (process.env.NODE_ENV === 'local') {
 else {
     config = require('../config/config').default
 }
+window.localStorage.setItem('BASE_URL', config.base_url);
 var app = angular.module(moduleName, ['modelSelection',
     'datasetSelection',
     'zonesetConfig',
@@ -116,12 +117,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         return value;
     }
     $scope.$watch(() => (JSON.stringify(self.tabs, excludeReplacer) + ((self.typeInput || {}).type || "")) , () => {
-        this.makeListOfDatasetSelectionForTabs([
+        this.buildInputSelectionListForTabs([
             STEP_TRAIN, 
             STEP_VERIFY
         ]).then(curves => {
             self.selectionListTarget = curves;
-            return self.makeListOfDatasetSelectionForTabs([
+            return self.buildInputSelectionListForTabs([
                 STEP_TRAIN, 
                 STEP_VERIFY, 
                 STEP_PREDICT
@@ -230,10 +231,19 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             }));
         })
     }
-    this.onInputItemChange = function(i, item) {
+    this.onInputItemChange = function(i, params) {
+        let item = params[0];
+        let idx = params[1];
         if(i) {
             item.currentSelect = i.label;
             item.value = i;
+            for (let stepLabel of Object.keys(self.tabs)) {
+                let listDataset = self.tabs[stepLabel].listDataset;
+                for (let dsItem of listDataset) {
+                    dsItem.selectedValues = dsItem.selectedValues || [];
+                    dsItem.selectedValues[idx] = "";
+                }
+            }
         }
         /*else {
             console.log("set default");
@@ -317,7 +327,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             // self.makeListOfDatasetSelection(); // TUNG
         });
     }
-    this.makeListOfDatasetSelectionForTabs = function(stepLabels) {
+    this.buildInputSelectionListForTabs = function(stepLabels) {
         let dsItemHash = {};
         let datasetIds = [];
         let curves = [];

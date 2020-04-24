@@ -55,10 +55,10 @@
 							on-item-changed="self.getFnOnInputChanged($index)" current-select="item.currentSelect">
 						</wi-dropdown-list-new> -->
 						<wi-dropdown-list ng-if="!item.isTarget" style="width: 100%;" place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionList" hide-delete-button='true'
-							on-item-changed="self.controller.onInputItemChange" current-select="item.currentSelect" params="item" bare-list="true">
+							on-item-changed="self.controller.onInputItemChange" current-select="item.currentSelect" params="[item, $index]" bare-list="true">
 						</wi-dropdown-list>
 						<wi-dropdown-list ng-if="item.isTarget" style="width: 100%;" place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionListTarget" hide-delete-button='true'
-							on-item-changed="self.controller.onInputItemChange" current-select="item.currentSelect" params="item" bare-list="true">
+							on-item-changed="self.controller.onInputItemChange" current-select="item.currentSelect" params="[item, $index]" bare-list="true">
 						</wi-dropdown-list>
 					</div>
 				</div>
