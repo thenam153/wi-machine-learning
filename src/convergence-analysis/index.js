@@ -49,13 +49,15 @@ function ConvergenceAnalysisController($scope, wiApi, $timeout, mlApi){
         return 0;
     }
     this.getRight = function() {
-        return self.train_loss.length;
+        let l = self.train_loss.length;
+        return parseInt((l / 10) + 1) * 10;
     }
     this.getBottom = function() {
         return 0;
     }
     this.getTop = function() {
-        return Math.ceil(_.maxBy([...self.train_loss, ...self.val_loss], i => i));
+        let max = Math.ceil(_.maxBy([...self.train_loss, ...self.val_loss], i => i));
+        return parseInt((max / 10) + 1) * 10;
     }
 
     this.getX = function(d, i) {
