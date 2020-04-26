@@ -24,10 +24,10 @@
     </div>
     <div class="workspace">
         <div ng-show="isSet(1)" class="workspace-main" id="Train" ng-init="self.machineLearnSteps['training'].expanded=true">
-            <div class="search">
+            <!-- <div class="search">
                 <div class="ti ti-search" style="margin-right: 15px; font-size: 15px;"></div>
                 <input placeholder="Search" ng-model="self.controller.searchTrainingText">
-            </div>
+            </div> -->
             <div class="button">
                 <!-- <div class="toolbar-button">Sort by</div>
                 <div class="toolbar-button">Select All</div> -->
@@ -75,11 +75,11 @@
             </div>
         </div>
         <div ng-show="isSet(2)" class="workspace-main">
-            <div class="search" style="width: 200px">
+            <!-- <div class="search" style="width: 200px">
                 <div class="ti ti-search" style="margin-right: 15px; font-size: 15px;"></div>
                 <input placeholder="Search" ng-model="self.controller.searchVerifyText">
-            </div>
-            <div class="search" style="margin-left: 20px; left: 240px;">
+            </div> -->
+            <div class="search" style="margin-right: 15px; width: 300px;">
                 <div>Plot: &nbsp;&nbsp;</div>
                 <input style="text-align: right;" placeholder="Plot name" ng-model="self.controller.tabs['verify'].plotName">
             </div>
@@ -124,9 +124,9 @@
 							    on-item-changed="self.controller.onItemChangeTabTAP" current-select="dataset.selectedValues[idxIt]" params="[curveSpecItem, dataset, 'Prediction', idxIt]">
 						    </wi-dropdown-list>
                         </div>
-                        <div class="table-block">
+                        <div class="table-block" style="width:150px;padding-left:0;margin-left:20px">
                             <!-- <input type="text" style="height: 32px;" ng-model="dataset.resultCurveName"> -->
-                            <editable item-value="self.getResultCurveName" set-value="self.setResultCurveName" enabled="!!self.controller" 
+                            <editable item-value="self.getResultCurveName" content-style='{width:"100%"}' set-value="self.setResultCurveName" enabled="!!self.controller" 
                                 params="[dataset, '_VR']" />
                         </div>
                     </div>
@@ -134,11 +134,11 @@
             </div>
         </div>
         <div ng-show="isSet(3)" class="workspace-main">
-            <div class="search" style="width: 200px">
+            <!-- <div class="search" style="width: 200px">
                 <div class="ti ti-search" style="margin-right: 15px; font-size: 15px;"></div>
                 <input placeholder="Search" ng-model="self.controller.searchPredictionText">
-            </div>
-            <div class="search" style="margin-left: 20px; left: 240px;">
+            </div> -->
+            <div class="search" style="margin-right: 15px; width: 300px;">
                 <div>Plot: &nbsp;&nbsp;</div>
                 <input style="text-align: right;" placeholder="Plot name" ng-model="self.controller.tabs['prediction'].plotName">
             </div>
@@ -186,9 +186,8 @@
                                 </wi-dropdown-list>
                             </div>
                         </div>
-                        <div class="table-block">
-                            <!-- <input type="text" style="height: 32px;" ng-model="dataset.resultCurveName"> -->
-                            <editable item-value="self.getResultCurveName" set-value="self.setResultCurveName" enabled="!!self.controller" 
+                        <div class="table-block" style="width:150px;padding-left:0;margin-left:20px">
+                            <editable item-value="self.getResultCurveName" set-value="self.setResultCurveName" enabled="!!self.controller" content-style='{width:"100%"}'
                                 params="[dataset, '_P']" />
                         </div>
                     </div>

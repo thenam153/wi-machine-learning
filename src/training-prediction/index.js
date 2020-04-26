@@ -652,7 +652,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
 
         let targetName = _.get(self.controller, "curveSpecs[0].value.name", null);
         if (!targetName) return dsItem.resultCurveName;
-        let defaultName = targetName + suffix;
+        let defaultName = normalizeCurveName(targetName + suffix);
         
         dsItem.resultCurveName = defaultName;
         return dsItem.resultCurveName;
@@ -660,5 +660,8 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     self.setResultCurveName = function([dsItem, suffix], newName) {
         if (!self.controller) return;
         dsItem.resultCurveName = newName;
+    }
+    function normalizeCurveName(name) {
+        return name.replace(/(\s|%)+/g, "_");
     }
 }
