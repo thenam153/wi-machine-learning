@@ -73,7 +73,7 @@
 				<span class="sub">Drag datasets from project list</span>
 			</div>
 
-			<wi-droppable container-style="{'flex':'1','display':'flex'}" onmouseover=this.style.overflowY='overlay'
+			<wi-droppable container-style="{'flex':'1','display':'flex', 'overflow': 'auto'}" onmouseover=this.style.overflowY='auto'
 				onmouseout=this.style.overflowY='hidden' on-drop="self.drop('training')"
 				style="display: flex; height: calc(100% - 67px); overflow: hidden;">
 				<div class="no-datasets" ng-show="!self.controller.tabs['training'].listDataset.length" style="background-image:url('./bg-datasets.png')">
@@ -105,7 +105,7 @@
 				<span class="title">Verify</span>
 				<span class="sub">Drag datasets from project list</span>
 			</div>
-			<wi-droppable container-style="{'flex':'1','display':'flex'}" onmouseover=this.style.overflowY='overlay'
+			<wi-droppable container-style="{'flex':'1','display':'flex', 'overflow': 'auto'}" onmouseover=this.style.overflowY='overlay'
 				onmouseout=this.style.overflowY='hidden' on-drop="self.drop('verify')"
 				style="display: flex;height: calc(100% - 67px); overflow: hidden;">
 				<div class="no-datasets" ng-show="!self.controller.tabs['verify'].listDataset.length" style="background-image:url('./bg-datasets.png')">
@@ -137,7 +137,7 @@
 				<span class="title">Prediction</span>
 				<span class="sub">Drag datasets from project list</span>
 			</div>
-			<wi-droppable container-style="{'flex':'1','display':'flex'}" onmouseover=this.style.overflowY='overlay'
+			<wi-droppable container-style="{'flex':'1','display':'flex', 'overflow': 'auto'}" onmouseover=this.style.overflowY='overlay'
 				onmouseout=this.style.overflowY='hidden' on-drop="self.drop('prediction')"
 				style="display: flex;height: calc(100% - 67px); overflow: hidden;">
 				<div class="no-datasets" ng-show="!self.controller.tabs['prediction'].listDataset.length" style="background-image:url('./bg-datasets.png')">
