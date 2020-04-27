@@ -152,7 +152,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         self.token = wiToken.getToken();
         self.titleTabs = [TAB_DATASET, TAB_MODEL, TAB_TRAIN, TAB_ZONESET, TAB_CONVERGENCE];
         self.steps = [STEP_TRAIN, STEP_VERIFY, STEP_PREDICT];
-        self.current_tab = 4;
+        self.current_tab = 0;
         initMlProject();
         if (self.token && self.token.length) window.localStorage.setItem('token', self.token);
         self.restoreProject();
