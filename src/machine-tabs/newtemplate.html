@@ -21,6 +21,10 @@
 				<span  class="ml-save-16x16" style="margin-right: 10px;filter: saturate(0) brightness(6)"></span>
 				<span>SAVE</span>
             </div>
+			<div ng-click="self.saveAsProject();" ng-if="self.project" style="align-items: center;margin-left: 10px; display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
+				<span  class="ml-save-16x16" style="margin-right: 10px;filter: saturate(0) brightness(6)"></span>
+				<span>SAVE AS</span>
+            </div>
             <div ng-click="self.createProject();" ng-if="!self.project" style="align-items: center;margin-left: 10px; display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
 				<span  class="ml-save-16x16" style="margin-right: 10px;filter: saturate(0) brightness(6)"></span>
 				<span>SAVE</span>

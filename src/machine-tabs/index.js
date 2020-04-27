@@ -1068,6 +1068,60 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         })
         .finally(() =>  ngDialog.close())
     }
+    this.saveAsProject = function() {
+        self.nameProject = "default";
+        $scope.createNewProject = function(name) {
+            if(self.nameProject) {
+                wiApi.client(getClientId()).createMlProjectPromise({
+                    name: self.nameProject,
+                    content: {
+                        tabs: {
+                            training: self.tabs[STEP_TRAIN].listDataset,
+                            verify: self.tabs[STEP_VERIFY].listDataset,
+                            prediction: self.tabs[STEP_PREDICT].listDataset,
+                        },
+                        plot:{
+                            verify: {
+                                plotName: self.tabs[STEP_VERIFY].plotName
+                            },
+                            prediction: {
+                                plotName: self.tabs[STEP_PREDICT].plotName
+                            }
+                        },
+                        zonesetConfig: self.zonesetConfig,
+                        convergenceAnalysis: self.convergenceAnalysis,
+                        projectInfo: self.projectInfo,
+                        curveSpecs: self.curveSpecs,
+                        typeInput: self.typeInput,
+                        model: self.modelSelection.currentModel,
+                        state: -1,
+                        modelId: null,
+                        bucketId: null
+                    }
+                })
+                .then((project) => {
+                    toastr.success('Create machine learing project success', 'Success')
+                    console.log(project);
+                    $timeout(() => {
+                        self.project = project;
+                        wiToken.setCurrentProjectName(project.name);
+                    })
+                })
+                .catch((err) => {
+                    toastr.error("Project's name already exists", 'Error')
+                })
+                .finally(() => {
+                    ngDialog.close();
+                })
+            }
+            ngDialog.close();
+        }
+        ngDialog.open({
+            template: 'templateNewPrj',
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        });
+    }
     this.createProject = function() {
         self.nameProject = "default";
         $scope.createNewProject = function(name) {
