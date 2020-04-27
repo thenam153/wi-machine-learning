@@ -55,6 +55,10 @@
         </span>
         <span class="sub">Active or Deactive Zone.</span>
       </div>
+      <div class="active-btn-ctn">
+        <span ng-click="self.activeAllZones()" class="button-with-label-layer">Activate All</span>
+        <span ng-click="self.deactiveAllZones()" class="button-with-label-layer">Deactivate All</span>
+      </div>
       <div style="height: calc(100% - 93px);">
         <wi-tree-view-virtual tree-root="self.getListZone()"
           hide-unmatched='true' get-children="self.getZoneChild"

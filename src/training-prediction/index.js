@@ -138,6 +138,11 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
         });
     }
     function zonesetFilter(dataset, curve, zonesConfig, zonesList) {
+        // if (zonesConfig.length == 1
+        //     && zonesConfig[0].template_name == 'Zonation All'
+        //     && zonesConfig[0]._notUsed) {
+        //     return curve.map(p => false);
+        // }
         if (!zonesList || !zonesList.length) return curve;
         let notUsedZones = _.filter(zonesConfig, '_notUsed');
         notUsedZones = notUsedZones.map(z => z.template_name);

@@ -12,7 +12,7 @@ const app = angular.module(moduleName, [
     'sideBar'
 ]);
 
-app.component(componentName,{
+app.component(componentName, {
     template: require('./template.html'),
     controller: ZonesetConfigController,
     style: require('./style.less'),
@@ -23,8 +23,8 @@ app.component(componentName,{
 });
 
 ZonesetConfigController.$inject = ['$scope', 'wiApi', '$timeout', 'mlApi']
-function ZonesetConfigController($scope, wiApi, $timeout, mlApi){
-    let self = 	this;
+function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
+    let self = this;
     const tabsName = ['training', 'verify', 'prediction'];
     function getTab() {
         return $scope.tab;
@@ -35,7 +35,7 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi){
     function setTab(newTab) {
         $scope.tab = newTab;
     };
-    this.$onInit = function() {
+    this.$onInit = function () {
         $scope.tab = 0;
         $scope.setTab = setTab;
         $scope.getTab = getTab;
@@ -88,7 +88,7 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi){
 
         //let uniqIdWells = _.uniq(listDataset.map(dataset => dataset.idWell));
         getZonesetsList(dsItemKeys, dsItemHash).then((zonesetsList) => {
-            switch(step) {
+            switch (step) {
                 case 'training': {
                     self.trainingZonesets = processZonesetsList(zonesetsList);
                     break;
@@ -142,6 +142,8 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi){
                 break;
             }
         }
+        zsList.unshift({ name: 'Zonation All' });
+        console.log(zsList);
         return zsList;
     }
     function intersectAndMerge(dstZoneList, srcZoneList) {
@@ -159,7 +161,7 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi){
     }
     this.getListZoneset = getListZoneset;
     function getListZoneset() {
-        switch(true) {
+        switch (true) {
             case isSet(0): {
                 return self.trainingZonesets;
             }
@@ -189,18 +191,18 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi){
         }
         updateZoneList();
     }
-    this.runMatchZoneset = function(node, filter) {
+    this.runMatchZoneset = function (node, filter) {
         let label = self.getZonesetLabel(node);
         return label.toLowerCase().includes(filter.toLowerCase());
     }
-    this.getZonesetLabel = function(node) {
-        return (node||{}).displayName || (node||{}).name || 'no name';
+    this.getZonesetLabel = function (node) {
+        return (node || {}).displayName || (node || {}).name || 'no name';
     }
-    this.getZonesetIcon = function(node) {
-        if(!node) return;
+    this.getZonesetIcon = function (node) {
+        if (!node) return;
         return "user-define-16x16";
     }
-    this.getZonesetChild = function(node) {
+    this.getZonesetChild = function (node) {
         return false;
     }
 
@@ -215,6 +217,11 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi){
         }).catch(e => console.error(e));
     }
     function getUniqZones(zonesetName, listDataset) {
+        if (zonesetName == "Zonation All") {
+            return new Promise((resolve, reject) => {
+                resolve([{ template_name: "Zonation All" }]);
+            })
+        }
         let jobs = listDataset.map(dsItem => getZoneset(dsItem, zonesetName));
         return Promise.all(jobs).then((zonesets) => {
             let zones = [];
@@ -222,7 +229,7 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi){
                 zones.push(...zoneset.zones);
             }
             zones = _.uniqBy(zones, "zone_template.name");
-            zones = zones.map(z => ({template_name: z.zone_template.name}));
+            zones = zones.map(z => ({ template_name: z.zone_template.name }));
             return zones;
         });
     }
@@ -245,7 +252,7 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi){
         }
         self.controller.zonesList[step] = tmpZonesList;
         zonesRes = _.uniqBy(zonesRes, 'zone_template.name');
-        zonesRes = zonesRes.map(z => ({template_name: z.zone_template.name}));
+        zonesRes = zonesRes.map(z => ({ template_name: z.zone_template.name }));
         return zonesRes;
     }
     function updateZonesArr(zonesetName, listDataset) {
@@ -265,32 +272,54 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi){
         }
         self.controller.zonesList[step] = tmpZonesList;
     }
-    this.getListZone = function() {
+    this.getListZone = function () {
         let step = tabsName[getTab()];
         return self.controller.zonesetConfig[step].zoneList;
     }
-    this.clickZoneFn = function(event, node, selectIds, rootnode) {
+    this.clickZoneFn = function (event, node, selectIds, rootnode) {
         if (!node) return;
+        if (node.template_name == 'Zonation All') {
+            node._notUsed = false;
+            return;
+        }
         node._notUsed = !node._notUsed;
     }
-    this.refreshZoneList = function() {
+    this.refreshZoneList = function () {
         let step = tabsName[getTab()];
         self.controller.zonesetConfig[step].zoneList = null;
         updateZoneList();
     }
-    this.getZoneChild = function(node) {
+    this.getZoneChild = function (node) {
         return false;
     }
-    this.runMatchZone = function(node, filter) {
+    this.runMatchZone = function (node, filter) {
         let label = self.getZoneLabel(node);
         return label.toLowerCase().includes(filter.toLowerCase());
     }
-    this.getZoneLabel = function(node) {
+    this.getZoneLabel = function (node) {
         if (!node) return;
         return node.template_name || node.zone_template.name || 'no name';
     }
-    this.getZoneIcon = function(node) {
+    this.getZoneIcon = function (node) {
         if (!node) return;
         return node._notUsed ? "ti ti-check check-off" : 'ti ti-check check-on';
+    }
+
+    this.activeAllZones = function () {
+        let zones = self.getListZone();
+        zones.forEach(z => {
+            z._notUsed = false;
+        })
+    }
+    this.deactiveAllZones = function () {
+        let zones = self.getListZone();
+        if (zones.length == 1
+            && zones[0].template_name == 'Zonation All') {
+            zones[0]._notUsed = false;
+            return;
+        }
+        zones.forEach(z => {
+            z._notUsed = true;
+        })
     }
 }
