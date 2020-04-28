@@ -2,7 +2,7 @@ const moduleName = "modelSelection";
 const componentName = "modelSelection";
 module.exports.name = moduleName;
 
-var app = angular.module(moduleName, ['wiDropdownList','editable']);
+var app = angular.module(moduleName, ['wiDropdownList','editable', 'vueContainer']);
 
 app.component(componentName,{
 	template: require('./newtemplate.html'),
@@ -41,5 +41,43 @@ function ModelSelectionController($scope, $timeout){
 	}
 	this.$onInit = function() {
 	}
+
+	this.getValue = getValue;
+    function getValue(props) {
+        return props.value
+    }
+    this.setValue = setValue;
+    function setValue(obj, newValue) {
+        $timeout(() => {
+			switch (obj.type) {
+                case 'string':
+					obj.value = newValue
+                    break;
+                case 'integer':
+                    if (!Number.isInteger(Number(newValue))) {
+                        obj.value = obj.example;
+                    }else {
+                        obj.value = Number(newValue)
+                    }
+                    break;
+                case 'number':
+                    if (isNaN(Number(newValue))) {
+                        obj.value = obj.example;
+                    }else {
+                        obj.value = Number(newValue)
+                    }
+                    break;
+                case 'float':
+                    if (isNaN(parseFloat(newValue))) {
+                        obj.value = obj.example;
+                    } 
+                    else {
+                        obj.value = parseFloat(newValue)
+                    } 
+                    break;
+			}
+			console.log(obj)
+        })
+    }
 }
 
