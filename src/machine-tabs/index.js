@@ -1106,15 +1106,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                         self.project = project;
                         wiToken.setCurrentProjectName(project.name);
                     })
+                    ngDialog.close();
                 })
                 .catch((err) => {
                     toastr.error("Project's name already exists", 'Error')
                 })
-                .finally(() => {
-                    ngDialog.close();
-                })
             }
-            ngDialog.close();
         }
         ngDialog.open({
             template: 'templateNewPrj',

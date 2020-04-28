@@ -104,10 +104,11 @@
             ng-if="self.titleTabs[self.current_tab] === 'Model Selection'">
         </model-selection>
 
+        <!-- Must use ng-if -->
         <zoneset-config 
             controller="self"
             id="zoneset-config" 
-            ng-show="self.titleTabs[self.current_tab] === 'Zoneset Config'">
+            ng-if="self.titleTabs[self.current_tab] === 'Zoneset Config'">
         </zoneset-config>
 
         <training-prediction 
