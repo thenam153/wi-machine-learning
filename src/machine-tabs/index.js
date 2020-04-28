@@ -191,6 +191,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             prediction: {}
         };
         self.zonesList = {};
+        self.zonesetsTree = {};
         self.typeInput = {
             label: 'Curve',
             type: CURVE,
@@ -898,7 +899,6 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }); */
     }
     this.onItemChangeTabTAP = function(item, arr) {
-        console.log(item, arr);
         if (!item) return;
         arr[1].selectedValues = arr[1].selectedValues || [];
         arr[1].selectedValues[arr[3]] = item.name;

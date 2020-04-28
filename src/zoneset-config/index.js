@@ -93,21 +93,19 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
         dsItemKeys = _.uniq(dsItemKeys);
 
         getZonesetsList(dsItemKeys, dsItemHash).then((zonesetsList) => {
-            switch (step) {
-                case 'training': {
-                    self.trainingZonesets = processZonesetsList(zonesetsList);
-                    break;
-                }
-                case 'verify': {
-                    self.verifyZonesets = processZonesetsList(zonesetsList);
-                    break;
-                }
-                case 'prediction': {
-                    self.predictionZonesets = processZonesetsList(zonesetsList);
-                    break;
-                }
-            }
+            self.controller.zonesetsTree[step] = processZonesetsList(zonesetsList);
+
+            let zonesetName = getZonesetName(step);
+            let selectedZoneset = self.controller.zonesetsTree[step].find(zs => {
+                return zs.name == zonesetName;
+            })
+            if (selectedZoneset)
+                selectedZoneset._selected = true;
         });
+    }
+    function getZonesetName() {
+        let step = tabsName[getTab()];
+        return self.controller.zonesetConfig[step].zonesetName;
     }
     function getZoneset(dsItem, zonesetName) {
         return wiApi.client(mlApi.getClientId(dsItem.owner, dsItem.prjName)).getCachedWellPromise(dsItem.idWell).then((well) => {
@@ -119,7 +117,6 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
         });
     }
     function getZonesetsList(dsItemKeys, dsItemHash) {
-
         return new Promise((resolve, reject) => {
             let jobs = dsItemKeys.map(dsItemKey => {
                 let dsItem = dsItemHash[dsItemKey];
@@ -135,7 +132,7 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
         });
     }
     function processZonesetsList(zonesetsList) {
-        if (!zonesetsList.length) return;
+        if (!zonesetsList.length) return [];
         let zsList;
         for (let zonesets of zonesetsList) {
             if (!zsList) {
@@ -147,9 +144,9 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
             }
         }
         zsList.unshift({ name: 'Zonation All' });
-        console.log(zsList);
         return zsList;
     }
+
     function intersectAndMerge(dstZoneList, srcZoneList) {
         return dstZoneList.filter(zs => {
             let zoneset = srcZoneList.find(zs1 => zs.name === zs1.name);
@@ -165,17 +162,8 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
     }
     this.getListZoneset = getListZoneset;
     function getListZoneset() {
-        switch (true) {
-            case isSet(0): {
-                return self.trainingZonesets;
-            }
-            case isSet(1): {
-                return self.verifyZonesets;
-            }
-            case isSet(2): {
-                return self.predictionZonesets;
-            }
-        }
+        let step = tabsName[getTab()];
+        return self.controller.zonesetsTree[step];
     }
     this.refreshZonesetList = refreshZonesetList;
     function refreshZonesetList() {
