@@ -682,50 +682,39 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
 			properties.value = properties.example;
 			// console.log(properties);
 		}
-	}
-	this.modelSelection.changeValue = _.debounce(function(obj) {
-        $timeout(() => {
-            switch (obj.type) {
-                case 'string':
-                    break;
-                case 'integer':
-                    if (!Number.isInteger(Number(obj.value))) {
-                        obj.value = obj.example;
-                    }else {
-                        obj.value = Number(obj.value)
-                    }
-                    break;
-                case 'number':
-                    if (isNaN(Number(obj.value))) {
-                        obj.value = obj.example;
-                    }else {
-                        obj.value = Number(obj.value)
-                    }
-                    break;
-                // case 'boolean':
-                //     if (value.toString().toLowerCase() == 'true') {
-                //         return true;
-                //     }
-                //     if (value.toString().toLowerCase() == 'false') {
-                //         return false;
-                //     }
-                //     return '';
-                case 'float':
-                    if (isNaN(parseFloat(obj.value))) {
-                        obj.value = obj.example;
-                    } 
-                    else {
-                        obj.value = parseFloat(obj.value)
-                    } 
-                    break;
-                // case 'array':
-                //     value = value.toString().replace(/\s/g, '').split(',');
-                //     console.log(value);
-                // 	return ([...new Set(value)]);
-            }
-            console.log(obj);
-        });
-	}, 700);
+    }
+    // NAM use vue - editable
+	// this.modelSelection.changeValue = _.debounce(function(obj) {
+    //     $timeout(() => {
+    //         switch (obj.type) {
+    //             case 'string':
+    //                 break;
+    //             case 'integer':
+    //                 if (!Number.isInteger(Number(obj.value))) {
+    //                     obj.value = obj.example;
+    //                 }else {
+    //                     obj.value = Number(obj.value)
+    //                 }
+    //                 break;
+    //             case 'number':
+    //                 if (isNaN(Number(obj.value))) {
+    //                     obj.value = obj.example;
+    //                 }else {
+    //                     obj.value = Number(obj.value)
+    //                 }
+    //                 break;
+    //             case 'float':
+    //                 if (isNaN(parseFloat(obj.value))) {
+    //                     obj.value = obj.example;
+    //                 } 
+    //                 else {
+    //                     obj.value = parseFloat(obj.value)
+    //                 } 
+    //                 break;
+    //         }
+    //         console.log(obj);
+    //     });
+	// }, 700);
 	this.modelSelection.onItemChange = function(value, properties) {
 		// console.log(value, properties);
 		properties.value = properties.enum.find(e => e.properties === value);
