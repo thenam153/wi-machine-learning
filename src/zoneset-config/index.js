@@ -44,32 +44,38 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
         $scope.$watch(() => {
             let listDataset = self.controller.tabs['training'].listDataset;
             return listDataset.map(dataset => dataset.idDataset);
-        }, () => {
-            self.updateListZoneset(0);
-            let step = 'training';
-            let listDataset = self.controller.tabs[step].listDataset;
-            let zonesetName = self.controller.zonesetConfig[step].zonesetName;
-            updateZonesArr(zonesetName, listDataset);
+        }, (newVal, oldVal) => {
+            if (newVal != oldVal || !self.getListZoneset()) {
+                self.updateListZoneset(0);
+                let step = 'training';
+                let listDataset = self.controller.tabs[step].listDataset;
+                let zonesetName = self.controller.zonesetConfig[step].zonesetName;
+                updateZonesArr(zonesetName, listDataset);
+            }
         }, true);
         $scope.$watch(() => {
             let listDataset = self.controller.tabs['verify'].listDataset;
             return listDataset.map(dataset => dataset.idDataset);
-        }, () => {
-            self.updateListZoneset(1);
-            let step = 'verify';
-            let listDataset = self.controller.tabs[step].listDataset;
-            let zonesetName = self.controller.zonesetConfig[step].zonesetName;
-            updateZonesArr(zonesetName, listDataset);
+        }, (newVal, oldVal) => {
+            if (newVal != oldVal || !self.getListZoneset()) {
+                self.updateListZoneset(1);
+                let step = 'verify';
+                let listDataset = self.controller.tabs[step].listDataset;
+                let zonesetName = self.controller.zonesetConfig[step].zonesetName;
+                updateZonesArr(zonesetName, listDataset);
+            }
         }, true);
         $scope.$watch(() => {
             let listDataset = self.controller.tabs['prediction'].listDataset;
             return listDataset.map(dataset => dataset.idDataset);
-        }, () => {
-            self.updateListZoneset(2);
-            let step = 'prediction';
-            let listDataset = self.controller.tabs[step].listDataset;
-            let zonesetName = self.controller.zonesetConfig[step].zonesetName;
-            updateZonesArr(zonesetName, listDataset);
+        }, (newVal, oldVal) => {
+            if (newVal != oldVal || !self.getListZoneset()) {
+                self.updateListZoneset(2);
+                let step = 'prediction';
+                let listDataset = self.controller.tabs[step].listDataset;
+                let zonesetName = self.controller.zonesetConfig[step].zonesetName;
+                updateZonesArr(zonesetName, listDataset);
+            }
         }, true);
     }
 
@@ -86,7 +92,6 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
         let dsItemKeys = Object.keys(dsItemHash);
         dsItemKeys = _.uniq(dsItemKeys);
 
-        //let uniqIdWells = _.uniq(listDataset.map(dataset => dataset.idWell));
         getZonesetsList(dsItemKeys, dsItemHash).then((zonesetsList) => {
             switch (step) {
                 case 'training': {
@@ -113,7 +118,6 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
             return toRet;
         });
     }
-    //function getZonesetsList(idWells) {
     function getZonesetsList(dsItemKeys, dsItemHash) {
 
         return new Promise((resolve, reject) => {
@@ -211,7 +215,6 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
         let step = tabsName[tabNum || getTab()];
         let listDataset = self.controller.tabs[step].listDataset;
         let zonesetName = self.controller.zonesetConfig[step].zonesetName;
-        //self.controller.zonesetConfig[step].zoneList = getUniqZones(zonesetName, listDataset);
         getUniqZones(zonesetName, listDataset).then(zones => {
             self.controller.zonesetConfig[step].zoneList = zones;
         }).catch(e => console.error(e));
@@ -233,28 +236,6 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
             return zones;
         });
     }
-    function getUniqZones1(zonesetName, listDataset) {
-        let step = tabsName[getTab()];
-        if (!listDataset || !listDataset.length) return null;
-        let wells = (self.controller.dataProject || {}).wells;
-        if (!wells || !wells.length) return null;
-        let zonesRes = [];
-        let tmpZonesList = [];
-        for (let dataset of listDataset) {
-            let idDataset = dataset.idDataset;
-            let idWell = dataset.idWell;
-            let well = _.find(wells, w => w.idWell === idWell);
-            let zones = (_.find(well.zonesets, zoneset => {
-                return zoneset.zone_set_template.name === zonesetName
-            }) || {}).zones || [];
-            zonesRes = [...zonesRes, ...zones];
-            tmpZonesList.push(angular.copy(zones));
-        }
-        self.controller.zonesList[step] = tmpZonesList;
-        zonesRes = _.uniqBy(zonesRes, 'zone_template.name');
-        zonesRes = zonesRes.map(z => ({ template_name: z.zone_template.name }));
-        return zonesRes;
-    }
     function updateZonesArr(zonesetName, listDataset) {
         let step = tabsName[getTab()];
         if (!listDataset || !listDataset.length) return null;
@@ -262,7 +243,6 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
         if (!wells || !wells.length) return null;
         let tmpZonesList = [];
         for (let dataset of listDataset) {
-            let idDataset = dataset.idDataset;
             let idWell = dataset.idWell;
             let well = _.find(wells, w => w.idWell === idWell);
             let zones = (_.find(well.zonesets, zoneset => {
