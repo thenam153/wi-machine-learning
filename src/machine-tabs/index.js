@@ -609,6 +609,28 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 break;
         }
     } */
+    this.refreshCurveData = function() {
+        this.buildInputSelectionListForTabs([
+            STEP_TRAIN, 
+            STEP_VERIFY
+        ]).then(curves => {
+            self.selectionListTarget = curves;
+            return self.buildInputSelectionListForTabs([
+                STEP_TRAIN, 
+                STEP_VERIFY, 
+                STEP_PREDICT
+            ]);
+        }).then(curves => {
+            self.selectionList = curves;
+            $timeout(() => {
+                buildAllCurvesCache();
+            });
+            toastr.success('Refresh success', 'Success');
+        }).catch(e => {
+            toastr.error('Refresh error', 'Error');
+            console.error(e)
+        });
+    }
     // ================= modelSelection ====================
     this.modelSelection = {}
     const dataJsonModels = require('../../wi-uservice.json');
