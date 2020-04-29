@@ -19,63 +19,13 @@
             </div>
 
             <div >
-                <div class="editable-custom" ng-repeat="(key, props) in self.controller.currentModel.value.payload.params" ng-init="self.controller.initPropertiesPayload(props)"> 
-                    <div ng-if="props.type == 'integer' || props.type == 'float' || props.type == 'string' || props.type == 'number'" style="display: flex;">
-                        <!-- <span class="title" style="min-width: 130px;padding: 10px 0;flex: 1;float: left;margin-right: 0;margin-bottom: 0;font-weight: bold;">{{props.label}}</span>
-                        <input class="sub" ng-model="props.value" ng-change="self.controller.changeValue(props);"> -->
-                        <vue-container vue-data="{itemLabel: props.label, item: props}" vue-methods="{getValue: self.getValue, setValue: self.setValue}">
-                            <vue-editable 
-                                :item-label="itemLabel" 
-                                :get-value="getValue"
-                                :set-value="setValue"
-                                :params="item"
-                                >
-                            </vue-editable>
-                        </vue-container>
-                    </div>
-                    
-                    <div ng-if=" props.type == 'enum' " style="margin-top: 15px;">
-                       <div style="font-weight: bold;">
-                           {{props.label}}
-                       </div>
-                        <div>
-                            <wi-dropdown-list place-holder="value" items="props.enum" params="props" current-select='props.value.data.label' on-item-changed="self.controller.onItemChange">
-                            </wi-dropdown-list>
-                        </div>
-                   </div>
-                   <div ng-if=" props.type == 'boolean' " style="margin-top: 15px;">
-                        <div style="font-weight: bold;">
-                            {{props.label}}
-                        </div>
-                        <div>
-                            <label>
-                                {{props.value? 'TRUE' : 'FALSE'}} 
-                                <input type="checkbox" ng-model="props.value">
-                            </label>
-                        </div>
-                    </div>
-                     <div class="header" ng-if="props.type=='size'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
-                        <span class="title" style="font-size: 13px;">{{props.label}}</span>
-                        <span class="sub" style="margin-bottom: 10px;">{{props.value.toString()}}</span>
-                    </div>    
-                    <div class="header" ng-if="props.type=='input'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
-                        <span class="title" style="font-size: 13px;">{{props.label}}</span>
-                        <span class="sub" style="margin-bottom: 10px;">{{props.value.toString()}}</span>
-                    </div>
-                </div>
-                <div ng-if="self.controller.currentModel.value.payload.train" class="header" style="margin-top: 20px;">
-                    <span class="title">
-                        <div ng-show="!self.controller.showAdvance" class="fa fa-caret-right" style="margin-right: 10px; cursor: pointer;" ng-click="self.controller.showAdvance = !self.controller.showAdvance"></div>
-                        <div ng-show="self.controller.showAdvance"class="fa fa-caret-down" style="margin-right: 10px; cursor: pointer;" ng-click="self.controller.showAdvance = !self.controller.showAdvance"></div>
-                    Advance</span>
-                </div>
-                <div ng-show="self.controller.showAdvance">
-                    <div ng-if="self.controller.currentModel.value.payload.train" class="editable-custom" ng-repeat="(key, props) in self.controller.currentModel.value.payload.train" ng-init="self.controller.initPropertiesPayload(props)">
-                        <div ng-if="props.type == 'integer' || props.type == 'float' || props.type == 'string' || props.type == 'number'">
+                <div class="editable-custom" ng-repeat="(key, props) in self.controller.currentModel.value.payload.params" ng-init="self.controller.initPropertiesPayload(props)" > 
+                    <div ng-hide="props.hidden">
+                        <div ng-if="props.type == 'integer' || props.type == 'float' || props.type == 'string' || props.type == 'number'" style="display: flex;">
                             <!-- <span class="title" style="min-width: 130px;padding: 10px 0;flex: 1;float: left;margin-right: 0;margin-bottom: 0;font-weight: bold;">{{props.label}}</span>
                             <input class="sub" ng-model="props.value" ng-change="self.controller.changeValue(props);"> -->
                             <vue-container vue-data="{itemLabel: props.label, item: props}" vue-methods="{getValue: self.getValue, setValue: self.setValue}">
-                                <vue-editable  
+                                <vue-editable 
                                     :item-label="itemLabel" 
                                     :get-value="getValue"
                                     :set-value="setValue"
@@ -84,6 +34,7 @@
                                 </vue-editable>
                             </vue-container>
                         </div>
+                        
                         <div ng-if=" props.type == 'enum' " style="margin-top: 15px;">
                            <div style="font-weight: bold;">
                                {{props.label}}
@@ -104,13 +55,66 @@
                                 </label>
                             </div>
                         </div>
-                        <div class="header" ng-if="props.type=='size'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
+                         <div class="header" ng-if="props.type=='size'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
                             <span class="title" style="font-size: 13px;">{{props.label}}</span>
                             <span class="sub" style="margin-bottom: 10px;">{{props.value.toString()}}</span>
                         </div>    
                         <div class="header" ng-if="props.type=='input'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
                             <span class="title" style="font-size: 13px;">{{props.label}}</span>
                             <span class="sub" style="margin-bottom: 10px;">{{props.value.toString()}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="self.controller.currentModel.value.payload.train" class="header" style="margin-top: 20px;">
+                    <span class="title">
+                        <div ng-show="!self.controller.showAdvance" class="fa fa-caret-right" style="margin-right: 10px; cursor: pointer;" ng-click="self.controller.showAdvance = !self.controller.showAdvance"></div>
+                        <div ng-show="self.controller.showAdvance"class="fa fa-caret-down" style="margin-right: 10px; cursor: pointer;" ng-click="self.controller.showAdvance = !self.controller.showAdvance"></div>
+                    Advance</span>
+                </div>
+                <div ng-show="self.controller.showAdvance">
+                    <div ng-if="self.controller.currentModel.value.payload.train" class="editable-custom" ng-repeat="(key, props) in self.controller.currentModel.value.payload.train" ng-init="self.controller.initPropertiesPayload(props)">
+                        <div ng-hide="props.hidden">
+                            <div ng-if="props.type == 'integer' || props.type == 'float' || props.type == 'string' || props.type == 'number'">
+                                <!-- <span class="title" style="min-width: 130px;padding: 10px 0;flex: 1;float: left;margin-right: 0;margin-bottom: 0;font-weight: bold;">{{props.label}}</span>
+                                <input class="sub" ng-model="props.value" ng-change="self.controller.changeValue(props);"> -->
+                                <vue-container vue-data="{itemLabel: props.label, item: props}" vue-methods="{getValue: self.getValue, setValue: self.setValue}">
+                                    <vue-editable  
+                                        :item-label="itemLabel" 
+                                        :get-value="getValue"
+                                        :set-value="setValue"
+                                        :params="item"
+                                        >
+                                    </vue-editable>
+                                </vue-container>
+                            </div>
+                            <div ng-if=" props.type == 'enum' " style="margin-top: 15px;">
+                               <div style="font-weight: bold;">
+                                   {{props.label}}
+                               </div>
+                                <div>
+                                    <wi-dropdown-list place-holder="value" items="props.enum" params="props" current-select='props.value.data.label' on-item-changed="self.controller.onItemChange">
+                                    </wi-dropdown-list>
+                                </div>
+                           </div>
+                           <div ng-if=" props.type == 'boolean' " style="margin-top: 15px;">
+                                <div style="font-weight: bold;">
+                                    {{props.label}}
+                                </div>
+                                <div>
+                                    <label>
+                                        {{props.value? 'TRUE' : 'FALSE'}} 
+                                        <input type="checkbox" ng-model="props.value">
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="header" ng-if="props.type=='size'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
+                                <span class="title" style="font-size: 13px;">{{props.label}}</span>
+                                <span class="sub" style="margin-bottom: 10px;">{{props.value.toString()}}</span>
+                            </div>    
+                            <div class="header" ng-if="props.type=='input'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
+                                <span class="title" style="font-size: 13px;">{{props.label}}</span>
+                                <span class="sub" style="margin-bottom: 10px;">{{props.value.toString()}}</span>
+                            </div>
                         </div>
                    </div>
                 </div>
