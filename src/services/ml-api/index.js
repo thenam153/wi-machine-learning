@@ -500,7 +500,8 @@ function mlApi($http, $timeout, wiApi) {
             idFamily: curveInfo.idFamily || null,
         }
         if (dataset.step == 0) {
-            let curve = await wiApi.client(getClientId(dataset.owner, dataset.prjName)).checkCurveExistedPromise(dataset.selectedValues[0], dataset.idDataset);
+            let nameCurve = dataset.selectedValues.find(i => i != "");
+            let curve = await wiApi.client(getClientId(dataset.owner, dataset.prjName)).checkCurveExistedPromise(nameCurve, dataset.idDataset);
             let curveData = await wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCurveDataPromise(curve.idCurve);
             payload.data = curveData.map((d, i) => {
                 return [parseFloat(d.y), curveInfo.data[i]];
