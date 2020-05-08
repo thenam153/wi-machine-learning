@@ -2,7 +2,7 @@ const moduleName = "modelSelection";
 const componentName = "modelSelection";
 module.exports.name = moduleName;
 
-var app = angular.module(moduleName, ['wiDropdownList','editable', 'vueContainer']);
+var app = angular.module(moduleName, ['wiDropdownList','editable', 'ngVue']);
 
 app.component(componentName,{
 	template: require('./newtemplate.html'),
