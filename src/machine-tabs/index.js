@@ -156,6 +156,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         initMlProject();
         if (self.token && self.token.length) window.localStorage.setItem('token', self.token);
         self.restoreProject();
+        $scope.$watch(() => window.localStorage.getItem("token"), () => wiApi && wiApi.doInit());
         // console.log(mlService.value);
     }
     function initMlProject() {
