@@ -972,8 +972,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             self.modelSelection.currentTypeModel = modelType;
         let model = self.modelSelection.listModel[modelType.type].find(item => item.name === content.model.name);
         if (model) {
-            Object.assign(self.modelSelection.currentModel, content.model);
+            // Object.assign(self.modelSelection.currentModel, content.model);
             Object.assign(model, content.model);
+            self.modelSelection.currentModel = model;
         }
             // self.modelSelection.currentModel = content.model;
         self.convergenceAnalysis = content.convergenceAnalysis;
