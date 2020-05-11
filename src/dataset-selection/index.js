@@ -149,6 +149,7 @@ function DatasetSelectionController($scope, wiApi, $timeout){
                 .then((data) => {
                     $timeout(() => {
                         self.listMlProject = data.sort((a,b) => a.name.localeCompare(b.name));
+                        self.controller.setProject(data);
                     })
                 })
                 .catch((err) => {
@@ -166,6 +167,7 @@ function DatasetSelectionController($scope, wiApi, $timeout){
             $timeout(() => {
                 self.listMlProject = data.sort((a,b) => a.name.localeCompare(b.name));
                 self.reloadPrj = !self.reloadPrj;
+                self.controller.setProject(data);
             })
         })
     }

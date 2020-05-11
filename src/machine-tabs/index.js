@@ -1250,6 +1250,22 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             self.openProject();
         }
     }
+    this.__PROJECTCACHE = {};
+    this.getProject = function(idProject, owner) {
+        if(owner) {
+            return this.__PROJECTCACHE[idProject + "_" + owner]
+        }
+        return this.__PROJECTCACHE[idProject]
+    }
+    this.setProject = function(projects) {
+        projects.forEach(project => {
+            if(project.owner == undefined) {
+                this.__PROJECTCACHE["" + project.idProject] = project;
+            }else {
+                this.__PROJECTCACHE[project.idProject + "_" + project.owner] = project;
+            }
+        })
+    }
     this.__WELLCACHE = {};
     this.getWell = function(idWell) {
         return this.__WELLCACHE["" + idWell];

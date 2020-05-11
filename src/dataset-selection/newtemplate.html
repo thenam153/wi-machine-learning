@@ -88,12 +88,9 @@
 								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
 									{{self.controller.getDataset(item.idWell, item.idDataset).name}}</div>
 								<div class="detail">
-									<!--<div>Well name: {{item.wellName}}</div>
-									<div>Curves: {{item.curves.length}}</div>
-									<div>ID dataset: {{item.idDataset}}</div>-->
+									<div>Project: {{self.controller.getProject(item.idProject, item.owner).alias || self.controller.getProject(item.idProject, item.owner).name}}</div>
 									<div>Well name: {{self.controller.getWell(item.idWell).name}}</div>
-									<div>Curves: {{self.controller.getDataset(item.idWell, item.idDataset).curves.length}}</div>
-									<div>ID dataset: {{item.idDataset}}</div>
+									<div>Owner: {{self.controller.getProject(item.idProject, item.owner).owner || self.controller.getProject(item.idProject, item.owner).createdBy}}</div>
 								</div>
 							</div>
 						</div>
@@ -120,12 +117,9 @@
 								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
 									{{self.controller.getDataset(item.idWell, item.idDataset).name}}</div>
 								<div class="detail">
-									<!--<div>Well name: {{item.wellName}}</div>
-									<div>Curves: {{item.curves.length}}</div>
-									<div>ID dataset: {{item.idDataset}}</div>-->
+									<div>Project: {{self.controller.getProject(item.idProject, item.owner).alias || self.controller.getProject(item.idProject, item.owner).name}}</div>
 									<div>Well name: {{self.controller.getWell(item.idWell).name}}</div>
-									<div>Curves: {{self.controller.getDataset(item.idWell, item.idDataset).curves.length}}</div>
-									<div>ID dataset: {{item.idDataset}}</div>
+									<div>Owner: {{self.controller.getProject(item.idProject, item.owner).owner || self.controller.getProject(item.idProject, item.owner).createdBy}}</div>
 								</div>
 							</div>
 						</div>
@@ -156,12 +150,9 @@
 								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
 									{{self.controller.getDataset(item.idWell, item.idDataset).name}}</div>
 								<div class="detail">
-									<!--<div>Well name: {{item.wellName}}</div>
-									<div>Curves: {{item.curves.length}}</div>
-									<div>ID dataset: {{item.idDataset}}</div>-->
+									<div>Project: {{self.controller.getProject(item.idProject, item.owner).alias || self.controller.getProject(item.idProject, item.owner).name}}</div>
 									<div>Well name: {{self.controller.getWell(item.idWell).name}}</div>
-									<div>Curves: {{self.controller.getDataset(item.idWell, item.idDataset).curves.length}}</div>
-									<div>ID dataset: {{item.idDataset}}</div>
+									<div>Owner: {{self.controller.getProject(item.idProject, item.owner).owner || self.controller.getProject(item.idProject, item.owner).createdBy}}</div>
 								</div>
 							</div>
 						</div>
