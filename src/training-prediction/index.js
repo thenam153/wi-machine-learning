@@ -451,7 +451,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     }
                     mlApi.saveCurveAndCreatePlot(self.controller.tabs['verify'], curveInfo, dataset, function() {
                         resolve();
-                    }, errorCurveInfo, targetGroupsInfo, self.controller.curveSpecs);
+                    }, errorCurveInfo, targetGroupsInfo, self.controller.curveSpecs, false, self.controller.zonesetConfig['verify'].zonesetName);
                 });
             })
         })
@@ -594,7 +594,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     }
                     mlApi.saveCurveAndCreatePlot(self.controller.tabs['prediction'], curveInfo, dataset, function() {
                         resolve();
-                    }, null, targetGroupsInfo, self.controller.curveSpecs, true)
+                    }, null, targetGroupsInfo, self.controller.curveSpecs, true, self.controller.zonesetConfig['prediction'].zonesetName)
                 })
                 //wiApi.getCurveInfoPromise(self.controller.tabs['training'].listDataset[0].curveSpecs[0].value.idCurve)
                 //.then(info => {

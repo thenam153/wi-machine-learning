@@ -441,7 +441,7 @@ function mlApi($http, $timeout, wiApi) {
     }
     */
     this.evaluateExpr = evaluateExpr;
-    async function saveCurveAndCreatePlot(tab, curveInfo, dataset, callback, errorCurveInfo, targetGroupsInfo, curveSpecs, isPrediction) {
+    async function saveCurveAndCreatePlot(tab, curveInfo, dataset, callback, errorCurveInfo, targetGroupsInfo, curveSpecs, isPrediction, zoneTrack) {
         let tempCurveSpecs = Object.assign([], curveSpecs)
         let selectedValues = Object.assign([], dataset.selectedValues)
         !isPrediction ? ( selectedValues.push(selectedValues.shift()) && tempCurveSpecs.push(tempCurveSpecs.shift())) : null;
@@ -477,7 +477,7 @@ function mlApi($http, $timeout, wiApi) {
                     }
                     createLogPlot(tab, dataset, inCurves, orderNum, function() {
                         callback();
-                    });
+                    }, zoneTrack);
                 });
             }
             if(errorCurveInfo) {
@@ -521,7 +521,7 @@ function mlApi($http, $timeout, wiApi) {
         callback(newCurve);
     }
     this.createLogPlot = createLogPlot;
-    function createLogPlot(tab, dataset, inCurves, orderNum, callback) {
+    function createLogPlot(tab, dataset, inCurves, orderNum, callback, zonesetName) {
         console.log('_step', tab);
         let idPlot = tab.plot.idPlot;
         let currentOrderNum = orderNum;
@@ -531,6 +531,48 @@ function mlApi($http, $timeout, wiApi) {
                 orderNum: currentOrderNum.slice(0, currentOrderNum.length - 1) + '0',
                 widthUnit: 'inch',
                 idWell: dataset.idWell
+            })
+            .then((res) => {
+                console.log("create depth track :))", "create zone track here")
+                return wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell)
+                // async.eachSeries(inCurves, async function(curve) {
+                //     let trackData = await wiApi.client(getClientId(dataset.owner, dataset.prjName)).createLogTrackPromise({
+                //         idPlot: idPlot,
+                //         orderNum: currentOrderNum,
+                //         title: curve.name,
+                //         width: 1
+                //     });
+                //     let line = wiApi.client(getClientId(dataset.owner, dataset.prjName)).createLinePromise({
+                //                     idTrack: trackData.idTrack,
+                //                     idCurve: curve.idCurve,
+                //                     orderNum: currentOrderNum
+                //                 })
+                //     if (line && curve.minValue != undefined && curve.maxValue != undefined) {
+                //             line.minValue = curve.minValue;
+                //             line.maxValue = curve.maxValue;
+                //             await wiApi.client(getClientId(dataset.owner, dataset.prjName)).editLinePromise(line);
+                //         }
+                // }, function(err) {
+                //     if (err) return err;
+                //     callback()
+                // })
+            })
+            .then((well) => {
+                let zoneSet = well.zone_sets.find(zs => zs.name === zonesetName);
+                let payload = {
+                    color: "#ffffff",
+                    idPlot: idPlot,
+                    idZoneSet: zoneSet.idZoneSet,
+                    orderNum: dataset.idDataset + "0",
+                    parameterSet: null,
+                    showTitle: true,
+                    title: "Zone Track 1",
+                    topJustification: "center",
+                    width: 1,
+                    widthUnit: "inch",
+                    zoomFactor: 1
+                }
+                return wiApi.createZoneTrackPromise(payload);
             })
             .then((res) => {
                 async.eachSeries(inCurves, async function(curve) {
