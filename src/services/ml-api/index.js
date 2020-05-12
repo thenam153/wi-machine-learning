@@ -442,6 +442,9 @@ function mlApi($http, $timeout, wiApi) {
     */
     this.evaluateExpr = evaluateExpr;
     async function saveCurveAndCreatePlot(tab, curveInfo, dataset, callback, errorCurveInfo, targetGroupsInfo, curveSpecs, isPrediction) {
+        let tempCurveSpecs = Object.assign([], curveSpecs)
+        let selectedValues = Object.assign([], dataset.selectedValues)
+        !isPrediction ? ( selectedValues.push(selectedValues.shift()) && tempCurveSpecs.push(tempCurveSpecs.shift())) : null;
         saveCurve(curveInfo, dataset, function(curveProps) {
             function handle(errorCurveInfo) {
                 let orderNum = dataset.idDataset.toString() + '1';
@@ -451,11 +454,11 @@ function mlApi($http, $timeout, wiApi) {
                         throw new Error(`Dataset ${dataset.idDataset} not found in well ${well.name}`);
                     }
                     let inCurves = [];
-                    curveSpecs.forEach((csItem, idx) => {
+                    tempCurveSpecs.forEach((csItem, idx) => {
                         if (isPrediction && idx === 0) return;
-                        inCurves.push(realDataset.curves.find((c) => (c.name === dataset.selectedValues[idx])));
+                        inCurves.push(realDataset.curves.find((c) => (c.name === (csItem.currentSelect ? csItem.currentSelect : selectedValues[idx]))));
                     })
-                    //let inCurves = curveSpecs.map((ipt, idx) => {
+                    //let inCurves = tempCurveSpecs.map((ipt, idx) => {
                         //return realDataset.curves.find((c) => (c.name === dataset.selectedValues[idx]));
                     //});
                     inCurves.push({
