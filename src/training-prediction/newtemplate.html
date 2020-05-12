@@ -83,6 +83,11 @@
                 <div>Plot: &nbsp;&nbsp;</div>
                 <input style="text-align: right;" placeholder="Plot name" ng-model="self.controller.tabs['verify'].plotName">
             </div>
+            <div>
+                <label>
+                    Create plot: <input type="checkbox" ng-model="self.controller.tabs['verify'].createPlot">
+                </label>
+            </div>
             <div class="button">
                 <!-- <div class="toolbar-button">Sort by</div>
                 <div class="toolbar-button">Select All</div> -->
@@ -141,6 +146,11 @@
             <div class="search" style="margin-right: 15px; width: 300px;">
                 <div>Plot: &nbsp;&nbsp;</div>
                 <input style="text-align: right;" placeholder="Plot name" ng-model="self.controller.tabs['prediction'].plotName">
+            </div>
+            <div>
+                <label>
+                    Create plot: <input type="checkbox" ng-model="self.controller.tabs['prediction'].createPlot">
+                </label>
             </div>
             <div class="button">
                 <!-- <div class="toolbar-button">Sort by</div>

@@ -324,7 +324,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 return resolve()
             }
             let idProject = self.controller.tabs['verify'].listDataset[0].idProject;
-            mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, self.controller.tabs['verify'].plotName, listDataset[0]).then((plot) => {
+            mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, self.controller.tabs['verify'].plotName, listDataset[0], self.controller.tabs['verify'].createPlot).then((plot) => {
                 self.controller.tabs['verify'].plot = plot;
                 self.controller.tabs['verify'].plot.username = localStorage.getItem('username') || '';
                 let filterCurveBoolean;
@@ -470,7 +470,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 return reject(new Error('Please active one or more dataset'));
             }
             let idProject = self.controller.tabs['prediction'].listDataset[0].idProject;
-            mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, self.controller.tabs['prediction'].plotName, listDataset[0])
+            mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, self.controller.tabs['prediction'].plotName, listDataset[0], self.controller.tabs['prediction'].createPlot)
             .then(plot => {
                 self.controller.tabs['prediction'].plot = plot
                 self.controller.tabs['prediction'].plot.username = localStorage.getItem('username') || '';

@@ -179,11 +179,13 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             },
             verify: {
                 listDataset: [],
-                plotName: 'Verification Plot'
+                plotName: 'Verification Plot',
+                createPlot: true
             },
             prediction: {
                 listDataset: [],
-                plotName: 'Prediction Plot'
+                plotName: 'Prediction Plot',
+                createPlot: true
             }
         }
         self.zonesetConfig = {
@@ -951,6 +953,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         if(self.project.content.plot) {
             self.tabs[STEP_VERIFY].plotName = self.project.content.plot[STEP_VERIFY].plotName;
             self.tabs[STEP_PREDICT].plotName = self.project.content.plot[STEP_PREDICT].plotName;
+
+            self.tabs[STEP_VERIFY].createPlot = self.project.content.plot[STEP_VERIFY].createPlot;
+            self.tabs[STEP_PREDICT].createPlot = self.project.content.plot[STEP_PREDICT].createPlot;
         }
 
         // PHUC !!! Dont move after load listDataset !!!
@@ -1058,10 +1063,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 },
                 plot:{
                     verify: {
-                        plotName: self.tabs[STEP_VERIFY].plotName
+                        plotName: self.tabs[STEP_VERIFY].plotName,
+                        createPlot: self.tabs[STEP_VERIFY].createPlot
                     },
                     prediction: {
-                        plotName: self.tabs[STEP_PREDICT].plotName
+                        plotName: self.tabs[STEP_PREDICT].plotName,
+                        createPlot: self.tabs[STEP_PREDICT].createPlot
                     }
                 },
                 zonesetConfig: self.zonesetConfig,
@@ -1098,10 +1105,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                         },
                         plot:{
                             verify: {
-                                plotName: self.tabs[STEP_VERIFY].plotName
+                                plotName: self.tabs[STEP_VERIFY].plotName,
+                                createPlot: self.tabs[STEP_VERIFY].createPlot
                             },
                             prediction: {
-                                plotName: self.tabs[STEP_PREDICT].plotName
+                                plotName: self.tabs[STEP_PREDICT].plotName,
+                                createPlot: self.tabs[STEP_PREDICT].createPlot
                             }
                         },
                         zonesetConfig: self.zonesetConfig,
@@ -1149,10 +1158,12 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                         },
                         plot:{
                             verify: {
-                                plotName: self.tabs[STEP_VERIFY].plotName
+                                plotName: self.tabs[STEP_VERIFY].plotName,
+                                createPlot: self.tabs[STEP_VERIFY].createPlot
                             },
                             prediction: {
-                                plotName: self.tabs[STEP_PREDICT].plotName
+                                plotName: self.tabs[STEP_PREDICT].plotName,
+                                createPlot: self.tabs[STEP_PREDICT].createPlot
                             }
                         },
                         curveSpecs: self.curveSpecs,

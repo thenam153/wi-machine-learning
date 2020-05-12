@@ -476,20 +476,24 @@ function mlApi($http, $timeout, wiApi) {
                         })
                     }
                     createLogPlot(tab, dataset, inCurves, orderNum, function() {
-                        callback();
+                        callback && callback();
                     }, zoneTrack);
                 });
             }
-            if(errorCurveInfo) {
-                saveCurve(errorCurveInfo, dataset, function(errorCurveProps) {
-                    if (errorCurveProps) handle(errorCurveProps);
-                })
-            } else if(targetGroupsInfo) {
-                saveCurve(targetGroupsInfo, dataset, function(targetGroupsCurveProps) {
-                    if (targetGroupsCurveProps) handle(targetGroupsCurveProps);
-                })
-            } else {
-                handle();
+            if(tab.createPlot) {
+                if(errorCurveInfo) {
+                    saveCurve(errorCurveInfo, dataset, function(errorCurveProps) {
+                        if (errorCurveProps) handle(errorCurveProps);
+                    })
+                } else if(targetGroupsInfo) {
+                    saveCurve(targetGroupsInfo, dataset, function(targetGroupsCurveProps) {
+                        if (targetGroupsCurveProps) handle(targetGroupsCurveProps);
+                    })
+                } else {
+                    handle();
+                }
+            }else {
+                callback && callback();
             }
         })
     }
@@ -599,13 +603,17 @@ function mlApi($http, $timeout, wiApi) {
             })
     }
     this.createBlankPlot = createBlankPlot;
-    function createBlankPlot(idProject, idMlProject, namePlot, dataset) {
-        return wiApi.client(getClientId(dataset.owner, dataset.prjName)).createLogplotPromise({
-            idProject: idProject,
-            name: `${namePlot} - ${localStorage.getItem('username') || 'none'} - ${idMlProject}`,
-            override: true,
-            option: 'blank-plot'
-        });
+    function createBlankPlot(idProject, idMlProject, namePlot, dataset, createPlot) {
+        if(createPlot) {
+            return wiApi.client(getClientId(dataset.owner, dataset.prjName)).createLogplotPromise({
+                idProject: idProject,
+                name: `${namePlot} - ${localStorage.getItem('username') || 'none'} - ${idMlProject}`,
+                override: true,
+                option: 'blank-plot'
+            });
+        }else {
+            return new Promise(res => res({}))
+        }
     }
     this.createModelAndBucketId = createModelAndBucketId;
     //function createModelAndBucketId(mlProject, dims, idMlProject) { // TUNG
