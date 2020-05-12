@@ -1013,7 +1013,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                         tabs: {
                             training: self.tabs[STEP_TRAIN].listDataset,
                             verify: self.tabs[STEP_VERIFY].listDataset,
-                            prediction: self.tabs[STEP_TRAIN].listDataset,
+                            prediction: self.tabs[STEP_PREDICT].listDataset,
                         },
                         curveSpecs: self.curveSpecs,
                         typeInput: self.typeInput,
