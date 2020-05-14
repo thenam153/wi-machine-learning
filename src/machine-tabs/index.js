@@ -1005,6 +1005,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 className: 'ngdialog-theme-default',
                 scope: $scope,
             });
+        }).catch(err => {
+            toastr.error(err.message);
         });
     }
     this.renameProject = function() {
@@ -1037,7 +1039,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 })
                 .catch(err => {
                     console.error(err);
-                    toastr.error('Rename project fail', 'Error: ' + err.message);
+                    Toastr.error('Rename project fail', 'Error: ' + err.message);
                 })
                 .finally(() => {
                     ngDialog.close();
