@@ -132,18 +132,21 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
         });
     }
     function processZonesetsList(zonesetsList) {
-        if (!zonesetsList.length) return [];
-        let zsList;
+        // if (!zonesetsList.length) return [];
+        let zsList = [];
+        zsList.unshift({ name: 'Zonation All' });
         for (let zonesets of zonesetsList) {
-            if (!zsList) {
-                zsList = angular.copy(zonesets);
-            } else if (zsList.length) {
-                zsList = intersectAndMerge(zsList, zonesets);
+            // if (!zsList) {
+            //     zsList = angular.copy(zonesets);
+            // } else if (zsList.length) {
+            //     zsList = intersectAndMerge(zsList, zonesets);
+            // }
+            if(zsList.length == 1) {
+                zsList = [...zsList, ...angular.copy(zonesets)];
             } else {
-                break;
+                zsList = intersectAndMerge(zsList, zonesets);
             }
         }
-        zsList.unshift({ name: 'Zonation All' });
         return zsList;
     }
 
