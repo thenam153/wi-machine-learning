@@ -286,7 +286,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     for (let node of datasets) {
                         let vlDs = angular.copy(node);
                         if(!vlDs.idDataset) continue;
-                        let ds = self.tabs[step].listDataset.find( i => i.idDataset === vlDs.idDataset || i.idProject !== vlDs.idProject);
+                        let ds = self.tabs[step].listDataset.find( i => i.idDataset === vlDs.idDataset);
                         if (!ds) {
                             let curveSpecs = self.curveSpecs.map(i => {return {isTarget: i.isTarget, value: null};});
                             if (step === STEP_PREDICT) 
@@ -306,7 +306,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                             }
                             self.tabs[step].listDataset.push(dsItem);
                         } else {
-                            toastr.error('Already has a dataset or a dataset that is not in the same project');
+                            toastr.error('Already has this dataset');
                         }
                     }
                 })
