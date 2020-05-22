@@ -456,7 +456,7 @@ function mlApi($http, $timeout, wiApi) {
                     let inCurves = [];
                     tempCurveSpecs.forEach((csItem, idx) => {
                         if (isPrediction && idx === 0) return;
-                        inCurves.push(realDataset.curves.find((c) => (c.name === (csItem.currentSelect ? csItem.currentSelect : selectedValues[idx]))));
+                        inCurves.push(realDataset.curves.find((c) => (c.name === selectedValues[idx])));
                     })
                     //let inCurves = tempCurveSpecs.map((ipt, idx) => {
                         //return realDataset.curves.find((c) => (c.name === dataset.selectedValues[idx]));
@@ -475,8 +475,8 @@ function mlApi($http, $timeout, wiApi) {
                             maxValue: (errorCurveInfo | {}).maxValue
                         })
                     }
-                    createLogPlot(tab, dataset, inCurves, orderNum, function() {
-                        callback && callback();
+                    createLogPlot(tab, dataset, inCurves, orderNum, function(err) {
+                        callback && callback(err);
                     }, zoneTrack);
                 });
             }
@@ -530,12 +530,12 @@ function mlApi($http, $timeout, wiApi) {
         let idPlot = tab.plot.idPlot;
         let currentOrderNum = orderNum;
         wiApi.client(getClientId(dataset.owner, dataset.prjName)).createDepthTrackPromise({
-                idPlot: idPlot,
-                width: 0.75,
-                orderNum: currentOrderNum.slice(0, currentOrderNum.length - 1) + '0',
-                widthUnit: 'inch',
-                idWell: dataset.idWell
-            })
+            idPlot: idPlot,
+            width: 0.75,
+            orderNum: currentOrderNum.slice(0, currentOrderNum.length - 1) + '0',
+            widthUnit: 'inch',
+            idWell: dataset.idWell
+        })
             .then((res) => {
                 console.log("create depth track :))", "create zone track here")
                 return wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell)
@@ -563,6 +563,7 @@ function mlApi($http, $timeout, wiApi) {
             })
             .then((well) => {
                 let zoneSet = well.zone_sets.find(zs => zs.name === zonesetName);
+                if (!zoneSet) return Promise.resolve();
                 let payload = {
                     color: "#ffffff",
                     idPlot: idPlot,
@@ -579,7 +580,7 @@ function mlApi($http, $timeout, wiApi) {
                 return wiApi.createZoneTrackPromise(payload);
             })
             .then((res) => {
-                async.eachSeries(inCurves, async function(curve) {
+                async.eachSeries(inCurves, async function (curve) {
                     let trackData = await wiApi.client(getClientId(dataset.owner, dataset.prjName)).createLogTrackPromise({
                         idPlot: idPlot,
                         orderNum: currentOrderNum,
@@ -587,20 +588,24 @@ function mlApi($http, $timeout, wiApi) {
                         width: 1
                     });
                     let line = wiApi.client(getClientId(dataset.owner, dataset.prjName)).createLinePromise({
-                                    idTrack: trackData.idTrack,
-                                    idCurve: curve.idCurve,
-                                    orderNum: currentOrderNum
-                                })
+                        idTrack: trackData.idTrack,
+                        idCurve: curve.idCurve,
+                        orderNum: currentOrderNum
+                    })
                     if (line && curve.minValue != undefined && curve.maxValue != undefined) {
-                            line.minValue = curve.minValue;
-                            line.maxValue = curve.maxValue;
-                            await wiApi.client(getClientId(dataset.owner, dataset.prjName)).editLinePromise(line);
-                        }
-                }, function(err) {
-                    if (err) return err;
-                    callback()
-                })
-            })
+                        line.minValue = curve.minValue;
+                        line.maxValue = curve.maxValue;
+                        await wiApi.client(getClientId(dataset.owner, dataset.prjName)).editLinePromise(line);
+                    }
+                }, function (err) {
+                    if (err) {
+                        console.error(err);
+                    }
+                    callback(err);
+                });
+            }).catch(e => {
+                console.error(e);
+            });
     }
     this.createBlankPlot = createBlankPlot;
     function createBlankPlot(idProject, idMlProject, namePlot, dataset, createPlot) {
