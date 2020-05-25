@@ -1,7 +1,7 @@
 import { ngVue } from '@revotechuet/misc-component-vue';
 const moduleName = "datasetSelection";
 const componentName = "datasetSelection";
-module.exports.name = moduleName;
+export {moduleName as name}
 
 var app = angular.module(moduleName, ['wiTreeView','wiDroppable','angularResizable','wiTreeViewVirtual','sideBar', ngVue]);
 
