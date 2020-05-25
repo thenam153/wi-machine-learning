@@ -67,46 +67,31 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
         }
 
     });
-    // ============================================================================
-    // this.modelId = null;
-    // this.bucketId = null;
     this.runTask = function(i) {
-        if(!self.controller.project) {
-            self.controller.createProject();
-            return   
-        }
-        if(i == -1) {
-            //mlApi.createModelAndBucketId({name: 1, idMlProject: 10}, self.controller.curveSpecs.length, self.controller.project.idMlProject)
-            mlApi.createModelAndBucketId(self.controller.curveSpecs.length, self.controller.project.idMlProject).then((res) => {
-                console.log(res);
-                self.modelId = res.modelId;
-                self.bucketId = res.bucketId;
-                self.controller.project.content.modelId = res.modelId;
-                self.controller.project.content.bucketId = res.bucketId;
-                train();
-            });
-        }
-        else if(i == 1) {
-            verify();
-        }
-        else if(i == 2) {
-            predict();
-        }
+        return new Promise((resolve) => {
+            if(!self.controller.project) {
+                self.controller.createProject();
+                return   
+            }
+            if(i == -1) {
+                mlApi.createModelAndBucketId(self.controller.curveSpecs.length, self.controller.project.idMlProject).then((res) => {
+                    console.log(res);
+                    self.modelId = res.modelId;
+                    self.bucketId = res.bucketId;
+                    self.controller.project.content.modelId = res.modelId;
+                    self.controller.project.content.bucketId = res.bucketId;
+                    return resolve(train());
+                });
+            }
+            else if(i == 1) {
+                return resolve(verify());
+            }
+            else if(i == 2) {
+                return resolve(predict());
+            }
+        })
     }
     this.runAll = function() {
-        // mlApi.createModelAndBucketId({name: 1, idMlProject: 10}, self.controller.curveSpecs.length, self.controller.project.idMlProject)
-        // .then((res) => {
-        //     console.log(res);
-        //     self.modelId = res.modelId;
-        //     self.bucketId = res.bucketId;
-        //     self.controller.project.content.modelId = res.modelId;
-        //     self.controller.project.content.bucketId = res.bucketId;
-        //     return train();
-        // })
-        // .then(() => verify())
-        // .then(() => predict())
-        // .then(() => console.log('run all success'))
-        // .catch(() => console.log('run all fail'))
         if(!self.controller.project) {
             self.controller.createProject();
             return;
@@ -114,28 +99,42 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
         $timeout(() => {
             self.running = true;
         });
-        //mlApi.createModelAndBucketId({name: 1, idMlProject: 10}, self.controller.curveSpecs.length, self.controller.project.idMlProject)
-        mlApi.createModelAndBucketId(self.controller.curveSpecs.length, self.controller.project.idMlProject).then((res) => {
-            console.log(res);
-            self.modelId = res.modelId;
-            self.bucketId = res.bucketId;
-            self.controller.project.content.modelId = res.modelId;
-            self.controller.project.content.bucketId = res.bucketId;
-            beforeTrain().then(() => trainData()).then((res) => afterTrain()).then(() => {
-                self.controller.project.content.state = 1;
-                self.controller.saveProject();
-            }).then(() => beforeVerify()).then(() => beforePredict()).then(() => {
-                toastr.success('Run all success');
-                self.controller.saveProject();
-            }).catch(err => {
-                toastr.error(err ? err.message : err || 'Something went error' );
-                console.log('Error')
-            }).finally(() => {
-                $timeout(() => {
-                    self.running = false;
-                })
-            });
-        });
+        // mlApi.createModelAndBucketId(self.controller.curveSpecs.length, self.controller.project.idMlProject).then((res) => {
+        //     console.log(res);
+        //     self.modelId = res.modelId;
+        //     self.bucketId = res.bucketId;
+        //     self.controller.project.content.modelId = res.modelId;
+        //     self.controller.project.content.bucketId = res.bucketId;
+        //     beforeTrain().then(() => trainData()).then((res) => afterTrain()).then(() => {
+        //         self.controller.project.content.state = 1;
+        //         self.controller.saveProject();
+        //     }).then(() => beforeVerify()).then(() => beforePredict()).then(() => {
+        //         toastr.success('Run all success');
+        //         self.controller.saveProject();
+        //     }).catch(err => {
+        //         toastr.error(err ? err.message : err || 'Something went error' );
+        //         console.log('Error')
+        //     }).finally(() => {
+        //         $timeout(() => {
+        //             self.running = false;
+        //         })
+        //     });
+        // });
+        self.runTask(-1)
+        .then(() => self.runTask(1))
+        .then(() => self.runTask(2))
+        .then(() => {
+            self.controller.saveProject();
+        })
+        .catch(err => {
+            toastr.error(err ? err.message : err || 'Something went error' );
+            console.log('Error')
+        })
+        .finally(() => {
+            $timeout(() => {
+                self.running = false;
+            })
+        })
     }
     function zonesetFilter(dataset, curve, zonesConfig, zonesList) {
         // if (zonesConfig.length == 1
