@@ -1,8 +1,9 @@
+import { ngVue } from '@revotechuet/misc-component-vue';
 const moduleName = "modelSelection";
 const componentName = "modelSelection";
-module.exports.name = moduleName;
+export { moduleName as name };
 
-var app = angular.module(moduleName, ['wiDropdownList','editable', 'ngVue']);
+var app = angular.module(moduleName, ['wiDropdownList','editable', ngVue]);
 
 app.component(componentName,{
 	template: require('./newtemplate.html'),
