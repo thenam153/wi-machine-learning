@@ -1,8 +1,9 @@
+import { ngVue } from '@revotechuet/misc-component-vue';
 const moduleName = "datasetSelection";
 const componentName = "datasetSelection";
 module.exports.name = moduleName;
 
-var app = angular.module(moduleName, ['wiTreeView','wiDroppable','angularResizable','wiTreeViewVirtual','sideBar']);
+var app = angular.module(moduleName, ['wiTreeView','wiDroppable','angularResizable','wiTreeViewVirtual','sideBar', ngVue]);
 
 app.component(componentName,{
 	template: require('./newtemplate.html'),
