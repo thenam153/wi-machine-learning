@@ -9,3 +9,4 @@ wi-uservice.json
 /public/bower_components
 /public/main.js
 yarn.lock
+pnpm-lock.yaml

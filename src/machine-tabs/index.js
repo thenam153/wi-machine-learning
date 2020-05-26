@@ -281,7 +281,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     }
     this.getFnDrop = function(step) {
         if (!functionCacheSteps[step].drop) {
-            functionCacheSteps[step].drop = function(event, helper, datasets) {
+            functionCacheSteps[step].drop = function(event, datasets) {
                 $timeout(() => {
                     for (let node of datasets) {
                         let vlDs = angular.copy(node);

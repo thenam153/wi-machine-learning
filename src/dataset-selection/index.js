@@ -1,4 +1,4 @@
-import { ngVue } from '@revotechuet/misc-component-vue';
+import { ngVue, WiTree, WiDroppable } from '@revotechuet/misc-component-vue';
 const moduleName = "datasetSelection";
 const componentName = "datasetSelection";
 export {moduleName as name}
@@ -30,7 +30,11 @@ app.component(componentName,{
 });
 DatasetSelectionController.$inject = ['$scope', 'wiApi', '$timeout']
 
-function DatasetSelectionController($scope, wiApi, $timeout){
+function DatasetSelectionController($scope, wiApi, $timeout) {
+    Object.assign($scope, {
+        WiTree,
+        WiDroppable,
+    })
     let self = 	this;
 	this.listMlProject;
     this.buttons = [{
@@ -49,6 +53,10 @@ function DatasetSelectionController($scope, wiApi, $timeout){
             icon: 'family-group-16x16'
         }
     ];
+    this.getDraggable = function (node) {
+      if (node.idDataset && node.idWell) return true;
+      return false;
+    }
     this.noDrag = function(node) {
         return !(node && node.idDataset && node.idWell);
     }
@@ -79,6 +87,17 @@ function DatasetSelectionController($scope, wiApi, $timeout){
             return "project-normal-16x16";
         }
     }
+    this.getChildrenKey = function (node) {
+      if (!node) return '';
+      if (node.idDataset) {
+        return 'curves';
+      } else if (node.idWell) {
+        return 'datasets';
+      } else if (node.idProject) {
+        return 'wells';
+      }
+      return '';
+    }
     this.getChildren = function (node) {
     	if (!node) return [];
         if(node.idDataset){
@@ -95,8 +114,7 @@ function DatasetSelectionController($scope, wiApi, $timeout){
     }
     this.clickFn = function(event, node, selectIds, rootnode) {
         console.log(node);
-        if(node.idProject && node.wells) return;
-        if(node.idWell && node.datasets) return;
+        if(node.$meta.loaded) return;
         if(node.idProject && !node.idDataset) {
             wiApi.client(getClientId(node.owner, node.name)).getFullInfoPromise(node.idProject, node.owner, node.name).then(dataProject => {
                 if (node.owner) {
@@ -121,6 +139,7 @@ function DatasetSelectionController($scope, wiApi, $timeout){
                         }
                     }
                     sortProjectData(node);   
+                    node.$meta.loaded = true;
                 });
                 /* TUNG : Donot need this anymore
                 // fix bug project share 
