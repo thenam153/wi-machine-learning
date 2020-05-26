@@ -45,37 +45,37 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
             let listDataset = self.controller.tabs['training'].listDataset;
             return listDataset.map(dataset => dataset.idDataset);
         }, (newVal, oldVal) => {
-            if (newVal != oldVal || !self.getListZoneset()) {
+            // if (newVal != oldVal || !self.getListZoneset()) {
                 self.updateListZoneset(0);
                 let step = 'training';
                 let listDataset = self.controller.tabs[step].listDataset;
                 let zonesetName = self.controller.zonesetConfig[step].zonesetName;
                 updateZonesArr(zonesetName, listDataset);
-            }
+            // }
         }, true);
         $scope.$watch(() => {
             let listDataset = self.controller.tabs['verify'].listDataset;
             return listDataset.map(dataset => dataset.idDataset);
         }, (newVal, oldVal) => {
-            if (newVal != oldVal || !self.getListZoneset()) {
+            // if (newVal != oldVal || !self.getListZoneset()) {
                 self.updateListZoneset(1);
                 let step = 'verify';
                 let listDataset = self.controller.tabs[step].listDataset;
                 let zonesetName = self.controller.zonesetConfig[step].zonesetName;
                 updateZonesArr(zonesetName, listDataset);
-            }
+            // }
         }, true);
         $scope.$watch(() => {
             let listDataset = self.controller.tabs['prediction'].listDataset;
             return listDataset.map(dataset => dataset.idDataset);
         }, (newVal, oldVal) => {
-            if (newVal != oldVal || !self.getListZoneset()) {
+            // if (newVal != oldVal || !self.getListZoneset()) {
                 self.updateListZoneset(2);
                 let step = 'prediction';
                 let listDataset = self.controller.tabs[step].listDataset;
                 let zonesetName = self.controller.zonesetConfig[step].zonesetName;
                 updateZonesArr(zonesetName, listDataset);
-            }
+            // }
         }, true);
     }
 
@@ -93,18 +93,16 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
         dsItemKeys = _.uniq(dsItemKeys);
 
         getZonesetsList(dsItemKeys, dsItemHash).then((zonesetsList) => {
-            $timeout(() => {
-                self.controller.zonesetsTree[step] = processZonesetsList(zonesetsList);
+            self.controller.zonesetsTree[step] = processZonesetsList(zonesetsList);
 
-                let zonesetName = getZonesetName(step);
-                if (zonesetName) {
-                    let selectedZoneset = self.controller.zonesetsTree[step].find(zs => {
-                        return zs.name == zonesetName;
-                    })
-                    if (selectedZoneset)
-                        selectedZoneset._selected = true;
-                }
-            })
+            let zonesetName = getZonesetName(step);
+            if (zonesetName) {
+                let selectedZoneset = self.controller.zonesetsTree[step].find(zs => {
+                    return zs.name == zonesetName;
+                })
+                if (selectedZoneset)
+                    selectedZoneset._selected = true;
+            }
         });
     }
     function getZonesetName(step) {
