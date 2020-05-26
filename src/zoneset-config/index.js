@@ -152,6 +152,8 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
 
     function intersectAndMerge(dstZoneList, srcZoneList) {
         return dstZoneList.filter(zs => {
+            if (zs.name == 'Zonation All')
+                return true;
             let zoneset = srcZoneList.find(zs1 => zs.name === zs1.name);
             if (!zoneset) return false;
             for (let z of zoneset.zones) {
