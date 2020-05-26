@@ -93,19 +93,23 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
         dsItemKeys = _.uniq(dsItemKeys);
 
         getZonesetsList(dsItemKeys, dsItemHash).then((zonesetsList) => {
-            self.controller.zonesetsTree[step] = processZonesetsList(zonesetsList);
+            $timeout(() => {
+                self.controller.zonesetsTree[step] = processZonesetsList(zonesetsList);
 
-            let zonesetName = getZonesetName(step);
-            let selectedZoneset = self.controller.zonesetsTree[step].find(zs => {
-                return zs.name == zonesetName;
+                let zonesetName = getZonesetName(step);
+                if (zonesetName) {
+                    let selectedZoneset = self.controller.zonesetsTree[step].find(zs => {
+                        return zs.name == zonesetName;
+                    })
+                    if (selectedZoneset)
+                        selectedZoneset._selected = true;
+                }
             })
-            if (selectedZoneset)
-                selectedZoneset._selected = true;
         });
     }
-    function getZonesetName() {
-        let step = tabsName[getTab()];
-        return self.controller.zonesetConfig[step].zonesetName;
+    function getZonesetName(step) {
+        let newStep = step || tabsName[getTab()];
+        return self.controller.zonesetConfig[newStep].zonesetName;
     }
     function getZoneset(dsItem, zonesetName) {
         return wiApi.client(mlApi.getClientId(dsItem.owner, dsItem.prjName)).getCachedWellPromise(dsItem.idWell).then((well) => {
