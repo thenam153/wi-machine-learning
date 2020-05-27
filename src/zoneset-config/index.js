@@ -102,6 +102,18 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
                 })
                 if (selectedZoneset)
                     selectedZoneset._selected = true;
+            } else {
+                let zonesetsTree = self.controller.zonesetsTree[step];
+                if (zonesetsTree && zonesetsTree.length) {
+                    let zonesetAll = zonesetsTree.find(zs => {
+                        return zs.name == 'Zonation All';
+                    })
+                    if (zonesetAll) {
+                        zonesetAll._selected = - true;
+                        // self.clickZonesetFn(null, zonesetAll);
+                        updateZoneList(tabNum);
+                    }
+                }
             }
         });
     }
@@ -206,10 +218,10 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
     }
 
     // ==========Zone List==========
-    function updateZoneList(tabNum) {
+    function updateZoneList(tabNum, zsName) {
         let step = tabsName[tabNum || getTab()];
         let listDataset = self.controller.tabs[step].listDataset;
-        let zonesetName = self.controller.zonesetConfig[step].zonesetName;
+        let zonesetName = zsName || self.controller.zonesetConfig[step].zonesetName || 'Zonation All';
         getUniqZones(zonesetName, listDataset).then(zones => {
             self.controller.zonesetConfig[step].zoneList = zones;
         }).catch(e => console.error(e));
