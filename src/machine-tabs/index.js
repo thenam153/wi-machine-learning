@@ -112,6 +112,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             case 'resultCurveName':
             case 'plotName':
             case 'active':
+            case 'selectedValues':
                 return undefined;
         }
         return value;
@@ -226,14 +227,23 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }
     }
     this.onChangeType = function(button) {
-        self.typeInput = button;
-        // self.makeListOfDatasetSelection(); // TUNG
-        $timeout(() => {
-            self.curveSpecs.forEach(i => Object.assign(i, {
-                value: null,
-                currentSelect: LABEL_DEFAULT
-            }));
-        })
+        if(self.typeInput.type != button.type) {
+            $timeout(() => {
+                self.typeInput = button;
+                    self.curveSpecs.forEach(i => Object.assign(i, {
+                        value: null,
+                        currentSelect: LABEL_DEFAULT
+                    }));
+            })
+            $timeout(() => {
+                for (let stepLabel of Object.keys(self.tabs)) {
+                    let listDataset = self.tabs[stepLabel].listDataset;
+                    for (let dsItem of listDataset) {
+                        dsItem.selectedValues = []
+                    }
+                }
+            }, 1000)
+        }
     }
     this.onInputItemChange = function(i, params) {
         let item = params[0];
