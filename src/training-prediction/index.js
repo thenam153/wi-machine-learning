@@ -136,6 +136,13 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             })
         })
     }
+    $scope.canCreatePlot = canCreatePlot;
+    function canCreatePlot (tabKey) {
+        const listDataset = self.controller.tabs[tabKey].listDataset;
+        if (!listDataset.length) return false;
+        const idProject1 = listDataset[0].idProject;
+        return !listDataset.some(d => d.idProject !== idProject1);
+    }
     function zonesetFilter(dataset, curve, zonesConfig, zonesList) {
         // if (zonesConfig.length == 1
         //     && zonesConfig[0].template_name == 'Zonation All'
@@ -322,6 +329,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             if( !isActive(self.controller.tabs['verify'].listDataset)) {
                 return resolve()
             }
+            if (!canCreatePlot('verify')) {
+                self.controller.tabs['verify'].createPlot = false;
+            }
             let idProject = self.controller.tabs['verify'].listDataset[0].idProject;
             mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, self.controller.tabs['verify'].plotName, listDataset[0], self.controller.tabs['verify'].createPlot).then((plot) => {
                 self.controller.tabs['verify'].plot = plot;
@@ -467,6 +477,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             }
             if(!isActive(self.controller.tabs['prediction'].listDataset)) {
                 return reject(new Error('Please active one or more dataset'));
+            }
+            if (!canCreatePlot('prediction')) {
+                self.controller.tabs['prediction'].createPlot = false;
             }
             let idProject = self.controller.tabs['prediction'].listDataset[0].idProject;
             mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, self.controller.tabs['prediction'].plotName, listDataset[0], self.controller.tabs['prediction'].createPlot)

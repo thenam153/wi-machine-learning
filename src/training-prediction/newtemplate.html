@@ -84,9 +84,8 @@
                 <input style="text-align: right;" placeholder="Plot name" ng-model="self.controller.tabs['verify'].plotName">
             </div>
             <div>
-                <label>
-                    Create plot: <input type="checkbox" ng-model="self.controller.tabs['verify'].createPlot">
-                </label>
+                <label ng-class="{'text-muted': !canCreatePlot('verify')}">Create plot</label>
+                <input type="checkbox" ng-model="self.controller.tabs['verify'].createPlot" ng-disabled="!canCreatePlot('verify')">
             </div>
             <div class="button">
                 <!-- <div class="toolbar-button">Sort by</div>
@@ -148,9 +147,8 @@
                 <input style="text-align: right;" placeholder="Plot name" ng-model="self.controller.tabs['prediction'].plotName">
             </div>
             <div>
-                <label>
-                    Create plot: <input type="checkbox" ng-model="self.controller.tabs['prediction'].createPlot">
-                </label>
+                <label ng-class="{'text-muted': !canCreatePlot('prediction')}">Create plot</label>
+                <input type="checkbox" ng-model="self.controller.tabs['prediction'].createPlot" ng-disabled="!canCreatePlot('prediction')">
             </div>
             <div class="button">
                 <!-- <div class="toolbar-button">Sort by</div>
