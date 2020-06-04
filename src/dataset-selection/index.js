@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import { ngVue, WiTree, WiDroppable } from '@revotechuet/misc-component-vue';
 const moduleName = "datasetSelection";
 const componentName = "datasetSelection";
@@ -87,21 +88,10 @@ function DatasetSelectionController($scope, wiApi, $timeout) {
             return "project-normal-16x16";
         }
     }
-    this.getChildrenKey = function (node) {
-      if (!node) return '';
-      if (node.idDataset) {
-        return 'curves';
-      } else if (node.idWell) {
-        return 'datasets';
-      } else if (node.idProject) {
-        return 'wells';
-      }
-      return '';
-    }
     this.getChildren = function (node) {
     	if (!node) return [];
         if(node.idDataset){
-            return node.curves || [];           
+            return node.curves || [];
         }else if (node.idWell) {
             return node.datasets || [];
         }else if(node.idProject) {
@@ -114,7 +104,7 @@ function DatasetSelectionController($scope, wiApi, $timeout) {
     }
     this.clickFn = function(event, node, selectIds, rootnode) {
         console.log(node);
-        if(node.$meta.loaded) return;
+        if(node.idProject && node.wells) return;
         if(node.idProject && !node.idDataset) {
             wiApi.client(getClientId(node.owner, node.name)).getFullInfoPromise(node.idProject, node.owner, node.name).then(dataProject => {
                 if (node.owner) {
@@ -125,11 +115,9 @@ function DatasetSelectionController($scope, wiApi, $timeout) {
                         }
                     }
                 }
-                $timeout(() => {
                     //self.controller.projectInfo = {owner: node.owner, name: node.name}; // TUNG
                     self.controller.dataProject = dataProject;
-                    node.wells = dataProject.wells.sort((a,b) => a.name.localeCompare(b.name));
-                    node.wells = dataProject.wells;
+                    Vue.set(node, 'wells', dataProject.wells.sort((a, b) => a.name.localeCompare(b.name)));
                     for(let i of node.wells) {
                         i.datasets.sort((a,b) => a.name.localeCompare(b.name));   
                         for(let j of i.datasets) {
@@ -138,9 +126,7 @@ function DatasetSelectionController($scope, wiApi, $timeout) {
                             j.idProject = node.idProject;
                         }
                     }
-                    sortProjectData(node);   
-                    node.$meta.loaded = true;
-                });
+                    sortProjectData(node);
                 /* TUNG : Donot need this anymore
                 // fix bug project share 
                 let project = rootnode.find(i => !i.shared)
