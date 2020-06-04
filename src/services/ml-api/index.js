@@ -480,7 +480,7 @@ function mlApi($http, $timeout, wiApi) {
                     }, zoneTrack);
                 });
             }
-            if(tab.createPlot) {
+            if(tab.canCreatePlot && tab.createPlot) {
                 if(errorCurveInfo) {
                     saveCurve(errorCurveInfo, dataset, function(errorCurveProps) {
                         if (errorCurveProps) handle(errorCurveProps);
