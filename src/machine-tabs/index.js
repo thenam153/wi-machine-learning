@@ -255,7 +255,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 let listDataset = self.tabs[stepLabel].listDataset;
                 for (let dsItem of listDataset) {
                     dsItem.selectedValues = dsItem.selectedValues || [];
-                    dsItem.selectedValues[idx] = "";
+                    // dsItem.selectedValues[idx] = "";
                 }
             }
         }
