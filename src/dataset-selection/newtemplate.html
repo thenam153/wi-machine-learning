@@ -200,7 +200,7 @@
 			
 		</div>
 		<input class="tree-search" type="text" placeholder="Search" ng-model="filter" />
-		<div style="height: calc(100% - 138px);">
+		<div style="height: calc(100% - 138px); margin-left: 15px;">
 			<!-- <wi-tree-view-virtual tree-root="self.listMlProject" hide-unmatched='true' get-children="self.getChildren"
 				click-fn='self.clickFn' get-label="self.getLabel" get-icon='self.getIcon' run-match='self.runMatch'
 				keep-chidren='true' no-drag='self.noDrag'>
@@ -209,7 +209,7 @@
 				props="{
 					treeRoot: self.listMlProject,
 					filter,
-					getChildrenKey: self.getChildrenKey,
+					getChildren: self.getChildren,
 					clickFn: self.clickFn,
 					getLabel: self.getLabel,
 					getIcon: self.getIcon,
