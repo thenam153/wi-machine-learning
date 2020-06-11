@@ -126,7 +126,7 @@ function DatasetSelectionController($scope, wiApi, $timeout) {
                             j.idProject = node.idProject;
                         }
                     }
-                    sortProjectData(node);
+                    // sortProjectData(node);
                 /* TUNG : Donot need this anymore
                 // fix bug project share 
                 let project = rootnode.find(i => !i.shared)
