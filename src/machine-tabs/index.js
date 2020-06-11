@@ -1016,7 +1016,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 scope: $scope,
             });
         }).catch(err => {
-            toastr.error(err.message);
+            console.log(err)
+            // toastr.error(err.message);
         });
     }
     this.renameProject = function() {
