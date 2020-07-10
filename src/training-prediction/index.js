@@ -151,15 +151,12 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
         // }
         if (!zonesList || !zonesList.length) return curve;
         let notUsedZones = _.filter(zonesConfig, '_notUsed');
-        notUsedZones = notUsedZones.map(z => z.template_name);
+        notUsedZones = notUsedZones.map(z => zonesList.find(_z => _z.zone_template.name === z.template_name));
         if (!notUsedZones || !notUsedZones.length) return curve;
         let curveRes = curve.map((p, pIdx) => {
-            let depth = +dataset.top + pIdx * dataset.step;
-            let zone = _.find(zonesList, z => {
-                return (z.startDepth - depth) * (z.endDepth - depth) <= 0
-                    && notUsedZones.includes(z.zone_template.name);
-            })
-            return zone ? false : p;
+            let depth = +dataset.step !== 0 ? +dataset.top + pIdx * dataset.step : p.y;
+            let zone = _.find(notUsedZones, z => (z.startDepth - depth) * (z.endDepth - depth) <= 0)
+            return zone ? { ...p, x: false } : p;
         })
         return curveRes;
     }
@@ -192,7 +189,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 .then(curves => {
                     let zonesConfig = self.controller.zonesetConfig['training'].zoneList || []; // PHUC
                     let zones = (realWell.zone_sets.find(zs => zs.name === self.controller.zonesetConfig['training'].zonesetName)  || {}).zones || [];
-                    curves = zonesetFilter(dataset, curves, zonesConfig, zones); // PHUC
+                    curves = zonesetFilter(dataset, curves, zonesConfig, zones).map(d => d.x); // PHUC
                     return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
                 }) 
                 .then(dataCurves => {
@@ -335,8 +332,8 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             mlApi.createBlankPlot(idProject, self.controller.project.idMlProject, self.controller.tabs['verify'].plotName, listDataset[0], createPlot).then((plot) => {
                 self.controller.tabs['verify'].plot = plot;
                 self.controller.tabs['verify'].plot.username = localStorage.getItem('username') || '';
-                let filterCurveBoolean;
                 async.each(self.controller.tabs['verify'].listDataset, (dataset, _next) => {
+                    let filterCurveBoolean;
                     //if(!isRun(dataset)) {
                     if(!isReady(dataset, self.controller.curveSpecs)) {
                         return reject(new Error('Curve in dataset must be select'))
@@ -358,7 +355,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                         //return mlApi.getDataCurveAndFilter(dataset, curves); // TUNG
                         let zonesConfig = self.controller.zonesetConfig['verify'].zoneList || [];
                         let zones = (realWell.zone_sets.find(zs => zs.name === self.controller.zonesetConfig['verify'].zonesetName) || {}).zones || [];
-                        curves = zonesetFilter(dataset, curves, zonesConfig, zones);
+                        curves = zonesetFilter(dataset, curves, zonesConfig, zones).map(d => d.x);
                         filterCurveBoolean = curves;
                         return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
                     })
@@ -505,7 +502,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     .then(curves => {
                         let zonesConfig = self.controller.zonesetConfig['prediction'].zoneList || [];
                         let zones = (realWell.zone_sets.find(zs => zs.name === self.controller.zonesetConfig['prediction'].zonesetName) || {}).zones || [];
-                        curves = zonesetFilter(dataset, curves, zonesConfig, zones);
+                        curves = zonesetFilter(dataset, curves, zonesConfig, zones).map(d => d.x);
                         filterCurveBoolean = curves;
                         return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs, true);
                     })

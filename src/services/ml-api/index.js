@@ -265,14 +265,14 @@ function mlApi($http, $timeout, wiApi) {
                     let leftCurve = curvesData.find(function(curve) {
                         return curve.name == condition.left.value;
                     });
-                    let left = leftCurve ? parseFloat(leftCurve.data[index]) : null;
+                    let left = leftCurve ? parseFloat(leftCurve.data[index].x) : null;
 
                     let right = condition.right.value;
                     if (condition.right.type == 'curve') {
                         let rightCurve = curvesData.find(function(curve) {
                             return curve.name == condition.right.value;
                         })
-                        right = rightCurve ? parseFloat(rightCurve.data[index]) : null;
+                        right = rightCurve ? parseFloat(rightCurve.data[index].x) : null;
                     }
 
                     if (left != null && right != null) {
@@ -311,7 +311,8 @@ function mlApi($http, $timeout, wiApi) {
                                 curvesData.push({
                                     idCurve: curve.idCurve,
                                     name: curve.name,
-                                    data: data.map(d => parseFloat(d.x))
+                                    data,
+                                    // data: data.map(d => parseFloat(d.x))
                                 })
                             }
                             done();
@@ -323,8 +324,8 @@ function mlApi($http, $timeout, wiApi) {
                     let data = await wiApi.client(getClientId(owner, prjName)).getCurveDataPromise(curvesInDataset[0].idCurve);
                     // console.log(data);
                     length = data.length;
-                    for (let i = 0; i <= length; i++) {
-                        result.push(evaluate(discriminator, i));
+                    for (let i = 0; i < length; i++) {
+                        result.push({ x: evaluate(discriminator, i), y: data[i].y });
                     }
                     resolve(result);
                 }
@@ -441,7 +442,7 @@ function mlApi($http, $timeout, wiApi) {
     }
     */
     this.evaluateExpr = evaluateExpr;
-    async function saveCurveAndCreatePlot(tab, curveInfo, dataset, callback, errorCurveInfo, targetGroupsInfo, curveSpecs, isPrediction, zoneTrack) {
+    async function saveCurveAndCreatePlot(tab, curveInfo, dataset, callback, errorCurveInfo, targetGroupsInfo, curveSpecs, isPrediction, zonesetName) {
         let tempCurveSpecs = Object.assign([], curveSpecs)
         let selectedValues = Object.assign([], dataset.selectedValues)
         !isPrediction ? ( selectedValues.push(selectedValues.shift()) && tempCurveSpecs.push(tempCurveSpecs.shift())) : null;
@@ -477,7 +478,7 @@ function mlApi($http, $timeout, wiApi) {
                     }
                     createLogPlot(tab, dataset, inCurves, orderNum, function(err) {
                         callback && callback(err);
-                    }, zoneTrack);
+                    }, zonesetName);
                 });
             }
             if(tab.canCreatePlot && tab.createPlot) {
