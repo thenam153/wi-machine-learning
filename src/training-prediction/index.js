@@ -151,8 +151,8 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
         // }
         if (!zonesList || !zonesList.length) return curve;
         let usedZones = _.filter(zonesConfig, z => !z._notUsed);
+        usedZones = usedZones.map(z => zonesList.find(_z => _z.zone_template.name === z.template_name)).filter(v => v);
         if (!usedZones || !usedZones.length) return curve.map(d => ({ ...d, x: false }));
-        usedZones = usedZones.map(z => zonesList.find(_z => _z.zone_template.name === z.template_name));
         return curve.map((p, pIdx) => {
             const depth = +dataset.step !== 0 ? +dataset.top + pIdx * dataset.step : p.y;
             const zone = _.find(usedZones, z => (z.startDepth - depth) * (z.endDepth - depth) <= 0)
