@@ -150,15 +150,14 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
         //     return curve.map(p => false);
         // }
         if (!zonesList || !zonesList.length) return curve;
-        let notUsedZones = _.filter(zonesConfig, '_notUsed');
-        notUsedZones = notUsedZones.map(z => zonesList.find(_z => _z.zone_template.name === z.template_name));
-        if (!notUsedZones || !notUsedZones.length) return curve;
-        let curveRes = curve.map((p, pIdx) => {
-            let depth = +dataset.step !== 0 ? +dataset.top + pIdx * dataset.step : p.y;
-            let zone = _.find(notUsedZones, z => (z.startDepth - depth) * (z.endDepth - depth) <= 0)
-            return zone ? { ...p, x: false } : p;
+        let usedZones = _.filter(zonesConfig, z => !z._notUsed);
+        if (!usedZones || !usedZones.length) return curve.map(d => ({ ...d, x: false }));
+        usedZones = usedZones.map(z => zonesList.find(_z => _z.zone_template.name === z.template_name));
+        return curve.map((p, pIdx) => {
+            const depth = +dataset.step !== 0 ? +dataset.top + pIdx * dataset.step : p.y;
+            const zone = _.find(usedZones, z => (z.startDepth - depth) * (z.endDepth - depth) <= 0)
+            return zone ? p : { ...p, x: false };
         })
-        return curveRes;
     }
     function beforeTrain() {
         return new Promise((resolve, reject) => {
