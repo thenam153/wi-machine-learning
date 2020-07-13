@@ -19,33 +19,7 @@ gulp.task('pre', function (cb) {
 });
 gulp.task('run-webpack', function(done) {
 	gulp.src('./src/main.js')
-    .pipe(webpackStream({
-		mode: process.env.NODE_ENV === 'prod' ? "production" : "development",
-		output: {
-			filename:'main.js'
-		},
-		module: {
-			rules: [{
-					test: /\.html$/,
-					use: ['html-loader']
-				}, {
-					test: /\.css$/,
-					use: ['style-loader', 'css-loader'],
-				},
-				{
-					test: /\.less$/,
-					use: ['style-loader','css-loader','less-loader'],
-				},
-				{
-					test: /\.(png|jpeg|ttf|...)$/,
-					use: [
-						{ loader: 'url-loader' }
-						// limit => file.size =< 8192 bytes ? DataURI : File
-					]
-				}
-			],
-		}
-	}, webpack))
+    .pipe(webpackStream(require('./webpack.config'), webpack))
     .pipe(gulp.dest('./public'));	
     done();
 });
