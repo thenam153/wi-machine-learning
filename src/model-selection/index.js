@@ -1,4 +1,4 @@
-import { ngVue } from '@revotechuet/misc-component-vue';
+import { ngVue, VueEditable } from '@revotechuet/misc-component-vue';
 const moduleName = "modelSelection";
 const componentName = "modelSelection";
 export { moduleName as name };
@@ -34,6 +34,9 @@ app.component(componentName,{
 ModelSelectionController.$inject = ['$scope', '$timeout']
 
 function ModelSelectionController($scope, $timeout){
+    Object.assign($scope, {
+        VueEditable
+    })
 	let self = 	this;
 	self.hideDeleteButton = false;	
 	$scope.tab = 1;
