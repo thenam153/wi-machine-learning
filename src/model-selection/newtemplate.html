@@ -22,15 +22,24 @@
                 <div class="editable-custom" ng-repeat="(key, props) in self.controller.currentModel.value.payload.params" ng-init="self.controller.initPropertiesPayload(props)" > 
                     <div ng-hide="props.hidden">
                         <div ng-if="props.type == 'integer' || props.type == 'float' || props.type == 'string' || props.type == 'number'" style="display: flex;">
-                            <vue-component root="VueEditable"
+                            <!-- <vue-component root="VueEditable"
                                 props="{
                                     itemLabel: props.label,
                                     getValue: self.getValue,
                                     setValue: self.setValue,
                                     params: props
                                 }"
-                            ></vue-component>
-                            
+                            ></vue-component> -->
+
+                            <vue-container vue-data="{itemLabel: props.label, item: props}" vue-methods="{getValue: self.getValue, setValue: self.setValue}">
+                                <vue-editable  
+                                    :item-label="itemLabel" 
+                                    :get-value="getValue"
+                                    :set-value="setValue"
+                                    :params="item"
+                                    >
+                                </vue-editable>
+                            </vue-container>
                         </div>
                         
                         <div ng-if=" props.type == 'enum' " style="margin-top: 15px;">

@@ -1,4 +1,6 @@
 import { ngVue, VueEditable } from '@revotechuet/misc-component-vue';
+import Vue from 'vue'
+Vue.component(VueEditable.name, VueEditable)
 const moduleName = "modelSelection";
 const componentName = "modelSelection";
 export { moduleName as name };
