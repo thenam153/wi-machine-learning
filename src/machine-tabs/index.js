@@ -1,11 +1,8 @@
 const moduleName = "machineTabs";
 const componentName = "machineTabs";
-// module.exports.name = moduleName;
-export default {
-    name: moduleName
-  };
+module.exports.name = moduleName;
 // const queryString = require('query-string')
-import { wiLogin } from '@revotechuet/misc-component-vue';
+const { wiLogin } = require('@revotechuet/misc-component-vue');
 var config;
 if (process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development') {
     config = require('../config/config').development
