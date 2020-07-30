@@ -12,18 +12,18 @@ app.component(componentName,{
     style: require('./newstyle.less'),
     controllerAs: 'self',
     bindings: {
-        inputCurveSpecs: '<',
-        targetCurveSpec: '<',
-        machineLearnSteps: '<',
-        typeInput: '<',
-        selectionList: '<',
-        onAddInputItem: '<',
-        getFnOnInputChanged: '<',
-        onTargetItemChanged: '<',
-        onRemoveInputItem: '<',
-        onChangeType: '<',
-        onRemoveDataset: '<',
-        drop: '<',
+        // inputCurveSpecs: '<',
+        // targetCurveSpec: '<',
+        // machineLearnSteps: '<',
+        // typeInput: '<',
+        // selectionList: '<',
+        // onAddInputItem: '<',
+        // getFnOnInputChanged: '<',
+        // onTargetItemChanged: '<',
+        // onRemoveInputItem: '<',
+        // onChangeType: '<',
+        // onRemoveDataset: '<',
+        // drop: '<',
 
         listDataset: '<',
         controller: '<'
@@ -105,7 +105,7 @@ function DatasetSelectionController($scope, wiApi, $timeout) {
     this.clickFn = function(event, node, selectIds, rootnode) {
         console.log(node);
         if(node.idProject && node.wells) return;
-        if(node.idProject && !node.idDataset) {
+        if(node.idProject && !node.idDataset && !node.idWell) {
             wiApi.client(getClientId(node.owner, node.name)).getFullInfoPromise(node.idProject, node.owner, node.name).then(dataProject => {
                 if (node.owner) {
                     for (let well of dataProject.wells) {
@@ -115,26 +115,16 @@ function DatasetSelectionController($scope, wiApi, $timeout) {
                         }
                     }
                 }
-                    //self.controller.projectInfo = {owner: node.owner, name: node.name}; // TUNG
-                    self.controller.dataProject = dataProject;
-                    Vue.set(node, 'wells', dataProject.wells.sort((a, b) => a.name.localeCompare(b.name)));
-                    for(let i of node.wells) {
-                        i.datasets.sort((a,b) => a.name.localeCompare(b.name));   
-                        for(let j of i.datasets) {
-                            j.curves.sort((a,b) => a.name.localeCompare(b.name));   
-                            j.wellName = i.name;
-                            j.idProject = node.idProject;
-                        }
+                self.controller.dataProject = dataProject;
+                Vue.set(node, 'wells', dataProject.wells.sort((a, b) => a.name.localeCompare(b.name)));
+                for(let i of node.wells) {
+                    i.datasets.sort((a,b) => a.name.localeCompare(b.name));   
+                    for(let j of i.datasets) {
+                        j.curves.sort((a,b) => a.name.localeCompare(b.name));   
+                        j.wellName = i.name;
+                        j.idProject = node.idProject;
                     }
-                    // sortProjectData(node);
-                /* TUNG : Donot need this anymore
-                // fix bug project share 
-                let project = rootnode.find(i => !i.shared)
-                if(project) {
-                    wiApi.getFullInfoPromise(project.idProject)
-                    .then(() => {});
                 }
-                */
             });
         }
     }
@@ -144,7 +134,6 @@ function DatasetSelectionController($scope, wiApi, $timeout) {
         }else if(node.name) {
             return node.name.toLowerCase().includes(filter.toLowerCase());
         }
-        // return node.name.includes(filter);
     }
     this.$onInit = function() {
         $scope.$watch(function () {
@@ -177,40 +166,40 @@ function DatasetSelectionController($scope, wiApi, $timeout) {
             })
         })
     }
-    function sortProjectData(projectData) {
-        if (!projectData.wells) return;
-        projectData.wells.sort((a, b) => {
-            let nameA = a.name.toUpperCase();
-            let nameB = b.name.toUpperCase();
-            return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
-        });
-        projectData.wells.forEach(well => {
-            well.datasets.sort((a, b) => {
-                let nameA = a.name.toUpperCase();
-                let nameB = b.name.toUpperCase();
-                return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
-            });
-            well.datasets.forEach(dataset => {
-                dataset.curves.sort((a, b) => {
-                    let nameA = a.name.toUpperCase();
-                    let nameB = b.name.toUpperCase();
-                    return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
-                });
-            });
-            well.zonesets.sort((a, b) => {
-                let nameA = a.name.toUpperCase();
-                let nameB = b.name.toUpperCase();
-                return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
-            });
-            well.zonesets.forEach(function (zoneset) {
-                zoneset.zones.sort((a, b) => {
-                    let depthA = parseFloat(a.startDepth);
-                    let depthB = parseFloat(b.startDepth);
-                    return depthA - depthB;
-                })
-            })
-        });
-    }
+    // function sortProjectData(projectData) {
+    //     if (!projectData.wells) return;
+    //     projectData.wells.sort((a, b) => {
+    //         let nameA = a.name.toUpperCase();
+    //         let nameB = b.name.toUpperCase();
+    //         return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+    //     });
+    //     projectData.wells.forEach(well => {
+    //         well.datasets.sort((a, b) => {
+    //             let nameA = a.name.toUpperCase();
+    //             let nameB = b.name.toUpperCase();
+    //             return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+    //         });
+    //         well.datasets.forEach(dataset => {
+    //             dataset.curves.sort((a, b) => {
+    //                 let nameA = a.name.toUpperCase();
+    //                 let nameB = b.name.toUpperCase();
+    //                 return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+    //             });
+    //         });
+    //         well.zonesets.sort((a, b) => {
+    //             let nameA = a.name.toUpperCase();
+    //             let nameB = b.name.toUpperCase();
+    //             return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
+    //         });
+    //         well.zonesets.forEach(function (zoneset) {
+    //             zoneset.zones.sort((a, b) => {
+    //                 let depthA = parseFloat(a.startDepth);
+    //                 let depthB = parseFloat(b.startDepth);
+    //                 return depthA - depthB;
+    //             })
+    //         })
+    //     });
+    // }
     function getClientId(owner, prjName) {
         return self.controller.getClientId(owner, prjName);
     }
