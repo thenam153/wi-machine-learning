@@ -48,10 +48,10 @@
 		<div class="user-setting" ng-class="{'show-user-setting':self.userSetting}">
 			<div style="position: absolute; right: 13px; top: -20px; z-index: 8; border: 10px solid transparent; border-bottom-color: #fff;">
 			</div>
-			<div class="login">
+			<!-- <div class="login">
 				<wi-login id="custom-login-css" register-url="https://www.i2g.cloud/register-information/" app-name="Wi ML"
 				login-url="{{self.loginUrl}}" query-string="self.queryString"></wi-login>
-			</div>
+			</div> -->
 			<div class="header" style="margin-top: 20px;">
 				<span class="title">
 					<span class="ti ti-shortcode" style="margin-right: 15px;"></span>
@@ -70,9 +70,10 @@
 				<span>12</span>
 				<span>14</span>
 				<span>16</span>
-			</div>
-			
-			
+            </div>
+            <div>
+                <button ng-click="self.logout()">logout</button>
+            </div>
 			<div class="about">
 			</div>
 		</div>

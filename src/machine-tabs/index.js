@@ -1,8 +1,11 @@
 const moduleName = "machineTabs";
 const componentName = "machineTabs";
-module.exports.name = moduleName;
-const queryString = require('query-string')
-//var config = require('../config/config').production;
+// module.exports.name = moduleName;
+export default {
+    name: moduleName
+  };
+// const queryString = require('query-string')
+import { wiLogin } from '@revotechuet/misc-component-vue';
 var config;
 if (process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development') {
     config = require('../config/config').development
@@ -15,7 +18,9 @@ else if (process.env.NODE_ENV === 'local') {
 else {
     config = require('../config/config').default
 }
-window.localStorage.setItem('BASE_URL', config.base_url);
+let { BASE_URL, AUTHENTICATION_HOME, WHOAMI } = config
+Object.assign(window.localStorage, { BASE_URL, AUTHENTICATION_HOME })
+// window.localStorage.setItem('BASE_URL', config.base_url);
 var app = angular.module(moduleName, ['modelSelection',
     'datasetSelection',
     'zonesetConfig',
@@ -24,7 +29,7 @@ var app = angular.module(moduleName, ['modelSelection',
     'mlApi',
     'wiApi',
     'wiNeuralNetwork',
-    'wiLogin',
+    // 'wiLogin',
     'wiToken',
     'wiDialog',
     'wiDiscriminator',
@@ -33,6 +38,9 @@ var app = angular.module(moduleName, ['modelSelection',
     'heatMap',
     'wiDropdownListNew',
 ]);
+app.run(['wiApi', function (wiApi) {
+    wiApi.setBaseUrl(window.localStorage.getItem("BASE_URL"));
+  }]);
 app.component(componentName, {
     template: require('./newtemplate.html'),
     controller: MachineTabsController,
@@ -135,6 +143,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             });
         }).catch(e => console.error(e));
     });
+    this.logout = function() {
+        wiLogin.logout({ redirectUrl: window.location.origin, whoami: WHOAMI, loginPage: AUTHENTICATION_HOME });
+        window.localStorage.clear();
+    }
     this.buildCurvesCache = function(curveSpecs, datasets) {
         let cache = {};
         for (let idx = 0; idx < curveSpecs.length; idx++) {
@@ -147,18 +159,18 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     }
     $scope.$watch(() => (JSON.stringify(this.curveSpecs)), buildAllCurvesCache);
     this.$onInit = async function() {
-        wiApi.setBaseUrl(config.base_url);
-        self.loginUrl = config.login;
-        self.queryString = queryString.parse(location.search);
-        self.token = wiToken.getToken();
+        // wiApi.setBaseUrl(config.base_url);
+        //self.loginUrl = config.login;
+        //self.queryString = queryString.parse(location.search);
+        //self.token = wiToken.getToken();
+        wiLogin.doLogin({ redirectUrl: window.location.origin, whoami: WHOAMI, loginPage: AUTHENTICATION_HOME });
         self.titleTabs = [TAB_DATASET, TAB_MODEL, TAB_TRAIN, TAB_ZONESET, TAB_CONVERGENCE];
         self.steps = [STEP_TRAIN, STEP_VERIFY, STEP_PREDICT];
         self.current_tab = 0;
         initMlProject();
-        if (self.token && self.token.length) window.localStorage.setItem('token', self.token);
+        //if (self.token && self.token.length) window.localStorage.setItem('token', self.token);
         self.restoreProject();
         $scope.$watch(() => window.localStorage.getItem("token"), () => wiApi && wiApi.doInit());
-        // console.log(mlService.value);
     }
     function initMlProject() {
         self.project = null;
@@ -345,6 +357,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         let dsItemHash = {};
         let datasetIds = [];
         let curves = [];
+        let wellIds = [];
         for (let tabLabel of stepLabels) {
             let tab = self.tabs[tabLabel];
             tab.listDataset.forEach(dsItem => {
