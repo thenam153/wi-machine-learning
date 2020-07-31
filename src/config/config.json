@@ -7,7 +7,7 @@
 		"list_type": "type_model",
 		"BASE_URL": "https://users.i2g.cloud",
 		"AUTHENTICATION_HOME": "https://login.i2g.cloud",
-		"WHOAMI": "wi-angular"
+		"WHOAMI": "wi-ml"
 	},
 	"development": {
 		"sheet_name": "models_prod",
@@ -17,7 +17,7 @@
 		"list_type": "type_model",
 		"BASE_URL": "https://users.i2g.cloud",
 		"AUTHENTICATION_HOME": "https://login.i2g.cloud",
-		"WHOAMI": "wi-angular"
+		"WHOAMI": "wi-ml"
 	},
 	"production": {
 		"sheet_name": "models_prod",
@@ -27,7 +27,7 @@
 		"list_type": "type_model",
 		"BASE_URL": "https://users.i2g.cloud",
 		"AUTHENTICATION_HOME": "https://login.i2g.cloud",
-		"WHOAMI": "wi-angular"
+		"WHOAMI": "wi-ml"
 	},
 	"local": {
 		"sheet_name": "models_prod",
@@ -37,6 +37,6 @@
 		"list_type": "type_model",
 		"BASE_URL": "https://users.i2g.cloud",
 		"AUTHENTICATION_HOME": "https://login.i2g.cloud",
-		"WHOAMI": "wi-angular"
+		"WHOAMI": "wi-ml"
 	}
 }
