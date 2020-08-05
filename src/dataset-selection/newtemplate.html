@@ -8,13 +8,13 @@
 			<span class="sub">Select the types below or Add new input curve.</span>
 		</div>
 		<div class="button-input">
-			<div title="Curve" class="button" ng-class="{'active': self.typeInput.type == self.buttons[0].type}" ng-click="self.onChangeType(self.buttons[0])">
+			<div title="Curve" class="button" ng-class="{'active': self.controller.typeInput.type == self.buttons[0].type}" ng-click="self.controller.onChangeType(self.buttons[0])">
 				<div class="ml-curve-16x16"></div>
 			</div>
-			<div title="Family" class="button" ng-class="{'active': self.typeInput.type == self.buttons[1].type}" ng-click="self.onChangeType(self.buttons[1])">
+			<div title="Family" class="button" ng-class="{'active': self.controller.typeInput.type == self.buttons[1].type}" ng-click="self.controller.onChangeType(self.buttons[1])">
 				<div class="ml-family-16x16"></div>
 			</div>
-			<div title="Family Group" class="button" ng-class="{'active': self.typeInput.type == self.buttons[2].type}" ng-click="self.onChangeType(self.buttons[2])">
+			<div title="Family Group" class="button" ng-class="{'active': self.controller.typeInput.type == self.buttons[2].type}" ng-click="self.controller.onChangeType(self.buttons[2])">
 				<div class="ml-family-group-16x16"></div>
 			</div>
 			<div title="Add input curve" class="button" ng-click="self.controller.onAddInputItem()">
@@ -48,7 +48,7 @@
 									</span>
 								</span>
 							</div>
-							<div ng-if="!item.isTarget" style="margin:0 10px; cursor: pointer; display: flex; align-items: center;" ng-click="self.onRemoveInputItem($index)">
+							<div ng-if="!item.isTarget" style="margin:0 10px; cursor: pointer; display: flex; align-items: center;" ng-click="self.controller.onRemoveInputItem($index)">
 								<i class="ti ti-close"></i>
 							</div>
 						</div>
@@ -75,14 +75,14 @@
 			</div>
 
 			<!-- <wi-droppable container-style="{'flex':'1','display':'flex', 'overflow': 'auto'}" onmouseover=this.style.overflowY='auto'
-				onmouseout=this.style.overflowY='hidden' on-drop="self.drop('training')"
+				onmouseout=this.style.overflowY='hidden' on-drop="self.getFnDrop('training')"
 				style="display: flex; height: calc(100% - 67px); overflow: hidden;">
 			</wi-droppable> -->
 			<vue-component
 				ng-show="self.currentTab===$index"
 				root="WiDroppable"
 				props="{
-						onDrop: self.drop('training'),
+						onDrop: self.controller.getFnDrop('training'),
 						dataType: 'tree-nodes',
 				}"
 			></vue-component>
@@ -93,7 +93,7 @@
 					<div style="height: 100%;">
 						<div ng-repeat="item in self.controller.tabs['training'].listDataset track by $index">
 							<div class="datasets-info">
-								<div class="button ti ti-close" ng-click="self.onRemoveDataset('training', $index)"></div>
+								<div class="button ti ti-close" ng-click="self.controller.onRemoveDataset('training', $index)"></div>
 								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
 									{{self.controller.getDataset(item.idWell, item.idDataset).name}}</div>
 								<div class="detail">
@@ -112,14 +112,14 @@
 				<span class="sub">Drag datasets from project list</span>
 			</div>
 			<!-- <wi-droppable container-style="{'flex':'1','display':'flex', 'overflow': 'auto'}" onmouseover=this.style.overflowY='overlay'
-				onmouseout=this.style.overflowY='hidden' on-drop="self.drop('verify')"
+				onmouseout=this.style.overflowY='hidden' on-drop="self.getFnDrop('verify')"
 				style="display: flex;height: calc(100% - 67px); overflow: hidden;">
 			</wi-droppable> -->
 			<vue-component
 				ng-show="self.currentTab===$index"
 				root="WiDroppable"
 				props="{
-						onDrop: self.drop('verify'),
+						onDrop: self.controller.getFnDrop('verify'),
 						dataType: 'tree-nodes',
 				}"
 			></vue-component>
@@ -130,7 +130,7 @@
 					<div style="height: 100%;">
 						<div ng-repeat="item in self.controller.tabs['verify'].listDataset track by $index">
 							<div class="datasets-info">
-								<div class="button ti ti-close" ng-click="self.onRemoveDataset('verify', $index)"></div>
+								<div class="button ti ti-close" ng-click="self.controller.onRemoveDataset('verify', $index)"></div>
 								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
 									{{self.controller.getDataset(item.idWell, item.idDataset).name}}</div>
 								<div class="detail">
@@ -149,7 +149,7 @@
 				<span class="sub">Drag datasets from project list</span>
 			</div>
 			<!-- <wi-droppable container-style="{'flex':'1','display':'flex', 'overflow': 'auto'}" onmouseover=this.style.overflowY='overlay'
-				onmouseout=this.style.overflowY='hidden' on-drop="self.drop('prediction')"
+				onmouseout=this.style.overflowY='hidden' on-drop="self.getFnDrop('prediction')"
 				style="display: flex;height: calc(100% - 67px); overflow: hidden;">
 			</wi-droppable> -->
 				<div class="no-datasets" ng-show="!self.controller.tabs['prediction'].listDataset.length" style="background-image:url('./bg-datasets.png')">
@@ -161,7 +161,7 @@
 				ng-show="self.currentTab===$index"
 				root="WiDroppable"
 				props="{
-						onDrop: self.drop('prediction'),
+						onDrop: self.controller.getFnDrop('prediction'),
 						dataType: 'tree-nodes',
 				}"
 			></vue-component>
@@ -170,7 +170,7 @@
 					<div style="height: 100%;">
 						<div ng-repeat="item in self.controller.tabs['prediction'].listDataset track by $index">
 							<div class="datasets-info">
-								<div class="button ti ti-close" ng-click="self.onRemoveDataset('prediction', $index)">
+								<div class="button ti ti-close" ng-click="self.controller.onRemoveDataset('prediction', $index)">
 								</div>
 								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
 									{{self.controller.getDataset(item.idWell, item.idDataset).name}}</div>
