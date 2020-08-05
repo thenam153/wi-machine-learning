@@ -33,7 +33,9 @@
 				<span  class="ml-new-16x16" style="margin-right: 10px;filter: saturate(0) brightness(6)"></span>
 				<span>NEW</span>
 			</div>
-            <span style="font-size: 15px; margin-left: 20px; padding: 0;" class="menu-item active ti ti-settings" ng-click="self.userSetting=!self.userSetting"></span>
+            <span style="font-size: 15px; margin-left: 20px; padding: 0; cursor: pointer; color: #fff;" class="menu-item active" ng-click="self.logout()">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px" height="16px" viewBox="0 0 16 16" version="1.1"> <g id="01-copy-15" stroke="none" stroke-width="1" fill-rule="evenodd" fill="#fff"> <path d="M8,14.5 C11.5898509,14.5 14.5,11.5898509 14.5,8 C14.5,4.41014913 11.5898509,1.5 8,1.5 C4.41014913,1.5 1.5,4.41014913 1.5,8 C1.5,8.27614237 1.72385763,8.5 2,8.5 C2.27614237,8.5 2.5,8.27614237 2.5,8 C2.5,4.96243388 4.96243388,2.5 8,2.5 C11.0375661,2.5 13.5,4.96243388 13.5,8 C13.5,11.0375661 11.0375661,13.5 8,13.5 C7.72385763,13.5 7.5,13.7238576 7.5,14 C7.5,14.2761424 7.72385763,14.5 8,14.5 Z" id="Oval" fill-rule="nonzero" transform="translate(8.000000, 8.000000) rotate(-225.000000) translate(-8.000000, -8.000000) "></path> <path d="M4.5,4 L11.5,4 C11.7761424,4 12,4.22385763 12,4.5 C12,4.77614237 11.7761424,5 11.5,5 L4.5,5 C4.22385763,5 4,4.77614237 4,4.5 C4,4.22385763 4.22385763,4 4.5,4 Z M4.5,5 C4.77614237,5 5,4.77614237 5,4.5 C5,4.22385763 4.77614237,4 4.5,4 L11.5,4 C11.2238576,4 11,4.22385763 11,4.5 C11,4.77614237 11.2238576,5 11.5,5 L4.5,5 Z" id="Rectangle" fill-rule="nonzero" transform="translate(8.000000, 4.500000) rotate(-270.000000) translate(-8.000000, -4.500000) "></path> </g> </svg>
+            </span>
 			
 		</div>
 		
@@ -44,38 +46,6 @@
 		</div>
 		<div class="next">
 			<span class="ti ti-arrow-right" ng-click="changeTab('next');"></span>
-		</div>
-		<div class="user-setting" ng-class="{'show-user-setting':self.userSetting}">
-			<div style="position: absolute; right: 13px; top: -20px; z-index: 8; border: 10px solid transparent; border-bottom-color: #fff;">
-			</div>
-			<!-- <div class="login">
-				<wi-login id="custom-login-css" register-url="https://www.i2g.cloud/register-information/" app-name="Wi ML"
-				login-url="{{self.loginUrl}}" query-string="self.queryString"></wi-login>
-			</div> -->
-			<div class="header" style="margin-top: 20px;">
-				<span class="title">
-					<span class="ti ti-shortcode" style="margin-right: 15px;"></span>
-					Font size
-				</span>
-				<span class="sub">Select font size for Machine Learning website</span>
-			</div>
-			<div class="font-size">
-				<div ng-click="self.selectedFontSize = 10; self.changeFontSize('10px')" ng-class="{'choose-font-size':self.selectedFontSize === 10}"></div>
-				<div ng-click="self.selectedFontSize = 12; self.changeFontSize('12px')" ng-class="{'choose-font-size':self.selectedFontSize === 12}"></div>
-				<div ng-click="self.selectedFontSize = 14; self.changeFontSize('14px')" ng-class="{'choose-font-size':self.selectedFontSize === 14}"></div>
-				<div ng-click="self.selectedFontSize = 16; self.changeFontSize('16px')" ng-class="{'choose-font-size':self.selectedFontSize === 16}"></div>
-			</div>
-			<div class="font-size" style="background: none;">
-				<span>10</span>
-				<span>12</span>
-				<span>14</span>
-				<span>16</span>
-            </div>
-            <div>
-                <button ng-click="self.logout()">logout</button>
-            </div>
-			<div class="about">
-			</div>
 		</div>
         <dataset-selection 
             ng-show="self.titleTabs[self.current_tab] === 'Dataset Selection'"
