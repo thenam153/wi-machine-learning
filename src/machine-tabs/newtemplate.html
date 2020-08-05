@@ -272,3 +272,32 @@
         </div>
     </div>
 </script>
+<script type="text/ng-template" id="templateLogout">
+    <div class="ngdialog-buttons">
+        <div class="newDialog">
+            <div style="display: flex;align-items: center;">
+               Logout 
+            </div>
+            <div style="border-bottom: 1px solid #f1f0f0; margin-bottom: 15px;"></div>
+            <div style="font-weight: 300; color: #666; font-size: 13px; font-style: italic;">
+                Are you sure want to log out?
+            <div class="newDialogContent">
+                <form style="justify-content: flex-end;">
+                        <a style="background: #fff;
+                        color: #0077be;
+                        border: 1px solid;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        margin-right: 15px;
+                        text-overflow: ellipsis;
+                        letter-spacing: 0;
+                        text-transform: none;" 
+                        class="ngdialog-button ngdialog-button-primary" ng-click="self.cancelLogout()"> CANCEL </a>
+                    <div>
+                        <input type="submit" style="max-width: fit-content; border: 1px solid #3188e6;" value="Logout" class="ngdialog-button ngdialog-button-primary" ng-click="self.acceptLogout()">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</script>

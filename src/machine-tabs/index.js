@@ -141,8 +141,18 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }).catch(e => console.error(e));
     });
     this.logout = function() {
-        wiLogin.logout({ redirectUrl: window.location.origin, whoami: WHOAMI, loginPage: AUTHENTICATION_HOME });
-        window.localStorage.clear();
+        ngDialog.open({
+            template: 'templateLogout',
+            className: 'ngdialog-theme-default',
+            scope: $scope,
+        });
+        self.acceptLogout = function() {
+            wiLogin.logout({ redirectUrl: window.location.origin, whoami: WHOAMI, loginPage: AUTHENTICATION_HOME });
+            window.localStorage.clear();
+        }
+        self.cancelLogout = function() {
+            ngDialog.close();
+        }
     }
     this.buildCurvesCache = function(curveSpecs, datasets) {
         let cache = {};
