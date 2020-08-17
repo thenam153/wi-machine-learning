@@ -11,9 +11,6 @@
 	},
 	"development": {
 		"sheet_name": "models_prod",
-		"backend": "https://api-1.i2g.cloud",
-		"login": "https://users.i2g.cloud/login",
-		"base_url": "https://users.i2g.cloud",
 		"list_type": "type_model",
 		"BASE_URL": "https://users.i2g.cloud",
 		"AUTHENTICATION_HOME": "https://login.i2g.cloud",
@@ -21,9 +18,6 @@
 	},
 	"production": {
 		"sheet_name": "models_prod",
-		"backend": "https://api-1.i2g.cloud",
-		"login": "https://users.i2g.cloud/login",
-		"base_url": "https://users.i2g.cloud",
 		"list_type": "type_model",
 		"BASE_URL": "https://users.i2g.cloud",
 		"AUTHENTICATION_HOME": "https://login.i2g.cloud",
@@ -31,9 +25,6 @@
 	},
 	"local": {
 		"sheet_name": "models_prod",
-		"backend": "https://api-1.i2g.cloud",
-		"login": "https://users.i2g.cloud/login",
-		"base_url": "https://users.i2g.cloud",
 		"list_type": "type_model",
 		"BASE_URL": "https://users.i2g.cloud",
 		"AUTHENTICATION_HOME": "https://login.i2g.cloud",

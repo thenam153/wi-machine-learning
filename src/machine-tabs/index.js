@@ -8,8 +8,7 @@ if (process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development') {
     config = require('../config/config').development
 } else if (process.env.NODE_ENV === 'prod' || process.env.NODE_ENV === 'production') {
     config = require('../config/config').production
-}
-else if (process.env.NODE_ENV === 'local') {
+} else if (process.env.NODE_ENV === 'local') {
     config = require('../config/config').local;
 }
 else {
