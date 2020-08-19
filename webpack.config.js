@@ -3,7 +3,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-	mode: "development",
+	mode: process.env.NODE_ENV || "development",
 	entry: {
 		main: "./src/main.js",
 	},
