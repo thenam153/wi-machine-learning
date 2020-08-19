@@ -20,7 +20,7 @@ gulp.task('pre', function (cb) {
 gulp.task('run-webpack', function(done) {
 	gulp.src('./src/main.js')
     .pipe(webpackStream(require('./webpack.config'), webpack))
-    .pipe(gulp.dest('./public'));	
+    .pipe(gulp.dest('./dist'));	
     done();
 });
 gulp.task('build', gulp.series('pre', 'run-webpack'), function(done) {
