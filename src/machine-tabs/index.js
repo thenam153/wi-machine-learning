@@ -2,6 +2,7 @@ const moduleName = "machineTabs";
 const componentName = "machineTabs";
 module.exports.name = moduleName;
 // const queryString = require('query-string')
+const limitToastDisplayed = 3;
 const { wiLogin } = require('@revotechuet/misc-component-vue');
 var config;
 if (process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development') {
@@ -139,20 +140,24 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             });
         }).catch(e => console.error(e));
     });
+    this.getUser = function() {
+    return localStorage.username || 'Guest';
+    }
     this.logout = function() {
-        ngDialog.open({
-            template: 'templateLogout',
-            className: 'ngdialog-theme-default',
-            scope: $scope,
+        let logoutDialog = ngDialog.open({
+          template: 'templateLogout',
+          className: 'i2g-ngdialog',
+          showClose: true,
+          scope: $scope,
         });
-        self.acceptLogout = function() {
+        self.acceptLogout = function () {
             wiLogin.logout({ redirectUrl: window.location.origin, whoami: WHOAMI, loginPage: AUTHENTICATION_HOME });
             window.localStorage.clear();
         }
-        self.cancelLogout = function() {
-            ngDialog.close();
+        self.cancelLogout = function () {
+          ngDialog.close(logoutDialog.id)
         }
-    }
+      }
     this.buildCurvesCache = function(curveSpecs, datasets) {
         let cache = {};
         for (let idx = 0; idx < curveSpecs.length; idx++) {
@@ -165,10 +170,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     }
     $scope.$watch(() => (JSON.stringify(this.curveSpecs)), buildAllCurvesCache);
     this.$onInit = async function() {
-        // wiApi.setBaseUrl(config.base_url);
-        //self.loginUrl = config.login;
-        //self.queryString = queryString.parse(location.search);
-        //self.token = wiToken.getToken();
+        loadTheme();
+        loadFontSize();
+        self.toastArray = [];
+		self.toastHistory = [];
+		self.mute = true;
         wiLogin.doLogin({ redirectUrl: window.location.origin, whoami: WHOAMI, loginPage: AUTHENTICATION_HOME });
         self.titleTabs = [TAB_DATASET, TAB_MODEL, TAB_TRAIN, TAB_ZONESET, TAB_CONVERGENCE];
         self.steps = [STEP_TRAIN, STEP_VERIFY, STEP_PREDICT];
@@ -177,6 +183,127 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         //if (self.token && self.token.length) window.localStorage.setItem('token', self.token);
         self.restoreProject();
         $scope.$watch(() => window.localStorage.getItem("token"), () => wiApi && wiApi.doInit());
+    }
+    this.setTheme = function(theme)  {
+        if (theme == 'dark') {
+          localStorage.setItem('theme', theme);
+          $timeout(()=>{
+            self.currentTheme = 'dark';
+          })
+          $(':root').css('--toolbar-bg-color', '#252525');
+          $(':root').css('--white', '#252525');
+          $(':root').css('--black', '#fff');
+          $(':root').css('--text-primary-color', '#fff');
+          $(':root').css('--button-bg-color', '#434343');
+          $(':root').css('--input-bg', '#2d2d2d');
+          $(':root').css('--dialog-bg-color', '#333333');
+          $(':root').css('--input-bg-hover', '#1e1e1e');
+          $(':root').css('--box-shadow', '0px 10px 50px rgb(0 0 0 / 17%)');
+          $(':root').css('--body-bg-color', '#252525');
+          $(':root').css('--input-check-bg', '#333333');
+          $(':root').css('--input-border', '#fff');
+          $(':root').css('--select-bg', '#f3f3f4');
+          $(':root').css('--select-border', '#434343');
+          
+        }
+        if (theme == 'light') {
+          localStorage.setItem('theme', 'light');
+          $timeout(()=>{
+            self.currentTheme = 'light';
+          })
+          $(':root').css('--toolbar-bg-color', '#fff');
+          $(':root').css('--body-bg-color', '#f3f3f4');
+          $(':root').css('--dialog-bg-color', '#fff');
+          $(':root').css('--white', '#fff');
+          $(':root').css('--black', '#000');
+          $(':root').css('--button-bg-color', '#f3f3f4');
+          $(':root').css('--text-primary-color', '#0d0b22');
+          $(':root').css('--input-check-bg', '#fff');
+          $(':root').css('--input-bg', '#f3f3f4');
+          $(':root').css('--input-border', '#9e9ea7');
+          $(':root').css('--input-bg-hover', '#fff');
+          $(':root').css('--box-shadow', '0px 10px 50px rgba(0, 0, 0, 0.1)');
+          $(':root').css('--select-bg', '#f3f3f4');
+          $(':root').css('--select-border', '#f3f3f4');
+    
+        }
+    }
+    function loadTheme() {
+    if (localStorage.getItem('theme') == '') {
+        self.setTheme('light');
+        $timeout(()=>{
+        self.currentTheme = 'light';
+        })
+    } else {
+        self.setTheme(localStorage.getItem('theme'));
+    }
+    }
+    this.setFontSize = function(size) {
+    if (size == '12') {
+        localStorage.setItem('font-size', size);
+        self.currentFont = '12';
+        $('*').addClass('font-12');
+        $('*').removeClass('font-14');
+        $('*').removeClass('font-16');
+        $('*').removeClass('font-18');
+        $('*').removeClass('font-20');
+    }
+    if (size == '14') {
+        localStorage.setItem('font-size', size);
+        self.currentFont = '14';
+        $('*').addClass('font-14');
+        $('*').removeClass('font-12');
+        $('*').removeClass('font-16');
+        $('*').removeClass('font-18');
+        $('*').removeClass('font-20');
+    }
+    if (size == '16') {
+        localStorage.setItem('font-size', size);
+        self.currentFont = '16';
+        $('*').addClass('font-16');
+        $('*').removeClass('font-14');
+        $('*').removeClass('font-12');
+        $('*').removeClass('font-18');
+        $('*').removeClass('font-20');
+    }
+    if (size == '18') {
+        localStorage.setItem('font-size', size);
+        self.currentFont = '18';
+        $('*').addClass('font-18');
+        $('*').removeClass('font-14');
+        $('*').removeClass('font-16');
+        $('*').removeClass('font-12');
+        $('*').removeClass('font-20');
+    }
+    if (size == '20') {
+        localStorage.setItem('font-size', size);
+        self.currentFont = '20';
+        $('*').addClass('font-20');
+        $('*').removeClass('font-14');
+        $('*').removeClass('font-16');
+        $('*').removeClass('font-18');
+        $('*').removeClass('font-12');
+    }
+    
+    }
+    function loadFontSize() {
+    if (localStorage.getItem('font-size') == '') {
+        self.setFontSize('14');
+        $timeout(()=>{
+        self.currentFont = '14';
+        })
+    } 
+    else {
+        self.setFontSize(localStorage.getItem('font-size'));
+    }
+    }
+    self.openSetting = function() {
+    let settingDialog = ngDialog.open({
+        template: 'settingDialog',
+        className: 'i2g-ngdialog',
+        showClose: true,
+        scope: $scope,
+    });
     }
     function initMlProject() {
         self.project = null;
@@ -334,7 +461,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                             }
                             self.tabs[step].listDataset.push(dsItem);
                         } else {
-                            toastr.error('Already has this dataset');
+                            $timeout(() => {
+                                self.showNotiFn('error', 'Error','Already has this dataset' , 4000);
+                            });
+                            // toastr.error('Already has this dataset');
                         }
                     }
                 })
@@ -449,199 +579,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             return curves;
         });
     }
-    /* TUNG
-    this.makeListOfDatasetSelection = function() {
-        self.makeListOfDatasetSelectionTarget();
-        let preProcessCurves = [];
-        self.tabs[STEP_TRAIN].listDataset.forEach(i => {
-            preProcessCurves.push(i.curves);
-        })
-        self.tabs[STEP_VERIFY].listDataset.forEach(i => {
-            preProcessCurves.push(i.curves);
-        })
-        self.tabs[STEP_PREDICT].listDataset.forEach(i => {
-            preProcessCurves.push(i.curves);
-        })
-        var curves = _.intersectionBy(...preProcessCurves, 'name');
-        self.selectionList = [];
-        switch(self.typeInput.type) {
-            case FAMILY_CURVE:
-                falCurve = _.intersectionBy(curves, 'idFamily');
-                async.eachSeries(falCurve, async (c) => {
-                    if (c.idFamily !== undefined && c.idFamily) {
-
-                        self.selectionList.push({
-                            label: c.LineProperty.name,
-                            familyGroup: c.LineProperty.familyGroup,
-                            familyCurve: c.LineProperty.name,
-                            name: c.LineProperty.name,
-                            // idFamily: fl.idFamily
-                            icon: 'family-16x16'
-                        })
-                    }
-                }, (err) => {
-                    if(err) console.log("Have a error!");
-                    self.selectionList = _.uniqBy(self.selectionList, 'label');
-                    self.selectionList.sort((a, b) => {
-                                        let nameA = a.label.toUpperCase();
-                                        let nameB = b.label.toUpperCase();
-                                        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
-                                    });
-                    self.selectionList.unshift({
-                        label: LABEL_DEFAULT,
-                        value: null
-                    });
-                });
-                break;
-            case FAMILY_GROUP:
-                falCurve = _.intersectionBy(curves, 'idFamily');
-                async.eachSeries(falCurve, async (c) => {
-                    if (c.idFamily !== undefined && c.idFamily) {
-                        self.selectionList.push({
-                            label: c.LineProperty.familyGroup,
-                            familyGroup: c.LineProperty.familyGroup,
-                            name: c.LineProperty.familyGroup,
-                            // idFamily: fl.idFamily
-                            icon: 'family-group-16x16'
-                        })
-                    }
-                }, (err) => {
-                    if(err) console.log("Have a error!");
-                    self.selectionList = _.uniqBy(self.selectionList, 'label');
-                    self.selectionList.sort((a, b) => {
-                                        let nameA = a.label.toUpperCase();
-                                        let nameB = b.label.toUpperCase();
-                                        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
-                                    });
-                    self.selectionList.unshift({
-                        label: LABEL_DEFAULT,
-                        value: null
-                    });
-                });
-                break;
-            case CURVE:
-                async.eachSeries(curves, (c, next) => {
-                    self.selectionList.push({
-                        label: c.name,
-                        name: c.name,
-                        curveType: c.type,
-                        // familyGroup: c.familyGroup,
-                        // familyCurveSpec: c.family_spec,
-                        idFamily: c.idFamily,
-                        icon: 'curve-16x16'
-                    });
-                    next();
-                }, (err) => {
-                    if(err) console.log("Have a error!");
-                    self.selectionList = _.uniqBy(self.selectionList, 'label');
-                    self.selectionList.sort((a, b) => {
-                                        let nameA = a.label.toUpperCase();
-                                        let nameB = b.label.toUpperCase();
-                                        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
-                                    });
-                    self.selectionList.unshift({
-                        label: LABEL_DEFAULT,
-                        value: null
-                    });
-                });
-                break;
-        }
-    }
-    this.makeListOfDatasetSelectionTarget = function() {
-        let preProcessCurves = [];
-        self.tabs[STEP_TRAIN].listDataset.forEach(i => {
-            preProcessCurves.push(i.curves);
-        })
-        self.tabs[STEP_VERIFY].listDataset.forEach(i => {
-            preProcessCurves.push(i.curves);
-        })
-        var curves = _.intersectionBy(...preProcessCurves, 'name');
-        self.selectionListTarget = [];
-        switch(self.typeInput.type) {
-            case FAMILY_CURVE:
-                falCurve = _.intersectionBy(curves, 'idFamily');
-                async.eachSeries(falCurve, async (c) => {
-                    if (c.idFamily !== undefined && c.idFamily) {
-
-                        self.selectionListTarget.push({
-                            label: c.LineProperty.name,
-                            familyGroup: c.LineProperty.familyGroup,
-                            familyCurve: c.LineProperty.name,
-                            name: c.LineProperty.name,
-                            // idFamily: fl.idFamily
-                            icon: 'family-16x16'
-                        })
-
-                    }
-                }, (err) => {
-                    if(err) console.log("Have a error!");
-                    self.selectionListTarget = _.uniqBy(self.selectionListTarget, 'label');
-                    self.selectionListTarget.sort((a, b) => {
-                                        let nameA = a.label.toUpperCase();
-                                        let nameB = b.label.toUpperCase();
-                                        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
-                                    });
-                    self.selectionListTarget.unshift({
-                        label: LABEL_DEFAULT,
-                        value: null
-                    });
-                });
-                break;
-            case FAMILY_GROUP:
-                falCurve = _.intersectionBy(curves, 'idFamily');
-                async.eachSeries(falCurve, async (c) => {
-                    if (c.idFamily !== undefined && c.idFamily) {
-                        self.selectionListTarget.push({
-                            label: c.LineProperty.familyGroup,
-                            familyGroup: c.LineProperty.familyGroup,
-                            name: c.LineProperty.familyGroup,
-                            // idFamily: fl.idFamily
-                            icon: 'family-group-16x16'
-                        })
-
-                    }
-                }, (err) => {
-                    if(err) console.log("Have a error!");
-                    self.selectionListTarget = _.uniqBy(self.selectionListTarget, 'label');
-                    self.selectionListTarget.sort((a, b) => {
-                                        let nameA = a.label.toUpperCase();
-                                        let nameB = b.label.toUpperCase();
-                                        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
-                                    });
-                    self.selectionListTarget.unshift({
-                        label: LABEL_DEFAULT,
-                        value: null
-                    });
-                });
-                break;
-            case CURVE:
-                async.eachSeries(curves, (c, next) => {
-                    self.selectionListTarget.push({
-                        label: c.name,
-                        name: c.name,
-                        curveType: c.type,
-                        // familyGroup: c.familyGroup,
-                        // familyCurveSpec: c.family_spec,
-                        idFamily: c.idFamily,
-                        icon: 'curve-16x16'
-                    });
-                    next();
-                }, (err) => {
-                    if(err) console.log("Have a error!");
-                    self.selectionListTarget = _.uniqBy(self.selectionListTarget, 'label');
-                    self.selectionListTarget.sort((a, b) => {
-                                        let nameA = a.label.toUpperCase();
-                                        let nameB = b.label.toUpperCase();
-                                        return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
-                                    });
-                    self.selectionListTarget.unshift({
-                        label: LABEL_DEFAULT,
-                        value: null
-                    });
-                });
-                break;
-        }
-    } */
+    
     this.refreshCurveData = function() {
         this.buildInputSelectionListForTabs([
             STEP_TRAIN, 
@@ -657,10 +595,14 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             self.selectionList = curves;
             $timeout(() => {
                 buildAllCurvesCache();
+                self.showNotiFn('success', 'Successfully','Refresh success' , 4000);
             });
-            toastr.success('Refresh success', 'Success');
+            // toastr.success('Refresh success', 'Success')
         }).catch(e => {
-            toastr.error('Refresh error', 'Error');
+            $timeout(() => {
+                self.showNotiFn('error', 'Error','Refresh error' , 4000);
+            });
+            // toastr.error('Refresh error', 'Error');
             console.error(e)
         });
     }
@@ -738,38 +680,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
 			// console.log(properties);
 		}
     }
-    // NAM use vue - editable
-	// this.modelSelection.changeValue = _.debounce(function(obj) {
-    //     $timeout(() => {
-    //         switch (obj.type) {
-    //             case 'string':
-    //                 break;
-    //             case 'integer':
-    //                 if (!Number.isInteger(Number(obj.value))) {
-    //                     obj.value = obj.example;
-    //                 }else {
-    //                     obj.value = Number(obj.value)
-    //                 }
-    //                 break;
-    //             case 'number':
-    //                 if (isNaN(Number(obj.value))) {
-    //                     obj.value = obj.example;
-    //                 }else {
-    //                     obj.value = Number(obj.value)
-    //                 }
-    //                 break;
-    //             case 'float':
-    //                 if (isNaN(parseFloat(obj.value))) {
-    //                     obj.value = obj.example;
-    //                 } 
-    //                 else {
-    //                     obj.value = parseFloat(obj.value)
-    //                 } 
-    //                 break;
-    //         }
-    //         console.log(obj);
-    //     });
-	// }, 700);
+   
 	this.modelSelection.onItemChange = function(value, properties) {
 		// console.log(value, properties);
 		properties.value = properties.enum.find(e => e.properties === value);
@@ -833,84 +744,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         //self.makeListOfTAP();
         mlApi.setBaseCurrentModel(self.modelSelection.currentModel.value);
     }
-    /* TUNG
-    this.updateCurveSpecs = function(remove) {
-        if(remove) {
-            Object.keys(self.tabs).forEach((k) => {
-                self.tabs[k].listDataset.forEach((d) => {
-                    k === STEP_PREDICT ? 
-                    d.curveSpecs.splice(remove - 1, 1) :
-                    d.curveSpecs.splice(remove, 1);
-                });
-            });
-        }
-        else {
-            Object.keys(self.tabs).forEach((k) => {
-                self.tabs[k].listDataset.forEach((d) => {
-                    d.curveSpecs.push({isTarget: false, value: null});
-                });
-            });
-        }
-    }
-    this.makeListOfTAP = function() {
-        console.log('makeListOfTAP');
-        return;
-        Object.keys(self.tabs).forEach((k) => {
-            let list = [];
-            switch(k) {
-                case STEP_TRAIN:
-                case STEP_VERIFY:
-                        list = self.curveSpecs.filter((i, idx) => idx >= 0);
-                    break;
-                case STEP_PREDICT: 
-                        list = self.curveSpecs.filter((i, idx) => idx > 0);
-                    break;
-            }
-            // self.tabs[k].selectionList = list;
-            self.tabs[k].listDataset.forEach((d) => {
-                d.listSelection = list.map(i => []);
-                list.forEach((l, idx) => {
-                    if(l.currentSelect !== LABEL_DEFAULT)
-                    {
-                        switch(self.typeInput.type) {
-                            case CURVE:
-                                    curve = d.curves.find(c => c.name === l.currentSelect);
-                                    d.listSelection[idx] = [{data: {label: curve.name}, properties: curve}];
-                                break;
-                            case FAMILY_CURVE:
-                                    d.listSelection[idx] = d.curves.filter(c => {
-                                        return c.LineProperty && c.LineProperty.name === l.currentSelect;
-                                    }).map((c) => {
-                                        return {
-                                            data: {
-                                                label: c.name
-                                            },
-                                            properties: c
-                                        }
-                                    });
-                                break;
-                            case FAMILY_GROUP:
-                                    d.listSelection[idx] = d.curves.filter(c => {
-                                        return c.LineProperty && c.LineProperty.familyGroup === l.currentSelect;
-                                    }).map((c) => {
-                                        return {
-                                            data: {
-                                                label: c.name
-                                            },
-                                            properties: c
-                                        }
-                                    });
-                                break;
-                        }
-                    } else {
-                        d.listSelection[idx] = [{data: {label: LABEL_DEFAULT}, properties: null}];
-                    }
-                    d.curveSpecs[idx].currentSelect =  d.listSelection[idx][0].data.label; 
-                })
-            })
-        });
-    }
-    */
+    
     this.onClickDiscriminator = function(dataset) {
         wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell).then(well => {
             let fullDataset = well.datasets.find(ds => ds.idDataset === dataset.idDataset);
@@ -936,30 +770,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         arr[1].selectedValues[arr[3]] = item.name;
         return;
     }
-    /* TUNG
-    this.onItemChangeTabTAP1 = function(v, arr) {
-
-        return;
-        arr[0].value = v;
-        if(arr[1] && arr[0].isTarget) {
-            if(v) {
-                if(arr[2] == 'Verify') {
-                    arr[1].resultCurveName = `${v.name}-${self.modelSelection.currentModel.value.infix}-${arr[2]}`;
-                }else {
-                    self.tabs[STEP_PREDICT].listDataset.forEach(d => d.resultCurveName = `${v.name}-${self.modelSelection.currentModel.value.infix}-${arr[2]}`)
-                }
-            }else {
-                if(arr[2] == 'Verify') {
-                    arr[1].resultCurveName = `-${self.modelSelection.currentModel.value.infix}-${arr[2]}`;
-                }else {
-                    self.tabs[STEP_PREDICT].listDataset.forEach(d => d.resultCurveName = `-${self.modelSelection.currentModel.value.infix}-${arr[2]}`)
-                }
-            }
-        }
-        console.log(v);
-    }
-    */
-    // ===========================================================================================
+   
     function loadProject(mlProject) {
         let content = mlProject.content;
         //self.projectInfo = content.projectInfo || {}; // TUNG
@@ -1031,7 +842,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             }
             ngDialog.open({
                 template: 'templateOpenProject',
-                className: 'ngdialog-theme-default',
+                className: 'i2g-ngdialog',
                 scope: $scope,
             });
         }).catch(err => {
@@ -1064,12 +875,16 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     $timeout(() => {
                         self.project = project;
                         wiToken.setCurrentProjectName(project.name);
+                        self.showNotiFn('success', 'Successfully','Rename project success' , 4000);
                     })
-                    toastr.success('Rename project success', 'Success');
+                    // toastr.success('Rename project success', 'Success');
                 })
                 .catch(err => {
                     console.error(err);
-                    Toastr.error('Rename project fail', 'Error: ' + err.message);
+                    $timeout(()=>{
+                        self.showNotiFn('error', 'Rename project fail',err.message , 4000);
+                    })
+                    // Toastr.error('Rename project fail', 'Error: ' + err.message);
                 })
                 .finally(() => {
                     ngDialog.close();
@@ -1079,7 +894,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }
         ngDialog.open({
             template: 'templateRenamePrj',
-            className: 'ngdialog-theme-default',
+            className: 'i2g-ngdialog',
             scope: $scope,
         });
     }
@@ -1116,9 +931,15 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         })
         .then((project) => {
             wiToken.setCurrentProjectName(project.name);
-            toastr.success('Save project success', 'Success');
+            $timeout(()=>{
+                self.showNotiFn('success', 'Successfully','Save project success' , 4000);
+            })
+            // toastr.success('Save project success', 'Success');
         })
         .catch((err) => {
+            $timeout(()=>{
+                self.showNotiFn('error', 'Error',"Save project fail" , 4000);
+            })
             toastr.error('Save project fail', 'Error');
         })
         .finally(() =>  ngDialog.close())
@@ -1157,22 +978,26 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     }
                 })
                 .then((project) => {
-                    toastr.success('Create machine learing project success', 'Success')
+                    // toastr.success('Create machine learing project success', 'Success')
                     console.log(project);
                     $timeout(() => {
+                        self.showNotiFn('success', 'Successfully','Save as machine learing project success' , 4000);
                         self.project = project;
                         wiToken.setCurrentProjectName(project.name);
                     })
                     ngDialog.close();
                 })
                 .catch((err) => {
-                    toastr.error("Project's name already exists", 'Error')
+                    $timeout(()=>{
+                        self.showNotiFn('error', 'Error',"Project's name already exists" , 4000);
+                    })
+                    // toastr.error("Project's name already exists", 'Error')
                 })
             }
         }
         ngDialog.open({
             template: 'templateNewPrj',
-            className: 'ngdialog-theme-default',
+            className: 'i2g-ngdialog',
             scope: $scope,
         });
     }
@@ -1207,9 +1032,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     }
                 })
                 .then((project) => {
-                    toastr.success('Create machine learing project success', 'Success')
+                    // toastr.success('Create machine learing project success', 'Success')
                     console.log(project);
                     $timeout(() => {
+                        self.showNotiFn('success', 'Successfully','Create machine learing project success' , 4000);
                         self.project = project;
                         wiToken.setCurrentProjectName(project.name);
                     })
@@ -1221,7 +1047,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
 
                 })
                 .catch((err) => {
-                    toastr.error("Project's name already exists", 'Error')
+                    $timeout(()=>{
+                        self.showNotiFn('error', 'Error',"Project's name already exists" , 4000);
+                    })
+                    // toastr.error("Project's name already exists", 'Error')
                 })
                 .finally(() => {
                     ngDialog.close();
@@ -1231,7 +1060,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }
         ngDialog.open({
             template: 'templateNewPrj',
-            className: 'ngdialog-theme-default',
+            className: 'i2g-ngdialog',
             scope: $scope,
         });
     }
@@ -1247,16 +1076,20 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         $scope.okDelete = function() {
             wiApi.client(getClientId()).deleteMlProjectPromise(project.idMlProject)
                 .then((res) => {
-                    toastr.success('Delete "' + project.name + '" Project Success', 'Success');
+                    // toastr.success('Delete "' + project.name + '" Project Success', 'Success');
                     if(self.project && project.idMlProject === self.project.idMlProject) {
                             self.newProject();
                     }
                     $timeout(() => {
+                        self.showNotiFn('success', 'Successfully','Delete "' + project.name + '" Project Success' , 4000);
                         $scope.allProjects = $scope.allProjects.filter((i) => i.idMlProject != project.idMlProject);
                     })
                 })
                 .catch((err) => {
-                    toastr.error('Delete "' + project.name + '" Project Error', 'Error');
+                    $timeout(()=>{
+                        self.showNotiFn('error', 'Error','Delete "' + project.name + '" Project error' , 4000);
+                    })
+                    // toastr.error('Delete "' + project.name + '" Project Error', 'Error');
                 })
                 .finally(() => {
                     dialog.close();
@@ -1264,7 +1097,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }
         let dialog = ngDialog.open({
             template: 'templateDeleteProject',
-            className: 'ngdialog-theme-default',
+            className: 'i2g-ngdialog',
             scope: $scope,
         });
     }
@@ -1284,7 +1117,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             }
             ngDialog.open({
                 template: 'templateRestore',
-                className: 'ngdialog-theme-default',
+                className: 'i2g-ngdialog',
                 scope: $scope,
             });
         })
@@ -1349,19 +1182,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }).map(c => ({ data: { label: c.name }, properties: c }));
         return curves;
     }
-    /*
-    this.updateAndGetCurvesCacheEntry = function(key, curves) {
-        let cs = curves.map(c => ({ data: { label: c.name }, properites: c }));
-        if (!self.__CURVES_CACHE[key]) {
-            self.__CURVES_CACHE[key] = cs;
-        }
-        else {
-            self.__CURVES_CACHE[key].length = 0;
-            self.__CURVES_CACHE[key].push(...cs);
-        }
-        return self.__CURVES_CACHE[key];
-    }
-    */
+   
     this.inputCurveSpecs = function(curveSpec, idx, curveSpecs) {
         return !curveSpec.isTarget;
     }
@@ -1390,4 +1211,72 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         return mlApi.getClientId(owner, prjName);
     }
     this.getClientId = getClientId;
+
+    //HUNGNK
+
+    $(".my_audio").trigger('load');
+	function play_audio(task) {
+		if(self.mute) return;
+		if(task == 'play'){
+			 $(".my_audio").trigger('play');
+		}
+		if(task == 'stop'){
+			 $(".my_audio").trigger('pause');
+			 $(".my_audio").prop("currentTime",0);
+		}
+   }
+  
+	this.showNotiFn = function (type, title, message, timeLife) {
+		let id;
+		let item;
+		let currentTime;
+		let date = new Date();
+		//SET OVERLAY LOADING NOTI
+		if (type === 'loading-noti') {
+			$(".i2g-toast-container").addClass("cursor-not-allowed");
+			setTimeout(function () {
+				$(".i2g-toast-container").removeClass("cursor-not-allowed");
+			}, timeLife);
+		}
+		//LIMIT ARRAY ITEM
+		if (self.toastArray.length > limitToastDisplayed) {
+			self.toastArray.pop();
+		}
+		//STOP SOUND
+		play_audio('stop');
+		//SET ID
+		id = type + '-' + String(Math.floor(Math.random() * 1000));
+		currentTime = String(date.getHours() + 'h' + date.getMinutes() + '"');
+		item = {
+			id: id,
+			type: type,
+			classTypeToast: type,
+			title: title,
+			message: message,
+			timeLife: timeLife,
+			currentTime: currentTime,
+		};
+		//PUSH ARRAY NOTI
+		self.toastArray.push(item)
+		//PLAY SOUND
+		play_audio('play');
+		//PUSH ARRAY HISTORY
+		self.toastHistory.unshift(item)
+		//REMOVE ITEM IN ARRAY, REMOVE DOM HTML
+		setTimeout(function () {
+			document.getElementById(id).classList.add('i2g-close-notification')
+		}, (timeLife - 300));
+		setTimeout(function () {
+			self.toastArray = self.toastArray.filter(function (obj) {
+				return obj.id !== id;
+			});
+			document.getElementById(id).remove();
+
+		}, timeLife);
+	}
+
+	this.turn_Off_On_Sound = function() {
+		console.log('mute')
+		document.getElementsByClassName(".my_audio").muted = true;
+	}
 }

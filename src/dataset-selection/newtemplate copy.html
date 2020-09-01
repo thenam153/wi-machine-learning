@@ -1,0 +1,235 @@
+<div class="main-content slim-scroller">
+	<div class="input-selection">
+		<div ng-click="self.controller.refreshCurveData()" style="cursor: pointer; position: absolute; right: 25px; /* top: 5px; */ padding-top: 4px; font-size: 12px; " class="ti ti-reload"></div>
+		<div class="header">
+			<span class="title">
+				<span class="ti ti-import" style="margin-right: 15px;"></span>
+				Input Selection</span>
+			<span class="sub">Select the types below or Add new input curve.</span>
+		</div>
+		<div class="button-input">
+			<div title="Curve" class="button" ng-class="{'active': self.controller.typeInput.type == self.buttons[0].type}" ng-click="self.controller.onChangeType(self.buttons[0])">
+				<div class="ml-curve-16x16"></div>
+			</div>
+			<div title="Family" class="button" ng-class="{'active': self.controller.typeInput.type == self.buttons[1].type}" ng-click="self.controller.onChangeType(self.buttons[1])">
+				<div class="ml-family-16x16"></div>
+			</div>
+			<div title="Family Group" class="button" ng-class="{'active': self.controller.typeInput.type == self.buttons[2].type}" ng-click="self.controller.onChangeType(self.buttons[2])">
+				<div class="ml-family-group-16x16"></div>
+			</div>
+			<div title="Add input curve" class="button" ng-click="self.controller.onAddInputItem()">
+				<div class="ml-new-16x16"></div>
+			</div>
+		</div>
+		<div class="list-input">
+			<div class="list-scroll" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
+				<div class="input-curve" ng-repeat="item in self.controller.curveSpecs track by $index">
+					<div style="flex: 1;">
+						<div style="display: flex; margin-bottom: 10px; justify-content: space-between;">
+							<div style="font-weight: bold; font-size: 12px; ">
+								{{item.label}} {{item.isTarget ? '' : $index}}
+								<span style='margin-left:1em;text-align:right;'>
+									<span ng-click='item.transform="linear";' 
+										class="curve-transform" ng-class="{'active': item.transform === 'linear'}" >
+										<span >
+											<span>x</span>
+										</span>
+									</span>
+									<span ng-click='item.transform="logarithmic";'
+										class="curve-transform" ng-class="{'active': item.transform === 'logarithmic'}">
+										<span>
+											lg(x)
+										</span>
+									</span>
+									<span ng-click='item.transform="exponential";'
+										class="curve-transform" ng-class="{'active': item.transform === 'exponential'}" >
+										<span>10<sup>x</sup>
+										</span>
+									</span>
+								</span>
+							</div>
+							<div ng-if="!item.isTarget" style="margin:0 10px; cursor: pointer; display: flex; align-items: center;" ng-click="self.controller.onRemoveInputItem($index)">
+								<i class="ti ti-close"></i>
+							</div>
+						</div>
+						<!-- <wi-dropdown-list-new style="width: 100%;" place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionList" hide-delete-button='true'
+							on-item-changed="self.getFnOnInputChanged($index)" current-select="item.currentSelect">
+						</wi-dropdown-list-new> -->
+						<wi-dropdown-list ng-if="!item.isTarget" style="width: 100%;" place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionList" hide-delete-button='true'
+							on-item-changed="self.controller.onInputItemChange" current-select="item.currentSelect" params="[item, $index]" bare-list="true">
+						</wi-dropdown-list>
+						<wi-dropdown-list ng-if="item.isTarget" style="width: 100%;" place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionListTarget" hide-delete-button='true'
+							on-item-changed="self.controller.onInputItemChange" current-select="item.currentSelect" params="[item, $index]" bare-list="true">
+						</wi-dropdown-list>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+	<div class="workspace">
+		<div style="flex: 1; overflow: hidden; position: relative;">
+			<div class="header sticky">
+				<span class="title">Traning</span>
+				<span class="sub">Drag datasets from project list</span>
+			</div>
+
+			<!-- <wi-droppable container-style="{'flex':'1','display':'flex', 'overflow': 'auto'}" onmouseover=this.style.overflowY='auto'
+				onmouseout=this.style.overflowY='hidden' on-drop="self.getFnDrop('training')"
+				style="display: flex; height: calc(100% - 67px); overflow: hidden;">
+			</wi-droppable> -->
+			<vue-component
+				ng-show="self.currentTab===$index"
+				root="WiDroppable"
+				props="{
+						onDrop: self.controller.getFnDrop('training'),
+						dataType: 'tree-nodes',
+				}"
+			></vue-component>
+				<div class="no-datasets" ng-show="!self.controller.tabs['training'].listDataset.length" style="background-image:url('./bg-datasets.png')">
+				</div>
+				<div ng-show="self.controller.tabs['training'].listDataset.length"
+					style="display: flex; flex-direction: column; height: 100%; overflow: auto;">
+					<div style="height: 100%;">
+						<div ng-repeat="item in self.controller.tabs['training'].listDataset track by $index">
+							<div class="datasets-info">
+								<div class="button ti ti-close" ng-click="self.controller.onRemoveDataset('training', $index)"></div>
+								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
+									{{self.controller.getDataset(item.idWell, item.idDataset).name}}</div>
+								<div class="detail">
+									<div>Project: {{self.controller.getProject(item.idProject, item.owner).alias || self.controller.getProject(item.idProject, item.owner).name}}</div>
+									<div>Well name: {{self.controller.getWell(item.idWell).name}}</div>
+									<div>Owner: {{self.controller.getProject(item.idProject, item.owner).owner || self.controller.getProject(item.idProject, item.owner).createdBy}}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+		</div>
+		<div style="flex: 1; overflow: hidden; margin-left: 20px; position: relative;">
+			<div class="header sticky">
+				<span class="title">Verify</span>
+				<span class="sub">Drag datasets from project list</span>
+			</div>
+			<!-- <wi-droppable container-style="{'flex':'1','display':'flex', 'overflow': 'auto'}" onmouseover=this.style.overflowY='overlay'
+				onmouseout=this.style.overflowY='hidden' on-drop="self.getFnDrop('verify')"
+				style="display: flex;height: calc(100% - 67px); overflow: hidden;">
+			</wi-droppable> -->
+			<vue-component
+				ng-show="self.currentTab===$index"
+				root="WiDroppable"
+				props="{
+						onDrop: self.controller.getFnDrop('verify'),
+						dataType: 'tree-nodes',
+				}"
+			></vue-component>
+				<div class="no-datasets" ng-show="!self.controller.tabs['verify'].listDataset.length" style="background-image:url('./bg-datasets.png')">
+				</div>
+				<div ng-show="self.controller.tabs['verify'].listDataset.length"
+					style="display: flex; flex-direction: column; height: 100%; overflow: auto;">
+					<div style="height: 100%;">
+						<div ng-repeat="item in self.controller.tabs['verify'].listDataset track by $index">
+							<div class="datasets-info">
+								<div class="button ti ti-close" ng-click="self.controller.onRemoveDataset('verify', $index)"></div>
+								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
+									{{self.controller.getDataset(item.idWell, item.idDataset).name}}</div>
+								<div class="detail">
+									<div>Project: {{self.controller.getProject(item.idProject, item.owner).alias || self.controller.getProject(item.idProject, item.owner).name}}</div>
+									<div>Well name: {{self.controller.getWell(item.idWell).name}}</div>
+									<div>Owner: {{self.controller.getProject(item.idProject, item.owner).owner || self.controller.getProject(item.idProject, item.owner).createdBy}}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+		</div>
+		<div style="flex: 1; overflow: hidden; margin-left: 20px; position: relative;">
+			<div class="header sticky">
+				<span class="title">Prediction</span>
+				<span class="sub">Drag datasets from project list</span>
+			</div>
+			<!-- <wi-droppable container-style="{'flex':'1','display':'flex', 'overflow': 'auto'}" onmouseover=this.style.overflowY='overlay'
+				onmouseout=this.style.overflowY='hidden' on-drop="self.getFnDrop('prediction')"
+				style="display: flex;height: calc(100% - 67px); overflow: hidden;">
+			</wi-droppable> -->
+				<div class="no-datasets" ng-show="!self.controller.tabs['prediction'].listDataset.length" style="background-image:url('./bg-datasets.png')">
+					<!-- <div class="ti ti-import" style="font-size: 40px;
+										margin-bottom: 20px;"></div>
+					<div>Drop datasets here</div> -->
+				</div>
+			<vue-component
+				ng-show="self.currentTab===$index"
+				root="WiDroppable"
+				props="{
+						onDrop: self.controller.getFnDrop('prediction'),
+						dataType: 'tree-nodes',
+				}"
+			></vue-component>
+				<div ng-show="self.controller.tabs['prediction'].listDataset.length"
+					style="display: flex;flex-direction: column; height: 100%; overflow: auto;">
+					<div style="height: 100%;">
+						<div ng-repeat="item in self.controller.tabs['prediction'].listDataset track by $index">
+							<div class="datasets-info">
+								<div class="button ti ti-close" ng-click="self.controller.onRemoveDataset('prediction', $index)">
+								</div>
+								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
+									{{self.controller.getDataset(item.idWell, item.idDataset).name}}</div>
+								<div class="detail">
+									<div>Project: {{self.controller.getProject(item.idProject, item.owner).alias || self.controller.getProject(item.idProject, item.owner).name}}</div>
+									<div>Well name: {{self.controller.getWell(item.idWell).name}}</div>
+									<div>Owner: {{self.controller.getProject(item.idProject, item.owner).owner || self.controller.getProject(item.idProject, item.owner).createdBy}}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+		</div>
+	</div>
+	<side-bar my-default-width="315" orientation="w" collapsed="false">
+
+		<div class="input-selection" style="height: unset; padding-bottom: 0;">
+			<div ng-click="self.refeshProject()" style="cursor: pointer; position: absolute; right: 25px; /* top: 5px; */ padding-top: 4px; font-size: 12px; " class="ti ti-reload"></div>
+			<div class="header">
+				<span class="title">
+					<span class="ti ti-align-left" style="margin-right: 15px;"></span>
+						Project list
+				</span>
+				<span class="sub">Project sync from i2G cloud, please login to get ít</span>
+				<!-- <div ng-click="self.refeshProject()">refesh pj</div> -->
+			</div>
+			
+		</div>
+		<input class="tree-search" type="text" placeholder="Search" ng-model="filter" />
+		<div style="height: calc(100% - 138px); margin-left: 15px;">
+			<!-- <wi-tree-view-virtual tree-root="self.listMlProject" hide-unmatched='true' get-children="self.getChildren"
+				click-fn='self.clickFn' get-label="self.getLabel" get-icon='self.getIcon' run-match='self.runMatch'
+				keep-chidren='true' no-drag='self.noDrag'>
+			</wi-tree-view-virtual> -->
+			<vue-component root="WiTree"
+				props="{
+					treeRoot: self.listMlProject,
+					filter,
+					getChildren: self.getChildren,
+					clickFn: self.clickFn,
+					getLabel: self.getLabel,
+					getIcon: self.getIcon,
+					runMatch: self.runMatch,
+					getDraggable: self.getDraggable
+				}"
+			></vue-component>
+		</div>
+	</side-bar>
+	<div ng-show="self.reloadPrj" style="z-index: 10; background: #ffffffc9; height: 100vh; width: 100vw; z-index: 5; position: absolute; display: flex; align-items: center; justify-content: center;">
+		<div >
+			<!-- <div class="loader08"></div> -->
+			<div style="
+				height: 80px;
+				width: 80px;
+				transform: translate(-50%, -50%);
+				position: absolute;
+				background-image: url(./spinner.gif);
+				background-size: contain;">
+        	</div>
+		</div>
+	</div>
+</div>

@@ -1,165 +1,299 @@
-<div class="main-content slim-scroller" style="width: 315px;">
-    <div class="input-selection" >
-        <div class="tab">
-            <div class="tab-button" ng-class="{'active' : tab===1}" ng-click="setTab(1)">Model Selection</div>
-            <div class="tab-button" ng-class="{'active' : tab===2}" ng-click="setTab(2)" ng-show="self.controller.currentModel.value.nnnw">Neural Network</div>
-        </div>
-        <div ng-show="tab == 1" style="padding: 20px; height: 100%;" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
-            <div class="header" style="text-transform: capitalize;">
-                <span class="title">Type Selection</span>
-                <wi-dropdown-list place-holder="Type model" items="self.controller.listTypeModel" hide-delete-button='self.controller.hideDeleteButton' bare-list="true"
-                    current-select='self.controller.currentTypeModel.label' on-item-changed="self.controller.onChangeTypeModel">
-                </wi-dropdown-list>
-            </div>
-            <div class="header">
-                <span class="title">Model Selection</span>
-                <wi-dropdown-list place-holder="Model" items="self.controller.listModel[self.controller.currentTypeModel.type]" hide-delete-button='self.controller.hideDeleteButton' bare-list="true"
-                    current-select='self.controller.currentModel.label' on-item-changed="self.controller.onChangeModel">
-                </wi-dropdown-list>
-            </div>
+<div class="block border-right-2px" style="flex-basis: 300px; overflow: visible; width: 100%;" resizable
+	r-directions="['right']" r-flex="true">
+	<div class="i2g-title-with-btn">
+		<div class="i2g-tab-line-bottom">
+			<div class="tab-item active" ng-class="{'active' : tab===1}" ng-click="setTab(1)">
+				<div class="tab-name">Model Selection</div>
+				<div class="active-tab-status"></div>
+			</div>
+			<div class="tab-item " ng-class="{'active' : tab===2}" ng-click="setTab(2)">
+				<div class="tab-name">Neural Network</div>
+				<div class="active-tab-status"></div>
+			</div>
+		</div>
+	</div>
+	<div class="space-height-20px"></div>
+	<div ng-show="tab == 2 && self.controller.currentModel.value.nnnw" style="display: flex; justify-content: space-between; color: var(--primary-color); background: var(--input-shadow-hover); font-weight: 500; border-radius: 10px; padding: 15px; border: 1px solid var(--primary-color); align-items: center;">
+		<div class="i2g-button-with-icon active" ng-click="self.controller.onLayerChange(-1)">
+			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px"
+				height="16px" viewBox="0 0 16 16" version="1.1">
+				<path
+					d="M2,7 L14,7 C14.5522847,7 15,7.44771525 15,8 C15,8.55228475 14.5522847,9 14,9 L2,9 C1.44771525,9 1,8.55228475 1,8 C1,7.44771525 1.44771525,7 2,7 Z"
+					id="Path" fill="currentColor" fill-rule="nonzero"
+					transform="translate(8.000000, 8.000000) rotate(-180.000000) translate(-8.000000, -8.000000) " />
+			</svg>
+		</div>
+		<div>{{self.controller.nnConfig.layers.length}}</div>
+		<div class="i2g-button-with-icon active" ng-click="self.controller.onLayerChange(1)">
+			<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px"
+				height="16px" viewBox="0 0 16 16" version="1.1">
+				<path
+					d="M2,7 L14,7 C14.5522847,7 15,7.44771525 15,8 C15,8.55228475 14.5522847,9 14,9 L2,9 C1.44771525,9 1,8.55228475 1,8 C1,7.44771525 1.44771525,7 2,7 Z"
+					id="Path" fill="currentColor" fill-rule="nonzero"
+					transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) " />
+				<path
+					d="M2,7 L14,7 C14.5522847,7 15,7.44771525 15,8 C15,8.55228475 14.5522847,9 14,9 L2,9 C1.44771525,9 1,8.55228475 1,8 C1,7.44771525 1.44771525,7 2,7 Z"
+					id="Path" fill="currentColor" fill-rule="nonzero"
+					transform="translate(8.000000, 8.000000) rotate(-180.000000) translate(-8.000000, -8.000000) " />
+			</svg>
+		</div>
+	</div>
+	<div class="space-height-10px" ng-show="tab == 2"></div>
+	<div ng-show="tab == 1" style="padding: 0 10px; margin: 0 -10px;" onmouseover=this.style.overflow='overlay'
+		onmouseout=this.style.overflow='hidden'>
+		<div class="i2g-title-with-btn">
+			<span>
+				Type Selection
+			</span>
+		</div>
+		<wi-dropdown-list place-holder="Type model" items="self.controller.listTypeModel"
+			hide-delete-button='self.controller.hideDeleteButton' bare-list="true"
+			current-select='self.controller.currentTypeModel.label' on-item-changed="self.controller.onChangeTypeModel">
+		</wi-dropdown-list>
+		<div class="space-height-10px"></div>
+		<div class="i2g-title-with-btn">
+			<span>
+				Model Selection
+			</span>
+		</div>
+		<wi-dropdown-list place-holder="Model" items="self.controller.listModel[self.controller.currentTypeModel.type]"
+			hide-delete-button='self.controller.hideDeleteButton' bare-list="true"
+			current-select='self.controller.currentModel.label' on-item-changed="self.controller.onChangeModel">
+		</wi-dropdown-list>
+		<div class="space-height-20px"></div>
+		<div class="border-bottom-2px"></div>
+		<div class="space-height-20px"></div>
+		<div ng-repeat="(key, props) in self.controller.currentModel.value.payload.params"
+			ng-init="self.controller.initPropertiesPayload(props)" ng-hide="props.hidden">
+			<div ng-if="props.type == 'integer' || props.type == 'float' || props.type == 'string' || props.type == 'number'"
+				class="vue-editable" style="margin-bottom: 10px;">
+				<vue-container vue-data="{itemLabel: props.label, item: props}"
+					vue-methods="{getValue: self.getValue, setValue: self.setValue}">
+					<vue-editable :item-label="itemLabel" :get-value="getValue" :set-value="setValue" :params="item">
+					</vue-editable>
+				</vue-container>
+			</div>
+			<div ng-if=" props.type == 'enum'" style="display: flex; flex-direction: column; margin-bottom: 10px;">
+				<div class="i2g-title-with-btn">
+					<span>
+						{{props.label}}
+					</span>
+				</div>
+				<wi-dropdown-list place-holder="value" items="props.enum" params="props"
+					current-select='props.value.data.label' on-item-changed="self.controller.onItemChange">
+				</wi-dropdown-list>
+			</div>
+			<div style="margin-bottom: 10px;" ng-if=" props.type == 'boolean'" class="i2g-title-with-btn">
+				<span>
+					{{props.label}}: {{props.value? 'TRUE' : 'FALSE'}}
+				</span>
+				<label>
+					<input type="checkbox" ng-model="props.value" style="margin: 0 !important;">
+				</label>
+			</div>
+			<div style="margin-bottom: 10px;" ng-if=" props.type == 'size'" class="i2g-title-with-btn">
+				<span>
+					{{props.label}}
+				</span>
+				<div style="display: block;
+				max-height: 40px;
+				min-height: 40px;
+				width: 50%;
+				padding: 11px 16px;
+				cursor: not-allowed;
+				border-radius: 10px;
+				background: var(--input-bg);
+				color: var(--text-primary-color);
+				overflow: hidden;
+				text-overflow: ellipsis;">{{props.value.toString()}}</div>
+			</div>
+			<div style="margin-bottom: 10px;" ng-if=" props.type == 'input'" class="i2g-title-with-btn">
+				<span>
+					{{props.label}}
+				</span>
+				<div title="{{props.value.toString()}}" style="display: block;
+				max-height: 40px;
+				min-height: 40px;
+				width: 50%;
+				padding: 11px 16px;
+				cursor: not-allowed;
+				border-radius: 10px;
+				background: var(--input-bg);
+				color: var(--text-primary-color);
+				overflow: hidden;
+				text-overflow: ellipsis;">{{props.value.toString()}}</div>
+			</div>
+		</div>
+		<div class="space-height-10px"></div>
+		<div class="border-bottom-2px"></div>
+		<div class="space-height-20px"></div>
+		<div class="i2g-title-with-btn" ng-if="self.controller.currentModel.value.payload.train">
+			<span>Advance options</span>
+			<div>
+				<div class="space-20px "></div>
+				<div class="i2g-button-with-icon" ng-show="!self.controller.showAdvance"
+					ng-click="self.controller.showAdvance = !self.controller.showAdvance">
+					<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+						<path
+							d="M12.6233804,6.08608223 C12.8678466,6.67561497 13.0027741,7.32205048 13.0027741,8 L15.0027741,8 C15.0027741,7.05087067 14.8138756,6.14586096 14.4716229,5.32051512 C15.521423,7.85780063 15.0150559,10.8872132 12.9525216,12.9497475 C10.2188516,15.6834175 5.78669671,15.6834175 3.05302667,12.9497475 L4.46724023,11.5355339 C6.41986169,13.4881554 9.58568658,13.4881554 11.538308,11.5355339 C13.0027741,10.0710678 13.3688907,7.92417477 12.6366576,6.1184952 C11.850808,4.25919913 10.0738419,3 8.00277414,3 C5.24135039,3 3.00277414,5.23857625 3.00277414,8 L1.00277414,8 C1.00277414,4.13400675 4.13678089,1 8.00277414,1 C9.93577074,1 11.6857707,1.78350167 12.9525216,3.05025249 L11.538308,4.46446609 C12.0176907,4.9438488 12.3793815,5.49635589 12.6233804,6.08608223 Z"
+							id="Combined-Shape" fill-rule="nonzero"></path>
+						<path
+							d="M12.4142136,4 L13.7071068,2.70710678 C14.0976311,2.31658249 14.0976311,1.68341751 13.7071068,1.29289322 C13.3165825,0.902368927 12.6834175,0.902368927 12.2928932,1.29289322 L10.2928932,3.29289322 C9.90236893,3.68341751 9.90236893,4.31658249 10.2928932,4.70710678 L12.2928932,6.70710678 C12.6834175,7.09763107 13.3165825,7.09763107 13.7071068,6.70710678 C14.0976311,6.31658249 14.0976311,5.68341751 13.7071068,5.29289322 L12.4142136,4 Z"
+							id="Line-2" fill-rule="nonzero"
+							transform="translate(12.000000, 4.000000) rotate(-135.000000) translate(-12.000000, -4.000000) ">
+						</path>
+						<path
+							d="M5.20710678,10.7071068 C5.59763107,10.3165825 5.59763107,9.68341751 5.20710678,9.29289322 C4.81658249,8.90236893 4.18341751,8.90236893 3.79289322,9.29289322 L1.79289322,11.2928932 C1.40236893,11.6834175 1.40236893,12.3165825 1.79289322,12.7071068 L3.79289322,14.7071068 C4.18341751,15.0976311 4.81658249,15.0976311 5.20710678,14.7071068 C5.59763107,14.3165825 5.59763107,13.6834175 5.20710678,13.2928932 L3.91421356,12 L5.20710678,10.7071068 Z"
+							id="Line-2" fill-rule="nonzero"
+							transform="translate(3.500000, 12.000000) rotate(-315.000000) translate(-3.500000, -12.000000) ">
+						</path>
+					</svg>
+				</div>
+				<div class="i2g-button-with-icon" ng-show="self.controller.showAdvance"
+					ng-click="self.controller.showAdvance = !self.controller.showAdvance">
+					<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+						<path
+							d="M12.6233804,6.08608223 C12.8678466,6.67561497 13.0027741,7.32205048 13.0027741,8 L15.0027741,8 C15.0027741,7.05087067 14.8138756,6.14586096 14.4716229,5.32051512 C15.521423,7.85780063 15.0150559,10.8872132 12.9525216,12.9497475 C10.2188516,15.6834175 5.78669671,15.6834175 3.05302667,12.9497475 L4.46724023,11.5355339 C6.41986169,13.4881554 9.58568658,13.4881554 11.538308,11.5355339 C13.0027741,10.0710678 13.3688907,7.92417477 12.6366576,6.1184952 C11.850808,4.25919913 10.0738419,3 8.00277414,3 C5.24135039,3 3.00277414,5.23857625 3.00277414,8 L1.00277414,8 C1.00277414,4.13400675 4.13678089,1 8.00277414,1 C9.93577074,1 11.6857707,1.78350167 12.9525216,3.05025249 L11.538308,4.46446609 C12.0176907,4.9438488 12.3793815,5.49635589 12.6233804,6.08608223 Z"
+							id="Combined-Shape" fill-rule="nonzero"></path>
+						<path
+							d="M12.4142136,4 L13.7071068,2.70710678 C14.0976311,2.31658249 14.0976311,1.68341751 13.7071068,1.29289322 C13.3165825,0.902368927 12.6834175,0.902368927 12.2928932,1.29289322 L10.2928932,3.29289322 C9.90236893,3.68341751 9.90236893,4.31658249 10.2928932,4.70710678 L12.2928932,6.70710678 C12.6834175,7.09763107 13.3165825,7.09763107 13.7071068,6.70710678 C14.0976311,6.31658249 14.0976311,5.68341751 13.7071068,5.29289322 L12.4142136,4 Z"
+							id="Line-2" fill-rule="nonzero"
+							transform="translate(12.000000, 4.000000) rotate(-135.000000) translate(-12.000000, -4.000000) ">
+						</path>
+						<path
+							d="M5.20710678,10.7071068 C5.59763107,10.3165825 5.59763107,9.68341751 5.20710678,9.29289322 C4.81658249,8.90236893 4.18341751,8.90236893 3.79289322,9.29289322 L1.79289322,11.2928932 C1.40236893,11.6834175 1.40236893,12.3165825 1.79289322,12.7071068 L3.79289322,14.7071068 C4.18341751,15.0976311 4.81658249,15.0976311 5.20710678,14.7071068 C5.59763107,14.3165825 5.59763107,13.6834175 5.20710678,13.2928932 L3.91421356,12 L5.20710678,10.7071068 Z"
+							id="Line-2" fill-rule="nonzero"
+							transform="translate(3.500000, 12.000000) rotate(-315.000000) translate(-3.500000, -12.000000) ">
+						</path>
+					</svg>
+				</div>
+			</div>
+		</div>
+		<div style="display: flex; flex-direction: column;" ng-show="self.controller.showAdvance">
+			<div ng-if="self.controller.currentModel.value.payload.train"
+				ng-repeat="(key, props) in self.controller.currentModel.value.payload.train"
+				ng-init="self.controller.initPropertiesPayload(props)" ng-hide="props.hidden">
+				<div ng-if="props.type == 'integer' || props.type == 'float' || props.type == 'string' || props.type == 'number'"
+					class="vue-editable" style="margin-bottom: 10px;">
+					<vue-container vue-data="{itemLabel: props.label, item: props}"
+						vue-methods="{getValue: self.getValue, setValue: self.setValue}">
+						<vue-editable :item-label="itemLabel" :get-value="getValue" :set-value="setValue"
+							:params="item">
+						</vue-editable>
+					</vue-container>
+				</div>
+				<div ng-if=" props.type == 'enum'" style="display: flex; flex-direction: column; margin-bottom: 10px;">
+					<div class="i2g-title-with-btn">
+						<span>
+							{{props.label}}
+						</span>
+					</div>
+					<wi-dropdown-list place-holder="value" items="props.enum" params="props"
+						current-select='props.value.data.label' on-item-changed="self.controller.onItemChange">
+					</wi-dropdown-list>
+				</div>
+				<div style="margin-bottom: 10px;" ng-if=" props.type == 'boolean'" class="i2g-title-with-btn">
+					<span>
+						{{props.label}}: {{props.value? 'TRUE' : 'FALSE'}}
+					</span>
+					<label>
+						<input type="checkbox" ng-model="props.value" style="margin: 0 !important;">
+					</label>
+				</div>
+				<div style="margin-bottom: 10px;" ng-if=" props.type == 'size'" class="i2g-title-with-btn">
+					<span>
+						{{props.label}}
+					</span>
+					<div style="display: block;
+					max-height: 40px;
+					min-height: 40px;
+					width: 50%;
+					padding: 11px 16px;
+					cursor: not-allowed;
+					border-radius: 10px;
+					background: var(--input-bg);
+					color: var(--text-primary-color);
+					overflow: hidden;
+					text-overflow: ellipsis;">{{props.value.toString()}}</div>
+				</div>
+				<div style="margin-bottom: 10px;" ng-if=" props.type == 'input'" class="i2g-title-with-btn">
+					<span>
+						{{props.label}}
+					</span>
+					<div title="{{props.value.toString()}}" style="display: block;
+					max-height: 40px;
+					min-height: 40px;
+					width: 50%;
+					padding: 11px 16px;
+					cursor: not-allowed;
+					border-radius: 10px;
+					background: var(--input-bg);
+					color: var(--text-primary-color);
+					overflow: hidden;
+					text-overflow: ellipsis;">{{props.value.toString()}}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div ng-show="tab == 2" style="padding: 0 10px; margin: 0 -10px;" onmouseover=this.style.overflow='overlay'
+		onmouseout=this.style.overflow='hidden'>
+		<div ng-if="self.controller.currentModel.value.nnnw" ng-repeat="layer in self.controller.nnConfig.layers track by $index"
+			class="item-icon-title-discription layer" style="animation: none;">
+			<div>
+			</div>
+			<div>
+				<div>
+					<div class="ng-binding">
+						Layer {{$index + 1}}
+					</div>
+				</div>
+				<span class="ng-binding">
+					{{layer}} {{layer == '1' ? 'node' : 'nodes'}}
+				</span>
+			</div>
+			<div class="i2g-button-with-icon" ng-click="self.controller.onHiddenChange($index, -1)">
+				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px"
+					height="16px" viewBox="0 0 16 16" version="1.1">
+					<path
+						d="M2,7 L14,7 C14.5522847,7 15,7.44771525 15,8 C15,8.55228475 14.5522847,9 14,9 L2,9 C1.44771525,9 1,8.55228475 1,8 C1,7.44771525 1.44771525,7 2,7 Z"
+						id="Path" fill="currentColor" fill-rule="nonzero"
+						transform="translate(8.000000, 8.000000) rotate(-180.000000) translate(-8.000000, -8.000000) " />
+				</svg>
+			</div>
+			<div class="i2g-button-with-icon" ng-click="self.controller.onHiddenChange($index, 1)">
+				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px"
+					height="16px" viewBox="0 0 16 16" version="1.1">
+					<path
+						d="M2,7 L14,7 C14.5522847,7 15,7.44771525 15,8 C15,8.55228475 14.5522847,9 14,9 L2,9 C1.44771525,9 1,8.55228475 1,8 C1,7.44771525 1.44771525,7 2,7 Z"
+						id="Path" fill="currentColor" fill-rule="nonzero"
+						transform="translate(8.000000, 8.000000) rotate(-270.000000) translate(-8.000000, -8.000000) " />
+					<path
+						d="M2,7 L14,7 C14.5522847,7 15,7.44771525 15,8 C15,8.55228475 14.5522847,9 14,9 L2,9 C1.44771525,9 1,8.55228475 1,8 C1,7.44771525 1.44771525,7 2,7 Z"
+						id="Path" fill="currentColor" fill-rule="nonzero"
+						transform="translate(8.000000, 8.000000) rotate(-180.000000) translate(-8.000000, -8.000000) " />
+				</svg>
+			</div>
+		</div>
+		<div ng-click="setTab(1)" ng-if="!self.controller.currentModel.value.nnnw" class="item-icon-title-discription warning" style="cursor: pointer;">
+			<div>
+			</div>
+			<div>
+				<div>
+					<div class="ng-binding">
+						Unavailable
+					</div>
+				</div>
+				<span class="ng-binding">
+					Select Neural Network in Model Selection
+				</span>
+			</div>
+		</div>
+	</div>
 
-            <div >
-                <div class="editable-custom" ng-repeat="(key, props) in self.controller.currentModel.value.payload.params" ng-init="self.controller.initPropertiesPayload(props)" > 
-                    <div ng-hide="props.hidden">
-                        <div ng-if="props.type == 'integer' || props.type == 'float' || props.type == 'string' || props.type == 'number'" style="display: flex;">
-                            <!-- <vue-component root="VueEditable"
-                                props="{
-                                    itemLabel: props.label,
-                                    getValue: self.getValue,
-                                    setValue: self.setValue,
-                                    params: props
-                                }"
-                            ></vue-component> -->
-
-                            <vue-container vue-data="{itemLabel: props.label, item: props}" vue-methods="{getValue: self.getValue, setValue: self.setValue}">
-                                <vue-editable  
-                                    :item-label="itemLabel" 
-                                    :get-value="getValue"
-                                    :set-value="setValue"
-                                    :params="item"
-                                    >
-                                </vue-editable>
-                            </vue-container>
-                        </div>
-                        
-                        <div ng-if=" props.type == 'enum' " style="margin-top: 15px;">
-                           <div style="font-weight: bold;">
-                               {{props.label}}
-                           </div>
-                            <div>
-                                <wi-dropdown-list place-holder="value" items="props.enum" params="props" current-select='props.value.data.label' on-item-changed="self.controller.onItemChange">
-                                </wi-dropdown-list>
-                            </div>
-                       </div>
-                       <div ng-if=" props.type == 'boolean' " style="margin-top: 15px;">
-                            <div style="font-weight: bold;">
-                                {{props.label}}
-                            </div>
-                            <div>
-                                <label>
-                                    {{props.value? 'TRUE' : 'FALSE'}} 
-                                    <input type="checkbox" ng-model="props.value">
-                                </label>
-                            </div>
-                        </div>
-                         <div class="header" ng-if="props.type=='size'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
-                            <span class="title" style="font-size: 13px;">{{props.label}}</span>
-                            <span class="sub" style="margin-bottom: 10px;">{{props.value.toString()}}</span>
-                        </div>    
-                        <div class="header" ng-if="props.type=='input'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
-                            <span class="title" style="font-size: 13px;">{{props.label}}</span>
-                            <span class="sub" style="margin-bottom: 10px;">{{props.value.toString()}}</span>
-                        </div>
-                    </div>
-                </div>
-                <div ng-if="self.controller.currentModel.value.payload.train" class="header" style="margin-top: 20px;">
-                    <span class="title">
-                        <div ng-show="!self.controller.showAdvance" class="fa fa-caret-right" style="margin-right: 10px; cursor: pointer;" ng-click="self.controller.showAdvance = !self.controller.showAdvance"></div>
-                        <div ng-show="self.controller.showAdvance"class="fa fa-caret-down" style="margin-right: 10px; cursor: pointer;" ng-click="self.controller.showAdvance = !self.controller.showAdvance"></div>
-                    Advance</span>
-                </div>
-                <div ng-show="self.controller.showAdvance">
-                    <div ng-if="self.controller.currentModel.value.payload.train" class="editable-custom" ng-repeat="(key, props) in self.controller.currentModel.value.payload.train" ng-init="self.controller.initPropertiesPayload(props)">
-                        <div ng-hide="props.hidden">
-                            <div ng-if="props.type == 'integer' || props.type == 'float' || props.type == 'string' || props.type == 'number'">
-                                <!-- <span class="title" style="min-width: 130px;padding: 10px 0;flex: 1;float: left;margin-right: 0;margin-bottom: 0;font-weight: bold;">{{props.label}}</span>
-                                <input class="sub" ng-model="props.value" ng-change="self.controller.changeValue(props);"> -->
-                                <vue-container vue-data="{itemLabel: props.label, item: props}" vue-methods="{getValue: self.getValue, setValue: self.setValue}">
-                                    <vue-editable  
-                                        :item-label="itemLabel" 
-                                        :get-value="getValue"
-                                        :set-value="setValue"
-                                        :params="item"
-                                        >
-                                    </vue-editable>
-                                </vue-container>
-                            </div>
-                            <div ng-if=" props.type == 'enum' " style="margin-top: 15px;">
-                               <div style="font-weight: bold;">
-                                   {{props.label}}
-                               </div>
-                                <div>
-                                    <wi-dropdown-list place-holder="value" items="props.enum" params="props" current-select='props.value.data.label' on-item-changed="self.controller.onItemChange">
-                                    </wi-dropdown-list>
-                                </div>
-                           </div>
-                           <div ng-if=" props.type == 'boolean' " style="margin-top: 15px;">
-                                <div style="font-weight: bold;">
-                                    {{props.label}}
-                                </div>
-                                <div>
-                                    <label>
-                                        {{props.value? 'TRUE' : 'FALSE'}} 
-                                        <input type="checkbox" ng-model="props.value">
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="header" ng-if="props.type=='size'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
-                                <span class="title" style="font-size: 13px;">{{props.label}}</span>
-                                <span class="sub" style="margin-bottom: 10px;">{{props.value.toString()}}</span>
-                            </div>    
-                            <div class="header" ng-if="props.type=='input'" style="margin: 10px 0; border-bottom: 1px solid #dadada;">
-                                <span class="title" style="font-size: 13px;">{{props.label}}</span>
-                                <span class="sub" style="margin-bottom: 10px;">{{props.value.toString()}}</span>
-                            </div>
-                        </div>
-                   </div>
-                </div>
-            </div>
-        </div>
-        <div ng-show="tab == 2 && self.controller.currentModel.value.nnnw" style="padding: 20px; overflow: hidden;">
-            <div class="hidden-layers">
-                <div class="add ti ti-minus" ng-click="self.controller.onLayerChange(-1)"></div>
-                <input class="inputs" value='{{self.controller.nnConfig.layers.length}}' disabled class="form-control wi-form-control" min="1">
-                <div class="remove ti ti-plus" ng-click="self.controller.onLayerChange(1)"></div>
-            </div>
-            <div style="height: 100%;" onmouseover=this.style.overflow='auto' onmouseout=this.style.overflow='hidden'>
-                <div ng-repeat="layer in self.controller.nnConfig.layers track by $index" class="input-number">
-                    <div style="display: flex; align-items: center;">
-                        <div class="layer-16x16" style="margin-right: 10px; min-width: 16px;"></div>
-                        <div class="name">Layer {{$index + 1}}</div>
-                        <input style="font-weight: bold;" type="number" class="form-control wi-form-control"disabled ng-model="layer" min="1">
-                    </div>
-                    <div style="display: flex;">
-                        <div class="add ti ti-minus" ng-click="self.controller.onHiddenChange($index, -1)"></div>
-                        <div class="remove ti ti-plus" ng-click="self.controller.onHiddenChange($index, 1)"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div id="workspace" class="workspace">
-        <!-- <div style="position: absolute;">
-            {{self.controller.currentModel.value.payload}}
-            {{self.controller.nnnw}}
-        </div> -->
-       
-        <wi-neural-network 
-            ng-if="self.controller.nnnw"
-            container="self.controller.nnConfig" 
-            input-curves="self.controller.nnConfig.inputs"
-            output-curves="self.controller.nnConfig.outputs" 
-            hidden-layer="self.controller.nnConfig.layers">
-        </wi-neural-network> 
-    </div>
+</div>
+<div class="block" style="flex: 1; overflow: visible; width: 100%;">
+	<wi-neural-network ng-if="self.controller.nnnw" container="self.controller.nnConfig"
+		input-curves="self.controller.nnConfig.inputs" output-curves="self.controller.nnConfig.outputs"
+		hidden-layer="self.controller.nnConfig.layers">
+	</wi-neural-network>
 </div>

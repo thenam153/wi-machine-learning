@@ -1,0 +1,225 @@
+<!-- <div id="wapper" style="display: none; background: #00000008; height: 100%; width: 100%; z-index: 4; position: absolute;"
+    ng-click="self.showWapper()"></div> -->
+<div ng-show="self.running" style="background: #ffffffc9; height: 100%; width: 100%; z-index: 5; position: absolute; display: flex; align-items: center; justify-content: center;">
+    <div>
+        <!-- <div class="loader08"></div> -->
+        <div style="
+            height: 80px;
+            width: 80px;
+            transform: translate(-50%, -50%);
+            position: absolute;
+            background-image: url(./spinner.gif);
+            background-size: contain;">
+        </div>
+    </div>
+</div>
+<div style="display:flex;flex-direction: column;width: 100vw;height: 100%; position: relative; padding: 40px; background: #EDEFF3;" class="slim-scroller">
+    <div class="toolbar">
+        <div class="tab">
+            <div class="tab-button" ng-class="{'active' : isSet(1)}" ng-click="setTab(1)" style="border-right: 1px solid #edeff3;">Train</div>
+            <div class="tab-button" ng-class="{'active' : isSet(2)}" ng-click="setTab(2)" style="border-right: 1px solid #edeff3;border-left: 1px solid #edeff3;">Verify</div>
+            <div class="tab-button" ng-class="{'active' : isSet(3)}" ng-click="setTab(3)" style="border-left: 1px solid #edeff3;">Predict</div>
+            <div class="tab-button" ng-class="{'active' : isSet(4)}" ng-show="self.showSomVisualize" ng-click="setTab(4)" style="border-left: 1px solid #edeff3;">Som Visualize</div>
+        </div>
+    </div>
+    <div class="workspace">
+        <div ng-show="isSet(1)" class="workspace-main" id="Train" ng-init="self.machineLearnSteps['training'].expanded=true">
+            <!-- <div class="search">
+                <div class="ti ti-search" style="margin-right: 15px; font-size: 15px;"></div>
+                <input placeholder="Search" ng-model="self.controller.searchTrainingText">
+            </div> -->
+            <div class="button">
+                <!-- <div class="toolbar-button">Sort by</div>
+                <div class="toolbar-button">Select All</div> -->
+                <div class="toolbar-button active" ng-click="self.runTask(-1);">Run Now</div>
+                <div class="toolbar-button active" ng-click="self.runAll()">Run All</div>
+            </div>
+            <div style="overflow: hidden; display: flex; flex-direction: column; height: 100%;">
+                <div class="table-main">
+                    <div class='table-row' style="color: #4e555f; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #fff; border: none; box-shadow: 0 5px 6px #00000012;">
+                        <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0;">Active
+                        </div>
+                        <div class="table-block" style="width: 70px; min-width: 70px;">Filter</div>
+                        <div class="table-block">Well</div>
+                        <div class="table-block">Dataset </div>
+                        <div ng-repeat="input in self.controller.curveSpecs track by $index" >
+                            <div class="table-block"style="width: 170px">{{input.label + ($index?(" " + $index):"")}}</div>
+                        </div>
+                    </div>
+                    <div class='table-row' ng-repeat="(idxDs, dataset) in self.controller.tabs['training'].listDataset | filter:self.controller.searchTrainingFilter track by idxDs">
+                        <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0; z-index: 1;">
+                            <label class="switch">
+                                <input type="checkbox" ng-checked="dataset.active">
+                                <span class="slider round" ng-click="self.onToggleActive(dataset)"></span>
+                            </label>
+                        </div>
+                        <div class="table-block" style="width: 70px; min-width: 70px;" ng-click="self.controller.onClickDiscriminator(dataset)">
+                            <span class="fa fa-filter icon" ng-class="{'active': dataset.discrimnt.active}"></span>
+                        </div>
+                        <div class="table-block" title='{{self.controller.getWell(dataset.idWell).name}}'>{{self.controller.getWell(dataset.idWell).name}}</div>
+                        <div class="table-block" title='{{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}'>{{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}</div>
+                        <!--
+                        <div class="table-block" ng-repeat="(idxIt, input) in dataset.curveSpecs track by idxIt" style="overflow: visible;">
+                            <wi-dropdown-list style="width: 100%;" place-holder="Curve" items="dataset.listSelection[idxIt]" hide-delete-button='true'
+							    on-item-changed="self.controller.onItemChangeTabTAP" current-select="input.currentSelect" params="[input, dataset, 'Prediction']">
+						    </wi-dropdown-list>
+                        </div>
+                        -->
+                        <div class="table-block" ng-repeat="(idxIt, curveSpecItem) in self.controller.curveSpecs track by idxIt" style="overflow: visible;">
+                            <wi-dropdown-list style="width: 100%;" place-holder="Curve" items="self.controller.__CURVES_CACHE['training'][dataset.idDataset + '-' + idxIt]" hide-delete-button='true'
+                                on-item-changed="self.controller.onItemChangeTabTAP" current-select="dataset.selectedValues[idxIt]" params="[curveSpecItem, dataset, 'Prediction', idxIt]">
+						    </wi-dropdown-list>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-show="isSet(2)" class="workspace-main">
+            <!-- <div class="search" style="width: 200px">
+                <div class="ti ti-search" style="margin-right: 15px; font-size: 15px;"></div>
+                <input placeholder="Search" ng-model="self.controller.searchVerifyText">
+            </div> -->
+            <div class="search" style="margin-right: 15px; width: 300px;">
+                <div>Plot: &nbsp;&nbsp;</div>
+                <input style="text-align: right;" placeholder="Plot name" ng-model="self.controller.tabs['verify'].plotName">
+            </div>
+            <div>
+                <label ng-class="{'text-muted': !canCreatePlot('verify')}">Create plot</label>
+                <input type="checkbox" ng-model="self.controller.tabs['verify'].createPlot" ng-disabled="!canCreatePlot('verify')">
+            </div>
+            <div class="button">
+                <!-- <div class="toolbar-button">Sort by</div>
+                <div class="toolbar-button">Select All</div> -->
+                <div class="toolbar-button active" ng-click="self.runTask(1);">Run Now</div>
+                <div class="toolbar-button active" ng-click="self.runAll()">Run All</div>
+            </div>
+            <div style="overflow: hidden; display: flex; flex-direction: column;  height: 100%;">
+                <div class="table-main">
+                    <div class='table-row' style="color: #4e555f; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #fff; border: none;box-shadow: 0 5px 6px #00000012;">
+                        <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0;">Active
+                        </div>
+                        <div class="table-block" style="width: 70px; min-width: 70px;">Filter</div>
+                        <div class="table-block">Well</div>
+                        <div class="table-block">Dataset </div>
+                        <div  ng-repeat="input in self.controller.curveSpecs track by $index" >
+                            <div class="table-block"style="width: 170px">{{input.label +  + ($index?(" " + $index):"")}}</div>
+                        </div>
+                        <div class="table-block">Verify Curve</div>
+                    </div>
+                    <div class='table-row' ng-repeat="(idxDs, dataset) in self.controller.tabs['verify'].listDataset | filter:self.controller.searchVerifyFilter track by idxDs" >
+                        <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0;z-index: 1;">
+                            <label class="switch">
+                                <input type="checkbox" ng-checked="dataset.active">
+                                <span class="slider round" ng-click="self.onToggleActive(dataset)"></span>
+                            </label>
+                        </div>
+                        <div class="table-block" style="width: 70px; min-width: 70px;" ng-click="self.controller.onClickDiscriminator(dataset)">
+                            <span class="fa fa-filter icon" ng-class="{'active': dataset.discrimnt.active}"></span>
+                        </div>
+                        <div class="table-block" title='{{self.controller.getWell(dataset.idWell).name}}'>{{self.controller.getWell(dataset.idWell).name}}</div>
+                        <div class="table-block" title='{{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}'>{{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}</div>
+                        <!--<div class="table-block" ng-repeat="(idxIt, input) in dataset.curveSpecs track by idxIt" style="overflow: visible;">
+                            <wi-dropdown-list style="width: 100%;" place-holder="Curve" items="dataset.listSelection[idxIt]" hide-delete-button='true'
+							    on-item-changed="self.controller.onItemChangeTabTAP" current-select="input.currentSelect" params="[input, dataset, 'Verify']">
+						    </wi-dropdown-list>
+                        </div>-->
+                        <div class="table-block" ng-repeat="(idxIt, curveSpecItem) in self.controller.curveSpecs track by idxIt" style="overflow: visible;">
+                            <wi-dropdown-list style="width: 100%;" place-holder="Curve" items="self.controller.__CURVES_CACHE['verify'][dataset.idDataset + '-' + idxIt]" hide-delete-button='true'
+							    on-item-changed="self.controller.onItemChangeTabTAP" current-select="dataset.selectedValues[idxIt]" params="[curveSpecItem, dataset, 'Prediction', idxIt]">
+						    </wi-dropdown-list>
+                        </div>
+                        <div class="table-block" style="width:150px;padding-left:0;margin-left:20px">
+                            <!-- <input type="text" style="height: 32px;" ng-model="dataset.resultCurveName"> -->
+                            <editable item-value="self.getResultCurveName" content-style='{width:"100%"}' set-value="self.setResultCurveName" enabled="!!self.controller" 
+                                params="[dataset, '_VR']" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-show="isSet(3)" class="workspace-main">
+            <!-- <div class="search" style="width: 200px">
+                <div class="ti ti-search" style="margin-right: 15px; font-size: 15px;"></div>
+                <input placeholder="Search" ng-model="self.controller.searchPredictionText">
+            </div> -->
+            <div class="search" style="margin-right: 15px; width: 300px;">
+                <div>Plot: &nbsp;&nbsp;</div>
+                <input style="text-align: right;" placeholder="Plot name" ng-model="self.controller.tabs['prediction'].plotName">
+            </div>
+            <div>
+                <label ng-class="{'text-muted': !canCreatePlot('prediction')}">Create plot</label>
+                <input type="checkbox" ng-model="self.controller.tabs['prediction'].createPlot" ng-disabled="!canCreatePlot('prediction')">
+            </div>
+            <div class="button">
+                <!-- <div class="toolbar-button">Sort by</div>
+                <div class="toolbar-button">Select All</div> -->
+                <div class="toolbar-button active" ng-click="self.runTask(2);">Run Now</div>
+                <div class="toolbar-button active" ng-click="self.runAll()">Run All</div>
+            </div>
+            <div style="overflow: hidden; display: flex; flex-direction: column;  height: 100%;">
+
+                <div class="table-main">
+                    <div class='table-row' style="color: #4e555f; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #fff; border: none;    box-shadow: 0 5px 6px #00000012;">
+                        <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0;">Active
+                        </div>
+                        <div class="table-block" style="width: 70px; min-width: 70px;">Filter</div>
+                        <div class="table-block">Well</div>
+                        <div class="table-block">Dataset </div>
+                        <div  ng-repeat="input in self.controller.curveSpecs track by $index" >
+                            <div ng-if="$index != 0" class="table-block"style="width: 170px">{{input.label + " " + $index}}</div>
+                        </div>
+                        <div class="table-block">Predict Curve</div>
+                    </div>
+                    <div class='table-row' ng-repeat="(idx, dataset) in self.controller.tabs['prediction'].listDataset| filter:self.controller.searchPredictionFilter track by idx" >
+                        <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0;z-index: 1;">
+                            <label class="switch">
+                                <input type="checkbox" ng-checked="dataset.active">
+                                <span class="slider round" ng-click="self.onToggleActive(dataset)"></span>
+                            </label>
+                        </div>
+                        <div class="table-block" style="width: 70px; min-width: 70px;" ng-click="self.controller.onClickDiscriminator(dataset)">
+                            <span class="fa fa-filter icon" ng-class="{'active': dataset.discrimnt.active}"></span>
+                        </div>
+                        <div class="table-block" title='{{self.controller.getWell(dataset.idWell).name}}'>{{self.controller.getWell(dataset.idWell).name}}</div>
+                        <div class="table-block" title='{{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}'>{{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}</div>
+                        <!--<div class="table-block" ng-repeat="(idxIt, input) in dataset.curveSpecs track by idxIt" style="overflow: visible;">
+                            <wi-dropdown-list style="width: 100%;" place-holder="Curve" items="dataset.listSelection[idxIt]" hide-delete-button='true'
+							    on-item-changed="self.controller.onItemChangeTabTAP" current-select="input.currentSelect" params="[input]">
+						    </wi-dropdown-list>
+                        </div>-->
+                        <div ng-repeat="(idxIt, curveSpecItem) in self.controller.curveSpecs track by idxIt" style="overflow: visible;">
+                            <div ng-if="idxIt > 0" class="table-block">
+                                <wi-dropdown-list style="width: 100%;" place-holder="Curve" items="self.controller.__CURVES_CACHE['prediction'][dataset.idDataset + '-' + idxIt]" hide-delete-button='true'
+                                    on-item-changed="self.controller.onItemChangeTabTAP" current-select="dataset.selectedValues[idxIt]" params="[curveSpecItem, dataset, 'Prediction', idxIt]">
+                                </wi-dropdown-list>
+                            </div>
+                        </div>
+                        <div class="table-block" style="width:150px;padding-left:0;margin-left:20px">
+                            <editable item-value="self.getResultCurveName" set-value="self.setResultCurveName" enabled="!!self.controller" content-style='{width:"100%"}'
+                                params="[dataset, '_P']" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-show="isSet(4)" class="workspace-main" style="height: calc(100vh - 200px);">
+            <div ng-if="self.showSomVisualize" style="display: flex; overflow: hidden;">
+                <div style="width: calc(100vw - 300px); overflow: auto hidden;">
+                    <distribution-map ng-show="!self.model.heatmap" data="self.somVisualize" colors="self.getDistributionMapColors" color-scale="self.distributionMapColorScale" get-maps="self.getDistributionMaps" get-header="self.getDistributionMapHeader" get-rows="self.getDistributionMapRows"
+                        get-cells="self.getDistributionMapCells" get-weight="self.getDistributionMapWeight" get-scaled-weight="self.getDistributionMapScaledWeight" get-label="self.getDistributionMapLabel" click-fn="self.distributionMapClickFn">
+                    </distribution-map>
+                    <heat-map ng-show="self.model.heatmap" data="self.somVisualize" get-map="self.getVisualizationMap" get-cells="self.getVisualizationMapCells" get-features="self.getVisualizationMapFeatures" get-label="self.getVisualizationMapLabel" get-labels="self.getVisualizationMapLabels"
+                        max-weight=1 get-feature-names="self.getVisualizationMapFeatureNames" feature-colors="self.heatmapColors" label-colors="self.heatmapColors">
+                    </heat-map>
+                </div>
+                <div>
+                    <visualization-map data="self.somVisualize" get-map="self.getVisualizationMap" get-cells="self.getVisualizationMapCells" get-features="self.getVisualizationMapFeatures" get-label="self.getVisualizationMapLabel" get-labels="self.getVisualizationMapLabels"
+                        get-feature-weight="self.getVisualizationMapFeatureWeight" get-feature-scaled-weight="self.getVisualizationMapFeatureScaledWeight" max-weight=1 get-feature-name="self.getVisualizationMapFeatureName" get-feature-names="self.getVisualizationMapFeatureNames"
+                        feature-colors="self.visualizationMapFeatureColors" label-colors="self.visualizationMapLabelColors" click-fn="self.visualizationMapClickFn">
+                    </visualization-map>
+                </div>
+            </div>
+            <!-- <button ng-click="self.getFittedModel()">Test</button> -->
+        </div>
+    </div>
+</div>

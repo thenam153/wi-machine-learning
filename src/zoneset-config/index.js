@@ -211,7 +211,7 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
     }
     this.getZonesetIcon = function (node) {
         if (!node) return;
-        return "user-define-16x16";
+        return "i2g-zoneset-16x16";
     }
     this.getZonesetChild = function (node) {
         return false;
@@ -289,7 +289,7 @@ function ZonesetConfigController($scope, wiApi, $timeout, mlApi) {
     }
     this.getZoneIcon = function (node) {
         if (!node) return;
-        return node._notUsed ? "ti ti-check check-off" : 'ti ti-check check-on';
+        return node._notUsed ? "i2g-zone-off-16x16" : 'i2g-zone-active-16x16';
     }
 
     this.activeAllZones = function () {

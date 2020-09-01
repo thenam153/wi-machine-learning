@@ -1,212 +1,539 @@
-<div class="main-content slim-scroller">
-	<div class="input-selection">
-		<div ng-click="self.controller.refreshCurveData()" style="cursor: pointer; position: absolute; right: 25px; /* top: 5px; */ padding-top: 4px; font-size: 12px; " class="ti ti-reload"></div>
-		<div class="header">
-			<span class="title">
-				<span class="ti ti-import" style="margin-right: 15px;"></span>
-				Input Selection</span>
-			<span class="sub">Select the types below or Add new input curve.</span>
+<!-- <div class="pre-loading" ng-show="self.reloadPrj"> <div></div> </div> -->
+<div class="block border-right-2px" style="flex-basis: 230px; overflow: visible" resizable r-directions="['right']"
+	r-flex="true">
+	<div class="i2g-title-with-btn">
+		<span>Input selection</span>
+		<div>
+			<div class="space-20px"></div>
+			<div class="i2g-button-with-icon" ng-click="self.controller.refreshCurveData()">
+				<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+					<path
+						d="M12.6233804,6.08608223 C12.8678466,6.67561497 13.0027741,7.32205048 13.0027741,8 L15.0027741,8 C15.0027741,7.05087067 14.8138756,6.14586096 14.4716229,5.32051512 C15.521423,7.85780063 15.0150559,10.8872132 12.9525216,12.9497475 C10.2188516,15.6834175 5.78669671,15.6834175 3.05302667,12.9497475 L4.46724023,11.5355339 C6.41986169,13.4881554 9.58568658,13.4881554 11.538308,11.5355339 C13.0027741,10.0710678 13.3688907,7.92417477 12.6366576,6.1184952 C11.850808,4.25919913 10.0738419,3 8.00277414,3 C5.24135039,3 3.00277414,5.23857625 3.00277414,8 L1.00277414,8 C1.00277414,4.13400675 4.13678089,1 8.00277414,1 C9.93577074,1 11.6857707,1.78350167 12.9525216,3.05025249 L11.538308,4.46446609 C12.0176907,4.9438488 12.3793815,5.49635589 12.6233804,6.08608223 Z"
+						id="Combined-Shape" fill-rule="nonzero"></path>
+					<path
+						d="M12.4142136,4 L13.7071068,2.70710678 C14.0976311,2.31658249 14.0976311,1.68341751 13.7071068,1.29289322 C13.3165825,0.902368927 12.6834175,0.902368927 12.2928932,1.29289322 L10.2928932,3.29289322 C9.90236893,3.68341751 9.90236893,4.31658249 10.2928932,4.70710678 L12.2928932,6.70710678 C12.6834175,7.09763107 13.3165825,7.09763107 13.7071068,6.70710678 C14.0976311,6.31658249 14.0976311,5.68341751 13.7071068,5.29289322 L12.4142136,4 Z"
+						id="Line-2" fill-rule="nonzero"
+						transform="translate(12.000000, 4.000000) rotate(-135.000000) translate(-12.000000, -4.000000) ">
+					</path>
+					<path
+						d="M5.20710678,10.7071068 C5.59763107,10.3165825 5.59763107,9.68341751 5.20710678,9.29289322 C4.81658249,8.90236893 4.18341751,8.90236893 3.79289322,9.29289322 L1.79289322,11.2928932 C1.40236893,11.6834175 1.40236893,12.3165825 1.79289322,12.7071068 L3.79289322,14.7071068 C4.18341751,15.0976311 4.81658249,15.0976311 5.20710678,14.7071068 C5.59763107,14.3165825 5.59763107,13.6834175 5.20710678,13.2928932 L3.91421356,12 L5.20710678,10.7071068 Z"
+						id="Line-2" fill-rule="nonzero"
+						transform="translate(3.500000, 12.000000) rotate(-315.000000) translate(-3.500000, -12.000000) ">
+					</path>
+				</svg>
+			</div>
 		</div>
-		<div class="button-input">
-			<div title="Curve" class="button" ng-class="{'active': self.controller.typeInput.type == self.buttons[0].type}" ng-click="self.controller.onChangeType(self.buttons[0])">
-				<div class="ml-curve-16x16"></div>
+	</div>
+	<div class="space-height-20px"></div>
+	<div class="i2g-title-with-btn">
+		<div style="justify-content: flex-start;">
+			<div title="Curve" class="i2g-button-with-icon"
+				ng-class="self.controller.typeInput.type == self.buttons[0].type ? 'active' : 'disable'"
+				ng-click="self.controller.onChangeType(self.buttons[0])">
+				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px"
+					height="16px" viewBox="0 0 16 16" version="1.1">
+					<path
+						d="M6.49740253,0.931026802 C7.07684452,0.927631318 7.48198,0.929356684 7.71280898,0.936202899 C7.91959731,0.942336086 8.18935649,0.958595689 8.52208652,0.984981707 C8.77478796,1.00496214 8.97251658,1.21091257 8.98225004,1.46421573 L8.98280936,1.47877138 C8.99212258,1.72113818 8.80319533,1.92516515 8.56082853,1.93447837 C8.5552101,1.93469426 8.54958804,1.93480224 8.54396545,1.93480224 L6.50033287,1.93480224 C6.22419049,1.93480224 6.00033287,1.71094461 6.00033287,1.43480224 L6.00025979,1.4310913 C6.00025979,1.15605224 6.2223682,0.932638481 6.49740253,0.931026802 Z"
+						id="Path" fill="currentColor" fill-rule="nonzero"
+						transform="translate(7.491700, 1.432070) rotate(6.000000) translate(-7.491700, -1.432070) " />
+					<path
+						d="M6.75274153,14.1722039 C7.33218351,14.1688084 7.737319,14.1705338 7.96814798,14.17738 C8.17493631,14.1835132 8.44469549,14.1997728 8.77742552,14.2261588 C9.03012696,14.2461393 9.22785558,14.4520897 9.23758904,14.7053929 L9.23814836,14.7199485 C9.24746158,14.9623153 9.05853433,15.1663423 8.81616753,15.1756555 C8.8105491,15.1758714 8.80492703,15.1759794 8.79930445,15.1759794 L6.75567187,15.1759794 C6.47952949,15.1759794 6.25567187,14.9521217 6.25567187,14.6759794 L6.25559879,14.6722684 C6.25559879,14.3972294 6.4777072,14.1738156 6.75274153,14.1722039 Z"
+						id="Path" fill="currentColor" fill-rule="nonzero"
+						transform="translate(7.747039, 14.673247) rotate(-165.000000) translate(-7.747039, -14.673247) " />
+					<path
+						d="M7,15 C4.33333333,14.3636364 3,13.2986046 3,11.8049047 C3,10.15598 5.05870129,9.4251336 7.39485888,8.78097265 L7,15 Z"
+						id="Path" fill="currentColor" fill-rule="nonzero" />
+					<path
+						d="M7.88888889,1 C11.962963,1.51333552 14,2.78606279 14,4.81818182 C14,7.24040764 10.4588014,7.93613576 7.39485888,8.78097265 L7.88888889,1 Z"
+						id="Path" fill="currentColor" fill-rule="nonzero" />
+					<path
+						d="M7.5,0 C7.77614237,-5.07265313e-17 8,0.223857625 8,0.5 L8,15.5 C8,15.7761424 7.77614237,16 7.5,16 C7.22385763,16 7,15.7761424 7,15.5 L7,0.5 C7,0.223857625 7.22385763,5.07265313e-17 7.5,0 Z"
+						id="Path" fill="currentColor" fill-rule="nonzero" />
+				</svg>
 			</div>
-			<div title="Family" class="button" ng-class="{'active': self.controller.typeInput.type == self.buttons[1].type}" ng-click="self.controller.onChangeType(self.buttons[1])">
-				<div class="ml-family-16x16"></div>
+			<div class="space-20px"></div>
+			<div title="Family" class="i2g-button-with-icon"
+				ng-class="self.controller.typeInput.type == self.buttons[1].type ? 'active' : 'disable'"
+				ng-click="self.controller.onChangeType(self.buttons[1])">
+				<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" class="">
+						<path d="M5,1.5 L11,1.5 C12.1045695,1.5 13,2.3954305 13,3.5 L13,12.5 C13,13.6045695 12.1045695,14.5 11,14.5 L5,14.5 C3.8954305,14.5 3,13.6045695 3,12.5 L3,3.5 C3,2.3954305 3.8954305,1.5 5,1.5 Z" id="Path" fill="currentColor" fill-rule="nonzero"/>
+						<path d="M3,3.5 L5,3.5 C5.27614237,3.5 5.5,3.72385763 5.5,4 C5.5,4.27614237 5.27614237,4.5 5,4.5 L3,4.5 C2.72385763,4.5 2.5,4.27614237 2.5,4 C2.5,3.72385763 2.72385763,3.5 3,3.5 Z" id="Path" fill="#FFFFFF" fill-rule="nonzero"/>
+						<path d="M3,7.5 L5,7.5 C5.27614237,7.5 5.5,7.72385763 5.5,8 C5.5,8.27614237 5.27614237,8.5 5,8.5 L3,8.5 C2.72385763,8.5 2.5,8.27614237 2.5,8 C2.5,7.72385763 2.72385763,7.5 3,7.5 Z" id="Path" fill="#FFFFFF" fill-rule="nonzero"/>
+						<path d="M3,11.5 L5,11.5 C5.27614237,11.5 5.5,11.7238576 5.5,12 C5.5,12.2761424 5.27614237,12.5 5,12.5 L3,12.5 C2.72385763,12.5 2.5,12.2761424 2.5,12 C2.5,11.7238576 2.72385763,11.5 3,11.5 Z" id="Path" fill="#FFFFFF" fill-rule="nonzero"/>
+				</svg>
 			</div>
-			<div title="Family Group" class="button" ng-class="{'active': self.controller.typeInput.type == self.buttons[2].type}" ng-click="self.controller.onChangeType(self.buttons[2])">
-				<div class="ml-family-group-16x16"></div>
+			<div class="space-20px"></div>
+			<div title="Family Group" class="i2g-button-with-icon"
+				ng-class="self.controller.typeInput.type == self.buttons[2].type ? 'active' : 'disable'"
+				ng-click="self.controller.onChangeType(self.buttons[2])">
+				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+					<path d="M7,0 L13,0 C14.1045695,-2.02906125e-16 15,0.8954305 15,2 L15,11 C15,12.1045695 14.1045695,13 13,13 L7,13 C5.8954305,13 5,12.1045695 5,11 L5,2 C5,0.8954305 5.8954305,2.02906125e-16 7,0 Z" id="Path" fill="currentColor" fill-rule="nonzero" opacity="0.564522879"/>
+					<path d="M3,4 L9,4 C10.1045695,4 11,4.8954305 11,6 L11,14 C11,15.1045695 10.1045695,16 9,16 L3,16 C1.8954305,16 1,15.1045695 1,14 L1,6 C1,4.8954305 1.8954305,4 3,4 Z" id="Path" fill="currentColor" fill-rule="nonzero"/>
+					<path d="M0.5,6 L2.5,6 C2.77614237,6 3,6.22385763 3,6.5 C3,6.77614237 2.77614237,7 2.5,7 L0.5,7 C0.223857625,7 3.38176876e-17,6.77614237 0,6.5 C-3.38176876e-17,6.22385763 0.223857625,6 0.5,6 Z" id="Path" fill="#FFFFFF" fill-rule="nonzero"/>
+					<path d="M0.5,9.5 L2.5,9.5 C2.77614237,9.5 3,9.72385763 3,10 C3,10.2761424 2.77614237,10.5 2.5,10.5 L0.5,10.5 C0.223857625,10.5 3.38176876e-17,10.2761424 0,10 C-3.38176876e-17,9.72385763 0.223857625,9.5 0.5,9.5 Z" id="Path" fill="#FFFFFF" fill-rule="nonzero"/>
+					<path d="M0.5,13 L2.5,13 C2.77614237,13 3,13.2238576 3,13.5 C3,13.7761424 2.77614237,14 2.5,14 L0.5,14 C0.223857625,14 3.38176876e-17,13.7761424 0,13.5 C-3.38176876e-17,13.2238576 0.223857625,13 0.5,13 Z" id="Path" fill="#FFFFFF" fill-rule="nonzero"/>
+				</svg>
 			</div>
-			<div title="Add input curve" class="button" ng-click="self.controller.onAddInputItem()">
-				<div class="ml-new-16x16"></div>
+			<div class="space-20px"></div>
+			<div style="height: 100%; display: flex; align-items: center;">
+				<div class="border-left-2px" style="height: 30px;"></div>
 			</div>
+			<div class="space-20px"></div>
+			<div class="i2g-button-with-icon active" title="Add input curve"
+				ng-click="self.controller.onAddInputItem()">
+				<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px"
+					height="16px" viewBox="0 0 16 16" version="1.1">
+					<path
+						d="M2,7 L14,7 C14.5522847,7 15,7.44771525 15,8 C15,8.55228475 14.5522847,9 14,9 L2,9 C1.44771525,9 1,8.55228475 1,8 C1,7.44771525 1.44771525,7 2,7 Z M8,8 L14,8 L8,8 Z"
+						id="Rectangle" fill="currentColor" fill-rule="nonzero"
+						transform="translate(8.000000, 8.000000) rotate(-180.000000) translate(-8.000000, -8.000000) " />
+					<path
+						d="M2,7 L14,7 C14.5522847,7 15,7.44771525 15,8 C15,8.55228475 14.5522847,9 14,9 L2,9 C1.44771525,9 1,8.55228475 1,8 C1,7.44771525 1.44771525,7 2,7 Z M8,8 L14,8 L8,8 Z"
+						id="Rectangle" fill="currentColor" fill-rule="nonzero"
+						transform="translate(8.000000, 8.000000) rotate(-90.000000) translate(-8.000000, -8.000000) " />
+				</svg>
+			</div>
+
 		</div>
-		<div class="list-input">
-			<div class="list-scroll" onmouseover=this.style.overflow='overlay' onmouseout=this.style.overflow='hidden'>
-				<div class="input-curve" ng-repeat="item in self.controller.curveSpecs track by $index">
-					<div style="flex: 1;">
-						<div style="display: flex; margin-bottom: 10px; justify-content: space-between;">
-							<div style="font-weight: bold; font-size: 12px; ">
-								{{item.label}} {{item.isTarget ? '' : $index}}
-								<span style='margin-left:1em;text-align:right;'>
-									<span ng-click='item.transform="linear";' 
-										class="curve-transform" ng-class="{'active': item.transform === 'linear'}" >
-										<span >
-											<span>x</span>
-										</span>
-									</span>
-									<span ng-click='item.transform="logarithmic";'
-										class="curve-transform" ng-class="{'active': item.transform === 'logarithmic'}">
-										<span>
-											lg(x)
-										</span>
-									</span>
-									<span ng-click='item.transform="exponential";'
-										class="curve-transform" ng-class="{'active': item.transform === 'exponential'}" >
-										<span>10<sup>x</sup>
-										</span>
-									</span>
-								</span>
-							</div>
-							<div ng-if="!item.isTarget" style="margin:0 10px; cursor: pointer; display: flex; align-items: center;" ng-click="self.controller.onRemoveInputItem($index)">
-								<i class="ti ti-close"></i>
-							</div>
-						</div>
-						<!-- <wi-dropdown-list-new style="width: 100%;" place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionList" hide-delete-button='true'
-							on-item-changed="self.getFnOnInputChanged($index)" current-select="item.currentSelect">
-						</wi-dropdown-list-new> -->
-						<wi-dropdown-list ng-if="!item.isTarget" style="width: 100%;" place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionList" hide-delete-button='true'
-							on-item-changed="self.controller.onInputItemChange" current-select="item.currentSelect" params="[item, $index]" bare-list="true">
-						</wi-dropdown-list>
-						<wi-dropdown-list ng-if="item.isTarget" style="width: 100%;" place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionListTarget" hide-delete-button='true'
-							on-item-changed="self.controller.onInputItemChange" current-select="item.currentSelect" params="[item, $index]" bare-list="true">
-						</wi-dropdown-list>
-					</div>
+	</div>
+	<div class="space-height-20px"></div>
+
+	<div class="i2g-list-card-v2" style="display: flex; flex-direction: column; height: 100%;">
+		<div class="i2g-title-with-btn" style="margin: 0 10px;">
+			<span>Target Curve</span>
+		</div>
+		<div class="item" ng-if="item.isTarget" ng-repeat="item in self.controller.curveSpecs track by $index">
+			<div>
+				<div>
+					<div class="i2g-badge" 
+						ng-click='item.transform="linear";' ng-class="{'active': item.transform === 'linear'}">x</div>
+					<div class="i2g-badge" 
+						ng-click='item.transform="logarithmic";'
+						ng-class="{'active': item.transform === 'logarithmic'}">lg(x)</div>
+					<div class="i2g-badge" 
+						ng-click='item.transform="exponential";'
+						ng-class="{'active': item.transform === 'exponential'}">10<sup
+							style="font-size: 70% !important;">x</sup></div>
 				</div>
 			</div>
+			<div class="space-height-10px"></div>
+			<wi-dropdown-list ng-if="item.isTarget" style="width: 100%;"
+				place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionListTarget"
+				hide-delete-button='true' on-item-changed="self.controller.onInputItemChange"
+				current-select="item.currentSelect" params="[item, $index]" bare-list="true">
+			</wi-dropdown-list>
+			<div class="space-height-10px"></div>
+			<div class="border-bottom-2px"></div>
 		</div>
-
-	</div>
-	<div class="workspace">
-		<div style="flex: 1; overflow: hidden; position: relative;">
-			<div class="header sticky">
-				<span class="title">Traning</span>
-				<span class="sub">Drag datasets from project list</span>
+		<div class="i2g-title-with-btn" style="margin: -10px 10px 0 10px;">
+			<span>Input Curves</span>
+		</div>
+		<div class="item" ng-if="!item.isTarget" ng-repeat="item in self.controller.curveSpecs track by $index">
+			<div>
+				<div class="i2g-badge-circle">
+					{{item.isTarget ? '' : $index}}
+				</div>
+				<div>
+					<div class="i2g-badge" 
+						ng-click='item.transform="linear";' ng-class="{'active': item.transform === 'linear'}">x</div>
+					<div class="i2g-badge" 
+						ng-click='item.transform="logarithmic";'
+						ng-class="{'active': item.transform === 'logarithmic'}">lg(x)</div>
+					<div class="i2g-badge" 
+						ng-click='item.transform="exponential";'
+						ng-class="{'active': item.transform === 'exponential'}">10<sup
+							style="font-size: 70% !important;">x</sup></div>
+				</div>
+				<div class="i2g-button-with-icon" ng-if="!item.isTarget" ng-click="self.controller.onRemoveInputItem($index)">
+					<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+						<path
+							d="M2,7 L14,7 C14.5522847,7 15,7.44771525 15,8 C15,8.55228475 14.5522847,9 14,9 L2,9 C1.44771525,9 1,8.55228475 1,8 C1,7.44771525 1.44771525,7 2,7 Z"
+							id="Path" fill-rule="nonzero"
+							transform="translate(8.000000, 8.000000) rotate(-225.000000) translate(-8.000000, -8.000000) " />
+						<path
+							d="M2,7 L14,7 C14.5522847,7 15,7.44771525 15,8 C15,8.55228475 14.5522847,9 14,9 L2,9 C1.44771525,9 1,8.55228475 1,8 C1,7.44771525 1.44771525,7 2,7 Z"
+							id="Path" fill-rule="nonzero"
+							transform="translate(8.000000, 8.000000) rotate(-135.000000) translate(-8.000000, -8.000000) " />
+					</svg>
+				</div>
 			</div>
+			<div class="space-height-10px"></div>
+			<wi-dropdown-list ng-if="!item.isTarget" style="width: 100%;"
+			place-holder="{{self.controller.typeInput.label}}" items="self.controller.selectionList"
+			hide-delete-button='true' on-item-changed="self.controller.onInputItemChange"
+			current-select="item.currentSelect" params="[item, $index]" bare-list="true">
+			</wi-dropdown-list>
+			<div class="space-height-10px"></div>
+			<div class="border-bottom-2px"></div>
 
-			<!-- <wi-droppable container-style="{'flex':'1','display':'flex', 'overflow': 'auto'}" onmouseover=this.style.overflowY='auto'
-				onmouseout=this.style.overflowY='hidden' on-drop="self.getFnDrop('training')"
-				style="display: flex; height: calc(100% - 67px); overflow: hidden;">
-			</wi-droppable> -->
-			<vue-component
-				ng-show="self.currentTab===$index"
-				root="WiDroppable"
-				props="{
+		</div>
+	</div>
+</div>
+<div style="flex: 1; display: flex; background: var(--toolbar-bg-color); padding: 20px;">
+	<div class="block" style="flex: 1; overflow: visible; background: var(--toolbar-bg-color); padding: 0;">
+		<div class="i2g-title-with-icon"
+			ng-style="{ 'background' : self.controller.tabs['training'].listDataset.length ? 'var(--primary-color)' : 'var(--button-icon-color)' }">
+			<div>
+				<svg ng-style="{ 'transform' : self.showmoreTraining ? 'rotate(180deg)' : 'rotate(0deg)' }"
+				ng-click="self.showmoreTraining = !self.showmoreTraining" style="cursor: pointer;" width="16px"
+					height="16px" viewBox="0 0 16 16" version="1.1">
+					<path
+						d="M10.7071068,4.70710678 C11.0976311,4.31658249 11.0976311,3.68341751 10.7071068,3.29289322 C10.3165825,2.90236893 9.68341751,2.90236893 9.29289322,3.29289322 L5.29289322,7.29289322 C4.90236893,7.68341751 4.90236893,8.31658249 5.29289322,8.70710678 L9.29289322,12.7071068 C9.68341751,13.0976311 10.3165825,13.0976311 10.7071068,12.7071068 C11.0976311,12.3165825 11.0976311,11.6834175 10.7071068,11.2928932 L7.41421356,8 L10.7071068,4.70710678 Z"
+						id="Path" fill="currentColor" fill-rule="nonzero"
+						transform="translate(8.000000, 8.000000) rotate(-90.000000) translate(-8.000000, -8.000000) " />
+				</svg>
+				<div>Training</div>
+			</div>
+			<span>
+				{{self.controller.tabs['training'].listDataset.length}}
+			</span>
+		</div>
+		<div class="space-height-20px"></div>
+		<vue-component ng-show="self.currentTab===$index" root="WiDroppable" props="{
 						onDrop: self.controller.getFnDrop('training'),
 						dataType: 'tree-nodes',
-				}"
-			></vue-component>
-				<div class="no-datasets" ng-show="!self.controller.tabs['training'].listDataset.length" style="background-image:url('./bg-datasets.png')">
-				</div>
-				<div ng-show="self.controller.tabs['training'].listDataset.length"
-					style="display: flex; flex-direction: column; height: 100%; overflow: auto;">
-					<div style="height: 100%;">
-						<div ng-repeat="item in self.controller.tabs['training'].listDataset track by $index">
-							<div class="datasets-info">
-								<div class="button ti ti-close" ng-click="self.controller.onRemoveDataset('training', $index)"></div>
-								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
-									{{self.controller.getDataset(item.idWell, item.idDataset).name}}</div>
-								<div class="detail">
-									<div>Project: {{self.controller.getProject(item.idProject, item.owner).alias || self.controller.getProject(item.idProject, item.owner).name}}</div>
-									<div>Well name: {{self.controller.getWell(item.idWell).name}}</div>
-									<div>Owner: {{self.controller.getProject(item.idProject, item.owner).owner || self.controller.getProject(item.idProject, item.owner).createdBy}}</div>
-								</div>
-							</div>
+				}"></vue-component>
+		<div class="i2g-list-card">
+			<div class="item" ng-repeat="item in self.controller.tabs['training'].listDataset track by $index">
+				<div>
+					<div>
+						<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20"
+							height="20" viewBox="0 0 67 52.799" style="margin-right: 10px;">
+							<defs>
+								<linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="0.245"
+									gradientUnits="objectBoundingBox">
+									<stop offset="0" stop-color="#679eff"></stop>
+									<stop offset="1" stop-color="#9dc0ff"></stop>
+								</linearGradient>
+								<linearGradient id="linear-gradient-2" x1="0.5" x2="0.5" y2="1"
+									gradientUnits="objectBoundingBox">
+									<stop offset="0" stop-color="#508fff"></stop>
+									<stop offset="1" stop-color="#3d7cef"></stop>
+								</linearGradient>
+							</defs>
+							<g id="Group_171" data-name="Group 171" transform="translate(-2666 -2409.201)">
+								<path id="Path_31" data-name="Path 31"
+									d="M4,1.2s14.13.043,16.6.043,2.759.346,3.852,1.821.657.872,1.894,2.536,2.162,1.606,3.963,1.586S63,7.18,63,7.18a3.785,3.785,0,0,1,4,4.036V50a4,4,0,0,1-4,4H4a4,4,0,0,1-4-4V4C0,1.791,1.791,1.2,4,1.2Z"
+									transform="translate(2666 2408)" fill="url(#linear-gradient)"></path>
+								<path id="Path_32" data-name="Path 32"
+									d="M4,0H63a4,4,0,0,1,4,4V39a4,4,0,0,1-4,4H4a4,4,0,0,1-4-4V4A4,4,0,0,1,4,0Z"
+									transform="translate(2733 2462) rotate(180)" fill="url(#linear-gradient-2)"></path>
+							</g>
+						</svg>
+						<div>
+							{{self.controller.getDataset(item.idWell, item.idDataset).name}}
 						</div>
 					</div>
+					<div class="i2g-button-with-icon" ng-click="self.controller.onRemoveDataset('training', $index)">
+						<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+							<path
+								d="M2,7 L14,7 C14.5522847,7 15,7.44771525 15,8 C15,8.55228475 14.5522847,9 14,9 L2,9 C1.44771525,9 1,8.55228475 1,8 C1,7.44771525 1.44771525,7 2,7 Z"
+								id="Path" fill-rule="nonzero"
+								transform="translate(8.000000, 8.000000) rotate(-225.000000) translate(-8.000000, -8.000000) " />
+							<path
+								d="M2,7 L14,7 C14.5522847,7 15,7.44771525 15,8 C15,8.55228475 14.5522847,9 14,9 L2,9 C1.44771525,9 1,8.55228475 1,8 C1,7.44771525 1.44771525,7 2,7 Z"
+								id="Path" fill-rule="nonzero"
+								transform="translate(8.000000, 8.000000) rotate(-135.000000) translate(-8.000000, -8.000000) " />
+						</svg>
+					</div>
 				</div>
-		</div>
-		<div style="flex: 1; overflow: hidden; margin-left: 20px; position: relative;">
-			<div class="header sticky">
-				<span class="title">Verify</span>
-				<span class="sub">Drag datasets from project list</span>
+				<div ng-show="!self.showmoreTraining" class="space-height-20px"></div>
+				<div ng-show="!self.showmoreTraining">
+					<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+						<path xmlns="http://www.w3.org/2000/svg"
+							d="M8,12 C10.209139,12 12,10.209139 12,8 C12,5.790861 10.209139,4 8,4 C5.790861,4 4,5.790861 4,8 C4,10.209139 5.790861,12 8,12 Z"
+							id="Path" fill-rule="nonzero" />
+					</svg>
+					Project:
+					{{self.controller.getProject(item.idProject, item.owner).alias || self.controller.getProject(item.idProject, item.owner).name}}
+				</div>
+				<div ng-show="!self.showmoreTraining"class="space-height-10px"></div>
+				<div ng-show="!self.showmoreTraining">
+					<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+						<path xmlns="http://www.w3.org/2000/svg"
+							d="M8,12 C10.209139,12 12,10.209139 12,8 C12,5.790861 10.209139,4 8,4 C5.790861,4 4,5.790861 4,8 C4,10.209139 5.790861,12 8,12 Z"
+							id="Path" fill-rule="nonzero" />
+					</svg>
+					Well name: {{self.controller.getWell(item.idWell).name}}
+				</div>
+				<div ng-show="!self.showmoreTraining"class="space-height-10px"></div>
+				<div ng-show="!self.showmoreTraining">
+					<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+						<path xmlns="http://www.w3.org/2000/svg"
+							d="M8,12 C10.209139,12 12,10.209139 12,8 C12,5.790861 10.209139,4 8,4 C5.790861,4 4,5.790861 4,8 C4,10.209139 5.790861,12 8,12 Z"
+							id="Path" fill-rule="nonzero" />
+					</svg>
+					Owner:
+					{{self.controller.getProject(item.idProject, item.owner).owner || self.controller.getProject(item.idProject, item.owner).createdBy}}
+				</div>
 			</div>
-			<!-- <wi-droppable container-style="{'flex':'1','display':'flex', 'overflow': 'auto'}" onmouseover=this.style.overflowY='overlay'
-				onmouseout=this.style.overflowY='hidden' on-drop="self.getFnDrop('verify')"
-				style="display: flex;height: calc(100% - 67px); overflow: hidden;">
-			</wi-droppable> -->
-			<vue-component
-				ng-show="self.currentTab===$index"
-				root="WiDroppable"
-				props="{
-						onDrop: self.controller.getFnDrop('verify'),
-						dataType: 'tree-nodes',
-				}"
-			></vue-component>
-				<div class="no-datasets" ng-show="!self.controller.tabs['verify'].listDataset.length" style="background-image:url('./bg-datasets.png')">
-				</div>
-				<div ng-show="self.controller.tabs['verify'].listDataset.length"
-					style="display: flex; flex-direction: column; height: 100%; overflow: auto;">
-					<div style="height: 100%;">
-						<div ng-repeat="item in self.controller.tabs['verify'].listDataset track by $index">
-							<div class="datasets-info">
-								<div class="button ti ti-close" ng-click="self.controller.onRemoveDataset('verify', $index)"></div>
-								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
-									{{self.controller.getDataset(item.idWell, item.idDataset).name}}</div>
-								<div class="detail">
-									<div>Project: {{self.controller.getProject(item.idProject, item.owner).alias || self.controller.getProject(item.idProject, item.owner).name}}</div>
-									<div>Well name: {{self.controller.getWell(item.idWell).name}}</div>
-									<div>Owner: {{self.controller.getProject(item.idProject, item.owner).owner || self.controller.getProject(item.idProject, item.owner).createdBy}}</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-		</div>
-		<div style="flex: 1; overflow: hidden; margin-left: 20px; position: relative;">
-			<div class="header sticky">
-				<span class="title">Prediction</span>
-				<span class="sub">Drag datasets from project list</span>
-			</div>
-			<!-- <wi-droppable container-style="{'flex':'1','display':'flex', 'overflow': 'auto'}" onmouseover=this.style.overflowY='overlay'
-				onmouseout=this.style.overflowY='hidden' on-drop="self.getFnDrop('prediction')"
-				style="display: flex;height: calc(100% - 67px); overflow: hidden;">
-			</wi-droppable> -->
-				<div class="no-datasets" ng-show="!self.controller.tabs['prediction'].listDataset.length" style="background-image:url('./bg-datasets.png')">
-					<!-- <div class="ti ti-import" style="font-size: 40px;
-										margin-bottom: 20px;"></div>
-					<div>Drop datasets here</div> -->
-				</div>
-			<vue-component
-				ng-show="self.currentTab===$index"
-				root="WiDroppable"
-				props="{
-						onDrop: self.controller.getFnDrop('prediction'),
-						dataType: 'tree-nodes',
-				}"
-			></vue-component>
-				<div ng-show="self.controller.tabs['prediction'].listDataset.length"
-					style="display: flex;flex-direction: column; height: 100%; overflow: auto;">
-					<div style="height: 100%;">
-						<div ng-repeat="item in self.controller.tabs['prediction'].listDataset track by $index">
-							<div class="datasets-info">
-								<div class="button ti ti-close" ng-click="self.controller.onRemoveDataset('prediction', $index)">
-								</div>
-								<div class="title" style="font-size: 12px; font-weight: 400;">Dataset name:
-									{{self.controller.getDataset(item.idWell, item.idDataset).name}}</div>
-								<div class="detail">
-									<div>Project: {{self.controller.getProject(item.idProject, item.owner).alias || self.controller.getProject(item.idProject, item.owner).name}}</div>
-									<div>Well name: {{self.controller.getWell(item.idWell).name}}</div>
-									<div>Owner: {{self.controller.getProject(item.idProject, item.owner).owner || self.controller.getProject(item.idProject, item.owner).createdBy}}</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
 		</div>
 	</div>
-	<side-bar my-default-width="315" orientation="w" collapsed="false">
-
-		<div class="input-selection" style="height: unset; padding-bottom: 0;">
-			<div ng-click="self.refeshProject()" style="cursor: pointer; position: absolute; right: 25px; /* top: 5px; */ padding-top: 4px; font-size: 12px; " class="ti ti-reload"></div>
-			<div class="header">
-				<span class="title">
-					<span class="ti ti-align-left" style="margin-right: 15px;"></span>
-						Project list
-				</span>
-				<span class="sub">Project sync from i2G cloud, please login to get ít</span>
-				<!-- <div ng-click="self.refeshProject()">refesh pj</div> -->
+	<div class="space-20px"></div>
+	<div class="block" style="flex: 1; overflow: visible; background: var(--toolbar-bg-color); padding: 0;">
+		<div class="i2g-title-with-icon"
+			ng-style="{ 'background' : self.controller.tabs['verify'].listDataset.length ? 'var(--primary-color)' : 'var(--button-icon-color)' }">
+			<div>
+				<svg ng-style="{ 'transform' : self.showmoreVerify ? 'rotate(180deg)' : 'rotate(0deg)' }"
+				ng-click="self.showmoreVerify = !self.showmoreVerify" style="cursor: pointer;" width="16px"
+					height="16px" viewBox="0 0 16 16" version="1.1">
+					<path
+						d="M10.7071068,4.70710678 C11.0976311,4.31658249 11.0976311,3.68341751 10.7071068,3.29289322 C10.3165825,2.90236893 9.68341751,2.90236893 9.29289322,3.29289322 L5.29289322,7.29289322 C4.90236893,7.68341751 4.90236893,8.31658249 5.29289322,8.70710678 L9.29289322,12.7071068 C9.68341751,13.0976311 10.3165825,13.0976311 10.7071068,12.7071068 C11.0976311,12.3165825 11.0976311,11.6834175 10.7071068,11.2928932 L7.41421356,8 L10.7071068,4.70710678 Z"
+						id="Path" fill="currentColor" fill-rule="nonzero"
+						transform="translate(8.000000, 8.000000) rotate(-90.000000) translate(-8.000000, -8.000000) " />
+				</svg>
+				<div>Verify</div>
 			</div>
-			
+			<span>
+				{{self.controller.tabs['verify'].listDataset.length}}
+			</span>
 		</div>
-		<input class="tree-search" type="text" placeholder="Search" ng-model="filter" />
-		<div style="height: calc(100% - 138px); margin-left: 15px;">
-			<!-- <wi-tree-view-virtual tree-root="self.listMlProject" hide-unmatched='true' get-children="self.getChildren"
-				click-fn='self.clickFn' get-label="self.getLabel" get-icon='self.getIcon' run-match='self.runMatch'
-				keep-chidren='true' no-drag='self.noDrag'>
-			</wi-tree-view-virtual> -->
-			<vue-component root="WiTree"
-				props="{
+		<div class="space-height-20px"></div>
+		<vue-component ng-show="self.currentTab===$index" root="WiDroppable" props="{
+						onDrop: self.controller.getFnDrop('verify'),
+						dataType: 'tree-nodes',
+				}"></vue-component>
+		<div class="i2g-list-card">
+			<div class="item" ng-repeat="item in self.controller.tabs['verify'].listDataset track by $index">
+				<div>
+					<div>
+						<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20"
+							height="20" viewBox="0 0 67 52.799" style="margin-right: 10px;">
+							<defs>
+								<linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="0.245"
+									gradientUnits="objectBoundingBox">
+									<stop offset="0" stop-color="#679eff"></stop>
+									<stop offset="1" stop-color="#9dc0ff"></stop>
+								</linearGradient>
+								<linearGradient id="linear-gradient-2" x1="0.5" x2="0.5" y2="1"
+									gradientUnits="objectBoundingBox">
+									<stop offset="0" stop-color="#508fff"></stop>
+									<stop offset="1" stop-color="#3d7cef"></stop>
+								</linearGradient>
+							</defs>
+							<g id="Group_171" data-name="Group 171" transform="translate(-2666 -2409.201)">
+								<path id="Path_31" data-name="Path 31"
+									d="M4,1.2s14.13.043,16.6.043,2.759.346,3.852,1.821.657.872,1.894,2.536,2.162,1.606,3.963,1.586S63,7.18,63,7.18a3.785,3.785,0,0,1,4,4.036V50a4,4,0,0,1-4,4H4a4,4,0,0,1-4-4V4C0,1.791,1.791,1.2,4,1.2Z"
+									transform="translate(2666 2408)" fill="url(#linear-gradient)"></path>
+								<path id="Path_32" data-name="Path 32"
+									d="M4,0H63a4,4,0,0,1,4,4V39a4,4,0,0,1-4,4H4a4,4,0,0,1-4-4V4A4,4,0,0,1,4,0Z"
+									transform="translate(2733 2462) rotate(180)" fill="url(#linear-gradient-2)"></path>
+							</g>
+						</svg>
+						<div>
+							{{self.controller.getDataset(item.idWell, item.idDataset).name}}
+						</div>
+					</div>
+					<div class="i2g-button-with-icon" ng-click="self.controller.onRemoveDataset('verify', $index)">
+						<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+							<path
+								d="M2,7 L14,7 C14.5522847,7 15,7.44771525 15,8 C15,8.55228475 14.5522847,9 14,9 L2,9 C1.44771525,9 1,8.55228475 1,8 C1,7.44771525 1.44771525,7 2,7 Z"
+								id="Path" fill-rule="nonzero"
+								transform="translate(8.000000, 8.000000) rotate(-225.000000) translate(-8.000000, -8.000000) " />
+							<path
+								d="M2,7 L14,7 C14.5522847,7 15,7.44771525 15,8 C15,8.55228475 14.5522847,9 14,9 L2,9 C1.44771525,9 1,8.55228475 1,8 C1,7.44771525 1.44771525,7 2,7 Z"
+								id="Path" fill-rule="nonzero"
+								transform="translate(8.000000, 8.000000) rotate(-135.000000) translate(-8.000000, -8.000000) " />
+						</svg>
+					</div>
+				</div>
+				<div ng-show="!self.showmoreVerify" class="space-height-20px"></div>
+				<div ng-show="!self.showmoreVerify">
+					<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+						<path xmlns="http://www.w3.org/2000/svg"
+							d="M8,12 C10.209139,12 12,10.209139 12,8 C12,5.790861 10.209139,4 8,4 C5.790861,4 4,5.790861 4,8 C4,10.209139 5.790861,12 8,12 Z"
+							id="Path" fill-rule="nonzero" />
+					</svg>
+					Project:
+					{{self.controller.getProject(item.idProject, item.owner).alias || self.controller.getProject(item.idProject, item.owner).name}}
+				</div>
+				<div ng-show="!self.showmoreVerify"class="space-height-10px"></div>
+				<div ng-show="!self.showmoreVerify">
+					<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+						<path xmlns="http://www.w3.org/2000/svg"
+							d="M8,12 C10.209139,12 12,10.209139 12,8 C12,5.790861 10.209139,4 8,4 C5.790861,4 4,5.790861 4,8 C4,10.209139 5.790861,12 8,12 Z"
+							id="Path" fill-rule="nonzero" />
+					</svg>
+					Well name: {{self.controller.getWell(item.idWell).name}}
+				</div>
+				<div ng-show="!self.showmoreVerify"class="space-height-10px"></div>
+				<div ng-show="!self.showmoreVerify">
+					<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+						<path xmlns="http://www.w3.org/2000/svg"
+							d="M8,12 C10.209139,12 12,10.209139 12,8 C12,5.790861 10.209139,4 8,4 C5.790861,4 4,5.790861 4,8 C4,10.209139 5.790861,12 8,12 Z"
+							id="Path" fill-rule="nonzero" />
+					</svg>
+					Owner:
+					{{self.controller.getProject(item.idProject, item.owner).owner || self.controller.getProject(item.idProject, item.owner).createdBy}}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="space-20px"></div>
+	<div class="block" style="flex: 1; overflow: visible; background: var(--toolbar-bg-color); padding: 0;">
+		<div class="i2g-title-with-icon"
+			ng-style="{ 'background' : self.controller.tabs['prediction'].listDataset.length ? 'var(--primary-color)' : 'var(--button-icon-color)' }">
+			<div>
+				<svg ng-style="{ 'transform' : self.showmorePrediction ? 'rotate(180deg)' : 'rotate(0deg)' }"
+				ng-click="self.showmorePrediction = !self.showmorePrediction" style="cursor: pointer;" width="16px"
+					height="16px" viewBox="0 0 16 16" version="1.1">
+					<path
+						d="M10.7071068,4.70710678 C11.0976311,4.31658249 11.0976311,3.68341751 10.7071068,3.29289322 C10.3165825,2.90236893 9.68341751,2.90236893 9.29289322,3.29289322 L5.29289322,7.29289322 C4.90236893,7.68341751 4.90236893,8.31658249 5.29289322,8.70710678 L9.29289322,12.7071068 C9.68341751,13.0976311 10.3165825,13.0976311 10.7071068,12.7071068 C11.0976311,12.3165825 11.0976311,11.6834175 10.7071068,11.2928932 L7.41421356,8 L10.7071068,4.70710678 Z"
+						id="Path" fill="currentColor" fill-rule="nonzero"
+						transform="translate(8.000000, 8.000000) rotate(-90.000000) translate(-8.000000, -8.000000) " />
+				</svg>
+				<div>Prediction</div>
+			</div>
+			<span>
+				{{self.controller.tabs['prediction'].listDataset.length}}
+			</span>
+		</div>
+		<div class="space-height-20px"></div>
+		<vue-component ng-show="self.currentTab===$index" root="WiDroppable" props="{
+						onDrop: self.controller.getFnDrop('prediction'),
+						dataType: 'tree-nodes',
+				}"></vue-component>
+		<div class="i2g-list-card">
+			<div class="item" ng-repeat="item in self.controller.tabs['prediction'].listDataset track by $index">
+				<div>
+					<div>
+						<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20"
+							height="20" viewBox="0 0 67 52.799" style="margin-right: 10px;">
+							<defs>
+								<linearGradient id="linear-gradient" x1="0.5" x2="0.5" y2="0.245"
+									gradientUnits="objectBoundingBox">
+									<stop offset="0" stop-color="#679eff"></stop>
+									<stop offset="1" stop-color="#9dc0ff"></stop>
+								</linearGradient>
+								<linearGradient id="linear-gradient-2" x1="0.5" x2="0.5" y2="1"
+									gradientUnits="objectBoundingBox">
+									<stop offset="0" stop-color="#508fff"></stop>
+									<stop offset="1" stop-color="#3d7cef"></stop>
+								</linearGradient>
+							</defs>
+							<g id="Group_171" data-name="Group 171" transform="translate(-2666 -2409.201)">
+								<path id="Path_31" data-name="Path 31"
+									d="M4,1.2s14.13.043,16.6.043,2.759.346,3.852,1.821.657.872,1.894,2.536,2.162,1.606,3.963,1.586S63,7.18,63,7.18a3.785,3.785,0,0,1,4,4.036V50a4,4,0,0,1-4,4H4a4,4,0,0,1-4-4V4C0,1.791,1.791,1.2,4,1.2Z"
+									transform="translate(2666 2408)" fill="url(#linear-gradient)"></path>
+								<path id="Path_32" data-name="Path 32"
+									d="M4,0H63a4,4,0,0,1,4,4V39a4,4,0,0,1-4,4H4a4,4,0,0,1-4-4V4A4,4,0,0,1,4,0Z"
+									transform="translate(2733 2462) rotate(180)" fill="url(#linear-gradient-2)"></path>
+							</g>
+						</svg>
+						<div>
+							{{self.controller.getDataset(item.idWell, item.idDataset).name}}
+						</div>
+					</div>
+					<div class="i2g-button-with-icon" ng-click="self.controller.onRemoveDataset('prediction', $index)">
+						<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+							<path
+								d="M2,7 L14,7 C14.5522847,7 15,7.44771525 15,8 C15,8.55228475 14.5522847,9 14,9 L2,9 C1.44771525,9 1,8.55228475 1,8 C1,7.44771525 1.44771525,7 2,7 Z"
+								id="Path" fill-rule="nonzero"
+								transform="translate(8.000000, 8.000000) rotate(-225.000000) translate(-8.000000, -8.000000) " />
+							<path
+								d="M2,7 L14,7 C14.5522847,7 15,7.44771525 15,8 C15,8.55228475 14.5522847,9 14,9 L2,9 C1.44771525,9 1,8.55228475 1,8 C1,7.44771525 1.44771525,7 2,7 Z"
+								id="Path" fill-rule="nonzero"
+								transform="translate(8.000000, 8.000000) rotate(-135.000000) translate(-8.000000, -8.000000) " />
+						</svg>
+					</div>
+				</div>
+				<div ng-show="!self.showmorePrediction"class="space-height-20px"></div>
+				<div ng-show="!self.showmorePrediction">
+					<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+						<path xmlns="http://www.w3.org/2000/svg"
+							d="M8,12 C10.209139,12 12,10.209139 12,8 C12,5.790861 10.209139,4 8,4 C5.790861,4 4,5.790861 4,8 C4,10.209139 5.790861,12 8,12 Z"
+							id="Path" fill-rule="nonzero" />
+					</svg>
+					Project:
+					{{self.controller.getProject(item.idProject, item.owner).alias || self.controller.getProject(item.idProject, item.owner).name}}
+				</div>
+				<div ng-show="!self.showmorePrediction"class="space-height-10px"></div>
+				<div ng-show="!self.showmorePrediction">
+					<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+						<path xmlns="http://www.w3.org/2000/svg"
+							d="M8,12 C10.209139,12 12,10.209139 12,8 C12,5.790861 10.209139,4 8,4 C5.790861,4 4,5.790861 4,8 C4,10.209139 5.790861,12 8,12 Z"
+							id="Path" fill-rule="nonzero" />
+					</svg>
+					Well name: {{self.controller.getWell(item.idWell).name}}
+				</div>
+				<div ng-show="!self.showmorePrediction"class="space-height-10px"></div>
+				<div ng-show="!self.showmorePrediction">
+					<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+						<path xmlns="http://www.w3.org/2000/svg"
+							d="M8,12 C10.209139,12 12,10.209139 12,8 C12,5.790861 10.209139,4 8,4 C5.790861,4 4,5.790861 4,8 C4,10.209139 5.790861,12 8,12 Z"
+							id="Path" fill-rule="nonzero" />
+					</svg>
+					Owner:
+					{{self.controller.getProject(item.idProject, item.owner).owner || self.controller.getProject(item.idProject, item.owner).createdBy}}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="block border-left-2px" style="flex-basis: 300px; overflow: visible" resizable r-directions="['left']"
+	r-flex="true">
+	<div class="i2g-title-with-btn">
+		<span>Projects List</span>
+		<div>
+			<div class="space-20px"></div>
+			<div class="loading-icon-animate" ng-show="self.reloadPrj">
+			</div>
+			<div class="i2g-button-with-icon" title="Refresh Tree" ng-click="self.refeshProject()"
+				ng-show="!self.reloadPrj">
+				<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+					<path
+						d="M12.6233804,6.08608223 C12.8678466,6.67561497 13.0027741,7.32205048 13.0027741,8 L15.0027741,8 C15.0027741,7.05087067 14.8138756,6.14586096 14.4716229,5.32051512 C15.521423,7.85780063 15.0150559,10.8872132 12.9525216,12.9497475 C10.2188516,15.6834175 5.78669671,15.6834175 3.05302667,12.9497475 L4.46724023,11.5355339 C6.41986169,13.4881554 9.58568658,13.4881554 11.538308,11.5355339 C13.0027741,10.0710678 13.3688907,7.92417477 12.6366576,6.1184952 C11.850808,4.25919913 10.0738419,3 8.00277414,3 C5.24135039,3 3.00277414,5.23857625 3.00277414,8 L1.00277414,8 C1.00277414,4.13400675 4.13678089,1 8.00277414,1 C9.93577074,1 11.6857707,1.78350167 12.9525216,3.05025249 L11.538308,4.46446609 C12.0176907,4.9438488 12.3793815,5.49635589 12.6233804,6.08608223 Z"
+						id="Combined-Shape" fill-rule="nonzero" />
+					<path
+						d="M12.4142136,4 L13.7071068,2.70710678 C14.0976311,2.31658249 14.0976311,1.68341751 13.7071068,1.29289322 C13.3165825,0.902368927 12.6834175,0.902368927 12.2928932,1.29289322 L10.2928932,3.29289322 C9.90236893,3.68341751 9.90236893,4.31658249 10.2928932,4.70710678 L12.2928932,6.70710678 C12.6834175,7.09763107 13.3165825,7.09763107 13.7071068,6.70710678 C14.0976311,6.31658249 14.0976311,5.68341751 13.7071068,5.29289322 L12.4142136,4 Z"
+						id="Line-2" fill-rule="nonzero"
+						transform="translate(12.000000, 4.000000) rotate(-135.000000) translate(-12.000000, -4.000000) " />
+					<path
+						d="M5.20710678,10.7071068 C5.59763107,10.3165825 5.59763107,9.68341751 5.20710678,9.29289322 C4.81658249,8.90236893 4.18341751,8.90236893 3.79289322,9.29289322 L1.79289322,11.2928932 C1.40236893,11.6834175 1.40236893,12.3165825 1.79289322,12.7071068 L3.79289322,14.7071068 C4.18341751,15.0976311 4.81658249,15.0976311 5.20710678,14.7071068 C5.59763107,14.3165825 5.59763107,13.6834175 5.20710678,13.2928932 L3.91421356,12 L5.20710678,10.7071068 Z"
+						id="Line-2" fill-rule="nonzero"
+						transform="translate(3.500000, 12.000000) rotate(-315.000000) translate(-3.500000, -12.000000) " />
+				</svg>
+			</div>
+			<div class="space-20px"></div>
+			<div class="i2g-button-with-icon" title="Sort by name" ng-class="{active: self.sortByName}"
+				ng-click="self.refeshProject(); self.sortByName = !self.sortByName;">
+				<svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1">
+					<path
+						d="M3.41421356,14 L4.70710678,12.7071068 C5.09763107,12.3165825 5.09763107,11.6834175 4.70710678,11.2928932 C4.31658249,10.9023689 3.68341751,10.9023689 3.29289322,11.2928932 L1.29289322,13.2928932 C0.902368927,13.6834175 0.902368927,14.3165825 1.29289322,14.7071068 L3.29289322,16.7071068 C3.68341751,17.0976311 4.31658249,17.0976311 4.70710678,16.7071068 C5.09763107,16.3165825 5.09763107,15.6834175 4.70710678,15.2928932 L3.41421356,14 Z"
+						id="Path" fill-rule="nonzero"
+						transform="translate(3.000000, 14.000000) rotate(-90.000000) translate(-3.000000, -14.000000) " />
+					<path
+						d="M-3,6 C-3.55228475,6 -4,6.44771525 -4,7 C-4,7.55228475 -3.55228475,8 -3,8 L9,8 C9.55228475,8 10,7.55228475 10,7 C10,6.44771525 9.55228475,6 9,6 L-3,6 Z"
+						id="Path" fill-rule="nonzero"
+						transform="translate(3.000000, 7.000000) rotate(-270.000000) translate(-3.000000, -7.000000) " />
+					<path
+						d="M8,0 L15,0 C15.5522847,-1.01453063e-16 16,0.44771525 16,1 C16,1.55228475 15.5522847,2 15,2 L8,2 C7.44771525,2 7,1.55228475 7,1 C7,0.44771525 7.44771525,1.01453063e-16 8,0 Z"
+						id="Path" fill-rule="nonzero" />
+					<path
+						d="M8,4 L13,4 C13.5522847,4 14,4.44771525 14,5 C14,5.55228475 13.5522847,6 13,6 L8,6 C7.44771525,6 7,5.55228475 7,5 C7,4.44771525 7.44771525,4 8,4 Z"
+						id="Path" fill-rule="nonzero" />
+					<path
+						d="M8,8 L11,8 C11.5522847,8 12,8.44771525 12,9 C12,9.55228475 11.5522847,10 11,10 L8,10 C7.44771525,10 7,9.55228475 7,9 C7,8.44771525 7.44771525,8 8,8 Z"
+						id="Path" fill-rule="nonzero" />
+					<path
+						d="M8,12 L9,12 C9.55228475,12 10,12.4477153 10,13 C10,13.5522847 9.55228475,14 9,14 L8,14 C7.44771525,14 7,13.5522847 7,13 C7,12.4477153 7.44771525,12 8,12 Z"
+						id="Path" fill-rule="nonzero" />
+				</svg>
+			</div>
+		</div>
+	</div>
+	<div class="space-height-20px"></div>
+	<div class="i2g-search-box-with-icon">
+		<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" role="img">
+			<path fill-rule="evenodd" clip-rule="evenodd"
+				d="M10.6002 12.0498C9.49758 12.8568 8.13777 13.3333 6.66667 13.3333C2.98477 13.3333 0 10.3486 0 6.66667C0 2.98477 2.98477 0 6.66667 0C10.3486 0 13.3333 2.98477 13.3333 6.66667C13.3333 8.15637 12.8447 9.53194 12.019 10.6419C12.0265 10.6489 12.0338 10.656 12.0411 10.6633L15.2935 13.9157C15.6841 14.3063 15.6841 14.9394 15.2935 15.33C14.903 15.7205 14.2699 15.7205 13.8793 15.33L10.6269 12.0775C10.6178 12.0684 10.6089 12.0592 10.6002 12.0498ZM11.3333 6.66667C11.3333 9.244 9.244 11.3333 6.66667 11.3333C4.08934 11.3333 2 9.244 2 6.66667C2 4.08934 4.08934 2 6.66667 2C9.244 2 11.3333 4.08934 11.3333 6.66667Z">
+			</path>
+		</svg>
+		<input type="search" placeholder="Search" ng-model="filter">
+	</div>
+	<div class="space-height-20px"></div>
+	<div style="height: 100%; overflow: hidden; margin-right: -20px;">
+		<vue-component root="WiTree" props="{
 					treeRoot: self.listMlProject,
 					filter,
 					getChildren: self.getChildren,
@@ -214,22 +541,9 @@
 					getLabel: self.getLabel,
 					getIcon: self.getIcon,
 					runMatch: self.runMatch,
-					getDraggable: self.getDraggable
-				}"
-			></vue-component>
-		</div>
-	</side-bar>
-	<div ng-show="self.reloadPrj" style="z-index: 10; background: #ffffffc9; height: 100vh; width: 100vw; z-index: 5; position: absolute; display: flex; align-items: center; justify-content: center;">
-		<div >
-			<!-- <div class="loader08"></div> -->
-			<div style="
-				height: 80px;
-				width: 80px;
-				transform: translate(-50%, -50%);
-				position: absolute;
-				background-image: url(./spinner.gif);
-				background-size: contain;">
-        	</div>
-		</div>
+					getDraggable: self.getDraggable,
+					nodeHeight: '40px', 
+					levelPadding: '20px'
+				}"></vue-component>
 	</div>
 </div>

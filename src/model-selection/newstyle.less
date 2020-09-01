@@ -1,409 +1,63 @@
-.position-static {
-	position: static;
-}
 model-selection {
-	.hide {
-		display: none;
-	}
-	.main-content {
-		display    : flex;
-		height     : calc(100vh - 60px);
-		font-family: 'Roboto', sans-serif !important;
-		font-size  : 12px;
-		background : #EDEFF3;
+    width   : 100%;
+    height  : 100%;
+    display : flex;
+    overflow: hidden;
 
-		.header {
-			display       : flex;
-			flex-direction: column;
-			margin-bottom : 20px;
-		}
+    .vue-editable {
+        display    : flex;
+        align-items: center;
+        height     : 40px;
+        color: var(--text-primary-color);
 
-		.title {
-			font-size    : 14px;
-			font-weight  : bold;
-			color        : #000;
-			margin-bottom: 10px;
-			margin-right : 30px;
-			display      : flex;
-		}
+        label {
+            height     : 40px;
+            width: 50%;
+            display    : flex;
+            align-items: center;
+        }
 
-		.sub {
-			color    : #8793A1;
-			font-size: 12px;
-			text-align:right;
-			//direction: rtl;
-		}
+        &>div {
+            align-items: center;
 
-		.input-selection {
-			width: 315px;
-			display: flex;
-			flex-direction: column;
-			background: #ffffff;
-			position: relative;
-			box-shadow: 10px 0 20px #0000000a;
+            &>div {
+                max-width: 50%;
+                width    : 50%;
 
-		}
-		.hidden-layers {
-			display: flex;
-			align-items: center;
-			border-radius: 2px;
-			margin-bottom: 20px;
-			// padding: 11px 20px;
-			background: #0674da;
-			justify-content: space-between;
-			color: #fff;
-			.inputs {
-				width: 100%;
-				font-weight: bold;
-				margin: 0 20px;
-				text-align: center;
-				background: transparent;
-				color: #fff;
-			}
-			.add, .remove {
-				padding: 15px;
-				cursor: pointer;
-				border-radius: 2px;
-				transition: all ease-in 0.1s;
-
-				&:active {
-					background: #4d70c3 !important;
-					transition: all ease-in 0.1s;
-				}
-				&:hover {
-					transition: all ease-in 0.1s;
-					background: #6e9aff;
-				}
-			}
-		}
-		.input-number {
-			display: flex;
-			align-items: center;
-			border-radius: 2px;
-			margin-bottom: 20px;
-			padding-left: 10px;
-			background: #fff;
-			justify-content: space-between;
-			border: 1px solid #edeff3;
-			.name {
-				font-weight: bold;
-				white-space: nowrap;
-				margin-right: 10px;
-			}
-			.add, .remove {
-				padding: 14px;
-				cursor: pointer;
-				transition: all ease-in 0.1s;
-
-				&:active {
-					transform: scale(0.8);
-					transition: all ease-in 0.1s;
-				}
-				&:hover {
-					transition: all ease-in 0.1s;
-					background: #e0e0e2;
-				}
-			}
-
-		}
-
-		.workspace {
-			flex         : 1;
-			display      : flex;
-			// padding   : 20px;
-			// height    : calc(100vh - 60px);
-		}
-
-		.button-neural {
-			position       : absolute;
-			bottom         : 0;
-			margin         : 20px;
-			display        : flex;
-			justify-content: center;
-			border-radius  : 2px;
-			width          : -webkit-fill-available;
-			padding        : 10px;
-			background     : #0674da;
-			text-transform : uppercase;
-			color          : #fff;
-			cursor         : pointer;
-			transition     : all ease-in 0.2s;
-
-			&:hover {
-				background: #5e8dfa;
-				transition: all ease-in 0.2s;
-			}
-		}
-
-		.tab {
-			display: flex;
-			background: #fff;
-
-			.tab-button {
-				flex           : 1;
-				display        : flex;
-				justify-content: center;
-				border-bottom  : 2px solid #edeff3;
-				padding        : 15px 30px;
-				color          : #A5ACB4;
-				cursor         : pointer;
-
-				&:hover {
-					filter    : invert(0.1);
-					transition: all ease-in 0.2s;
-				}
-			}
-
-			.active {
-				color        : #0674da;
-				border-bottom: 2px solid #0674da;
-				transition   : all ease-in 0.2s;
-
-			}
-
-		}
-	}
-
-	.dropdown-list {
-		user-select  : none;
-		overflow     : visible;
-		position     : absolute;
-		z-index      : 1;
-		left         : -29px;
-		border-radius: 2px;
-		margin-top   : 15px;
-		padding      : 15px 0;
-		min-width    : 150px;
-		box-shadow   : 0 0px 25px 0 #0000001c;
-		background   : #fff;
-
-		>div>div {
-			padding: 10px 20px;
-			cursor : pointer;
-		}
-	}
-
-
-	.dropdown-list-caret {
-		position           : absolute;
-		left               : 64px;
-		top                : -20px;
-		z-index            : 8;
-		border             : 10px solid transparent;
-		border-bottom-color: #fff;
-	}
-
-	.slim-scroller {
-		::-webkit-scrollbar {
-			background: transparent !important;
-			width     : 5px !important;
-			height    : 5px !important;
-		}
-
-		::-webkit-scrollbar-thumb {
-			background-color: #dcdcdc !important;
-		}
-	}
-
-	editable {
-		display      : flex;
-		border-bottom: 1px solid #dadada;
-	}
-
-	editable label {
-		padding      : 10px 0;
-		flex         : 1;
-		float        : left;
-		margin-right : 0;
-		margin-bottom: 0;
-	}
-
-	editable div.my-content {
-		flex     : 1;
-		direction: ltr;
-		text-align: right;
-		padding  : 10px 0;
-		overflow : hidden;
-
-		&>div {
-			overflow     : hidden;
-			text-overflow: ellipsis;
-			white-space  : nowrap;
-			direction: unset;
-			text-align: right;
-		}
-	}
-
-	//RESET CSS
-	.form-control {
-		box-shadow   : none;
-		font-size    : 12px;
-		border-radius: 2px;
-		border       : none;
-		height       : 20px;
-		padding      : 0;
-	}
-
-	.form-control:focus {
-		border-color: #fff;
-		outline     : none;
-		box-shadow  : none;
-	}
-
-	.btn {
-		border-radius: 2px;
-		padding      : 0;
-		box-shadow   : none;
-	}
-
-	.btn-default {
-		color           : #333;
-		background-color: unset;
-		border-color    : unset;
-		border          : none;
-		font-size       : 12px;
-		color           : #8793A1;
-		background      : #fff;
-	}
-
-	.btn-default.focus,
-	.btn-default:focus {
-		color           : #333;
-		background-color: #ffffff;
-		box-shadow      : none;
-	}
-
-	.btn-default:hover {
-		background-color: #ffffff;
-		border-color    : #0674da;
-		transition      : all ease-in 0.3s;
-		box-shadow      : none;
-	}
-
-	.btn-default.active,
-	.btn-default:active,
-	.open>.dropdown-toggle.btn-default {
-		background-color: #ffffff;
-		border-color    : #fff;
-		box-shadow      : none;
-		border-radius   : 2px;
-	}
-
-	.btn-default-focus {
-		box-shadow   : none;
-		outline      : none;
-		border-radius: 2px;
-		background   : #fff;
-	}
-
-	.dropdown-menu {
-		box-shadow   : none;
-		border-radius: 0;
-		padding      : 0;
-		font-size    : 12px;
-	}
-
-	.ui-select-bootstrap .ui-select-choices-row.active>span {
-		color           : #fff;
-		text-decoration : none;
-		outline         : 0;
-		background-color: #0674da;
-	}
-
-	.ui-select-bootstrap .ui-select-match-text {
-		margin-top: 1px;
-	}
-
-	.ui-select-bootstrap>.ui-select-choices,
-	.ui-select-bootstrap>.ui-select-no-choice {
-		max-height   : 500px;
-		margin-top   : 4px;
-		border-radius: 2px;
-	}
-
-	.ui-select-bootstrap .ui-select-choices-row>span {
-		padding      : 7px 20px;
-		border-bottom: 1px solid #fff;
-	}
-
-	//CUSTOM CSS
-
-	wi-tree-node-virtual>div {
-		padding-left: 10px;
-	}
-
-	wi-tree-node-virtual .node-content,
-	wi-tree-node-virtual .node-content::after {
-		line-height     : unset;
-		padding         : 7px 15px 7px 7px;
-		// margin       : 0 10px;
-		background      : #fff;
-		border-bottom   : unset;
-		transition      : all ease-in 0.1s;
-		border-radius   : 2px;
-		user-select     : none;
-
-	}
-
-	wi-tree-node-virtual .node-content.selected::after {
-		background: none;
-
-	}
-
-	wi-tree-node-virtual .node-label {
-		font-size: 12px;
-		padding  : 0 10px;
-	}
-
-	wi-tree-node-virtual .node-caret {
-		width: 18px;
-	}
-
-	wi-tree-node-virtual .node-icon {
-		filter: saturate(2)
-	}
-
-	wi-tree-node-virtual .node-content:hover {
-		background: #f6f8fa;
-		transition: all ease-in 0.1s;
-
-	}
-
-	wi-tree-node-virtual .node-content.selected {
-		background   : #f6f8fa;
-		border-radius: 2px;
-		transition   : all ease-in 0.1s;
-	}
-
-	wi-tree-node-virtual .node-content::after {
-		content : unset;
-		color   : transparent;
-		display : block;
-		position: absolute;
-		top     : 0;
-		width   : 4px;
-	}
-
-	wi-tree-view-virtual div input {
-		max-width    : calc(100% - 40px);
-		line-height  : unset;
-		padding      : 11px 20px;
-		margin       : 20px;
-		border-bottom: 1px solid #e4ecfa;
-		border-radius: 0;
-		color        : #353535;
-		background   : #EDEFF3;
-
-	}
-
-	.jsPanel-theme-default {
-		width           : calc(100% - 315px) !important;
-		left            : unset !important;
-		top             : unset !important;
-		height          : calc(100% - 60px) !important;
-		box-shadow      : none;
-		background-color: #EDEFF3;
-	}
-	//STYLE OF SOM
-	
+                &>*:nth-child(1) {
+                    display    : flex;
+                    align-items: center;
+                    max-height : 40px;
+                    min-height : 40px;
+                    padding    : 11px 16px;
+                    border-radius: 10px;
+                    background: var(--input-bg);
+                    -webkit-transition: background-color 200ms ease, outline 200ms ease, color 200ms ease, -webkit-box-shadow 200ms ease;
+                    transition: background-color 200ms ease, outline 200ms ease, color 200ms ease, -webkit-box-shadow 200ms ease;
+                    transition: background-color 200ms ease, outline 200ms ease, color 200ms ease, box-shadow 200ms ease;
+                    transition: background-color 200ms ease, outline 200ms ease, color 200ms ease, box-shadow 200ms ease, -webkit-box-shadow 200ms ease;
+                    &:hover {
+                        background-color: var(--input-bg-hover) !important;
+                        border-color: var(--input-border-hover) !important;
+                        -webkit-box-shadow: 0 0 0 4px var(--input-shadow-hover) !important;
+                        box-shadow: 0 0 0 4px var(--input-shadow-hover) !important;
+                        -webkit-transition: background-color 200ms ease, outline 200ms ease, color 200ms ease, -webkit-box-shadow 200ms ease;
+                        transition: background-color 200ms ease, outline 200ms ease, color 200ms ease, -webkit-box-shadow 200ms ease;
+                        transition: background-color 200ms ease, outline 200ms ease, color 200ms ease, box-shadow 200ms ease;
+                        transition: background-color 200ms ease, outline 200ms ease, color 200ms ease, box-shadow 200ms ease, -webkit-box-shadow 200ms ease;
+                    }
+                    &>span {
+                        overflow     : hidden;
+                        text-overflow: ellipsis;
+                    }
+                }
+            }
+        }
+    }
+    .neural-network-main {
+        height  : 100%;
+        width   : 100%;
+        right   : 0;
+        position: absolute;
+    }
 }

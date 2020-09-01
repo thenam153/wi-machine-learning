@@ -80,12 +80,12 @@ function DatasetSelectionController($scope, wiApi, $timeout) {
             } else if (node.name === "INDEX") {
                 return "reference-dataset-16x16";
             }else {
-                return "curve-data-16x16";
+                return "i2g-curve-data-16x16";
             }
     	} else if(node.idWell) {
-	        return "well-16x16";
+	        return "i2g-well-16x16";
  		} else if(node.idProject) {
-            return "project-normal-16x16";
+            return "i2g-project-16x16";
         }
     }
     this.getChildren = function (node) {
@@ -103,6 +103,7 @@ function DatasetSelectionController($scope, wiApi, $timeout) {
         return [];
     }
     this.clickFn = function(event, node, selectIds, rootnode) {
+        self.reloadPrj = true;
         console.log(node);
         if(node.idProject && node.wells) return;
         if(node.idProject && !node.idDataset && !node.idWell) {
@@ -125,7 +126,14 @@ function DatasetSelectionController($scope, wiApi, $timeout) {
                         j.idProject = node.idProject;
                     }
                 }
-            });
+               
+            })
+            .finally(()=>{
+                $timeout(()=>{
+                    self.reloadPrj = false;
+                })
+            })
+            
         }
     }
     this.runMatch = function(node, filter) {
@@ -136,6 +144,8 @@ function DatasetSelectionController($scope, wiApi, $timeout) {
         }
     }
     this.$onInit = function() {
+        self.sortByName = true;
+        self.dropAreaDatasets = [];
         $scope.$watch(function () {
 			return localStorage.getItem('token');
 		}, function (newValue, oldValue) {
@@ -160,7 +170,11 @@ function DatasetSelectionController($scope, wiApi, $timeout) {
         wiApi.client(getClientId()).getProjectsPromise()
         .then((data) => {
             $timeout(() => {
-                self.listMlProject = data.sort((a,b) => a.name.localeCompare(b.name));
+                if (self.sortByName) {
+                    self.listMlProject = data.sort((a,b) => a.name.localeCompare(b.name));
+                } else {
+                    self.listMlProject = data.sort((a,b) => a.name.localeCompare(b.alias));
+                }
                 self.reloadPrj = !self.reloadPrj;
                 self.controller.setProject(data);
             })

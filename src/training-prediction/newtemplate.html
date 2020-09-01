@@ -1,225 +1,206 @@
-<!-- <div id="wapper" style="display: none; background: #00000008; height: 100%; width: 100%; z-index: 4; position: absolute;"
-    ng-click="self.showWapper()"></div> -->
-<div ng-show="self.running" style="background: #ffffffc9; height: 100%; width: 100%; z-index: 5; position: absolute; display: flex; align-items: center; justify-content: center;">
-    <div>
-        <!-- <div class="loader08"></div> -->
-        <div style="
-            height: 80px;
-            width: 80px;
-            transform: translate(-50%, -50%);
-            position: absolute;
-            background-image: url(./spinner.gif);
-            background-size: contain;">
-        </div>
-    </div>
-</div>
-<div style="display:flex;flex-direction: column;width: 100vw;height: 100%; position: relative; padding: 40px; background: #EDEFF3;" class="slim-scroller">
-    <div class="toolbar">
-        <div class="tab">
-            <div class="tab-button" ng-class="{'active' : isSet(1)}" ng-click="setTab(1)" style="border-right: 1px solid #edeff3;">Train</div>
-            <div class="tab-button" ng-class="{'active' : isSet(2)}" ng-click="setTab(2)" style="border-right: 1px solid #edeff3;border-left: 1px solid #edeff3;">Verify</div>
-            <div class="tab-button" ng-class="{'active' : isSet(3)}" ng-click="setTab(3)" style="border-left: 1px solid #edeff3;">Predict</div>
-            <div class="tab-button" ng-class="{'active' : isSet(4)}" ng-show="self.showSomVisualize" ng-click="setTab(4)" style="border-left: 1px solid #edeff3;">Som Visualize</div>
-        </div>
-    </div>
-    <div class="workspace">
-        <div ng-show="isSet(1)" class="workspace-main" id="Train" ng-init="self.machineLearnSteps['training'].expanded=true">
-            <!-- <div class="search">
-                <div class="ti ti-search" style="margin-right: 15px; font-size: 15px;"></div>
-                <input placeholder="Search" ng-model="self.controller.searchTrainingText">
-            </div> -->
-            <div class="button">
-                <!-- <div class="toolbar-button">Sort by</div>
-                <div class="toolbar-button">Select All</div> -->
-                <div class="toolbar-button active" ng-click="self.runTask(-1);">Run Now</div>
-                <div class="toolbar-button active" ng-click="self.runAll()">Run All</div>
+<div class="block" style="flex: 1; overflow: visible; width: 100%;">
+    <div class="i2g-title-with-btn">
+        <div class="i2g-tab-line-bottom">
+            <div class="tab-item" ng-class="{'active' : isSet(1)}" ng-click="setTab(1)">
+                <div class="tab-name">Train</div>
+                <div class="active-tab-status"></div>
             </div>
-            <div style="overflow: hidden; display: flex; flex-direction: column; height: 100%;">
-                <div class="table-main">
-                    <div class='table-row' style="color: #4e555f; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #fff; border: none; box-shadow: 0 5px 6px #00000012;">
-                        <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0;">Active
-                        </div>
-                        <div class="table-block" style="width: 70px; min-width: 70px;">Filter</div>
-                        <div class="table-block">Well</div>
-                        <div class="table-block">Dataset </div>
-                        <div ng-repeat="input in self.controller.curveSpecs track by $index" >
-                            <div class="table-block"style="width: 170px">{{input.label + ($index?(" " + $index):"")}}</div>
-                        </div>
-                    </div>
-                    <div class='table-row' ng-repeat="(idxDs, dataset) in self.controller.tabs['training'].listDataset | filter:self.controller.searchTrainingFilter track by idxDs">
-                        <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0; z-index: 1;">
-                            <label class="switch">
-                                <input type="checkbox" ng-checked="dataset.active">
-                                <span class="slider round" ng-click="self.onToggleActive(dataset)"></span>
-                            </label>
-                        </div>
-                        <div class="table-block" style="width: 70px; min-width: 70px;" ng-click="self.controller.onClickDiscriminator(dataset)">
-                            <span class="fa fa-filter icon" ng-class="{'active': dataset.discrimnt.active}"></span>
-                        </div>
-                        <div class="table-block" title='{{self.controller.getWell(dataset.idWell).name}}'>{{self.controller.getWell(dataset.idWell).name}}</div>
-                        <div class="table-block" title='{{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}'>{{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}</div>
-                        <!--
-                        <div class="table-block" ng-repeat="(idxIt, input) in dataset.curveSpecs track by idxIt" style="overflow: visible;">
-                            <wi-dropdown-list style="width: 100%;" place-holder="Curve" items="dataset.listSelection[idxIt]" hide-delete-button='true'
-							    on-item-changed="self.controller.onItemChangeTabTAP" current-select="input.currentSelect" params="[input, dataset, 'Prediction']">
-						    </wi-dropdown-list>
-                        </div>
-                        -->
-                        <div class="table-block" ng-repeat="(idxIt, curveSpecItem) in self.controller.curveSpecs track by idxIt" style="overflow: visible;">
-                            <wi-dropdown-list style="width: 100%;" place-holder="Curve" items="self.controller.__CURVES_CACHE['training'][dataset.idDataset + '-' + idxIt]" hide-delete-button='true'
-                                on-item-changed="self.controller.onItemChangeTabTAP" current-select="dataset.selectedValues[idxIt]" params="[curveSpecItem, dataset, 'Prediction', idxIt]">
-						    </wi-dropdown-list>
-                        </div>
-                    </div>
-                </div>
+            <div class="tab-item " ng-class="{'active' : isSet(2)}" ng-click="setTab(2)">
+                <div class="tab-name">Verify</div>
+                <div class="active-tab-status"></div>
+            </div>
+            <div class="tab-item" ng-class="{'active' : isSet(3)}" ng-click="setTab(3)">
+                <div class="tab-name">Predict</div>
+                <div class="active-tab-status"></div>
             </div>
         </div>
-        <div ng-show="isSet(2)" class="workspace-main">
-            <!-- <div class="search" style="width: 200px">
-                <div class="ti ti-search" style="margin-right: 15px; font-size: 15px;"></div>
-                <input placeholder="Search" ng-model="self.controller.searchVerifyText">
-            </div> -->
-            <div class="search" style="margin-right: 15px; width: 300px;">
-                <div>Plot: &nbsp;&nbsp;</div>
-                <input style="text-align: right;" placeholder="Plot name" ng-model="self.controller.tabs['verify'].plotName">
-            </div>
-            <div>
-                <label ng-class="{'text-muted': !canCreatePlot('verify')}">Create plot</label>
+        <div>
+            <label class="i2g-checkbox" ng-show="isSet(2)">
                 <input type="checkbox" ng-model="self.controller.tabs['verify'].createPlot" ng-disabled="!canCreatePlot('verify')">
-            </div>
-            <div class="button">
-                <!-- <div class="toolbar-button">Sort by</div>
-                <div class="toolbar-button">Select All</div> -->
-                <div class="toolbar-button active" ng-click="self.runTask(1);">Run Now</div>
-                <div class="toolbar-button active" ng-click="self.runAll()">Run All</div>
-            </div>
-            <div style="overflow: hidden; display: flex; flex-direction: column;  height: 100%;">
-                <div class="table-main">
-                    <div class='table-row' style="color: #4e555f; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #fff; border: none;box-shadow: 0 5px 6px #00000012;">
-                        <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0;">Active
-                        </div>
-                        <div class="table-block" style="width: 70px; min-width: 70px;">Filter</div>
-                        <div class="table-block">Well</div>
-                        <div class="table-block">Dataset </div>
-                        <div  ng-repeat="input in self.controller.curveSpecs track by $index" >
-                            <div class="table-block"style="width: 170px">{{input.label +  + ($index?(" " + $index):"")}}</div>
-                        </div>
-                        <div class="table-block">Verify Curve</div>
-                    </div>
-                    <div class='table-row' ng-repeat="(idxDs, dataset) in self.controller.tabs['verify'].listDataset | filter:self.controller.searchVerifyFilter track by idxDs" >
-                        <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0;z-index: 1;">
-                            <label class="switch">
-                                <input type="checkbox" ng-checked="dataset.active">
-                                <span class="slider round" ng-click="self.onToggleActive(dataset)"></span>
-                            </label>
-                        </div>
-                        <div class="table-block" style="width: 70px; min-width: 70px;" ng-click="self.controller.onClickDiscriminator(dataset)">
-                            <span class="fa fa-filter icon" ng-class="{'active': dataset.discrimnt.active}"></span>
-                        </div>
-                        <div class="table-block" title='{{self.controller.getWell(dataset.idWell).name}}'>{{self.controller.getWell(dataset.idWell).name}}</div>
-                        <div class="table-block" title='{{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}'>{{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}</div>
-                        <!--<div class="table-block" ng-repeat="(idxIt, input) in dataset.curveSpecs track by idxIt" style="overflow: visible;">
-                            <wi-dropdown-list style="width: 100%;" place-holder="Curve" items="dataset.listSelection[idxIt]" hide-delete-button='true'
-							    on-item-changed="self.controller.onItemChangeTabTAP" current-select="input.currentSelect" params="[input, dataset, 'Verify']">
-						    </wi-dropdown-list>
-                        </div>-->
-                        <div class="table-block" ng-repeat="(idxIt, curveSpecItem) in self.controller.curveSpecs track by idxIt" style="overflow: visible;">
-                            <wi-dropdown-list style="width: 100%;" place-holder="Curve" items="self.controller.__CURVES_CACHE['verify'][dataset.idDataset + '-' + idxIt]" hide-delete-button='true'
-							    on-item-changed="self.controller.onItemChangeTabTAP" current-select="dataset.selectedValues[idxIt]" params="[curveSpecItem, dataset, 'Prediction', idxIt]">
-						    </wi-dropdown-list>
-                        </div>
-                        <div class="table-block" style="width:150px;padding-left:0;margin-left:20px">
-                            <!-- <input type="text" style="height: 32px;" ng-model="dataset.resultCurveName"> -->
-                            <editable item-value="self.getResultCurveName" content-style='{width:"100%"}' set-value="self.setResultCurveName" enabled="!!self.controller" 
-                                params="[dataset, '_VR']" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div ng-show="isSet(3)" class="workspace-main">
-            <!-- <div class="search" style="width: 200px">
-                <div class="ti ti-search" style="margin-right: 15px; font-size: 15px;"></div>
-                <input placeholder="Search" ng-model="self.controller.searchPredictionText">
-            </div> -->
-            <div class="search" style="margin-right: 15px; width: 300px;">
-                <div>Plot: &nbsp;&nbsp;</div>
-                <input style="text-align: right;" placeholder="Plot name" ng-model="self.controller.tabs['prediction'].plotName">
-            </div>
-            <div>
-                <label ng-class="{'text-muted': !canCreatePlot('prediction')}">Create plot</label>
+                <span>Create Plot</span>
+            </label>
+            <label class="i2g-checkbox" ng-show="isSet(3)">
                 <input type="checkbox" ng-model="self.controller.tabs['prediction'].createPlot" ng-disabled="!canCreatePlot('prediction')">
+                <span>Create Plot</span>
+            </label>
+            <div class="space-20px"></div>
+            <input ng-show="isSet(2) && self.controller.tabs['verify'].createPlot" type="text" placeholder="Plot name" ng-model="self.controller.tabs['verify'].plotName" style="width: auto;">
+            <input ng-show="isSet(3) && self.controller.tabs['prediction'].createPlot" type="text" placeholder="Plot name" ng-model="self.controller.tabs['prediction'].plotName" style="width: auto;">
+            <div class="space-20px"></div>
+            <div class="i2g-button-with-icon active" ng-show="isSet(1)" ng-click="self.runTask(-1);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"
+                    role="img">
+                    <path xmlns="http://www.w3.org/2000/svg"
+                        d="M7.45841605,3.11583019 C7.91895292,2.29472327 9.08104708,2.29472327 9.54158395,3.11583019 L14.3401658,11.6713857 C14.7971668,12.4861885 14.2196969,13.5 13.2985819,13.5 L3.70141812,13.5 C2.78030314,13.5 2.20283316,12.4861885 2.65983417,11.6713857 L7.45841605,3.11583019 Z"
+                        id="Path" fill-rule="nonzero"
+                        transform="translate(8.500000, 8.000000) rotate(-270.000000) translate(-8.500000, -8.000000) " />
+                </svg>
             </div>
-            <div class="button">
-                <!-- <div class="toolbar-button">Sort by</div>
-                <div class="toolbar-button">Select All</div> -->
-                <div class="toolbar-button active" ng-click="self.runTask(2);">Run Now</div>
-                <div class="toolbar-button active" ng-click="self.runAll()">Run All</div>
+            <div class="i2g-button-with-icon active" ng-show="isSet(2)" ng-click="self.runTask(1);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"
+                    role="img">
+                    <path xmlns="http://www.w3.org/2000/svg"
+                        d="M7.45841605,3.11583019 C7.91895292,2.29472327 9.08104708,2.29472327 9.54158395,3.11583019 L14.3401658,11.6713857 C14.7971668,12.4861885 14.2196969,13.5 13.2985819,13.5 L3.70141812,13.5 C2.78030314,13.5 2.20283316,12.4861885 2.65983417,11.6713857 L7.45841605,3.11583019 Z"
+                        id="Path" fill-rule="nonzero"
+                        transform="translate(8.500000, 8.000000) rotate(-270.000000) translate(-8.500000, -8.000000) " />
+                </svg>
             </div>
-            <div style="overflow: hidden; display: flex; flex-direction: column;  height: 100%;">
-
-                <div class="table-main">
-                    <div class='table-row' style="color: #4e555f; font-weight: bold; position: sticky; top: 0; z-index: 2; background: #fff; border: none;    box-shadow: 0 5px 6px #00000012;">
-                        <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0;">Active
-                        </div>
-                        <div class="table-block" style="width: 70px; min-width: 70px;">Filter</div>
-                        <div class="table-block">Well</div>
-                        <div class="table-block">Dataset </div>
-                        <div  ng-repeat="input in self.controller.curveSpecs track by $index" >
-                            <div ng-if="$index != 0" class="table-block"style="width: 170px">{{input.label + " " + $index}}</div>
-                        </div>
-                        <div class="table-block">Predict Curve</div>
-                    </div>
-                    <div class='table-row' ng-repeat="(idx, dataset) in self.controller.tabs['prediction'].listDataset| filter:self.controller.searchPredictionFilter track by idx" >
-                        <div class="table-block" style="width: 70px; min-width: 70px; position: sticky; left: 0;z-index: 1;">
-                            <label class="switch">
-                                <input type="checkbox" ng-checked="dataset.active">
-                                <span class="slider round" ng-click="self.onToggleActive(dataset)"></span>
-                            </label>
-                        </div>
-                        <div class="table-block" style="width: 70px; min-width: 70px;" ng-click="self.controller.onClickDiscriminator(dataset)">
-                            <span class="fa fa-filter icon" ng-class="{'active': dataset.discrimnt.active}"></span>
-                        </div>
-                        <div class="table-block" title='{{self.controller.getWell(dataset.idWell).name}}'>{{self.controller.getWell(dataset.idWell).name}}</div>
-                        <div class="table-block" title='{{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}'>{{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}</div>
-                        <!--<div class="table-block" ng-repeat="(idxIt, input) in dataset.curveSpecs track by idxIt" style="overflow: visible;">
-                            <wi-dropdown-list style="width: 100%;" place-holder="Curve" items="dataset.listSelection[idxIt]" hide-delete-button='true'
-							    on-item-changed="self.controller.onItemChangeTabTAP" current-select="input.currentSelect" params="[input]">
-						    </wi-dropdown-list>
-                        </div>-->
-                        <div ng-repeat="(idxIt, curveSpecItem) in self.controller.curveSpecs track by idxIt" style="overflow: visible;">
-                            <div ng-if="idxIt > 0" class="table-block">
-                                <wi-dropdown-list style="width: 100%;" place-holder="Curve" items="self.controller.__CURVES_CACHE['prediction'][dataset.idDataset + '-' + idxIt]" hide-delete-button='true'
-                                    on-item-changed="self.controller.onItemChangeTabTAP" current-select="dataset.selectedValues[idxIt]" params="[curveSpecItem, dataset, 'Prediction', idxIt]">
-                                </wi-dropdown-list>
-                            </div>
-                        </div>
-                        <div class="table-block" style="width:150px;padding-left:0;margin-left:20px">
-                            <editable item-value="self.getResultCurveName" set-value="self.setResultCurveName" enabled="!!self.controller" content-style='{width:"100%"}'
-                                params="[dataset, '_P']" />
-                        </div>
-                    </div>
-                </div>
+            <div class="i2g-button-with-icon active" ng-show="isSet(3)" ng-click="self.runTask(2);">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"
+                    role="img">
+                    <path xmlns="http://www.w3.org/2000/svg"
+                        d="M7.45841605,3.11583019 C7.91895292,2.29472327 9.08104708,2.29472327 9.54158395,3.11583019 L14.3401658,11.6713857 C14.7971668,12.4861885 14.2196969,13.5 13.2985819,13.5 L3.70141812,13.5 C2.78030314,13.5 2.20283316,12.4861885 2.65983417,11.6713857 L7.45841605,3.11583019 Z"
+                        id="Path" fill-rule="nonzero"
+                        transform="translate(8.500000, 8.000000) rotate(-270.000000) translate(-8.500000, -8.000000) " />
+                </svg>
+            </div>
+            <div class="space-20px"></div>
+            <div class="i2g-button-with-icon active" ng-click="self.runAll();">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px"
+                    height="16px" viewBox="0 0 16 16" version="1.1">
+                    <path
+                        d="M4.04669236,3.05984562 C4.46885116,2.31338479 5.53410414,2.31338479 5.95626294,3.05984562 L10.354963,10.8376234 C10.7738806,11.5783531 10.2445331,12.5 9.4001777,12.5 L0.602777595,12.5 C-0.241577808,12.5 -0.770925287,11.5783531 -0.352007694,10.8376234 L4.04669236,3.05984562 Z"
+                        id="Path" fill-rule="nonzero" opacity="0.508603051"
+                        transform="translate(5.001478, 7.500000) rotate(-270.000000) translate(-5.001478, -7.500000) " />
+                    <path
+                        d="M10.0466924,3.05984562 C10.4688512,2.31338479 11.5341041,2.31338479 11.9562629,3.05984562 L16.354963,10.8376234 C16.7738806,11.5783531 16.2445331,12.5 15.4001777,12.5 L6.6027776,12.5 C5.75842219,12.5 5.22907471,11.5783531 5.64799231,10.8376234 L10.0466924,3.05984562 Z"
+                        id="Path" fill-rule="nonzero"
+                        transform="translate(11.001478, 7.500000) rotate(-270.000000) translate(-11.001478, -7.500000) " />
+                </svg>
             </div>
         </div>
-        <div ng-show="isSet(4)" class="workspace-main" style="height: calc(100vh - 200px);">
-            <div ng-if="self.showSomVisualize" style="display: flex; overflow: hidden;">
-                <div style="width: calc(100vw - 300px); overflow: auto hidden;">
-                    <distribution-map ng-show="!self.model.heatmap" data="self.somVisualize" colors="self.getDistributionMapColors" color-scale="self.distributionMapColorScale" get-maps="self.getDistributionMaps" get-header="self.getDistributionMapHeader" get-rows="self.getDistributionMapRows"
-                        get-cells="self.getDistributionMapCells" get-weight="self.getDistributionMapWeight" get-scaled-weight="self.getDistributionMapScaledWeight" get-label="self.getDistributionMapLabel" click-fn="self.distributionMapClickFn">
-                    </distribution-map>
-                    <heat-map ng-show="self.model.heatmap" data="self.somVisualize" get-map="self.getVisualizationMap" get-cells="self.getVisualizationMapCells" get-features="self.getVisualizationMapFeatures" get-label="self.getVisualizationMapLabel" get-labels="self.getVisualizationMapLabels"
-                        max-weight=1 get-feature-names="self.getVisualizationMapFeatureNames" feature-colors="self.heatmapColors" label-colors="self.heatmapColors">
-                    </heat-map>
-                </div>
-                <div>
-                    <visualization-map data="self.somVisualize" get-map="self.getVisualizationMap" get-cells="self.getVisualizationMapCells" get-features="self.getVisualizationMapFeatures" get-label="self.getVisualizationMapLabel" get-labels="self.getVisualizationMapLabels"
-                        get-feature-weight="self.getVisualizationMapFeatureWeight" get-feature-scaled-weight="self.getVisualizationMapFeatureScaledWeight" max-weight=1 get-feature-name="self.getVisualizationMapFeatureName" get-feature-names="self.getVisualizationMapFeatureNames"
-                        feature-colors="self.visualizationMapFeatureColors" label-colors="self.visualizationMapLabelColors" click-fn="self.visualizationMapClickFn">
-                    </visualization-map>
+    </div>
+    <div class="space-height-20px"></div>
+    <div class="border-bottom-2px"></div>
+    <div id="Train" class="i2g-table" ng-show="isSet(1)" ng-init="self.machineLearnSteps['training'].expanded=true">
+        <div class="i2g-table-header">
+            <div style="width: 60px;">Active</div>
+            <div style="width: 60px;">Filter</div>
+            <div style="width: 100px;">Well</div>
+            <div style="width: 160px;">Dataset</div>
+            <div style="width: 160px;" ng-repeat="input in self.controller.curveSpecs track by $index">
+                {{input.label + ($index?(" " + $index):"")}}</div>
+        </div>
+        <div class="i2g-table-row"
+            ng-repeat="(idxDs, dataset) in self.controller.tabs['training'].listDataset | filter:self.controller.searchTrainingFilter track by idxDs">
+            <div style="width: 60px;">
+                <label class="i2g-checkbox">
+                    <input type="checkbox" ng-checked="dataset.active" ng-click="self.onToggleActive(dataset)">
+                </label>
+            </div>
+            <div style="width: 60px;" ng-click="self.controller.onClickDiscriminator(dataset)"
+                ng-class="{'active': dataset.discrimnt.active}">
+                <svg style="fill: currentColor;" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                    viewBox="0 0 16 16" fill="none" role="img">
+                        <path d="M2,2 C1.44771525,2 1,2.44771525 1,3 C1,3.55228475 1.44771525,4 2,4 L14,4 C14.5522847,4 15,3.55228475 15,3 C15,2.44771525 14.5522847,2 14,2 L2,2 Z" id="Path"  fill-rule="nonzero" transform="translate(8.000000, 3.000000) rotate(-360.000000) translate(-8.000000, -3.000000) "/>
+                        <path d="M4,7 C3.44771525,7 3,7.44771525 3,8 C3,8.55228475 3.44771525,9 4,9 L12,9 C12.5522847,9 13,8.55228475 13,8 C13,7.44771525 12.5522847,7 12,7 L4,7 Z" id="Path"  fill-rule="nonzero" transform="translate(8.000000, 8.000000) rotate(-360.000000) translate(-8.000000, -8.000000) "/>
+                        <path d="M6,12 C5.44771525,12 5,12.4477153 5,13 C5,13.5522847 5.44771525,14 6,14 L10,14 C10.5522847,14 11,13.5522847 11,13 C11,12.4477153 10.5522847,12 10,12 L6,12 Z" id="Path"  fill-rule="nonzero" transform="translate(8.000000, 13.000000) rotate(-360.000000) translate(-8.000000, -13.000000) "/>
+                </svg>
+            </div>
+            <div style="width: 100px;" class="text-ellipsis" title='{{self.controller.getWell(dataset.idWell).name}}'>
+                {{self.controller.getWell(dataset.idWell).name}}</div>
+            <div style="width: 160px;" class="text-ellipsis" title="{{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}">
+                {{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}</div>
+            <div style="width: 160px;" ng-repeat="(idxIt, curveSpecItem) in self.controller.curveSpecs track by idxIt">
+                <div style="margin-right: 20px;">
+                    <wi-dropdown-list style="width: 100%;" place-holder="Curve"
+                        items="self.controller.__CURVES_CACHE['training'][dataset.idDataset + '-' + idxIt]"
+                        hide-delete-button='true' on-item-changed="self.controller.onItemChangeTabTAP"
+                        current-select="dataset.selectedValues[idxIt]"
+                        params="[curveSpecItem, dataset, 'Prediction', idxIt]">
+                    </wi-dropdown-list>
                 </div>
             </div>
-            <!-- <button ng-click="self.getFittedModel()">Test</button> -->
+
+
+        </div>
+    </div>
+    <div class="i2g-table" ng-show="isSet(2)">
+        <div class="i2g-table-header">
+            <div style="width: 60px;">Active</div>
+            <div style="width: 60px;">Filter</div>
+            <div style="width: 100px;">Well</div>
+            <div style="width: 160px;">Dataset</div>
+            <div style="width: 160px;" ng-repeat="input in self.controller.curveSpecs track by $index">
+                {{input.label + ($index?(" " + $index):"")}}</div>
+            <div style="width: 160px;">Verify Curve</div>
+        </div>
+        <div class="i2g-table-row"
+            ng-repeat="(idxDs, dataset) in self.controller.tabs['verify'].listDataset | filter:self.controller.searchVerifyFilter track by idxDs" >
+            <div style="width: 60px;">
+                <label class="i2g-checkbox">
+                    <input type="checkbox" ng-checked="dataset.active" ng-click="self.onToggleActive(dataset)">
+                </label>
+            </div>
+            <div style="width: 60px;" ng-click="self.controller.onClickDiscriminator(dataset)"
+                ng-class="{'active': dataset.discrimnt.active}">
+                <svg style="fill: currentColor;" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                    viewBox="0 0 16 16" fill="none" role="img">
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M10.6002 12.0498C9.49758 12.8568 8.13777 13.3333 6.66667 13.3333C2.98477 13.3333 0 10.3486 0 6.66667C0 2.98477 2.98477 0 6.66667 0C10.3486 0 13.3333 2.98477 13.3333 6.66667C13.3333 8.15637 12.8447 9.53194 12.019 10.6419C12.0265 10.6489 12.0338 10.656 12.0411 10.6633L15.2935 13.9157C15.6841 14.3063 15.6841 14.9394 15.2935 15.33C14.903 15.7205 14.2699 15.7205 13.8793 15.33L10.6269 12.0775C10.6178 12.0684 10.6089 12.0592 10.6002 12.0498ZM11.3333 6.66667C11.3333 9.244 9.244 11.3333 6.66667 11.3333C4.08934 11.3333 2 9.244 2 6.66667C2 4.08934 4.08934 2 6.66667 2C9.244 2 11.3333 4.08934 11.3333 6.66667Z">
+                    </path>
+                </svg>
+            </div>
+            <div style="width: 100px;" class="text-ellipsis"title='{{self.controller.getWell(dataset.idWell).name}}'>
+                {{self.controller.getWell(dataset.idWell).name}}</div>
+            <div style="width: 160px;" class="text-ellipsis"title="{{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}">
+                {{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}</div>
+            <div style="width: 160px;" ng-repeat="(idxIt, curveSpecItem) in self.controller.curveSpecs track by idxIt">
+                <div style="margin-right: 20px;">
+                    <wi-dropdown-list style="width: 100%;" place-holder="Curve" items="self.controller.__CURVES_CACHE['verify'][dataset.idDataset + '-' + idxIt]" hide-delete-button='true'
+                    on-item-changed="self.controller.onItemChangeTabTAP" current-select="dataset.selectedValues[idxIt]" params="[curveSpecItem, dataset, 'Prediction', idxIt]">
+                    </wi-dropdown-list>
+                </div>
+            </div>
+            <div style="width: 160px;">
+                <editable item-value="self.getResultCurveName" content-style='{width:"100%"}' set-value="self.setResultCurveName" enabled="!!self.controller" params="[dataset, '_VR']" />
+            </div>
+
+
+        </div>
+    </div>
+    <div class="i2g-table" ng-show="isSet(3)">
+        <div class="i2g-table-header">
+            <div style="width: 60px;">Active</div>
+            <div style="width: 60px;">Filter</div>
+            <div style="width: 100px;">Well</div>
+            <div style="width: 160px;">Dataset</div>
+            <div style="width: 160px;" ng-if="$index != 0" ng-repeat="input in self.controller.curveSpecs track by $index">
+                {{input.label + " " + $index}}</div>
+            <div style="width: 160px;">Predict Curve</div>
+
+        </div>
+        <div class="i2g-table-row"
+            ng-repeat="(idx, dataset) in self.controller.tabs['prediction'].listDataset| filter:self.controller.searchPredictionFilter track by idx">
+            <div style="width: 60px;">
+                <label class="i2g-checkbox">
+                    <input type="checkbox" ng-checked="dataset.active" ng-click="self.onToggleActive(dataset)">
+                </label>
+            </div>
+            <div style="width: 60px;" ng-click="self.controller.onClickDiscriminator(dataset)"
+                ng-class="{'active': dataset.discrimnt.active}">
+                <svg style="fill: currentColor;" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                    viewBox="0 0 16 16" fill="none" role="img">
+                    <path fill-rule="evenodd" clip-rule="evenodd"
+                        d="M10.6002 12.0498C9.49758 12.8568 8.13777 13.3333 6.66667 13.3333C2.98477 13.3333 0 10.3486 0 6.66667C0 2.98477 2.98477 0 6.66667 0C10.3486 0 13.3333 2.98477 13.3333 6.66667C13.3333 8.15637 12.8447 9.53194 12.019 10.6419C12.0265 10.6489 12.0338 10.656 12.0411 10.6633L15.2935 13.9157C15.6841 14.3063 15.6841 14.9394 15.2935 15.33C14.903 15.7205 14.2699 15.7205 13.8793 15.33L10.6269 12.0775C10.6178 12.0684 10.6089 12.0592 10.6002 12.0498ZM11.3333 6.66667C11.3333 9.244 9.244 11.3333 6.66667 11.3333C4.08934 11.3333 2 9.244 2 6.66667C2 4.08934 4.08934 2 6.66667 2C9.244 2 11.3333 4.08934 11.3333 6.66667Z">
+                    </path>
+                </svg>
+            </div>
+            <div style="width: 100px;" class="text-ellipsis"title='{{self.controller.getWell(dataset.idWell).name}}'>
+                {{self.controller.getWell(dataset.idWell).name}}</div>
+            <div style="width: 160px;" class="text-ellipsis"title="{{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}">
+                {{self.controller.getDataset(dataset.idWell, dataset.idDataset).name}}</div>
+            <div style="width: 160px;" ng-repeat="(idxIt, curveSpecItem) in self.controller.curveSpecs track by idxIt" ng-if="idxIt > 0">
+                <div style="margin-right: 20px;" >
+                    <wi-dropdown-list style="width: 100%;" place-holder="Curve" items="self.controller.__CURVES_CACHE['prediction'][dataset.idDataset + '-' + idxIt]" hide-delete-button='true'
+                    on-item-changed="self.controller.onItemChangeTabTAP" current-select="dataset.selectedValues[idxIt]" params="[curveSpecItem, dataset, 'Prediction', idxIt]">
+                    </wi-dropdown-list>
+                </div>
+            </div>
+            <div style="width: 160px;">
+                <editable item-value="self.getResultCurveName" set-value="self.setResultCurveName" enabled="!!self.controller" content-style='{width:"100%"}' params="[dataset, '_P']" />
+            </div>
+
         </div>
     </div>
 </div>

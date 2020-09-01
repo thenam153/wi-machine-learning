@@ -1,0 +1,72 @@
+<div style="display:flex;flex-direction: column;width: 100vw;height: 100%; position: relative; padding: 40px; background: #EDEFF3;" class="slim-scroller">
+  <div class="toolbar">
+    <div class="tab">
+      <div class="tab-button"
+        ng-class="{'active' : isSet(0)}"
+        ng-click="setTab(0)"
+        style="border-right: 1px solid #edeff3;">
+        Train
+      </div>
+      <div class="tab-button"
+        ng-class="{'active' : isSet(1)}"
+        ng-click="setTab(1)"
+        style="border-right: 1px solid #edeff3;border-left: 1px solid #edeff3;">
+        Verify
+      </div>
+      <div class="tab-button"
+        ng-class="{'active' : isSet(2)}"
+        ng-click="setTab(2)"
+        style="border-left: 1px solid #edeff3;">
+        Predict
+      </div>
+    </div>
+  </div>
+  <div class="main-content slim-scroller">
+    <div class="zoneset-list">
+      <div ng-click="self.refreshZonesetList()"
+        style="cursor: pointer; position: absolute; right: 25px; padding-top: 4px; font-size: 12px;"
+        class="ti ti-reload">
+      </div>
+      <div class="header">
+        <span class="title">
+          <span class="ti ti-align-left" style="margin-right: 15px;"></span>
+          Available Zonesets 
+        </span>
+        <span class="sub">Select Zoneset to get Zone list.</span>
+      </div>
+      <div style="height: calc(100% - 93px);">
+        <wi-tree-view-virtual tree-root="self.getListZoneset()"
+          hide-unmatched='true' get-children="self.getZonesetChild"
+          click-fn='self.clickZonesetFn' get-label="self.getZonesetLabel"
+          get-icon='self.getZonesetIcon' run-match='self.runMatchZoneset'
+          keep-chidren="false" no-drag='true'>
+        </wi-tree-view-virtual>
+      </div>
+    </div>
+    <div class="zoneset-list">
+      <div ng-click="self.refreshZoneList()"
+        style="cursor: pointer; position: absolute; right: 25px; padding-top: 4px; font-size: 12px;"
+        class="ti ti-reload">
+      </div>
+      <div class="header">
+        <span class="title">
+          <span class="ti ti-align-left" style="margin-right: 15px;"></span>
+          {{isSet(0)?"Training":(isSet(1)?"Verification":'Prediction')}} Zones
+        </span>
+        <span class="sub">Active or Deactive Zone.</span>
+      </div>
+      <div class="active-btn-ctn">
+        <span ng-click="self.activeAllZones()" class="button-with-label-layer">Activate All</span>
+        <span ng-click="self.deactiveAllZones()" class="button-with-label-layer">Deactivate All</span>
+      </div>
+      <div style="height: calc(100% - 93px);">
+        <wi-tree-view-virtual tree-root="self.getListZone()"
+          hide-unmatched='true' get-children="self.getZoneChild"
+          click-fn='self.clickZoneFn' get-label="self.getZoneLabel"
+          get-icon='self.getZoneIcon' run-match='self.runMatchZone'
+          keep-chidren='true' no-drag='true'>
+        </wi-tree-view-virtual>
+      </div>
+    </div>
+  </div>
+</div>

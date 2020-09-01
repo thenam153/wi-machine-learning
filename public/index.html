@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Machine Learning Tool</title>
     <link rel="icon" href="https://www.i2g.cloud/wp-content/uploads/2018/11/favi.png" type="image/png">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="bower_components/jquery-ui/themes/base/jquery-ui.min.css">
     <link rel="stylesheet" href="bower_components/angular-ui-select/dist/select.min.css">
     <link rel="stylesheet" href="bower_components/ng-dialog/css/ngDialog.min.css">
@@ -43,6 +43,8 @@
     <script src="bower_components/som-visualization/dist/index.bundle.js"></script>
     <script src="bower_components/jspanel3/source/jquery.jspanel-compiled.min.js"></script> 
     <script src="bower_components/async/dist/async.min.js"></script>
+    <script src="bower_components/wi-css/dist/wi-css.js"></script>
+
   </head>
   <body ng-app="myApp" ng-controller="myCtrl as self">
     <machine-tabs></machine-tabs>
@@ -52,4 +54,9 @@
         }]);
     </script>
   </body>
+  <div style="display: none;">
+    <audio class="my_audio">
+        <source src="./sound/ios_notification.mp3" type="audio/mpeg">
+      </audio>
+  </div>
 </html>

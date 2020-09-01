@@ -1,72 +1,90 @@
-<div style="display:flex;flex-direction: column;width: 100vw;height: 100%; position: relative; padding: 40px; background: #EDEFF3;" class="slim-scroller">
-  <div class="toolbar">
-    <div class="tab">
-      <div class="tab-button"
-        ng-class="{'active' : isSet(0)}"
-        ng-click="setTab(0)"
-        style="border-right: 1px solid #edeff3;">
-        Train
-      </div>
-      <div class="tab-button"
-        ng-class="{'active' : isSet(1)}"
-        ng-click="setTab(1)"
-        style="border-right: 1px solid #edeff3;border-left: 1px solid #edeff3;">
-        Verify
-      </div>
-      <div class="tab-button"
-        ng-class="{'active' : isSet(2)}"
-        ng-click="setTab(2)"
-        style="border-left: 1px solid #edeff3;">
-        Predict
-      </div>
+<div class="block border-right-2px" style="flex-basis: 300px; overflow: visible; width: 100%;" resizable
+    r-directions="['right']" r-flex="true">
+    <div class="i2g-title-with-btn ">
+        <span class="">Available Zonesets</span>
+        <div class="">
+            <div class="space-20px "></div>
+            <div class="i2g-button-with-icon " ng-click="self.refreshZonesetList()">
+                <svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" class="">
+                    <path
+                        d="M12.6233804,6.08608223 C12.8678466,6.67561497 13.0027741,7.32205048 13.0027741,8 L15.0027741,8 C15.0027741,7.05087067 14.8138756,6.14586096 14.4716229,5.32051512 C15.521423,7.85780063 15.0150559,10.8872132 12.9525216,12.9497475 C10.2188516,15.6834175 5.78669671,15.6834175 3.05302667,12.9497475 L4.46724023,11.5355339 C6.41986169,13.4881554 9.58568658,13.4881554 11.538308,11.5355339 C13.0027741,10.0710678 13.3688907,7.92417477 12.6366576,6.1184952 C11.850808,4.25919913 10.0738419,3 8.00277414,3 C5.24135039,3 3.00277414,5.23857625 3.00277414,8 L1.00277414,8 C1.00277414,4.13400675 4.13678089,1 8.00277414,1 C9.93577074,1 11.6857707,1.78350167 12.9525216,3.05025249 L11.538308,4.46446609 C12.0176907,4.9438488 12.3793815,5.49635589 12.6233804,6.08608223 Z"
+                        id="Combined-Shape" fill-rule="nonzero" class=""></path>
+                    <path
+                        d="M12.4142136,4 L13.7071068,2.70710678 C14.0976311,2.31658249 14.0976311,1.68341751 13.7071068,1.29289322 C13.3165825,0.902368927 12.6834175,0.902368927 12.2928932,1.29289322 L10.2928932,3.29289322 C9.90236893,3.68341751 9.90236893,4.31658249 10.2928932,4.70710678 L12.2928932,6.70710678 C12.6834175,7.09763107 13.3165825,7.09763107 13.7071068,6.70710678 C14.0976311,6.31658249 14.0976311,5.68341751 13.7071068,5.29289322 L12.4142136,4 Z"
+                        id="Line-2" fill-rule="nonzero"
+                        transform="translate(12.000000, 4.000000) rotate(-135.000000) translate(-12.000000, -4.000000) "
+                        class=""></path>
+                    <path
+                        d="M5.20710678,10.7071068 C5.59763107,10.3165825 5.59763107,9.68341751 5.20710678,9.29289322 C4.81658249,8.90236893 4.18341751,8.90236893 3.79289322,9.29289322 L1.79289322,11.2928932 C1.40236893,11.6834175 1.40236893,12.3165825 1.79289322,12.7071068 L3.79289322,14.7071068 C4.18341751,15.0976311 4.81658249,15.0976311 5.20710678,14.7071068 C5.59763107,14.3165825 5.59763107,13.6834175 5.20710678,13.2928932 L3.91421356,12 L5.20710678,10.7071068 Z"
+                        id="Line-2" fill-rule="nonzero"
+                        transform="translate(3.500000, 12.000000) rotate(-315.000000) translate(-3.500000, -12.000000) "
+                        class=""></path>
+                </svg>
+            </div>
+        </div>
     </div>
-  </div>
-  <div class="main-content slim-scroller">
-    <div class="zoneset-list">
-      <div ng-click="self.refreshZonesetList()"
-        style="cursor: pointer; position: absolute; right: 25px; padding-top: 4px; font-size: 12px;"
-        class="ti ti-reload">
-      </div>
-      <div class="header">
-        <span class="title">
-          <span class="ti ti-align-left" style="margin-right: 15px;"></span>
-          Available Zonesets 
-        </span>
-        <span class="sub">Select Zoneset to get Zone list.</span>
-      </div>
-      <div style="height: calc(100% - 93px);">
-        <wi-tree-view-virtual tree-root="self.getListZoneset()"
-          hide-unmatched='true' get-children="self.getZonesetChild"
-          click-fn='self.clickZonesetFn' get-label="self.getZonesetLabel"
-          get-icon='self.getZonesetIcon' run-match='self.runMatchZoneset'
-          keep-chidren="false" no-drag='true'>
+    <div class="space-height-20px"></div>
+    <div style="height: 100%; overflow: hidden; margin: -10px;">
+        <wi-tree-view-virtual tree-root="self.getListZoneset()" hide-unmatched='true'
+            get-children="self.getZonesetChild" click-fn='self.clickZonesetFn' get-label="self.getZonesetLabel"
+            get-icon='self.getZonesetIcon' run-match='self.runMatchZoneset' keep-chidren="false" no-drag='true'>
         </wi-tree-view-virtual>
-      </div>
     </div>
-    <div class="zoneset-list">
-      <div ng-click="self.refreshZoneList()"
-        style="cursor: pointer; position: absolute; right: 25px; padding-top: 4px; font-size: 12px;"
-        class="ti ti-reload">
-      </div>
-      <div class="header">
-        <span class="title">
-          <span class="ti ti-align-left" style="margin-right: 15px;"></span>
-          {{isSet(0)?"Training":(isSet(1)?"Verification":'Prediction')}} Zones
-        </span>
-        <span class="sub">Active or Deactive Zone.</span>
-      </div>
-      <div class="active-btn-ctn">
-        <span ng-click="self.activeAllZones()" class="button-with-label-layer">Activate All</span>
-        <span ng-click="self.deactiveAllZones()" class="button-with-label-layer">Deactivate All</span>
-      </div>
-      <div style="height: calc(100% - 93px);">
-        <wi-tree-view-virtual tree-root="self.getListZone()"
-          hide-unmatched='true' get-children="self.getZoneChild"
-          click-fn='self.clickZoneFn' get-label="self.getZoneLabel"
-          get-icon='self.getZoneIcon' run-match='self.runMatchZone'
-          keep-chidren='true' no-drag='true'>
+</div>
+<div class="block border-right-2px" style="flex-basis: 350px; overflow: visible; width: 100%;" resizable
+    r-directions="['right']" r-flex="true">
+    <div class="i2g-title-with-btn">
+        <div class="i2g-tab-line-bottom">
+            <div class="tab-item" ng-class="{'active' : isSet(0)}" ng-click="setTab(0)">
+                <div class="tab-name">Train</div>
+                <div class="active-tab-status"></div>
+            </div>
+            <div class="tab-item " ng-class="{'active' : isSet(1)}" ng-click="setTab(1)">
+                <div class="tab-name">Verify</div>
+                <div class="active-tab-status"></div>
+            </div>
+            <div class="tab-item" ng-class="{'active' : isSet(2)}" ng-click="setTab(2)">
+                <div class="tab-name">Predict</div>
+                <div class="active-tab-status"></div>
+            </div>
+        </div>
+        <div >
+            <div class="i2g-button-with-icon " ng-click="self.refreshZoneList()">
+                <svg width="16px" height="16px" viewBox="0 0 16 16" version="1.1" class="">
+                    <path
+                        d="M12.6233804,6.08608223 C12.8678466,6.67561497 13.0027741,7.32205048 13.0027741,8 L15.0027741,8 C15.0027741,7.05087067 14.8138756,6.14586096 14.4716229,5.32051512 C15.521423,7.85780063 15.0150559,10.8872132 12.9525216,12.9497475 C10.2188516,15.6834175 5.78669671,15.6834175 3.05302667,12.9497475 L4.46724023,11.5355339 C6.41986169,13.4881554 9.58568658,13.4881554 11.538308,11.5355339 C13.0027741,10.0710678 13.3688907,7.92417477 12.6366576,6.1184952 C11.850808,4.25919913 10.0738419,3 8.00277414,3 C5.24135039,3 3.00277414,5.23857625 3.00277414,8 L1.00277414,8 C1.00277414,4.13400675 4.13678089,1 8.00277414,1 C9.93577074,1 11.6857707,1.78350167 12.9525216,3.05025249 L11.538308,4.46446609 C12.0176907,4.9438488 12.3793815,5.49635589 12.6233804,6.08608223 Z"
+                        id="Combined-Shape" fill-rule="nonzero" class=""></path>
+                    <path
+                        d="M12.4142136,4 L13.7071068,2.70710678 C14.0976311,2.31658249 14.0976311,1.68341751 13.7071068,1.29289322 C13.3165825,0.902368927 12.6834175,0.902368927 12.2928932,1.29289322 L10.2928932,3.29289322 C9.90236893,3.68341751 9.90236893,4.31658249 10.2928932,4.70710678 L12.2928932,6.70710678 C12.6834175,7.09763107 13.3165825,7.09763107 13.7071068,6.70710678 C14.0976311,6.31658249 14.0976311,5.68341751 13.7071068,5.29289322 L12.4142136,4 Z"
+                        id="Line-2" fill-rule="nonzero"
+                        transform="translate(12.000000, 4.000000) rotate(-135.000000) translate(-12.000000, -4.000000) "
+                        class=""></path>
+                    <path
+                        d="M5.20710678,10.7071068 C5.59763107,10.3165825 5.59763107,9.68341751 5.20710678,9.29289322 C4.81658249,8.90236893 4.18341751,8.90236893 3.79289322,9.29289322 L1.79289322,11.2928932 C1.40236893,11.6834175 1.40236893,12.3165825 1.79289322,12.7071068 L3.79289322,14.7071068 C4.18341751,15.0976311 4.81658249,15.0976311 5.20710678,14.7071068 C5.59763107,14.3165825 5.59763107,13.6834175 5.20710678,13.2928932 L3.91421356,12 L5.20710678,10.7071068 Z"
+                        id="Line-2" fill-rule="nonzero"
+                        transform="translate(3.500000, 12.000000) rotate(-315.000000) translate(-3.500000, -12.000000) "
+                        class=""></path>
+                </svg>
+            </div>
+        </div>
+    </div>
+    <div class="space-height-20px"></div>
+    <div style="display: flex;" >
+        <div class="i2g-button-text-with-icon-center" style="flex: 1" ng-click="self.activeAllZones()">
+           
+            <span>Active All</span>
+        </div>
+        <div class="space-20px"></div>
+        <div class="i2g-button-text-with-icon-center" style="flex: 1" ng-click="self.deactiveAllZones()">
+           
+            <span>Deactive All</span>
+        </div>
+    </div>
+    <div class="space-height-10px"></div>
+    <div style="height: 100%; overflow: hidden; margin: -10px;">
+        <wi-tree-view-virtual tree-root="self.getListZone()" hide-unmatched='true' get-children="self.getZoneChild"
+            click-fn='self.clickZoneFn' get-label="self.getZoneLabel" get-icon='self.getZoneIcon'
+            run-match='self.runMatchZone' keep-chidren='true' no-drag='true'>
         </wi-tree-view-virtual>
-      </div>
     </div>
-  </div>
 </div>

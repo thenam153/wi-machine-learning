@@ -1,0 +1,303 @@
+<div style="display: flex;flex-direction: column;flex: 1;" class="slim-scroller">
+	<div class="menu">
+        <div style="display: flex;">
+            <span class="menu-item" ng-class="{active: self.current_tab == 0}" ng-click="self.current_tab = 0;">Dataset Selection</span>
+            <span class="menu-item" ng-class="{active: self.current_tab == 1}" ng-click="self.current_tab = 1;">Model Selection</span>
+            <span class="menu-item" ng-class="{active: self.current_tab == 3}" ng-click="self.current_tab = 3;">Zoneset Config</span>
+            <span class="menu-item" ng-class="{active: self.current_tab == 2}" ng-click="self.current_tab = 2;self.updateTabTrainingPredictiong();">Training and Prediction</span>
+            <span class="menu-item" ng-class="{active: self.current_tab == 4}" ng-click="self.current_tab = 4;">Convergence Analysis</span>
+        </div>
+		<div class="active menu-item">
+            <span ng-click="self.openProject();" class="ml-project-name">{{self.project ? self.project.name: ''}}</span>
+            <div ng-click="self.renameProject();" ng-if="self.project" style="align-items: center;margin-left: 10px; display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
+                <span  class="rename-16x16" style="margin-right: 10px;filter: saturate(0) brightness(6)"></span>
+                <span>RENAME</span>
+            </div>
+            <div ng-click="self.openProject();" style="align-items: center;display: flex; background: #ffffff40; margin-left: 10px; padding: 5px 10px; border-radius: 2px;">
+				<span  class="ml-open-16x16" style="margin-right: 10px; filter: saturate(0) brightness(6)"></span>
+				<span>OPEN</span>
+			</div>
+			<div ng-click="self.saveProject();" ng-if="self.project" style="align-items: center;margin-left: 10px; display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
+				<span  class="ml-save-16x16" style="margin-right: 10px;filter: saturate(0) brightness(6)"></span>
+				<span>SAVE</span>
+            </div>
+			<div ng-click="self.saveAsProject();" ng-if="self.project" style="align-items: center;margin-left: 10px; display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
+				<span  class="ml-save-16x16" style="margin-right: 10px;filter: saturate(0) brightness(6)"></span>
+				<span>SAVE AS</span>
+            </div>
+            <div ng-click="self.createProject();" ng-if="!self.project" style="align-items: center;margin-left: 10px; display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
+				<span  class="ml-save-16x16" style="margin-right: 10px;filter: saturate(0) brightness(6)"></span>
+				<span>SAVE</span>
+			</div>
+			<div ng-click="self.newProject();" style="align-items: center;margin-left: 10px;  display: flex; background: #ffffff40; padding: 5px 10px; border-radius: 2px;">
+				<span  class="ml-new-16x16" style="margin-right: 10px;filter: saturate(0) brightness(6)"></span>
+				<span>NEW</span>
+			</div>
+            <span style="font-size: 15px; margin-left: 20px; padding: 0; cursor: pointer; color: #fff;" class="menu-item active" ng-click="self.logout()">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px" height="16px" viewBox="0 0 16 16" version="1.1"> <g id="01-copy-15" stroke="none" stroke-width="1" fill-rule="evenodd" fill="#fff"> <path d="M8,14.5 C11.5898509,14.5 14.5,11.5898509 14.5,8 C14.5,4.41014913 11.5898509,1.5 8,1.5 C4.41014913,1.5 1.5,4.41014913 1.5,8 C1.5,8.27614237 1.72385763,8.5 2,8.5 C2.27614237,8.5 2.5,8.27614237 2.5,8 C2.5,4.96243388 4.96243388,2.5 8,2.5 C11.0375661,2.5 13.5,4.96243388 13.5,8 C13.5,11.0375661 11.0375661,13.5 8,13.5 C7.72385763,13.5 7.5,13.7238576 7.5,14 C7.5,14.2761424 7.72385763,14.5 8,14.5 Z" id="Oval" fill-rule="nonzero" transform="translate(8.000000, 8.000000) rotate(-225.000000) translate(-8.000000, -8.000000) "></path> <path d="M4.5,4 L11.5,4 C11.7761424,4 12,4.22385763 12,4.5 C12,4.77614237 11.7761424,5 11.5,5 L4.5,5 C4.22385763,5 4,4.77614237 4,4.5 C4,4.22385763 4.22385763,4 4.5,4 Z M4.5,5 C4.77614237,5 5,4.77614237 5,4.5 C5,4.22385763 4.77614237,4 4.5,4 L11.5,4 C11.2238576,4 11,4.22385763 11,4.5 C11,4.77614237 11.2238576,5 11.5,5 L4.5,5 Z" id="Rectangle" fill-rule="nonzero" transform="translate(8.000000, 4.500000) rotate(-270.000000) translate(-8.000000, -4.500000) "></path> </g> </svg>
+            </span>
+			
+		</div>
+		
+	</div>
+	<div class="main">
+		<div class="back">
+			<span class="ti ti-arrow-left" ng-click="changeTab('back');"></span>
+		</div>
+		<div class="next">
+			<span class="ti ti-arrow-right" ng-click="changeTab('next');"></span>
+		</div>
+        <dataset-selection 
+            ng-show="self.titleTabs[self.current_tab] === 'Dataset Selection'"
+
+            id-project="self.idProject" 
+            input-curve-specs="self.inputCurveSpecs"
+            target-curve-spec="self.targetCurveSpec" 
+            type-input="self.typeInput" 
+            on-add-input-item="self.onAddInputItem" 
+            get-fn-on-input-changed="self.getFnOnInputChanged"
+            on-target-item-changed="self.onTargetItemChanged" 
+            on-change-type="self.onChangeType" 
+            selection-list="self.selectionList" 
+            make-selection-list="self.makeSelectionList" 
+            on-remove-input-item="self.onRemoveInputItem"
+            on-remove-dataset="self.onRemoveDataset"
+            drop="self.getFnDrop" 
+
+            list-dataset="self.listDataset"
+            controller="self"
+            >
+        </dataset-selection>
+
+        <model-selection 
+            controller="self.getModelSelection()"
+            id="model-selection" 
+            ng-if="self.titleTabs[self.current_tab] === 'Model Selection'">
+        </model-selection>
+
+        <!-- Must use ng-if -->
+        <zoneset-config 
+            controller="self"
+            id="zoneset-config" 
+            ng-if="self.titleTabs[self.current_tab] === 'Zoneset Config'">
+        </zoneset-config>
+
+        <training-prediction 
+            ng-show="self.titleTabs[self.current_tab] === 'Training and Prediction'"
+            controller="self" >
+        </training-prediction>
+
+        <convergence-analysis
+            ng-show="self.titleTabs[self.current_tab] === 'Convergence Analysis'"
+            controller="self">
+        </convergence-analysis>
+	</div>
+</div>
+<div ng-show="self.sprinnerMl || self.showNotiSave" style="z-index: 10; background: #ffffffc9; height: 100vh; width: 100vw; z-index: 5; position: absolute; display: flex; align-items: center; justify-content: center;">
+    <div >
+        <!-- <div class="loader08"></div> -->
+        <div style="
+            height: 80px;
+            width: 80px;
+            transform: translate(-50%, -50%);
+            position: absolute;
+            background-image: url(./spinner.gif);
+            background-size: contain;">
+        </div>
+    </div>
+</div>
+<script type="text/ng-template" id="templateRestore">
+    <style>
+        .ngdialog-overlay{
+            pointer-events: none;
+        }
+    </style>
+    <div class="ngdialog-buttons">
+        <div class="newDialog">
+            <div style="display: flex;align-items: center;">
+                <i class="restore-project-wi-python-32x32" style="margin-right: 20px;">
+                </i>Restore opened project
+            </div>
+            <div style="border-bottom: 1px solid #f1f0f0; margin-bottom: 30px;"></div>
+            <div class="newDialogContent" style="display:flex; justify-content: space-between;">
+                <a style="background: #fff;
+                color: #0077be;
+                border: 1px solid;
+                overflow: hidden;
+                white-space: nowrap;
+                width: 226px;
+                margin: 0;
+                text-overflow: ellipsis;
+                letter-spacing: 0;
+                text-transform: none;" 
+                class="ngdialog-button ngdialog-button-primary" ng-click="acceptRestore()">
+                <i style="margin-right:10px;"class="ti-arrow-left" aria-hidden="true"></i>
+                <b>{{self.restoreProjectName}}</b> </a>
+                <a style="border: 1px solid #0077be;" class="ngdialog-button ngdialog-button-primary" ng-click="self.openProject()">Other<i style="margin-left:10px;"class="ti-arrow-right" aria-hidden="true"></i></a>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="templateConnectionError">
+    <div class="ngdialog-buttons">
+        <div class="newDialog">
+            <div style="display: flex;align-items: center;">
+                <i class="connection-error-wi-python-32x32" style="margin-right: 20px; color: #0074c5;font-size: 25px;">
+                </i>Connection has problems
+            </div>
+            <div style="border-bottom: 1px solid #f1f0f0; margin-bottom: 15px;"></div>
+            <div style="font-weight: 300; color: #666; font-size: 13px; font-style: italic;">
+                Try reconnecting the Wifi or LAN network</div>
+            <div class="newDialogContent">
+                <form style="justify-content: flex-end;">
+                    <div>
+                        <input type="submit" value="RELOAD PAGE" class="ngdialog-button ngdialog-button-primary" ng-click="self.cancelReload()">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="templateOpenProject">
+    <div class="ngdialog-buttons">
+        <div class="newDialog slim-scroller">
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div>Open Projects</div>
+                <input class="searchInput" type="text" placeholder="Search project" ng-model="searchProject">
+                <a class="new-circle" ng-click="self.newProject()"><i class="fa fa-plus"></i></a>
+            </div>
+            <div style="border-bottom: 1px solid #f1f0f0; margin-bottom: 15px;"></div>
+
+            <div class="newDialogContent" style="overflow-y: auto; max-height: 203px;" >
+                <ul class="list-project">
+                    <li ng-repeat="project in allProjects | filter:{'name': searchProject} track by $index"
+                        ng-click="clickProject(project);"
+                        ng-class="{selectedProject: projectSelected.name == project.name}">
+                        <span ng-bind="project.name"></span>
+                        <span class="fa fa-times-circle del"
+                              ng-click="event.stopPropagation(); self.deleteProject(project);"></span>
+                    </li>
+                </ul>
+            </div>
+            <div style="border-bottom: 1px solid #f1f0f0; margin-bottom: 15px;"></div>
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <div style="font-weight: 300; color: #666; font-size: 13px; font-style: italic;">
+                    Projects has been arranged alphabetically.
+                </div>
+                <div>
+                    <a class="ngdialog-button ngdialog-button-primary"
+                       ng-click="openProject();">OPEN</a>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+</script>
+<script type="text/ng-template" id="templateNewPrj">
+    <style>
+        .ngdialog-overlay{
+            pointer-events: auto;
+        }
+    </style>
+    <div class="ngdialog-buttons">
+        <div class="newDialog">
+            <div style="display: flex;align-items: center;">
+                <i class="new-project-wi-python-32x32" style="margin-right: 20px; color: #00c571;font-size: 25px;">
+                </i>Save Project
+            </div>
+            <div style="border-bottom: 1px solid #f1f0f0; margin-bottom: 15px;"></div>
+            <div style="font-weight: 300; color: #666; font-size: 13px; font-style: italic;">
+                Please enter the project name:</div>
+            <div class="newDialogContent">
+                <form>
+                    <input style="flex: 1;" type="text" placeholder="Enter project name" ng-model="self.nameProject">
+                    <input style="max-width: fit-content;" type="submit" value="Save" class="ngdialog-button ngdialog-button-primary" ng-click="createNewProject(nameProject)">
+                </form>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="templateRenamePrj">
+    <style>
+        .ngdialog-overlay{
+            pointer-events: auto;
+        }
+    </style>
+    <div class="ngdialog-buttons">
+        <div class="newDialog">
+            <div style="display: flex;align-items: center;">
+                <i class="rename-wi-python-32x32" style="margin-right: 20px; color: #00c571;font-size: 25px;">
+                </i>Rename Project
+            </div>
+            <div style="border-bottom: 1px solid #f1f0f0; margin-bottom: 15px;"></div>
+            <div style="font-weight: 300; color: #666; font-size: 13px; font-style: italic;">
+                Please enter new name:</div>
+            <div class="newDialogContent">
+                <form>
+                    <input style="flex: 1;" type="text" placeholder="Enter project name" ng-model="self.projectName">
+                    <input style="max-width: fit-content;" type="submit" value="Rename" class="ngdialog-button ngdialog-button-primary" ng-click="rename()">
+                </form>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="templateDeleteProject">
+    <div class="ngdialog-buttons">
+        <div class="newDialog">
+            <div style="display: flex;align-items: center;">
+                <i class="del-project-wi-python-32x32" style="margin-right: 20px; color: #ff0000;font-size: 25px;">
+                </i>Delete
+            </div>
+            <div style="border-bottom: 1px solid #f1f0f0; margin-bottom: 15px;"></div>
+            <div style="font-weight: 300; color: #666; font-size: 13px; font-style: italic;">
+                Are you sure want delete project <b>{{projectDelete.name}}</b></div>
+            <div class="newDialogContent">
+                <form style="justify-content: flex-end;">
+                        <a style="background: #fff;
+                        color: #0077be;
+                        border: 1px solid;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        margin-right: 15px;
+                        text-overflow: ellipsis;
+                        letter-spacing: 0;
+                        text-transform: none;" 
+                        class="ngdialog-button ngdialog-button-primary" ng-click="cancelDelete()"> CANCEL </a>
+                    <div>
+                        <input type="submit" style="max-width: fit-content; border: 1px solid #3188e6;" value="DELETE" class="ngdialog-button ngdialog-button-primary" ng-click="okDelete()">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</script>
+<script type="text/ng-template" id="templateLogout">
+    <div class="ngdialog-buttons">
+        <div class="newDialog">
+            <div style="display: flex;align-items: center;">
+               Logout 
+            </div>
+            <div style="border-bottom: 1px solid #f1f0f0; margin-bottom: 15px;"></div>
+            <div style="font-weight: 300; color: #666; font-size: 13px; font-style: italic;">
+                Are you sure want to log out?
+            <div class="newDialogContent">
+                <form style="justify-content: flex-end;">
+                        <a style="background: #fff;
+                        color: #0077be;
+                        border: 1px solid;
+                        overflow: hidden;
+                        white-space: nowrap;
+                        margin-right: 15px;
+                        text-overflow: ellipsis;
+                        letter-spacing: 0;
+                        text-transform: none;" 
+                        class="ngdialog-button ngdialog-button-primary" ng-click="self.cancelLogout()"> CANCEL </a>
+                    <div>
+                        <input type="submit" style="max-width: fit-content; border: 1px solid #3188e6;" value="Logout" class="ngdialog-button ngdialog-button-primary" ng-click="self.acceptLogout()">
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</script>
