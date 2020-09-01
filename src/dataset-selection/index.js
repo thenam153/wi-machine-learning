@@ -76,9 +76,9 @@ function DatasetSelectionController($scope, wiApi, $timeout) {
             }
     	} else if(node.idDataset){
             if(node.step == "0"){
-                return "dataset-new-16x16"
+                return "i2g-curve-data-index-16x16"
             } else if (node.name === "INDEX") {
-                return "reference-dataset-16x16";
+                return "i2g-curve-data-reference-16x16";
             }else {
                 return "i2g-curve-data-16x16";
             }
