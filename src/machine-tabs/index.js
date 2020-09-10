@@ -3,7 +3,9 @@ const componentName = "machineTabs";
 module.exports.name = moduleName;
 // const queryString = require('query-string')
 const limitToastDisplayed = 3;
-const { wiLogin } = require('@revotechuet/misc-component-vue');
+// const { wiLogin } = require('@revotechuet/misc-component-vue');
+const { wiLoginClient } = require('@revotechuet/misc-component-vue');
+const wiLogin = new wiLoginClient('WI_AI_CLIENT')
 var config;
 if (process.env.NODE_ENV === 'dev' || process.env.NODE_ENV === 'development') {
     config = require('../config/config').development
@@ -35,8 +37,8 @@ var app = angular.module(moduleName, ['modelSelection',
     'heatMap',
     'wiDropdownListNew',
 ]);
-app.run(['wiApi', function (wiApi) {
-    wiApi.setBaseUrl(window.localStorage.getItem("BASE_URL"));
+app.run(['wiApi', 'mlApi', function (wiApi, mlApi) {
+    wiApi.client(mlApi.getClientId()).setBaseUrl(window.localStorage.getItem("BASE_URL"));
   }]);
 app.component(componentName, {
     template: require('./newtemplate.html'),
@@ -182,7 +184,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         initMlProject();
         //if (self.token && self.token.length) window.localStorage.setItem('token', self.token);
         self.restoreProject();
-        $scope.$watch(() => window.localStorage.getItem("token"), () => wiApi && wiApi.doInit());
+        $scope.$watch(() => window.localStorage.getItem("token"), () => wiApi && wiApi.client(getClientId()).doInit());
     }
     this.setTheme = function(theme)  {
         if (theme == 'dark') {
