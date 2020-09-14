@@ -67,7 +67,7 @@ const CURVE = 'curve';
 const FAMILY_CURVE = 'family_curve';
 const FAMILY_GROUP = 'main_family';
 const REMOVE = 0;
-const ADD = 1;  
+const ADD = 1;
 
 function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog, ngDialog, mlApi) {
     const _buildAllCurvesCache = () => {
@@ -126,13 +126,13 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     }
     $scope.$watch(() => (JSON.stringify(self.tabs, excludeReplacer) + ((self.typeInput || {}).type || "")) , () => {
         this.buildInputSelectionListForTabs([
-            STEP_TRAIN, 
+            STEP_TRAIN,
             STEP_VERIFY
         ]).then(curves => {
             self.selectionListTarget = curves;
             return self.buildInputSelectionListForTabs([
-                STEP_TRAIN, 
-                STEP_VERIFY, 
+                STEP_TRAIN,
+                STEP_VERIFY,
                 STEP_PREDICT
             ]);
         }).then(curves => {
@@ -206,7 +206,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
           $(':root').css('--input-border', '#fff');
           $(':root').css('--select-bg', '#f3f3f4');
           $(':root').css('--select-border', '#434343');
-          
+
         }
         if (theme == 'light') {
           localStorage.setItem('theme', 'light');
@@ -227,7 +227,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
           $(':root').css('--box-shadow', '0px 10px 50px rgba(0, 0, 0, 0.1)');
           $(':root').css('--select-bg', '#f3f3f4');
           $(':root').css('--select-border', '#f3f3f4');
-    
+
         }
     }
     function loadTheme() {
@@ -286,7 +286,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         $('*').removeClass('font-18');
         $('*').removeClass('font-12');
     }
-    
+
     }
     function loadFontSize() {
     if (localStorage.getItem('font-size') == '') {
@@ -294,7 +294,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         $timeout(()=>{
         self.currentFont = '14';
         })
-    } 
+    }
     else {
         self.setFontSize(localStorage.getItem('font-size'));
     }
@@ -446,7 +446,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                         let ds = self.tabs[step].listDataset.find( i => i.idDataset === vlDs.idDataset);
                         if (!ds) {
                             let curveSpecs = self.curveSpecs.map(i => {return {isTarget: i.isTarget, value: null};});
-                            if (step === STEP_PREDICT) 
+                            if (step === STEP_PREDICT)
                                 curveSpecs = curveSpecs.filter(item => !item.isTarget);
                             let dsItem = {
                                 active: true,
@@ -478,11 +478,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         $timeout(() => {
             switch(step) {
                 case STEP_TRAIN:
-                    self.tabs[STEP_TRAIN].listDataset.splice($index, 1); 
+                    self.tabs[STEP_TRAIN].listDataset.splice($index, 1);
                     // self.makeListOfDatasetSelection();
                     break;
                 case STEP_VERIFY:
-                    self.tabs[step].listDataset.splice($index, 1); 
+                    self.tabs[step].listDataset.splice($index, 1);
                     break;
                 case STEP_PREDICT:
                     self.tabs[step].listDataset.splice($index, 1);
@@ -517,14 +517,14 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     buildAllCurvesCache();
                 });
                 for (let ds of w.datasets) {
-                    if (datasetIds.indexOf(ds.idDataset) < 0) 
+                    if (datasetIds.indexOf(ds.idDataset) < 0)
                         continue;
                     curves.push(ds.curves);
                 }
             }
             self.selectionList = [];
             switch (self.typeInput.type) {
-                case CURVE: 
+                case CURVE:
                     curves = _.intersectionBy(...curves, 'name');
                     curves = curves.map(c => ({
                         label: c.name,
@@ -566,7 +566,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                     });
                     curves = _.uniqBy(curves, 'label');
                     break;
-                default: 
+                default:
                     throw new Error("invalid self.inputType.type " + self.inputType.type);
             }
             curves.sort((a, b) => {
@@ -581,16 +581,16 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             return curves;
         });
     }
-    
+
     this.refreshCurveData = function() {
         this.buildInputSelectionListForTabs([
-            STEP_TRAIN, 
+            STEP_TRAIN,
             STEP_VERIFY
         ]).then(curves => {
             self.selectionListTarget = curves;
             return self.buildInputSelectionListForTabs([
-                STEP_TRAIN, 
-                STEP_VERIFY, 
+                STEP_TRAIN,
+                STEP_VERIFY,
                 STEP_PREDICT
             ]);
         }).then(curves => {
@@ -632,14 +632,14 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                                                 name: m.name,
                                                 type: m.type,
                                                 value: m
-                                            } 
+                                            }
                                         })
                                         .sort((a, b) => {
                                             let nameA = a.label.toUpperCase();
                                             let nameB = b.label.toUpperCase();
                                             return nameA.localeCompare(nameB, undefined, { numeric: true, sensitivity: "accent" });
                                         });
-    
+
         });
         self.modelSelection.currentTypeModel = self.modelSelection.listTypeModel[0];
         self.modelSelection.currentModel = self.modelSelection.listModel[self.modelSelection.currentTypeModel.type][0];
@@ -682,7 +682,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
 			// console.log(properties);
 		}
     }
-   
+
 	this.modelSelection.onItemChange = function(value, properties) {
 		// console.log(value, properties);
 		properties.value = properties.enum.find(e => e.properties === value);
@@ -725,7 +725,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         })
 	}
 	this.modelSelection.onLayerChange = function(idx) {
-		idx > 0 ? self.modelSelection.nnConfig.layers.push(10) : self.modelSelection.nnConfig.layers.pop(); 
+		idx > 0 ? self.modelSelection.nnConfig.layers.push(10) : self.modelSelection.nnConfig.layers.pop();
         self.modelSelection.updatePaint();
 	}
 	this.modelSelection.onHiddenChange = function(index, idx) {
@@ -733,7 +733,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         self.modelSelection.updatePaint();
     }
     this.modelSelection.updatePaint = function() {
-        self.modelSelection.currentModel.value.nnnw && self.modelSelection.nnConfig.wiNNCtrl ? self.modelSelection.nnConfig.wiNNCtrl.update(self.modelSelection.nnConfig) : null; 
+        self.modelSelection.currentModel.value.nnnw && self.modelSelection.nnConfig.wiNNCtrl ? self.modelSelection.nnConfig.wiNNCtrl.update(self.modelSelection.nnConfig) : null;
     }
     this.getModelSelection = function() {
         return self.modelSelection;
@@ -741,12 +741,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     this.modelSelection.initModelSelection();
     // ================= training ==========================
 
-    this.updateTabTrainingPredictiong = function() {
-        console.log("switch");
-        //self.makeListOfTAP();
+    this.updateTabTrainingPredictiong = function () {
         mlApi.setBaseCurrentModel(self.modelSelection.currentModel.value);
     }
-    
+
     this.onClickDiscriminator = function(dataset) {
         wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell).then(well => {
             let fullDataset = well.datasets.find(ds => ds.idDataset === dataset.idDataset);
@@ -772,7 +770,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         arr[1].selectedValues[arr[3]] = item.name;
         return;
     }
-   
+
     function loadProject(mlProject) {
         let content = mlProject.content;
         //self.projectInfo = content.projectInfo || {}; // TUNG
@@ -830,7 +828,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         wiApi.client(getClientId()).getMlProjectListPromise()
         .then((listMlProject) => {
             $scope.allProjects = self.project ? listMlProject.filter(l => l.name != self.project.name).sort((a, b) => a.name.localeCompare(b.name)) :
-            listMlProject.sort((a, b) => a.name.localeCompare(b.name)) 
+            listMlProject.sort((a, b) => a.name.localeCompare(b.name))
             $scope.projectSelected = null;
             $scope.openProject = function() {
                 console.log($scope.projectSelected);
@@ -1066,7 +1064,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             scope: $scope,
         });
     }
-    this.newProject = function() {   
+    this.newProject = function() {
         initMlProject();
         self.modelSelection.initModelSelection();
         wiToken.setCurrentProjectName('');
@@ -1184,7 +1182,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }).map(c => ({ data: { label: c.name }, properties: c }));
         return curves;
     }
-   
+
     this.inputCurveSpecs = function(curveSpec, idx, curveSpecs) {
         return !curveSpec.isTarget;
     }
@@ -1227,7 +1225,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
 			 $(".my_audio").prop("currentTime",0);
 		}
    }
-  
+
 	this.showNotiFn = function (type, title, message, timeLife) {
 		let id;
 		let item;
