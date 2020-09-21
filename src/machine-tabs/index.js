@@ -537,7 +537,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 case FAMILY_CURVE:
                     curves = _.intersectionBy(...curves, 'idFamily');
                     curves = curves.filter(c => c.idFamily).map(c => {
-                        let family = wiApi.getFamily(c.idFamily);
+                        let family = wiApi.client(getClientId()).getFamily(c.idFamily);
                         return {
                             label: family.name,
                             familyGroup: family.familyGroup,
@@ -556,7 +556,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 case FAMILY_GROUP:
                     curves = _.intersectionBy(...curves, 'idFamily');
                     curves = curves.filter(c => c.idFamily).map(c => {
-                        let family = wiApi.getFamily(c.idFamily);
+                        let family = wiApi.client(getClientId()).getFamily(c.idFamily);
                         return {
                             label: family.familyGroup,
                             familyGroup: family.familyGroup,
@@ -1156,7 +1156,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         let well = self.__WELLCACHE["" + compactDataset.idWell];
         if (!well) return null;
         let dataset = well.datasets.find(ds => ds.idDataset === compactDataset.idDataset);
-        let familyTable = wiApi.getFamilyTable();
+        let familyTable = wiApi.client(getClientId()).getFamilyTable();
         let family;
         let families;
         switch (self.typeInput.type) {
