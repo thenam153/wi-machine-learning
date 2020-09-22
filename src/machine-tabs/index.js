@@ -144,7 +144,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             console.log(e)
             $timeout(() => {
                 self.showNotiFn('error', 'Error', e.message || "Open project error" , 4000);
-                self.newProject()
+                removeDataProject() 
             })
         });
     });
@@ -379,6 +379,11 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             bucket_id: null
         }
     }
+    function removeDataProject() {
+        for (let stepLabel of Object.keys(self.tabs)) {
+            self.tabs[stepLabel].listDataset = []
+        }
+    }
     this.onChangeType = function(button) {
         if(self.typeInput.type != button.type) {
             $timeout(() => {
@@ -611,6 +616,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }).catch(e => {
             $timeout(() => {
                 self.showNotiFn('error', 'Error','Refresh error' , 4000);
+                removeDataProject()
             });
             // toastr.error('Refresh error', 'Error');
             console.error(e)
