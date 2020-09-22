@@ -140,7 +140,13 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             $timeout(() => {
                 buildAllCurvesCache();
             });
-        }).catch(e => console.error(e));
+        }).catch(e => {
+            console.log(e)
+            $timeout(() => {
+                self.showNotiFn('error', 'Error', e.message || "Open project error" , 4000);
+                self.newProject()
+            })
+        });
     });
     this.getUser = function() {
     return localStorage.username || 'Guest';
@@ -513,8 +519,10 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         return Promise.all(jobs).then((wells) => {
             for (let w of wells) {
                 $timeout(() => {
-                    this.__WELLCACHE["" + w.idWell] = w;
-                    buildAllCurvesCache();
+                    if(w != null) {
+                        this.__WELLCACHE["" + w.idWell] = w;
+                        buildAllCurvesCache();
+                    }
                 });
                 for (let ds of w.datasets) {
                     if (datasetIds.indexOf(ds.idDataset) < 0)
