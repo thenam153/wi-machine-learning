@@ -27,7 +27,7 @@
             <input ng-show="isSet(2) && self.controller.tabs['verify'].createPlot" type="text" placeholder="Plot name" ng-model="self.controller.tabs['verify'].plotName" style="width: auto;">
             <input ng-show="isSet(3) && self.controller.tabs['prediction'].createPlot" type="text" placeholder="Plot name" ng-model="self.controller.tabs['prediction'].plotName" style="width: auto;">
             <div class="space-20px"></div>
-            <div class="i2g-button-with-icon active" ng-show="isSet(1)" ng-click="self.runTask(-1);">
+            <div class="i2g-button-with-icon active" title="Run Now" ng-show="isSet(1)" ng-click="self.runTask(-1);">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"
                     role="img">
                     <path xmlns="http://www.w3.org/2000/svg"
@@ -36,7 +36,7 @@
                         transform="translate(8.500000, 8.000000) rotate(-270.000000) translate(-8.500000, -8.000000) " />
                 </svg>
             </div>
-            <div class="i2g-button-with-icon active" ng-show="isSet(2)" ng-click="self.runTask(1);">
+            <div class="i2g-button-with-icon active" title="Run Now" ng-show="isSet(2)" ng-click="self.runTask(1);">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"
                     role="img">
                     <path xmlns="http://www.w3.org/2000/svg"
@@ -45,7 +45,7 @@
                         transform="translate(8.500000, 8.000000) rotate(-270.000000) translate(-8.500000, -8.000000) " />
                 </svg>
             </div>
-            <div class="i2g-button-with-icon active" ng-show="isSet(3)" ng-click="self.runTask(2);">
+            <div class="i2g-button-with-icon active" title="Run Now" ng-show="isSet(3)" ng-click="self.runTask(2);">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"
                     role="img">
                     <path xmlns="http://www.w3.org/2000/svg"
@@ -55,7 +55,7 @@
                 </svg>
             </div>
             <div class="space-20px"></div>
-            <div class="i2g-button-with-icon active" ng-click="self.runAll();">
+            <div class="i2g-button-with-icon active" title="Run All" ng-click="self.runAll();">
                 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="16px"
                     height="16px" viewBox="0 0 16 16" version="1.1">
                     <path
