@@ -74,14 +74,19 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 return   
             }
             if(i == -1) {
-                mlApi.createModelAndBucketId(self.controller.curveSpecs.length, self.controller.project.idMlProject).then((res) => {
-                    console.log(res);
-                    self.modelId = res.modelId;
-                    self.bucketId = res.bucketId;
-                    self.controller.project.content.modelId = res.modelId;
-                    self.controller.project.content.bucketId = res.bucketId;
-                    return resolve(train());
-                });
+                $timeout(() => {
+                    self.running = true;
+                    mlApi.createModelAndBucketId(self.controller.curveSpecs.length, self.controller.project.idMlProject).then((res) => {
+                        console.log(res);
+                        self.modelId = res.modelId;
+                        self.bucketId = res.bucketId;
+                        self.controller.project.content.modelId = res.modelId;
+                        self.controller.project.content.bucketId = res.bucketId;
+                        self.running = false;
+                        return resolve(train());
+                    });
+                    
+                })
             }
             else if(i == 1) {
                 return resolve(verify());
