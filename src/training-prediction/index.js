@@ -132,7 +132,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             self.controller.saveProject();
         })
         .catch(err => {
-            toastr.error(err ? err.message : err || 'Something went error' );
+            // toastr.error(err ? err.message : err || 'Something went error' );
             console.log('Error')
         })
         .finally(() => {
@@ -253,13 +253,13 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 afterTrain()
             }).then(() => {
                 console.log('Success')
-                toastr.success('Training success');
+                // toastr.success('Training success');
                 self.controller.project.content.state = 1;
                 self.controller.saveProject();
             })
             .catch(err => {
                 console.error(err);
-                toastr.error(err ? err.message : err || 'Something went error' );
+                // toastr.error(err ? err.message : err || 'Something went error' );
             })
             .finally(() => {
                 $timeout(() => {
@@ -276,12 +276,12 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             })
             beforeVerify()
             .then((res) => {
-                if(res) toastr.success('Verify success');
+                // if(res) toastr.success('Verify success');
                 console.log('Success')
                 self.controller.saveProject();
             })
             .catch(err => {
-                toastr.error(err ? err.message : err || 'Something went error' );
+                // toastr.error(err ? err.message : err || 'Something went error' );
                 console.log('Error')
             })
             .finally(() => {
@@ -299,14 +299,14 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             })
             beforePredict()
             .then(() => {
-                toastr.success('Prediction success');
+                // toastr.success('Prediction success');            
                 console.log('Success')
                 self.controller.saveProject();
             })
             .catch(err => {
-                toastr.error(err ? err.message
-                    || (err.status ? `${err.status} - ${err.statusText}${err.data?("-" + JSON.stringify(err.data)):""}` : 'Something went error')
-                    : err || 'Something went error');
+                // toastr.error(err ? err.message
+                    // || (err.status ? `${err.status} - ${err.statusText}${err.data?("-" + JSON.stringify(err.data)):""}` : 'Something went error')
+                    // : err || 'Something went error');          
                 console.log('Error')
             })
             .finally(() => {
