@@ -215,7 +215,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
 					template: 'templateVersion',
 					className: 'i2g-ngdialog',
 					showClose: false,
-					scope: $scope
+					scope: $scope,
+                    closeByEscape: false
 				})
 				self.acceptRefresh = function() {
 					localStorage.setItem('VER', newVersion)
