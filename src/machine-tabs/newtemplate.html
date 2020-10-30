@@ -1138,3 +1138,19 @@
         <input type="submit" value="New" ng-click="createNewProject(nameProject)">
     </form>
 </script>
+<script type="text/ng-template" id="templateVersion">
+    <div class="i2g-title-with-btn">
+        <span>New version available</span>
+    </div>
+    <div class="space-height-20px"></div>
+    Refresh browser to update?
+    <div class="space-height-20px"></div>
+    <form style="display: flex;">
+        <div style=" display: grid; grid-column-gap: 20px; grid-template-columns: auto auto; width: 100%; ">
+            <div class="i2g-button-text-with-icon-center" ng-click="self.cancelRefresh();">
+                <span>No</span>
+            </div>
+            <input type="submit" value="Yes" ng-click="self.acceptRefresh()">
+        </div>
+    </form>
+</script>
