@@ -1,0 +1,36 @@
+<div class="i2g-title-large">
+  <span>Confusion matrix {{datasetName}}</span>
+</div>
+<div class="confusion-matrix">
+  <div class="label-top">Predicted label</div>
+  <div class="label-left">True label</div>
+  <div class="row">
+    <span class="row-header"></span>
+    <div ng-repeat="i in [].constructor(matrix.length) track by $index" class="col-header">{{$index+1}}</div>
+  </div>
+  <div ng-repeat="row in matrix track by $index" class="row">
+    <span class="row-header">{{$index+1}}</span>
+    <div ng-repeat="cell in row track by $index" class="cell" ng-style="{'background-color': getColor(cell, sum), color: getTextColor(cell, sum)}">
+      {{cell}}
+    </div>
+    <div class="cell" ng-style="{'background-color': getColor(rowPercentage($index)), color: getTextColor(rowPercentage($index))}">{{rowPercentage($index)}}%
+    </div>
+  </div>
+  <div class="row">
+    <span class="row-header"></span>
+    <div class="cell" ng-repeat="i in [].constructor(matrix.length) track by $index"
+      ng-style="{'background-color': getColor(colPercentage($index)), color: getTextColor(colPercentage($index))}">{{colPercentage($index)}}%</div>
+    <div class="cell" ng-style="{'background-color': getColor(averageAccuracy), color: getTextColor(averageAccuracy)}">{{averageAccuracy}}%</div>
+  </div>
+  <div class="color-scale">
+    <div class="color"></div>
+    <div class="scale">
+      <span>100</span>
+      <span>80</span>
+      <span>60</span>
+      <span>40</span>
+      <span>20</span>
+      <span>0</span>
+    </div>
+  </div>
+</div>

@@ -29,17 +29,22 @@
             </div>
         </div>
         <div>
-            <label class="i2g-checkbox" ng-show="isSet(2)">
-                <input type="checkbox" ng-model="self.controller.tabs['verify'].createPlot" ng-disabled="!canCreatePlot('verify')">
-                <span>Create Plot</span>
-            </label>
-            <label class="i2g-checkbox" ng-show="isSet(3)">
-                <input type="checkbox" ng-model="self.controller.tabs['prediction'].createPlot" ng-disabled="!canCreatePlot('prediction')">
-                <span>Create Plot</span>
-            </label>
-            <div class="space-20px"></div>
-            <input ng-show="isSet(2) && self.controller.tabs['verify'].createPlot" type="text" placeholder="Plot name" ng-model="self.controller.tabs['verify'].plotName" style="width: auto;">
-            <input ng-show="isSet(3) && self.controller.tabs['prediction'].createPlot" type="text" placeholder="Plot name" ng-model="self.controller.tabs['prediction'].plotName" style="width: auto;">
+            <div ng-show="isSet(2)" style="display: flex;">
+                <label class="i2g-checkbox">
+                    <input type="checkbox" ng-model="self.controller.tabs['verify'].createPlot" ng-disabled="!canCreatePlot('verify')">
+                    <span>Create Plot</span>
+                </label>
+                <div class="space-20px"></div>
+                <input ng-disabled="!self.controller.tabs['verify'].createPlot" type="text" placeholder="Plot name" ng-model="self.controller.tabs['verify'].plotName" style="width: auto;">
+            </div>
+            <div ng-show="isSet(3)" style="display: flex;">
+                <label class="i2g-checkbox">
+                    <input type="checkbox" ng-model="self.controller.tabs['prediction'].createPlot" ng-disabled="!canCreatePlot('prediction')">
+                    <span>Create Plot</span>
+                </label>
+                <div class="space-20px"></div>
+                <input ng-disabled="!self.controller.tabs['prediction'].createPlot" type="text" placeholder="Plot name" ng-model="self.controller.tabs['prediction'].plotName" style="width: auto;">
+            </div>
             <div class="space-20px"></div>
             <div class="i2g-button-with-icon active" title="Run Now" ng-show="isSet(1)" ng-click="self.runTask(-1);">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none"
@@ -138,6 +143,7 @@
             <div style="width: 160px;" ng-repeat="input in self.controller.curveSpecs track by $index">
                 {{input.label + ($index?(" " + $index):"")}}</div>
             <div style="width: 160px;">Verify Curve</div>
+            <div style="width: 180px;"></div>
         </div>
         <div class="i2g-table-row"
             ng-repeat="(idxDs, dataset) in self.controller.tabs['verify'].listDataset | filter:self.controller.searchVerifyFilter track by idxDs" >
@@ -169,8 +175,9 @@
             <div style="width: 160px;">
                 <editable item-value="self.getResultCurveName" content-style='{width:"100%"}' set-value="self.setResultCurveName" enabled="!!self.controller" params="[dataset, '_VR']" />
             </div>
-
-
+            <div style="width: 180px; padding: 0 10px;">
+                <div class="i2g-button-text-with-icon-center" ng-click="self.confusionMatrix(dataset)">Confusion Matrix</div>
+            </div>
         </div>
     </div>
     <div class="i2g-table" ng-show="isSet(3)">

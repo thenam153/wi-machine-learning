@@ -1,6 +1,7 @@
+import { getConfusionMatrix } from './confusion-matrix';
 const moduleName = "trainingPrediction";
 const componentName = "trainingPrediction";
-module.exports.name = moduleName;
+export const name = moduleName;
 
 var app = angular.module(moduleName, ['wiDialog',
     'wiDiscriminator',
@@ -42,9 +43,9 @@ app.component(componentName, {
         controller: '<'
     }
 });
-TrainingPredictionController.$inject = ['$scope', '$timeout', 'wiDialog', 'wiApi', '$http', 'somModelService', 'mlApi']
+TrainingPredictionController.$inject = ['$scope', '$timeout', 'wiDialog', 'wiApi', '$http', 'somModelService', 'mlApi', 'ngDialog']
 
-function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, somModelService, mlApi) {
+function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, somModelService, mlApi, ngDialog) {
     let self = this;
     toastr.options = {
         "positionClass": "toast-bottom-right",
@@ -643,9 +644,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     }
     */
     this.onToggleActive = function(dataset) {
-        $timeout(() => {
-            dataset.active = !dataset.active;
-        })
+        dataset.active = !dataset.active;
     }
     function isActive(datasets) {
         let d = datasets.find(i => i.active);
@@ -679,5 +678,47 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     }
     function normalizeCurveName(name) {
         return name.replace(/(\s|%)+/g, "_");
+    }
+
+    this.confusionMatrix = async function (dataset) {
+        console.log(dataset);
+        self.running = true;
+        const dsInfo = await wiApi.getDatasetInfoPromise(dataset.idDataset);
+        const targetCurve = dsInfo.curves.find(c => c.name === dataset.selectedValues[0]);
+        const resultCurve = dsInfo.curves.find(c => c.name === dataset.resultCurveName);
+        if (!resultCurve || !targetCurve) return;
+        const targetCurveData = await wiApi.getCurveDataPromise(targetCurve.idCurve);
+        const resultCurveData = await wiApi.getCurveDataPromise(resultCurve.idCurve);
+        const matrix = getConfusionMatrix(targetCurveData, resultCurveData);
+        self.running = false;
+        ngDialog.open({
+            template: require('./confusion-matrix.html'),
+            plain: true,
+            className: 'i2g-ngdialog confusion-matrix-dialog',
+            controller: ['$scope', '$element',
+                function ($scope, $element) {
+                    $scope.datasetName = self.controller.getDataset(dataset.idWell, dataset.idDataset).name;
+                    const matrixTransposed = _.unzip(matrix);
+                    $scope.rowPercentage = function (row) {
+                        return _.round(matrix[row][row] / _.sum(matrix[row]) * 100, 1) || 0;
+                    }
+                    $scope.colPercentage = function (col) {
+                        return _.round(matrixTransposed[col][col] / _.sum(matrixTransposed[col]) * 100, 1) || 0;
+                    }
+                    $scope.matrix = matrix;
+                    const sum = _.sum(matrix.flat());
+                    $scope.sum = sum;
+                    $scope.averageAccuracy = _.round(matrix.reduce((acc, row, idx) => acc + row[idx], 0) / sum * 100, 1) || 0;
+                    const colorScale = d3.scaleLinear().domain([0, 20, 40, 60, 80, 100]).range(['#F7FCF0', '#D4EECD', '#9FDAB8', '#57B8D0', '#1C7CB6', '#053D7F']);
+                    $scope.getColor = function (val, max = 100) {
+                        return colorScale(val / max * 100);
+                    };
+                    const textColorScale = d3.scaleQuantile().domain([0, 80, 100]).range(['#000', '#fff', '#fff']);
+                    $scope.getTextColor = function (val, max = 100) {
+                        return textColorScale(val / max * 100);
+                    }
+                }
+            ],
+        });
     }
 }
