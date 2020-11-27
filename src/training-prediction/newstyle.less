@@ -81,3 +81,51 @@ training-prediction {
 		}
 	}
 }
+
+input:hover[type='number'] {
+	background-color: var(--input-bg-hover) !important;
+	border-color: var(--input-border-hover) !important;
+	-webkit-box-shadow: 0 0 0 4px var(--input-shadow-hover) !important;
+	box-shadow: 0 0 0 4px var(--input-shadow-hover) !important;
+}
+input[type='number'] {
+	border: 1px solid transparent !important;
+}
+input:active[type='number'] {
+	background-color: var(--input-bg-hover);
+	border-color: var(--input-border-active);
+	-webkit-box-shadow: none;
+	box-shadow: none;
+}
+input:focus[type='number'] {
+	background-color: var(--input-bg-hover);
+	border-color: var(--input-border-focus) !important;
+	-webkit-box-shadow: 0 0 0 4px var(--input-shadow-hover) !important;
+	box-shadow: 0 0 0 4px var(--input-shadow-hover) !important;
+}
+input[type=file]:focus, input[type=checkbox]:focus, input[type=radio]:focus {
+	outline: none !important;
+}
+input[type='number'] {
+	font-weight: 400;
+	width: 100%;
+	-webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	max-height: 40px;
+	min-height: 40px;
+	padding: 11px 16px;
+	outline: none;
+	border-radius: 10px;
+	-webkit-transition: background-color 200ms ease, outline 200ms ease, color 200ms ease, -webkit-box-shadow 200ms ease;
+	transition: background-color 200ms ease, outline 200ms ease, color 200ms ease, -webkit-box-shadow 200ms ease;
+	transition: background-color 200ms ease, outline 200ms ease, color 200ms ease, box-shadow 200ms ease;
+	transition: background-color 200ms ease, outline 200ms ease, color 200ms ease, box-shadow 200ms ease, -webkit-box-shadow 200ms ease;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	color: var(--text-primary-color);
+	background-color: var(--input-bg) !important;
+}
+input[type=number]::-webkit-text-cancel-button {
+	-webkit-appearance: searchfield-cancel-button;
+}
