@@ -353,6 +353,20 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         scope: $scope,
     });
     }
+
+    const defaultSample = {
+        training: {
+            value: 0,
+            condition: "<",
+            enable: false
+        },
+        verify: {
+            value: 0,
+            condition: "<",
+            enable: false
+        }
+    }
+
     function initMlProject() {
         self.project = null;
         self.selectionList = [
@@ -826,6 +840,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     }
 
     function loadProject(mlProject) {
+        !mlProject.content.sample ? mlProject.content.sample = defaultSample : null
+
         let content = mlProject.content;
         //self.projectInfo = content.projectInfo || {}; // TUNG
         //let owner = self.projectInfo.owner; // TUNG
@@ -877,6 +893,8 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         }
             // self.modelSelection.currentModel = content.model;
         self.convergenceAnalysis = content.convergenceAnalysis;
+
+        
     }
     this.openProject = function() {
         wiApi.client(getClientId()).getMlProjectListPromise()
@@ -922,7 +940,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                         model: self.modelSelection.currentModel,
                         state: self.project.content.state,
                         modelId: self.project.content.modelId,
-                        bucketId: self.project.content.bucketId
+                        bucketId: self.project.content.bucketId,
+
+                        sample: self.project.content.sample || defaultSample
                     }
                 })
                 .then((project) => {
@@ -980,7 +1000,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                 model: self.modelSelection.currentModel,
                 state: self.project.content.state,
                 modelId: self.project.content.modelId,
-                bucketId: self.project.content.bucketId
+                bucketId: self.project.content.bucketId,
+
+                sample: self.project.content.sample || defaultSample
             }
         })
         .then((project) => {
@@ -1028,7 +1050,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                         model: self.modelSelection.currentModel,
                         state: -1,
                         modelId: null,
-                        bucketId: null
+                        bucketId: null,
+
+                        sample: defaultSample
                     }
                 })
                 .then((project) => {
@@ -1082,7 +1106,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
                         model: self.modelSelection.currentModel,
                         state: -1,
                         modelId: null,
-                        bucketId: null
+                        bucketId: null,
+
+                        sample: defaultSample
                     }
                 })
                 .then((project) => {
@@ -1333,4 +1359,26 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
 		console.log('mute')
 		document.getElementsByClassName(".my_audio").muted = true;
 	}
+
+    // 
+    this.clickDialogSample = function(step) {
+        console.log("click", step)
+        if (!self.project) {
+            return;
+        }
+        $scope.sample = self.project.content.sample[step]
+        $scope.closeDialogSample = function(sample) {
+            console.log(sample)
+            ngDialog.close()
+        }
+        $scope.ngDialog = ngDialog
+        ngDialog.open({
+            template: 'templateDialogSample',
+            className: 'i2g-ngdialog',
+            showClose: false,
+            scope: $scope,
+            closeByEscape: false,
+            closeByDocument: false
+        })
+    }
 }

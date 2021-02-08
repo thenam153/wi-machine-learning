@@ -105,27 +105,6 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
         $timeout(() => {
             self.running = true;
         });
-        // mlApi.createModelAndBucketId(self.controller.curveSpecs.length, self.controller.project.idMlProject).then((res) => {
-        //     console.log(res);
-        //     self.modelId = res.modelId;
-        //     self.bucketId = res.bucketId;
-        //     self.controller.project.content.modelId = res.modelId;
-        //     self.controller.project.content.bucketId = res.bucketId;
-        //     beforeTrain().then(() => trainData()).then((res) => afterTrain()).then(() => {
-        //         self.controller.project.content.state = 1;
-        //         self.controller.saveProject();
-        //     }).then(() => beforeVerify()).then(() => beforePredict()).then(() => {
-        //         toastr.success('Run all success');
-        //         self.controller.saveProject();
-        //     }).catch(err => {
-        //         toastr.error(err ? err.message : err || 'Something went error' );
-        //         console.log('Error')
-        //     }).finally(() => {
-        //         $timeout(() => {
-        //             self.running = false;
-        //         })
-        //     });
-        // });
         self.runTask(-1)
         .then(() => self.runTask(1))
         .then(() => self.runTask(2))
@@ -165,6 +144,38 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             return zone ? p : { ...p, x: false };
         })
     }
+    function sampleFilter(curves, project, step) {
+        let sample = project.content.sample[step]
+        if (sample.enable) {
+            console.log(">>>>", curves, project, step)
+            for(let idx = 0; idx < curves.length; idx++) {
+                if(curves[idx]) {
+                    curves[idx] = seeding(sample.value, sample.condition)
+                }
+            }
+        }
+        return curves
+    }
+    function seeding(value, condition) {
+        let randomValue = random()
+        switch (condition) {
+            case '<': 
+                return randomValue < value;
+            case '>':
+                return randomValue > value;
+            case '=':
+                return randomValue == value;
+            case '<=':
+                return randomValue <= value;
+            case '>=':
+                return randomValue => value;
+            default:
+                return false
+        }
+    }
+    function random() {
+        return Math.random(0,1)
+    }
     function beforeTrain() {
         return new Promise((resolve, reject) => {
             let listDataset = self.controller.tabs['training'].listDataset;
@@ -195,6 +206,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     let zonesConfig = self.controller.zonesetConfig['training'].zoneList || []; // PHUC
                     let zones = (realWell.zone_sets.find(zs => zs.name === self.controller.zonesetConfig['training'].zonesetName)  || {}).zones || [];
                     curves = zonesetFilter(dataset, curves, zonesConfig, zones).map(d => d.x); // PHUC
+                    curves = sampleFilter(curves, self.controller.project, 'training')
                     return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
                 }) 
                 .then(dataCurves => {
@@ -360,7 +372,8 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                         //return mlApi.getDataCurveAndFilter(dataset, curves); // TUNG
                         let zonesConfig = self.controller.zonesetConfig['verify'].zoneList || [];
                         let zones = (realWell.zone_sets.find(zs => zs.name === self.controller.zonesetConfig['verify'].zonesetName) || {}).zones || [];
-                        curves = zonesetFilter(dataset, curves, zonesConfig, zones).map(d => d.x);
+                        curves = zonesetFilter(dataset, curves, zonesConfig, zones).map(d => d.x);  
+                        curves = sampleFilter(curves, self.controller.project, 'verify')
                         filterCurveBoolean = curves;
                         return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
                     })

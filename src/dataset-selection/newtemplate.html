@@ -184,6 +184,9 @@
 				</svg>
 				<div>Training</div>
 			</div>
+			<span ng-click="self.controller.clickDialogSample('training')">
+				Sampler
+			</span>
 			<span>
 				{{self.controller.tabs['training'].listDataset.length}}
 			</span>
@@ -279,6 +282,9 @@
 				</svg>
 				<div>Verify</div>
 			</div>
+			<span ng-click="self.controller.clickDialogSample('verify')">
+				Sampler
+			</span>
 			<span>
 				{{self.controller.tabs['verify'].listDataset.length}}
 			</span>

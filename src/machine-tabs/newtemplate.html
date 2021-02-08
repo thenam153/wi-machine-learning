@@ -1154,3 +1154,23 @@
         </div>
     </form>
 </script>
+<script type="text/ng-template" id="templateDialogSample">
+    <style>
+        .ngdialog-overlay{
+            pointer-events: auto;
+        }
+    </style>
+    <div class="i2g-title-large">
+        <span>Sampler</span>
+    </div>
+    <div class="space-height-20px"></div>
+    <div ng-click="sample.enable = !sample.enable">{{sample.enable ? "ON" : "OFF"}}</div>
+    {{sample}}
+    <form>
+        <div><=</div>
+        <input type="number" mix=0 max=1 placeholder="sample" ng-model="sample.value">
+        <div>></div>
+    </form>
+    <div ng-click="ngDialog.close()">Cancel</div>
+    <div ng-click="closeDialogSample(sample)">Save</div>
+</script>
