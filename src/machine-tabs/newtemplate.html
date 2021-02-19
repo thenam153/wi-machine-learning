@@ -1157,20 +1157,53 @@
 <script type="text/ng-template" id="templateDialogSample">
     <style>
         .ngdialog-overlay{
-            pointer-events: auto;
+        pointer-events: auto;
         }
-    </style>
-    <div class="i2g-title-large">
+     </style>
+     <div class="i2g-title-with-btn">
         <span>Sampler</span>
     </div>
-    <div class="space-height-20px"></div>
-    <div ng-click="sample.enable = !sample.enable">{{sample.enable ? "ON" : "OFF"}}</div>
-    {{sample}}
-    <form>
-        <div><=</div>
-        <input type="number" mix=0 max=1 placeholder="sample" ng-model="sample.value">
-        <div>></div>
-    </form>
-    <div ng-click="ngDialog.close()">Cancel</div>
-    <div ng-click="closeDialogSample(sample)">Save</div>
+     <div class="i2g-title-large">
+        <!-- <label class="i2g-checkbox">
+            <div class="i2g-button-with-icon" title="" ng-click="sample.enable=!sample.enable" ng-class="sample.enable==true ? 'active' : 'disable'">
+                {{ sample.enable==true ? 'OFF' : 'ON' }}
+            </div>
+        </label> -->
+        <label class="i2g-checkbox">
+            <input type="checkbox" ng-click="sample.enable=!sample.enable" ng-checked="sample.enable">
+            <span>Enable Sampler</span>
+        </label>
+     </div>
+     <div class="space-height-20px"></div>
+     <form>
+        <div style="display: flex;">
+            <!-- {{sample}} -->
+           <div class="i2g-button-with-icon" title="" ng-click="sample.condition = '<='" ng-class="sample.condition == '<=' ? 'active' : 'disable'">
+              <svg xml:space="preserve" style="enable-background:new 0 0 121.809 121.809;" viewBox="0 0 121.809 121.809" height="12" width="12" y="0px" x="0px" id="Capa_1" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+                 <path d="M12.183,121.809h97.443c4.037,0,7.309-3.271,7.309-7.31c0-4.035-3.271-7.309-7.309-7.309H12.183    c-4.037,0-7.309,3.272-7.309,7.309C4.874,118.537,8.146,121.809,12.183,121.809z"></path>
+                 <path d="M109.142,4.695c-1.443-3.766-5.66-5.657-9.439-4.207L10.785,34.593c-2.753,1.055-4.604,3.662-4.689,6.609    c-0.085,2.948,1.607,5.657,4.297,6.872l88.918,40.197c0.974,0.44,1.996,0.65,3.002,0.65c2.785,0,5.443-1.6,6.664-4.302    c1.664-3.678,0.028-8.007-3.649-9.671L32.366,41.967l72.568-27.834C108.704,12.69,110.588,8.464,109.142,4.695z"></path>
+              </svg>
+           </div>
+           <div class="space-20px"></div>
+           <input type="number" mix="0" max="1" placeholder="sample" ng-blur="checkValue()" ng-model="sample.value">
+           <div class="space-20px"></div>
+           <div class="i2g-button-with-icon" title="" ng-click="sample.condition='>'" style="transform: rotate(180deg);" ng-class="sample.condition=='>' ? 'active' : 'disable'">
+              <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" width="12" height="12" viewBox="0 0 103.537 103.537" style="enable-background:new 0 0 103.537 103.537;" xml:space="preserve">
+                 <path d="M103.048,12.002c-1.445-3.771-5.679-5.649-9.438-4.207L4.692,41.9c-2.753,1.055-4.603,3.662-4.688,6.609    c-0.087,2.948,1.608,5.656,4.295,6.872l88.917,40.196c0.978,0.44,2,0.65,3.006,0.65c2.784,0,5.442-1.6,6.665-4.302    c1.661-3.678,0.029-8.007-3.648-9.671L26.273,49.277l72.568-27.834C102.61,19.998,104.496,15.771,103.048,12.002z"></path>
+              </svg>
+           </div>
+        </div>
+        <div class="space-height-20px"></div>
+        <label class="i2g-table">
+            <input style="width: 60%;" type="number" placeholder="sample" ng-blur="checkSeedNumber()" ng-model="sample.seedNumber">
+            <span>Seed Sampler</span>
+        </label>
+        <div class="space-height-20px"></div>
+        <div style=" display: grid; grid-column-gap: 20px; grid-template-columns: auto auto; width: 100%; ">
+           <div class="i2g-button-text-with-icon-center" ng-click="ngDialog.close()">
+              <span>Cancel</span>
+           </div>
+           <input type="submit" value="Save" ng-click="closeDialogSample(sample)">
+        </div>
+     </form>
 </script>

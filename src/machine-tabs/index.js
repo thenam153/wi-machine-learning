@@ -357,13 +357,15 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
     const defaultSample = {
         training: {
             value: 0,
-            condition: "<",
-            enable: false
+            condition: "<=",
+            enable: false,
+            seedNumber: 1
         },
         verify: {
             value: 0,
-            condition: "<",
-            enable: false
+            condition: "<=",
+            enable: false,
+            seedNumber: 1
         }
     }
 
@@ -1370,6 +1372,20 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
         $scope.closeDialogSample = function(sample) {
             console.log(sample)
             ngDialog.close()
+        }
+        $scope.checkValue = function() {
+            if(!isNaN(Number(self.project.content.sample[step].value))) {
+                self.project.content.sample[step].value = Number(self.project.content.sample[step].value)
+            } else {
+                self.project.content.sample[step].value = 0
+            }
+        }
+        $scope.checkSeedNumber = function() {
+            // if(!isNaN(Number(self.project.content.sample[step].seedNumber)) && self.project.content.sample[step].seedNumber != 0) {
+            //     self.project.content.sample[step].seedNumber = Number(self.project.content.sample[step].seedNumber)
+            // } else {
+            //     self.project.content.sample[step].seedNumber = 1
+            // }
         }
         $scope.ngDialog = ngDialog
         ngDialog.open({

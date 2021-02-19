@@ -150,14 +150,15 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             console.log(">>>>", curves, project, step)
             for(let idx = 0; idx < curves.length; idx++) {
                 if(curves[idx]) {
-                    curves[idx] = seeding(sample.value, sample.condition)
+                    // curves[idx] = seeding(sample.value, sample.condition, 5, idx)
+                    curves[idx] = seeding(sample.value, sample.condition, sample.seedNumber, idx)
                 }
             }
         }
         return curves
     }
-    function seeding(value, condition) {
-        let randomValue = random()
+    function seeding(value, condition, seedNumber, idx) {
+        let randomValue = random(seedNumber, idx)
         switch (condition) {
             case '<': 
                 return randomValue < value;
@@ -173,8 +174,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 return false
         }
     }
-    function random() {
-        return Math.random(0,1)
+    function random(seed, index) {
+        let x = Math.sin(seed + index) * 10000;
+        return x - Math.floor(x)
     }
     function beforeTrain() {
         return new Promise((resolve, reject) => {
