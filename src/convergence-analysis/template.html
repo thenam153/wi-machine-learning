@@ -1,5 +1,4 @@
-<div class="slim-scroller" ng-if="self.plotCondition()">
-  <div style="flex: 1; display: flex; flex-direction: column;">
+  <div style="flex: 1; display: flex; flex-direction: column;" class="slim-scroller" ng-if="self.plotCondition()">
     <div class="main-body-center border-style" style="position: relative;" id='layer-collection'>
       <layer-collection v-padding="50" h-padding="60">
         <axis-layer min-val="self.getLeft()" max-val="self.getRight()"
@@ -49,4 +48,3 @@
       </div>
     </div>
   </div>
-</div>
