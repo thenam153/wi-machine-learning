@@ -50,14 +50,16 @@ function ConvergenceAnalysisController($scope, wiApi, $timeout, mlApi){
     }
     this.getRight = function() {
         let l = self.train_loss.length;
-        return parseInt((l / 10) + 1) * 10;
+        const e = Math.pow(10, -l.toExponential(0).split('e').slice(-1)[0])
+        return Math.ceil(l * e * 2) / e / 2;
     }
     this.getBottom = function() {
         return 0;
     }
-    this.getTop = function() {
-        let max = Math.ceil(_.maxBy([...self.train_loss, ...self.val_loss], i => i));
-        return parseInt((max / 10) + 1) * 10;
+    this.getTop = function () {
+        let max = _.max([...self.train_loss, ...self.val_loss]);
+        const e = Math.pow(10, -max.toExponential(0).split('e').slice(-1)[0])
+        return Math.ceil(max * e * 2) / e / 2;
     }
 
     this.getX = function(d, i) {

@@ -1,7 +1,6 @@
 const moduleName = "machineTabs";
 const componentName = "machineTabs";
 module.exports.name = moduleName;
-// const queryString = require('query-string')
 const limitToastDisplayed = 3;
 // const { wiLogin } = require('@revotechuet/misc-component-vue');
 const { wiLoginClient } = require('@revotechuet/misc-component-vue');
@@ -144,7 +143,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             console.log(e)
             $timeout(() => {
                 self.showNotiFn('error', 'Error', e.message || "Open project error" , 4000);
-                removeDataProject() 
+                removeDataProject()
             })
         });
     });
@@ -200,14 +199,14 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
 				method: 'GET',
 				url: window.location + 'i2g.version',
 				cache: false
-			}) 
+			})
 			.then(res => {
 				res ? resolve(res.data) : resolve(null)
 			})
 			.catch(err => {
 				resolve(null)
 			})
-		}) 
+		})
 		if(!newVersion) return
 		if(newVersion != oldVersion) {
 			await new Promise((resolve) => {
@@ -229,9 +228,9 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
 					resolve()
 				}
 			})
-			
+
 		}
-	}	
+	}
     this.setTheme = function(theme)  {
         if (theme == 'dark') {
           localStorage.setItem('theme', theme);
@@ -896,7 +895,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
             // self.modelSelection.currentModel = content.model;
         self.convergenceAnalysis = content.convergenceAnalysis;
 
-        
+
     }
     this.openProject = function() {
         wiApi.client(getClientId()).getMlProjectListPromise()
@@ -1362,7 +1361,7 @@ function MachineTabsController($scope, $timeout, wiToken, wiApi, $http, wiDialog
 		document.getElementsByClassName(".my_audio").muted = true;
 	}
 
-    // 
+    //
     this.clickDialogSample = function(step) {
         console.log("click", step)
         if (!self.project) {

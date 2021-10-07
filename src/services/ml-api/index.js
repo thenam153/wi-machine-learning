@@ -1,5 +1,3 @@
-import { parse } from "query-string";
-
 const serviceName = 'mlApi';
 angular.module(serviceName, ['wiApi']).factory(serviceName, ['$http', '$timeout', 'wiApi', function($http, $timeout, wiApi) {
     return new mlApi($http, $timeout, wiApi);
@@ -33,7 +31,7 @@ function mlApi($http, $timeout, wiApi) {
         this.currentModel = model;
     }
     this.getBaseCurrentModel = () => self.currentModel;
-    
+
     this.postCreateModel = postCreateModel;
     function postCreateModel(payload) {
         return httpPromise(`${self.getBaseCurrentModel().url}/api/model/create/${self.getBaseCurrentModel().create}`, payload, 'POST', { service: self.getBaseCurrentModel().service });
@@ -163,7 +161,7 @@ function mlApi($http, $timeout, wiApi) {
             }
         });
     }
-   
+
     function getDataCurveAndFilter(dataset, curves, curveSpecs, isPrediction) {
         return new Promise((resolve, reject) => {
             // let arrNaN = [];
@@ -180,10 +178,10 @@ function mlApi($http, $timeout, wiApi) {
                 }
                 wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell).then((well) => {
                     let dtset = well.datasets.find(ds => ds.idDataset === dataset.idDataset);
-                    if (!dtset) 
+                    if (!dtset)
                         return cb(new Error("Dataset not found idDataset="+dataset.idDataset));
                     let curveInfo = dtset.curves.find(c => c.name === curveName);
-                    if (!curveInfo) 
+                    if (!curveInfo)
                         return cb(new Error(`Curve ${curveName} not found in dataset idDataset=${dataset.idDataset}`));
                     wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCurveDataPromise(curveInfo.idCurve).then((dataCurve) => {
                         for (let i in dataCurve) {
@@ -760,7 +758,7 @@ function mlApi($http, $timeout, wiApi) {
     }
     function getClientId(owner, prjName) {
         if (!owner || !owner.length) return "WI_AI_CLIENT";
-        return `WI_AI_CLIENT-${owner}-${prjName}`; 
+        return `WI_AI_CLIENT-${owner}-${prjName}`;
     }
     this.getClientId = getClientId;
 }

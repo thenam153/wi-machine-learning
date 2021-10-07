@@ -1,5 +1,5 @@
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
+const HtmlWebpackDeployPlugin = require('html-webpack-deploy-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -39,15 +39,32 @@ module.exports = {
 		symlinks: false,
 	},
 	plugins: [
-		new CleanWebpackPlugin(),
-		new CopyPlugin({
-			patterns: [
-				{
-					from: 'public',
-					cacheTransform: true,
-					force: true,
+		new CleanWebpackPlugin({
+			cleanOnceBeforeBuildPatterns: ['**/*', '!bower_components/**'],
+		}),
+		new HtmlWebpackDeployPlugin({
+			append: false,
+			assets: {
+				copy: [
+					{
+						from: './public',
+						to: '',
+						cacheTransform: true,
+						force: true,
+					},
+				],
+			},
+			useAssetsPath: false,
+			packages: {
+				'@revotechuet/misc-component': {
+					copy: { from: 'dist', to: '/' },
+					scripts: 'misc-components.js',
 				},
-			],
+				'@revotechuet/plot-toolkit': {
+					copy: [{ from: 'dist/plot-toolkit.js', to: 'plot-toolkit.js' }],
+					scripts: 'plot-toolkit.js',
+				},
+			}
 		}),
 		new HtmlWebpackPlugin({
 			template: './public/index.html',
