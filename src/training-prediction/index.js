@@ -39,7 +39,7 @@ app.component(componentName, {
         // setState: '<',
         // saveMlProject: '<',
         // model: '<',
-        
+
         controller: '<'
     }
 });
@@ -50,7 +50,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     toastr.options = {
         "positionClass": "toast-bottom-right",
       }
-      
+
     $scope.tab = 1;
     $scope.setTab = function(newTab) {
         $scope.tab = newTab;
@@ -72,7 +72,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
         return new Promise((resolve) => {
             if(!self.controller.project) {
                 self.controller.createProject();
-                return   
+                return
             }
             if(i == -1) {
                 $timeout(() => {
@@ -86,7 +86,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                         self.running = false;
                         return resolve(train());
                     });
-                    
+
                 })
             }
             else if(i == 1) {
@@ -160,7 +160,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     function seeding(value, condition, seedNumber, idx) {
         let randomValue = random(seedNumber, idx)
         switch (condition) {
-            case '<': 
+            case '<':
                 return randomValue < value;
             case '>':
                 return randomValue > value;
@@ -210,12 +210,16 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     curves = zonesetFilter(dataset, curves, zonesConfig, zones).map(d => d.x); // PHUC
                     curves = sampleFilter(curves, self.controller.project, 'training')
                     return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
-                }) 
+                })
                 .then(dataCurves => {
                     return mlApi.transformData(dataCurves, self.controller.curveSpecs);
                 })
                 .then(dataCurves => {
                     dataCurves.push(dataCurves.shift());
+                    if (dataCurves.some(arr => !arr || !arr.length)) {
+                        toastr.error("Curve data empty")
+                        return
+                    }
                     let payload = {
                         bucket_id: self.controller.project.content.bucketId,
                         data: dataCurves
@@ -226,7 +230,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     _next();
                 })
             }, err => {
-                !err ? resolve() : reject(err); 
+                !err ? resolve() : reject(err);
             })
         })
     }
@@ -314,14 +318,14 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             })
             beforePredict()
             .then(() => {
-                // toastr.success('Prediction success');            
+                // toastr.success('Prediction success');
                 console.log('Success')
                 self.controller.saveProject();
             })
             .catch(err => {
                 // toastr.error(err ? err.message
                     // || (err.status ? `${err.status} - ${err.statusText}${err.data?("-" + JSON.stringify(err.data)):""}` : 'Something went error')
-                    // : err || 'Something went error');          
+                    // : err || 'Something went error');
                 console.log('Error')
             })
             .finally(() => {
@@ -374,7 +378,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                         //return mlApi.getDataCurveAndFilter(dataset, curves); // TUNG
                         let zonesConfig = self.controller.zonesetConfig['verify'].zoneList || [];
                         let zones = (realWell.zone_sets.find(zs => zs.name === self.controller.zonesetConfig['verify'].zonesetName) || {}).zones || [];
-                        curves = zonesetFilter(dataset, curves, zonesConfig, zones).map(d => d.x);  
+                        curves = zonesetFilter(dataset, curves, zonesConfig, zones).map(d => d.x);
                         curves = sampleFilter(curves, self.controller.project, 'verify')
                         filterCurveBoolean = curves;
                         return mlApi.getDataCurveAndFilter(dataset, curves, self.controller.curveSpecs);
@@ -683,7 +687,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
         let targetName = _.get(self.controller, "curveSpecs[0].value.name", null);
         if (!targetName) return dsItem.resultCurveName;
         let defaultName = normalizeCurveName(targetName + suffix);
-        
+
         dsItem.resultCurveName = defaultName;
         return dsItem.resultCurveName;
     }
@@ -694,7 +698,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     function normalizeCurveName(name) {
         return name.replace(/(\s|%)+/g, "_");
     }
-    
+
     this.minValueMatrix = 0;
     this.maxValueMatrix = 0;
     this.levelMatrix = 5;
