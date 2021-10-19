@@ -6,10 +6,18 @@
   <div class="label-left">True label</div>
   <div class="row">
     <span class="row-header"></span>
-    <div ng-repeat="i in [].constructor(matrix.length) track by $index" class="col-header">{{$index+1}}</div>
+    <div ng-repeat="i in [].constructor(matrix.length) track by $index" class="col-header">
+      <span class="bold">{{$index+1}}</span>
+      <span ng-if="!$index">({{min}})</span>
+      <span ng-if="$index===matrix.length-1">({{max}})</span>
+    </div>
   </div>
   <div ng-repeat="row in matrix track by $index" class="row">
-    <span class="row-header">{{$index+1}}</span>
+    <div class="row-header">
+      <span class="bold">{{$index+1}}</span>
+      <span ng-if="!$index">({{min}})</span>
+      <span ng-if="$index===matrix.length-1">({{max}})</span>
+    </div>
     <div ng-repeat="cell in row track by $index" class="cell" ng-style="{'background-color': getColor(cell, sum), color: getTextColor(cell, sum)}">
       {{cell}}
     </div>

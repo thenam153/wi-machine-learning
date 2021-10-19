@@ -8,12 +8,11 @@ export function getConfusionMatrix(targetCurve, predictCurve, opts = { levelDefa
   // let _levelMatrix = _.uniq([...targetCurve.map(point => point.x), ...predictCurve.map(point => point.x)]).length - 1
   // _levelMatrix = _levelMatrix < opts._levelMatrix ? _levelMatrix : opts._levelMatrix; // Nam The comment
   let _levelMatrix = this.levelMatrix ? this.levelMatrix - 1 : opts.levelDefault - 1
-  
+
   let _2Curve = _.concat(targetCurve, predictCurve)
   let min2Curve = Math.min.apply(null, _2Curve.map(point => point.x))
   let max2Curve = Math.max.apply(null, _2Curve.map(point => point.x))
 
-  console.log(min2Curve, max2Curve, _levelMatrix)
   let segment = (max2Curve - min2Curve) / _levelMatrix
   let magrin = segment / 2;
   let arrLabel = []

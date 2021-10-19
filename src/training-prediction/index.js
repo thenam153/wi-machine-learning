@@ -762,7 +762,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
         self.showConfusionMatrix(listTargetCurveData, listResultCurveData, 'Model')
     }
     this.showConfusionMatrix = function(targetCurveData, resultCurveData, datasetName) {
-        const { matrix } = getConfusionMatrix.call(this, targetCurveData, resultCurveData);
+        const { matrix, min, max } = getConfusionMatrix.call(this, targetCurveData, resultCurveData);
         ngDialog.open({
             template: require('./confusion-matrix.html'),
             plain: true,
@@ -779,6 +779,8 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                         return _.round(matrixTransposed[col][col] / _.sum(matrixTransposed[col]) * 100, 1) || 0;
                     }
                     $scope.matrix = matrix;
+                    $scope.min = min;
+                    $scope.max = max;
                     const sum = _.sum(matrix.flat());
                     $scope.sum = sum;
                     $scope.averageAccuracy = _.round(matrix.reduce((acc, row, idx) => acc + row[idx], 0) / sum * 100, 1) || 0;
