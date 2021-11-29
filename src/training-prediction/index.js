@@ -505,7 +505,6 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 .then(plot => {
                 self.controller.tabs['prediction'].plot = plot
                 self.controller.tabs['prediction'].plot.username = localStorage.getItem('username') || '';
-                let filterCurveBoolean;
                 async.each(self.controller.tabs['prediction'].listDataset, (dataset, _next) => {
                     //if(!isRun(dataset)) {
                     if (!isReady(dataset, self.controller.curveSpecs, true)) {
@@ -514,6 +513,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     if(!dataset.active) {
                         return _next();
                     }
+                    let filterCurveBoolean;
                     let realWell;
                     wiApi.client(getClientId(dataset.owner, dataset.prjName)).getCachedWellPromise(dataset.idWell).then((well) => {
                         realWell = well;
