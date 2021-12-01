@@ -703,12 +703,16 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     this.maxValueMatrix = 0;
     this.levelMatrix = 5;
     this.confusionMatrix = async function (dataset) {
-        console.log(dataset);
         self.running = true;
         const dsInfo = await wiApi.getDatasetInfoPromise(dataset.idDataset);
         const targetCurve = dsInfo.curves.find(c => c.name === dataset.selectedValues[0]);
         const resultCurve = dsInfo.curves.find(c => c.name === dataset.resultCurveName);
-        if (!resultCurve || !targetCurve) return;
+        if (!resultCurve || !targetCurve) {
+            toastr.error("Curve not found")
+            self.running = false;
+            $timeout();
+            return;
+        }
         const targetCurveData = await wiApi.getCurveDataPromise(targetCurve.idCurve);
         const resultCurveData = await wiApi.getCurveDataPromise(resultCurve.idCurve);
         self.running = false;
