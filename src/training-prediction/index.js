@@ -693,10 +693,10 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
     }
     self.setResultCurveName = function([dsItem, suffix], newName) {
         if (!self.controller) return;
-        dsItem.resultCurveName = newName;
+        dsItem.resultCurveName = normalizeCurveName(newName);
     }
     function normalizeCurveName(name) {
-        return name.replace(/(\s|%)+/g, "_");
+        return name.replace(/(\s|%)+/g, "_").toUpperCase();
     }
 
     this.minValueMatrix = 0;
