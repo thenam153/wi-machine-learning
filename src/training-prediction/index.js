@@ -217,8 +217,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 .then(dataCurves => {
                     dataCurves.push(dataCurves.shift());
                     if (dataCurves.some(arr => !arr || !arr.length)) {
-                        toastr.error("Curve data empty")
-                        return
+                        throw new Error("Train phase: Curve data is empty. Please check data and try again")
                     }
                     let payload = {
                         bucket_id: self.controller.project.content.bucketId,
@@ -226,11 +225,21 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     }
                     return mlApi.putDataOfTrain(payload);
                 })
-                .finally(() => {
+                .then(() => {
                     _next();
                 })
+                .catch(err => {
+                    _next(err);
+                })
             }, err => {
-                !err ? resolve() : reject(err);
+                if (!err) {
+                    resolve()
+                } else {
+                    if (err.status == 400) {
+                        reject(new Error("Train phase: Input curve values maybe invalid. Please check input data, input condition and try again"))
+                    }
+                    reject(err)
+                }
             })
         })
     }
@@ -278,7 +287,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
             })
             .catch(err => {
                 console.error(err);
-                // toastr.error(err ? err.message : err || 'Something went error' );
+                toastr.error(err ? err.message : err || 'Something went error' );
             })
             .finally(() => {
                 $timeout(() => {
@@ -300,7 +309,7 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 self.controller.saveProject();
             })
             .catch(err => {
-                // toastr.error(err ? err.message : err || 'Something went error' );
+                toastr.error(err ? err.message : err || 'Something went error' );
                 console.log('Error')
             })
             .finally(() => {
@@ -323,9 +332,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                 self.controller.saveProject();
             })
             .catch(err => {
-                // toastr.error(err ? err.message
-                    // || (err.status ? `${err.status} - ${err.statusText}${err.data?("-" + JSON.stringify(err.data)):""}` : 'Something went error')
-                    // : err || 'Something went error');
+                toastr.error(err ? err.message
+                    || (err.status ? `${err.status} - ${err.statusText}${err.data?("-" + JSON.stringify(err.data)):""}` : 'Something went error')
+                    : err || 'Something went error');
                 console.log('Error')
             })
             .finally(() => {
@@ -388,6 +397,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                     })
                     .then(dataCurves => {
                         // dataCurves.pop();
+                        if (dataCurves.some(arr => !arr || !arr.length)) {
+                            throw new Error("Verify phase: Curve data is empty. Please check data and try again")
+                        }
                         dataCurves.shift();
                         let payload = {
                             features: dataCurves,
@@ -405,7 +417,14 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                         _next(err);
                     })
                 }, err => {
-                    err ? reject() : resolve(true)
+                    if (!err) {
+                        resolve(true)
+                    } else {
+                        if (err.status == 400) {
+                            reject(new Error("Verify phase: Input curve values maybe invalid. Please check input data, input condition and try again"))
+                        }
+                        reject(err)
+                    }
                 })
             })
         })
@@ -534,6 +553,9 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                         return mlApi.transformData(dataCurves, self.controller.curveSpecs, true)
                     })
                     .then(dataCurves => {
+                        if (dataCurves.some(arr => !arr || !arr.length)) {
+                            throw new Error("Predict phase: Curve data is empty. Please check data and try again")
+                        }
                         let payload = {
                             features: dataCurves,
                             model_id: self.controller.project.content.modelId
@@ -550,7 +572,14 @@ function TrainingPredictionController($scope, $timeout, wiDialog, wiApi, $http, 
                         _next(err);
                     })
                 }, err => {
-                    err ? reject(err) : resolve()
+                    if (!err) {
+                        resolve()
+                    } else {
+                        if (err.status == 400) {
+                            reject(new Error("Predict phase: Input curve values maybe invalid. Please check input data, input condition and try again"))
+                        }
+                        reject(err)
+                    }
                 })
             }).catch(e => {
                 reject(e);
