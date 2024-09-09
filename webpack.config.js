@@ -29,7 +29,12 @@ module.exports = {
 				{ loader: 'url-loader' }
 				// limit => file.size =< 8192 bytes ? DataURI : File
 			]
-		}
+		}, {
+			test: /\.(js|jsx)$/,
+			use: {
+				loader: 'babel-loader',
+			},
+		},
 		],
 	},
 	resolve: {
