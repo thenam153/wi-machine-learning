@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@revotechuet/misc-component": "^1.4.13",
-    "@revotechuet/misc-component-vue": "1.2.3-f50b5b8.1",
+    "@revotechuet/misc-component-vue": "^1.6.2",
     "@revotechuet/plot-toolkit": "^1.0.1",
     "gulp": "^4.0.2",
     "gulp-changed": "^4.0.1",
